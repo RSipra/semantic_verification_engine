@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -169,3 +170,20 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+=======
+# Ignore the script used to download datasets
+src/download_data.py
+
+# Ignore token files or sensitive configs
+.env
+
+# Ignore OS metadata files
+.DS_Store
+src/.DS_Store
+
+# ignore virtual environment - have requirements.txt
+hp_env/
+
+#Ignore all .ipynb_checkpoints directories:
+.ipynb_checkpoints/
+>>>>>>> 7b98c21 (Initial commit)
