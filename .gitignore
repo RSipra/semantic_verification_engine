@@ -3,13 +3,13 @@ src/download_data.py
 
 # Ignore token files or sensitive configs
 .env
+# ignore virtual environment - have requirements.txt
+.venv/
 
 # Ignore OS metadata files
 .DS_Store
 src/.DS_Store
 
-# ignore virtual environment - have requirements.txt
-hp_env/
-
 #Ignore all .ipynb_checkpoints directories:
 .ipynb_checkpoints/
+tempCodeRunnerFile*.ipynb
