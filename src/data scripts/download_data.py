@@ -7,10 +7,14 @@
 import os
 import pandas as pd
 from datasets import load_dataset
+from dotenv import load_dotenv
+
+# Load the 'configure.env' file
+load_dotenv('config.env')
 
 # Define the dataset and save paths
 DATASET_NAME = "saracandu/harry-potter-trivia-human"
-SAVE_DIR = "/Users/reemasipra/Documents/GitHub_Repos/Python_Projects/Harry_Potter_Trivia/data"
+SAVE_DIR = os.getenv('SAVE_DIR')
 CSV_FILENAME = "harry_potter_trivia_questions_HFdataset.csv"
 
 # Download the dataset from Hugging Face

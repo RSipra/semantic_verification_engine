@@ -13,3 +13,4 @@ src/.DS_Store
 #Ignore all .ipynb_checkpoints directories:
 .ipynb_checkpoints/
 tempCodeRunnerFile*.ipynb
+venv/
