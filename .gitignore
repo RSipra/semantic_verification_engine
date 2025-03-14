@@ -4,6 +4,7 @@ src/download_data.py
 # Ignore token files or sensitive configs
 .env
 config.env
+
 # ignore virtual environment - have requirements.txt
 .venv/
 venv
