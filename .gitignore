@@ -17,3 +17,8 @@ src/.DS_Store
 .ipynb_checkpoints/
 tempCodeRunnerFile*.ipynb
 venv/
+
+# Ignore temporary Word files
+~$*.docx
+~$*.doc
+*.wbk
