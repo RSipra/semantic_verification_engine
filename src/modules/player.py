@@ -77,13 +77,13 @@ class Player(object):
     def find_player_level(self):
         '''Return the player's level based on their score at the end of the game'''
         
-        score_ratio = self.score / 20   # can change this to a variable selected by player later.
+        score_ratio = self.score / 20   # can change total questions asked to a variable selected by player later.
         
-        if score_ratio < 0.25:
+        if score_ratio < 0.25: # 5 questions
             return "HP Triva Novice. You need to read more books!"
-        if score_ratio < 0.6:
+        if score_ratio < 0.75: # 15 questions
             return "Trivia Enthusiast. Keep going!"
-        if score_ratio < 0.85:
+        if score_ratio < 0.85: # 17 questions
             return "Trivia Expert! You know your stuff!"
         else:
             return "Absolutely brilliant Master of HP Trivia! You crushed it!"
