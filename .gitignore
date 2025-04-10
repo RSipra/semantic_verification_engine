@@ -4,6 +4,7 @@ src/download_data.py
 # Ignore token files or sensitive configs
 .env
 config.env
+.vscode/
 
 # ignore virtual environment - have requirements.txt
 .venv/
@@ -22,3 +23,6 @@ venv/
 ~$*.docx
 ~$*.doc
 *.wbk
+
+# Ignore python cache files
+__pycache__/

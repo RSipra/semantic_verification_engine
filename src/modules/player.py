@@ -1,6 +1,6 @@
 '''PLAYER Class'''
 
-class Player(object):
+class Player:
     ''' This class represents a player in a game session.'''
     
     def __init__(self, name: str, hogwarts_house: str):
@@ -20,24 +20,24 @@ class Player(object):
             raise ValueError(f"Invalid house '{hogwarts_house}'. Valid houses are {valid_houses}.")
         
         # Initialize player attributes
-        self.name = name.strip().title()
-        self.hogwarts_house = hogwarts_house.strip().capitalize()
+        self._name = name.strip().title()
+        self._hogwarts_house = hogwarts_house.strip().capitalize()
         # Initialize score to 0
-        self.score = 0
+        self._score = 0
         # Initialize chances left to 3 - can adjust this later
-        self.chances_left = 3
+        self._chances_left = 3
 
     def __str__(self):
-        return f"Player '{self.name}' is a member of {self.hogwarts_house} with a current score of {self.score}."
+        return f"Player '{self._name}' is a member of {self._hogwarts_house} with a current score of {self._score}."
 
     def __repr__(self):
-        return f"Player({self.name}, {self.hogwarts_house}, {self.score})"
+        return f"Player({self._name}, {self._hogwarts_house}, {self._score})"
     
     def __eq__(self, other):
         '''Check if the other object is an instance of Player'''
         if isinstance(other, Player):
-            return self.name == other.name and \
-                   self.hogwarts_house == other.hogwarts_house
+            return self._name == other._name and \
+                   self._hogwarts_house == other._hogwarts_house
         return NotImplemented
         # can consider player_id as unique identifier for player later on. 
     
@@ -45,45 +45,53 @@ class Player(object):
     @property
     def score(self):
         """Return the player's score"""
-        return self.score
+        return self._score
     
     @property
     def name(self):
         """Return the player's name"""
-        return self.name
+        return self._name
     
     @property
     def house(self):
         """Return the player's hogwarts house"""
-        return self.hogwarts_house
+        return self._hogwarts_house
     
     def add_score(self):
         '''Increase the player's score by 1 point'''
-        self.score += 1
-        return self.score
+        self._score += 1
+        return self._score
     
     def reset_score(self):
         '''Return the player's score back to 0'''
-        self.score = 0
-        return self.score
+        self._score = 0
+        return self._score
     
     def lose_chance(self):
         '''Reduce the player's chances by 1'''
-        if self.chances_left <= 0:
+        if self._chances_left <= 0:
             raise ValueError("No chances left.")
-        self.chances_left -= 1
-        return self.chances_left
+        self._chances_left -= 1
+        return self._chances_left
     
-    def find_player_level(self):
+    def find_player_level(self, total_questions: int):
         '''Return the player's level based on their score at the end of the game'''
         
-        score_ratio = self.score / 20   # can change total questions asked to a variable selected by player later.
+        # Validate the total_questions and score inputs
+        if total_questions <= 0:
+            raise ValueError("Total questions must be greater than 0.")
+        if self._score < 0:
+            raise ValueError("Score cannot be negative.")
         
-        if score_ratio < 0.25: # 5 questions
+        # Calculate the score ratio
+        score_ratio = self._score / total_questions
+        
+        # Define thresholds for player levels
+        if score_ratio <= 0.25: # 5 questions
             return "HP Triva Novice. You need to read more books!"
-        if score_ratio < 0.75: # 15 questions
+        if score_ratio <= 0.75: # 15 questions
             return "Trivia Enthusiast. Keep going!"
-        if score_ratio < 0.85: # 17 questions
+        if score_ratio <= 0.85: # 17 questions
             return "Trivia Expert! You know your stuff!"
         else:
             return "Absolutely brilliant Master of HP Trivia! You crushed it!"
