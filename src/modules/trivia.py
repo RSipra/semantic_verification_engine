@@ -20,7 +20,7 @@ class Trivia:
     """Represents the random set of questions loaded from the dataset for the Trivia game session."""
     
     # Number of questions to load (can be user defined variable later as pre-set list of options ,e.g. 10, 20, 30)
-    NUM_QUESTIONS = 20
+    NUM_QUESTIONS = 10
     
     def __init__(self):
         """Initialize the Trivia session with an empty list of questions."""
