@@ -21,9 +21,11 @@ class Player(object):
         
         # Initialize player attributes
         self.name = name.strip().title()
-        self.hogwarts_house = hogwarts_house.strip().title()
+        self.hogwarts_house = hogwarts_house.strip().capitalize()
         # Initialize score to 0
         self.score = 0
+        # Initialize chances left to 3 - can adjust this later
+        self.chances_left = 3
 
     def __str__(self):
         return f"Player '{self.name}' is a member of {self.hogwarts_house} with a current score of {self.score}."
@@ -32,35 +34,58 @@ class Player(object):
         return f"Player({self.name}, {self.hogwarts_house}, {self.score})"
     
     def __eq__(self, other):
-        """Check if the other object is an instance of Player"""
+        '''Check if the other object is an instance of Player'''
         if isinstance(other, Player):
             return self.name == other.name and \
                    self.hogwarts_house == other.hogwarts_house
         return NotImplemented
         # can consider player_id as unique identifier for player later on. 
-
-    def add_score(self, score: int):
-        """Increase the player's score by 1 point"""
+    
+    # getter functions
+    @property
+    def score(self):
+        """Return the player's score"""
+        return self.score
+    
+    @property
+    def name(self):
+        """Return the player's name"""
+        return self.name
+    
+    @property
+    def house(self):
+        """Return the player's hogwarts house"""
+        return self.hogwarts_house
+    
+    def add_score(self):
+        '''Increase the player's score by 1 point'''
         self.score += 1
         return self.score
     
     def reset_score(self):
-        """Return the player's score back to 0"""
+        '''Return the player's score back to 0'''
         self.score = 0
         return self.score
     
-    # getter function
-    def get_score(self):
-        """Return the player's score"""
-        return self.score
+    def lose_chance(self):
+        '''Reduce the player's chances by 1'''
+        if self.chances_left <= 0:
+            raise ValueError("No chances left.")
+        self.chances_left -= 1
+        return self.chances_left
     
-    # getter function
-    def get_name(self):
-        """Return the player's name"""
-        return self.name    
-    
-    # getter function
-    def get_house(self):
-        """Return the player's hogwarts house"""
-        return self.hogwarts_house
+    def find_player_level(self):
+        '''Return the player's level based on their score at the end of the game'''
+        
+        score_ratio = self.score / 20   # can change this to a variable selected by player later.
+        
+        if score_ratio < 0.25:
+            return "HP Triva Novice. You need to read more books!"
+        if score_ratio < 0.6:
+            return "Trivia Enthusiast. Keep going!"
+        if score_ratio < 0.85:
+            return "Trivia Expert! You know your stuff!"
+        else:
+            return "Absolutely brilliant Master of HP Trivia! You crushed it!"
+
       
