@@ -83,17 +83,16 @@ class Player:
         if self._score < 0:
             raise ValueError("Score cannot be negative.")
         
-        # Calculate the score ratio
+        # Calculate the score ratio -> basecase is a total of 10 questions
         score_ratio = self._score / total_questions
         
         # Define thresholds for player levels
-        if score_ratio <= 0.25: # 5 questions
+        if score_ratio <= 0.3: 
             return "HP Triva Novice. You need to read more books!"
-        if score_ratio <= 0.75: # 15 questions
+        if score_ratio <= 0.6: 
             return "Trivia Enthusiast. Keep going!"
-        if score_ratio <= 0.85: # 17 questions
+        if score_ratio <= 0.8: 
             return "Trivia Expert! You know your stuff!"
-        else:
-            return "Absolutely brilliant Master of HP Trivia! You crushed it!"
+        return "Absolutely brilliant Master of HP Trivia! You crushed it!"
 
       
