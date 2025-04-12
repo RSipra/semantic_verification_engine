@@ -1,4 +1,12 @@
-'''PLAYER Class'''
+'''
+==================================================================
+HARRY POTTER TRIVA GAME 
+==================================================================
+
+CLI MVP (core logic) -> player module (model)
+
+------------------------------------------------------------------
+'''
 
 class Player:
     ''' This class represents a player in a game session.'''

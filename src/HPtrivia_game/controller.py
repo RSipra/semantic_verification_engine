@@ -1,6 +1,14 @@
-# Main game logic
-
 '''
+==================================================================
+HARRY POTTER TRIVA GAME 
+==================================================================
+
+CLI MVP (core logic) -> game module (viewer and controller)
+
+Currently both View and Controller are included in the same module for the MVP. Handled separately through classes. 
+** Separation should be considered in next phase.
+------------------------------------------------------------------
+
 Game Logic for Trivia Game (CLI MVP):
 
  1. Initialize the game:
@@ -60,14 +68,11 @@ PHASE 2: consider a separate module for game logic and view especially if moving
 web app.
 
 '''
-from modules.player import Player
-from modules.trivia import Trivia
+from HPtrivia_game.player import Player
+from HPtrivia_game.trivia import Trivia
 
 ''' 
-Currently both View and Controller are included in the same module for the MVP. Handled separately through classes. 
 
------
-** Separation should be considered in next phase.
 
 '''
 
@@ -78,7 +83,6 @@ Currently both View and Controller are included in the same module for the MVP. 
 class Start(Trivia):
     # check inheritance from Trivia - and how it will be used. 
     '''Initialize game by loading dataset and 10 random questions'''
-    pass
     
 class Introduction(Player):
     ''' Handles user interaction (View)'''
@@ -94,16 +98,16 @@ class Introduction(Player):
         ''' Get the player to input their username and hogwart's house and use it to initialize the player'''
         
         print("So, let's get to know you better!")
-        # Validate name at input, loop until correct provided.
+        # Obtain player name and validate name at input, loop until correct provided.
         while True:
             player_name = input("So what should I call you? Please enter your name: ").strip()
             if player_name:
                 break
             print("Oops! Please enter a valid, non-empty name.")
 
-        
-        player_house = input("Which Hogwart's house has your allegiance?? \nEnter your house: ")
-        # Validate house at input:
+        while True:
+            player_house = input("Which Hogwart's house has your allegiance?? \nEnter your house: ")
+            # Validate house at input:
        
         
         # Initialize player
@@ -114,26 +118,16 @@ class Introduction(Player):
     @staticmethod
     def explain_rules():
         ''' provide rules on how to play, chances, scoring.'''
-        pass
     
     class GamePlayView:
         '''View methods during gameplay'''
-        pass
     
     class GameEndView:
         '''View methods at the end of game play'''
-        pass
+    
     # ------------------------------------------------------------
     # CONTROLLER classes
     
     class GameController:
         """Main game controller for the Trivia game."""
-    
-    def __init__(self):
-        # inherit from player / trivia
-        pass
-    
-        
-        
-        
     

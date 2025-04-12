@@ -3,15 +3,17 @@
 HARRY POTTER TRIVA GAME 
 ==================================================================
 
-Phase 1.2
-CLI MVP (core logic) Runner module
-Author: R. Sipra
-Version: 0
+The runner module that executes the game.
 
 ------------------------------------------------------------------
 '''
 # Import game modules:
 
-import src.HPtrivia_game.game    # Game View and Controller module 
+import HPtrivia_game.controller    # Game View and Controller module 
 import src.HPtrivia_game.player  # Player model module
 import src.HPtrivia_game.trivia  # Trivia data module
+
+# Start / initialize the game
+# Greet / Introduction
+# Game play
+# End game
