@@ -1,14 +1,26 @@
-''' 
-TRIVIA MODULE
+'''
+==================================================================
+HARRY POTTER TRIVA GAME 
+==================================================================
 
-This module is part of the Trivia game application. It is responsible for loading questions, 
-checking answers, and display the question and answer.
+CLI MVP (core logic) -> trivia module (data)
 
-Overview:
-* Trivia class: loads and manages a set of trivia questions and answers randomly selected from 
-the dataset.
-* Question class: represents a single trivia question and its answer. The class includes methods 
-for checking the correctness of an answer and for displaying the question and answer.
+------------------------------------------------------------------
+
+This module manages the core trivia game functionality, including:
+- Loading and storing trivia questions
+- Handling question presentation and answer validation
+- Scoring logic and question progression
+
+Classes:
+    - Trivia
+
+Functions:
+    - load_questions(): Loads questions from file or data source
+    - shuffle_questions(): Randomizes the order of questions
+    - validate_answer(): Checks if a player's answer is correct
+
+This module is typically used by the GameController during gameplay.
   
   '''
 # Import necessary libraries:
