@@ -6,7 +6,7 @@ class Player:
     def __init__(self, name: str, hogwarts_house: str):
         
         """Initialize the Player with a name and Hogwarts house."""
-        
+        # where is the best place to validate? i shoud check at input instead of initialization.
         # Validate the name
         if not isinstance(name, str) or not name.strip():
             raise ValueError("Player name must be a non-empty string.")
@@ -28,7 +28,8 @@ class Player:
         self._chances_left = 3
 
     def __str__(self):
-        return f"Player '{self._name}' is a member of {self._hogwarts_house} with a current score of {self._score}."
+        return f"Player '{self._name}' is a member of {self._hogwarts_house} \
+            with a current score of {self._score}."
 
     def __repr__(self):
         return f"Player({self._name}, {self._hogwarts_house}, {self._score})"
@@ -95,4 +96,3 @@ class Player:
             return "Trivia Expert! You know your stuff!"
         return "Absolutely brilliant Master of HP Trivia! You crushed it!"
 
-      
