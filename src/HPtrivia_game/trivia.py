@@ -26,7 +26,7 @@ This module is typically used by the GameController during gameplay.
 # Import necessary libraries:
 from dataclasses import dataclass, field
 from typing import List
-import random
+# import random
 import pandas as pd
 from HPtrivia_game.constants import NUM_QUESTIONS_PER_SESSION
 

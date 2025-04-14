@@ -178,7 +178,6 @@ class Introduction(Player):
             """
             setup the game introduction to run the Introduction class functions.
             """
-            pass
         
         def run_game(self):  # State 3
             """
@@ -207,11 +206,9 @@ class Introduction(Player):
             5. Player score and state are updated
             6. Controller checks if the game should continue or end
             """
-            pass
         
         def _update_game_state(self):
             pass
         
         def end_game(self):  # State 4
             """logic and view to end game, provide score, player level."""
-            pass
