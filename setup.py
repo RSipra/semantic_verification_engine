@@ -1,7 +1,12 @@
+"""Setup script for the Harry Potter Trivia Game.
+
+This script uses setuptools to package and install the game.
+"""
+
 from setuptools import setup, find_packages
 
 # Read dependencies from requirements.txt
-with open("requirements.txt") as f:
+with open("requirements.txt", encoding="utf-8") as f:
     requirements = f.read().splitlines()
 
 setup(
