@@ -26,17 +26,35 @@ This module is typically used by the GameController during gameplay.
 # Import necessary libraries:
 from dataclasses import dataclass, field
 from typing import List
-# import random
+import random
+import pandas as pd
+from HPtrivia_game.constants import NUM_QUESTIONS_PER_SESSION
 
-class Trivia:
-    """Represents the random set of questions loaded from the dataset for the Trivia game session."""
+class Trivia: 
+    
+    """
+    The dataset / questions manager
+    Represents the random set of questions loaded from the dataset for the Trivia game session.
+    """
     
     # Number of questions to load (can be user defined variable later as pre-set list of options ,e.g. 10, 20, 30)
-    NUM_QUESTIONS = 10
+    NUM_QUESTIONS = NUM_QUESTIONS_PER_SESSION
     
     def __init__(self):
-        """Initialize the Trivia session with an empty list of questions."""
-        self.questions = []  # List to store questions
+        self.questions = self._load_questions()
+    
+    
+    def _load_dataset(self, csv_filepath: str):
+        # return dataframe of full dataset
+        df = pd.read_csv(csv_filepath, index_col=False)
+        return df
+    
+    @staticmethod
+    def _load_questions():
+        session_questions_dict={}
+        # select 10 random questions and answers and store in dict
+        # return dict with question as key
+        return session_questions_dict
 
        
     # --- NEXT STEP: How do I load the 20 questions? ---
@@ -83,8 +101,14 @@ class Question:
     
     def __str__(self):
         return f"Question: {self.question_text},\nAnswer: {self.correct_answer},\nKeywords: {', '.join(self.keywords)}"
+    
+    def _prepare_question_to_ask(self):
+        # Prepare the question for View class to ask player
+        pass
   
-    def check_answer(self, player_answer: str):
-        """Checks if the player provided answer is correct by comparing it to the correct answer."""
+    def _check_answer(self, player_answer: str):
+        """
+        Checks if the player provided answer is correct by comparing it to the correct answer.
+        """
         return player_answer.lower() == self.correct_answer.lower()
     
