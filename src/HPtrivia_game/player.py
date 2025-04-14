@@ -7,6 +7,7 @@ CLI MVP (core logic) -> player module (model)
 
 ------------------------------------------------------------------
 '''
+from HPtrivia_game.constants import VALID_HOUSES
 
 class Player:
     ''' This class represents a player in a game session.'''
@@ -22,7 +23,7 @@ class Player:
         # Validate the Hogwarts house
         if not isinstance(hogwarts_house, str) or not hogwarts_house.strip():
             raise ValueError("Hogwarts house must be a non-empty string.")
-        valid_houses = ["Gryffindor", "Hufflepuff", "Ravenclaw", "Slytherin"]
+        valid_houses = VALID_HOUSES
         
         if hogwarts_house not in valid_houses:
             raise ValueError(f"Invalid house '{hogwarts_house}'. Valid houses are {valid_houses}.")
