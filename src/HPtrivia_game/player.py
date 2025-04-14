@@ -67,9 +67,9 @@ class Player:
         """Return the player's hogwarts house"""
         return self._hogwarts_house
     
-    def add_score(self):
+    def add_score(self, points=1):
         '''Increase the player's score by 1 point'''
-        self._score += 1
+        self._score += points
         return self._score
     
     def reset_score(self):
