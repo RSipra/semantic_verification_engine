@@ -62,4 +62,7 @@ We welcome contributions to improve the game! Here’s how you can help:
 4. Push to the branch (`git push origin feature-name`).
 5. Open a pull request.
 
+## Disclaimer:
+This project is an unofficial fan tribute to the Harry Potter series and is not endorsed by or affiliated with J.K. Rowling, Warner Bros., or any related parties. It is a passion and learning project created solely for educational and non-commercial purposes.
+
 Please follow the [Code of Conduct](CODE_OF_CONDUCT.md) and ensure your changes are well-documented.

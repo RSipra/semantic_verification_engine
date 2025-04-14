@@ -8,7 +8,7 @@ CLI MVP (core logic) -> game module (viewer and controller)
 Currently both View and Controller are included in the same module for the MVP. 
 Handled separately through classes. 
 
-** Separation should be considered in next phase **
+** Separation into separate VIEW and CONTROLLER modules should be considered in next phase **
 ------------------------------------------------------------------
 
 Game Logic for Trivia Game (CLI MVP): phase 1.2
@@ -58,10 +58,48 @@ from HPtrivia_game.trivia import Trivia
 from HPtrivia_game.constants import VALID_HOUSES, NUM_QUESTIONS_PER_SESSION
 
 #-------------------------------------------------
-# VIEW classes: handle game view and user input and output.    
+# VIEW classes: handle game view and user input and output.
 
-class Introduction(Player):
-    ''' Handles user interaction (View)'''
+# START VIEW
+class Introduction():
+    ''' Handles user interaction (View) at the start of the game'''  
+    def __init__(self):
+        """
+        Initialize the Introduction instance with game messages.
+
+        The messages are stored in a dictionary for easy modification and later use.
+        Each key corresponds to a section of the game intro (e.g., greeting, objective, etc.).
+        """      
+        # Message dictionary - remember no commas in paranthesis for values = str otherwise tuple!
+        self.messages = {
+            "greeting": (
+                "⚡️✨ Welcome, young wizard, to the world of magic! ✨⚡️\n"
+                "🪄 You've entered the Harry Potter Trivia Challenge!\n"
+            ),
+            "objective": (
+                "You have been selected as a member of the house trivia team.\n"
+                "Answer the trivia questions correctly and make your team proud! 🏅\n"
+            ),
+            "how_to_play": (
+                "How to play the game:\n"
+                f"- You will be given {NUM_QUESTIONS_PER_SESSION} random questions in this session.\n"
+                "- Answer the questions with a short, clear, and concise sentence.\n"
+                "- You will earn a point for every right answer.\n"
+                "- Your final score will give determine your level of expertise!🤓\n"
+                # can add explanations for chances_left and score later
+            ),
+            "how_to_quit": (
+                "Quit mid-game:\n"
+                "- You can quit anytime by typing 'quit' and pressing enter.\n"
+                "- But keep in mind you will lose all game progress.\n"
+            ),
+            "start_game": (
+                "🪄✨⚡️ Think you know the books inside and out?\n"
+                "  📚🔮 Let's put your knowledge to the test!\n"
+                "\nOn with the game!\n\n"
+            ),
+        }
+    # Add __str__ and __repr__
     
     @staticmethod
     def print_ascii_art(font_style: str = 'standard'):
@@ -79,17 +117,20 @@ class Introduction(Player):
         ## Can consider a random font selector for more fun later.
         game_title_text = "Harry Potter Trivia"
         # Try 'digital', 'ogre, 'gothic' or 'smscript' for a different vibe!
-        print(figlet_format(text=game_title_text, font= font_style))  
+        print( '\n\n' + figlet_format(text=game_title_text, font= font_style) + '\n')  
 
-    @ staticmethod
-    def greet():
-        """Return a warm and whimsical greeting to welcome the player to the game."""
-        # can consider using the `shutil` package to dynamically adjust text to be centred in next phase
-        return (
-            "🧙‍♂️✨ Welcome, young wizard, to the world of magic! ✨⚡️\n"
-            "🪄 You've entered the Harry Potter Trivia Challenge!\n"
-            "Think you know the books inside and out? Let’s put your knowledge to the test! 📚🔮\n\n\n"
-        )
+    def greet(self):
+        """
+        Return a warm, whimsical greeting message for the player.
+
+        This method retrieves the 'greeting' message from the messages dictionary.
+        Future enhancements might add additional formatting or dynamic behavior.
+
+        Returns:
+            str: The greeting message.
+        """
+        # Can add extra behavior later (e.g. game quotes? more formatting? fun facts?)
+        return self.messages["greeting"]
         
     @ staticmethod
     def get_player_details():
@@ -112,103 +153,125 @@ class Introduction(Player):
         # to make loop execution simpler for player can consider suggestion after ~3 tries
         # and provide "I pick?" option or end w. default name?
         while True:
-            player_name = input("So what should I call you? Please enter your name: ").strip()
+            player_name = input("So what should I call you? Please enter your name: ").strip().title()
             if player_name:
                 break
             print("Oops! Please enter a valid, non-empty name.")
         
-        # Fun dialogue to keep the player engaged and link to theme -> sorting hat suggests a random house
-        print("Hmmm, what would your house be....?\n\n")
+        # Fun dialogue -> sorting hat suggests a random house
+        print("\n\nHmmm, what would your house be....?\n\n")
         # could add a time delay here later.
         random_house = random.choice(VALID_HOUSES)
-        print(f"The Sorting Hat thinks you *might* be a good fit for... {random_house.upper()}!\n\n 🎩")
+        print(f"The Sorting Hat thinks you *might* be a good fit for {random_house.upper()}!🎩\n\n ")
         print("But you always get to choose!\n")
         
         # Player picks the hosue:
         while True:
-            player_house = input("Which Hogwart's house has your allegiance?? \nEnter your house: ").strip().title()
+            player_house = \
+            input("Which Hogwart's house has your allegiance?\nEnter your house: ").strip().title()
             if player_house in VALID_HOUSES:
                 break
             print(f"Uhoh! I didn't get that ... please enter a valid house from: {', '.join(VALID_HOUSES)}.")
             # can simplify later by breaking after ~3 incorrect answers and go with the random sorting house choice
             # will need to make the sorting house choice a variable then.
- 
+
         # Initialize player
         player = Player(player_name, player_house)
+         # Can be replaced with function to print in color later?
+        print(f"\n\nWelcome to House {player_house}, {player_name}!\n")
+        
         return player
     
-    @staticmethod
-    def explain_rules():
-        ''' provide rules on how to play, chances, scoring.'''
-    
-    class GamePlayView:
+    def explain_gameplay(self):
+        """
+        Return the full explanation of the game’s rules and objectives.
+
+        This method retrieves and concatenates the messages for objective, rules,
+        quitting instructions, and the start prompt so that they can be printed together.
+
+        Returns:
+            str: A multiline string that explains gameplay instructions.
+        """
+        # Concatenate the messages with newlines between them
+        parts = [
+            self.messages["objective"],
+            self.messages["how_to_play"],
+            self.messages["how_to_quit"],
+            self.messages["start_game"]
+        ]
+        return "\n".join(parts)
+       
+# GAMEPLAY VIEW:
+class GamePlayView:
         '''View methods during gameplay'''
-    
-    class GameEndView:
+# END VIEW:  
+class GameEndView:
         '''View methods at the end of game play'''
     
-    # ------------------------------------------------------------
-    # CONTROLLER classes: manage flow between the game states.
+# ----------------------------------------------------------------------------------------------------------
     
-    class GameController:
+# CONTROLLER classes: manage flow between the game states.
+    
+class GameController:
+    """
+    Main game controller for the Trivia game.
+        - Manage the game flow and state. 
+        - Interact with Player and Trivia modules.
+        - To manage the state (like the current Player object, the Trivia session object, 
+            maybe the current question index, game over status).
+        - Other methods could handle specific parts like _get_player_details(), _play_round(), 
+            _display_results().r adding a new player,
+    """
+    
+    # Track current state of the game.
+    def __init__(self): 
+        self.player = None  # Instantiated by player during introduction
+        self.trivia = Trivia()  # loads dataset + selects 10 questions
+        self.current_question_index = 0
+        self.game_over = False
+    
+    def start_game(self): # State 1
+    # check inheritance from Trivia - and how it will be used. 
         """
-        Main game controller for the Trivia game.
-            - Manage the game flow and state. 
-            - Interact with Player and Trivia modules.
-            - To manage the state (like the current Player object, the Trivia session object, 
-              maybe the current question index, game over status).
-            - Other methods could handle specific parts like _get_player_details(), _play_round(), 
-              _display_results().r adding a new player,
+        Initialize game by loading dataset and preselected number of random questions
+        
         """
         
-        # Track current state of the game.
-        def __init__(self): 
-            self.player = None  # Instantiated by player during introduction
-            self.trivia = Trivia()  # loads dataset + selects 10 questions
-            self.current_question_index = 0
-            self.game_over = False
+    def introduce_game(self): # State 2
+        """
+        setup the game introduction to run the Introduction class functions.
+        """
+    
+    def run_game(self):  # State 3
+        """
+        Setup the game play logic / loop usingt use the GameView, Player, and Trivia classes. 
+        run_game will be a wrapper with other internal private methods for individual jobs
+        """
+        # CHECK!
+        # self._get_player_details()
+        # Need to add chances_left here later!!
+        while self.current_question_index != (NUM_QUESTIONS_PER_SESSION-1):
+            self._play_round()
+        self.end_game()
         
-        def start_game(self): # State 1
-        # check inheritance from Trivia - and how it will be used. 
-            """
-            Initialize game by loading dataset and 10 random questions
-            """
-            
-        def introduce_game(self): # State 2
-            """
-            setup the game introduction to run the Introduction class functions.
-            """
+    # Private internal methods to perform individual jobs required for running the game 
+    def _get_player_details(self):
+        pass
         
-        def run_game(self):  # State 3
-            """
-            Setup the game play logic / loop usingt use the GameView, Player, and Trivia classes. 
-            run_game will be a wrapper with other internal private methods for individual jobs
-            """
-            # CHECK!
-            # self._get_player_details()
-            # Need to add chances_left here later!!
-            while self.current_question_index != (NUM_QUESTIONS_PER_SESSION-1):
-                self._play_round()
-            self.end_game()
-            
-        # Private internal methods to perform individual jobs required for running the game 
-        def _get_player_details(self):
-            pass
-            
-        def _play_round(self):
-            """
-            One round of gameplay includes the following steps:
+    def _play_round(self):
+        """
+        One round of gameplay includes the following steps:
 
-            1. Trivia provides a question
-            2. View asks the question to the player
-            3. Trivia checks the player's answer
-            4. View displays feedback (correct/incorrect)
-            5. Player score and state are updated
-            6. Controller checks if the game should continue or end
-            """
-        
-        def _update_game_state(self):
-            pass
-        
-        def end_game(self):  # State 4
-            """logic and view to end game, provide score, player level."""
+        1. Trivia provides a question
+        2. View asks the question to the player
+        3. Trivia checks the player's answer
+        4. View displays feedback (correct/incorrect)
+        5. Player score and state are updated
+        6. Controller checks if the game should continue or end
+        """
+    
+    def _update_game_state(self):
+        pass
+    
+    def end_game(self):  # State 4
+        """logic and view to end game, provide score, player level."""
