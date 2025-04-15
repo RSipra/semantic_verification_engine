@@ -26,6 +26,7 @@ from HPtrivia_game.controller import Introduction as intro
 # Full Introduction:
 introduction = intro()
 intro.print_ascii_art(font_style='ogre')
+print(introduction.dedication())
 print(introduction.greet())
 intro.get_player_details()
-print(introduction.explain_gameplay())
+introduction.explain_gameplay()
