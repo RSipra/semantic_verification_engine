@@ -1,48 +1,95 @@
-# Harry Potter Trivia Game 🧙‍♂️✨
+# 🧙‍♀️ Hogwarts Trivia Game – A Passion Project Turned Portfolio Spell 🌟
 
-A fun and interactive trivia game for Harry Potter fans! Players answer trivia questions about the magical world, challenge their knowledge, and compete for the title of "Harry Potter Expert."
+This repository contains the source code, notebooks, and support documents for a Harry Potter trivia game built with Python featuring NLP-driven features.
 
-This project uses natural language processing (NLP) to automatically categorize questions and evaluate answers, with a custom-trained Named Entity Recognition (NER) model to identify characters, spells, and locations.
+This magical little adventure started over late-night book readings and a daughter who just won’t stop dropping Harry Potter trivia around the clock. Naturally, a trivia game was born – for her to play, and for me (a muggle-turned-data-wizard) to build.
 
+This is more than just a game — it’s a portfolio project to practice and showcase:
 
+    - 🐍 Clean Python + OOP design
+    - 🧠 NLP & Named Entity Recognition (NER) spells. 
+    - 🎯 Building an MVP from idea to deployment (Command logic interface → Web App)
+    - 📦 Packaging, modular design & installable project structure
+    - 🧪 Testing, versioning, and all those responsible grown-up dev things
+    - 🦄 Use of DistilBERT for some really cool magic!✨ (semantic matching of answers, more conversational play, etc!) 
+
+Whether you're here to cast code spells or just play a few rounds of trivia, welcome to a corner of the internet where passion meets Python.
 
 ## Table of Contents
-1. [Installation](#installation)
-2. [Description](#description)
-3. [Usage](#usage)
-4. [Features](#features)
-5. [Data Sources](#data-sources)
-6. [License](#license)
-7. [Contributing](#contributing)
 
+1. [Description](#description)
+2. [Project development phases](#project-development-phases)
+3. [Features](#features)
+4. [Installation](#installation)
+5. [Usage](#usage)
+6. [Controls](#controls)
+7. [Data Sources](#data-sources)
+8. [License](#license)
+9. [Contributing](#contributing))
+10. [Acknowledgements](#acknowledgements)
+11. [Disclaimer](#disclaimer)
 
 ## Description
 
-My daughter and I are avid Harry Potter fans. To such an extent that my daughter has read every book atleast three times and is her favourite reading option. We've spent countless evenings trying to best each other with facts, spells, and trivia from all seven books. This is a passion project for her to have another place to try things she likes
+Step into the halls of Hogwarts and test your knowledge with this interactive CLI trivia game (and later a web app)! Challenge yourself or compete for house points against a series of randomly selected questions drawn from the wizarding world. This project goes beyond simple Q&A, utilizing Natural Language Processing (NLP) with custom-trained models [Phase 2 onwards] to understand the nuances of the questions and eventually [Phase 4+] even your answers!
+
+
+## Project development phases
+
+The main steps in the devleopment of the game are: 
+
+1. Phase 1: MVP core game logic, unit testing, and pattern awareness
+    - Setup environmental and data foundation (download, cleaning, EDA, preprocessing of dataset)
+    - Develop basic core logic and OOP structure for CLI game play          *<-- Current phase*
+    - Test and refactor the game throughly (using unittest and pytest)
+
+2. Phase 2: NLP / NER integration to CLI MVP.
+    - Annotation of data, training of NER model with iterative active learning.
+    - static NER tagging
+    - Integrate logic into MVP (topic and difficulty level selection)
+
+3. Phase 3: Basic web app (with Flask)
+    - setup and integrate game logic backend with audio and visuals.
+    - styling and deployment prep.
+
+4. Phase 4+: Enhancements! (the most exciting part)
+    - runtime NLP with DistilBERT (semantic answer checking, smarter hints, etc)
+    - tagging reference of q&a to HP book of origin
+    - easter eggs and themed commands / elements
+    - GUI and game state enhancements 
+
+**Project documentation**:
+
+The project phases and sprints can be found in the detailed workflow document. This is a live, adaptive document to organize work and learning streams of the project.
+- [🗂️ Latest Workflow](docs/Overall%20workflow/) — Always updated with the current workflow version.  
+- Older versions are stored in [`/docs/superceded/`](docs/superceded/) for reference.
+
+## Features
+
+### Current features:
+- **Randomized Trivia Questions**: Every game session is unique.
+- **Scoring**: Represent your chosen Hogwarts house and earn house points to find your wizarding trivia rank.
+- **Interactive UI**: Command logic interface with dialogue and feedback to create an immersive experience.
+
+### Future features:
+- **Custom NER Model**: support topic selection (e.g. characters, locations, spells) and difficulty-level questions in the game based on custom NER class tagging.
+- **Interactive GUI**: web based up for more player engagement with visuals, audio, and interactive elements.
 
 ## Installation
 
-To get started,
+This section will provide clear, step-by-step commands to install game once ready.
+<steps such as: git clone.. cd.. pip install setup.py... run main.py etc>
 
-
-### 4. **Usage**
+## **Usage**
 
 1. When you launch the game, you will be prompted to enter your name and select your Hogwarts house.
 2. Answer a series of randomly selected trivia questions about the Harry Potter universe.
 3. After each question, you will receive feedback on whether your answer is correct or incorrect.
 4. At the end, you'll receive a score and a "Wizard Rank" (e.g., "Harry Potter Expert," "Hogwarts First-Year").
 
-### Controls:
-- Type your answer and press **Enter** or click the **Submit Answer** button.
-- Sound effects and house visuals will accompany correct/incorrect answers.
-
-## Features
-
-- **Randomized Trivia Questions**: Every game session is unique.
-- **House-Based Scoring**: Represent your Hogwarts house and earn house points.
-- **Custom NER Model**: Categorize questions based on characters, locations, and spells.
-- **Difficulty Levels**: Based on the complexity of questions and their tokens.
-- **Interactive UI**: Use of images, sound effects, and feedback to create an immersive experience.
+## Controls:
+- Type your answer and press **Enter** .
+- Type "quit" to exit game at any point.
 
 ## Data Sources
 
@@ -62,7 +109,10 @@ We welcome contributions to improve the game! Here’s how you can help:
 4. Push to the branch (`git push origin feature-name`).
 5. Open a pull request.
 
+Please follow the [Code of Conduct](CODE_OF_CONDUCT.md) and ensure your changes are well-documented.
+
+## Acknowledgements
+To my daughter — an endless source of joy and inspiration. You brought the *fun* to this project, and are my go-to expert for all things Harry Potter, especially those rapid-fire and obscure references. Thank you for being my alpha/beta tester and ever-patient reviewer!
+
 ## Disclaimer:
 This project is an unofficial fan tribute to the Harry Potter series and is not endorsed by or affiliated with J.K. Rowling, Warner Bros., or any related parties. It is a passion and learning project created solely for educational and non-commercial purposes.
-
-Please follow the [Code of Conduct](CODE_OF_CONDUCT.md) and ensure your changes are well-documented.

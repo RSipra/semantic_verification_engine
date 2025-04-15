@@ -84,7 +84,7 @@ class Player:
         self._chances_left -= 1
         return self._chances_left
     
-    def find_player_level(self, total_questions: int):
+    def find_player_wizard_rank(self, total_questions: int):
         '''Return the player's level based on their score at the end of the game'''
         
         # Validate the total_questions and score inputs
@@ -98,10 +98,10 @@ class Player:
         
         # Define thresholds for player levels
         if score_ratio <= 0.3: 
-            return "HP Triva Novice. You need to read more books!"
+            return "HP Triva Novice. You need to read more books!\n (Psst did someone use the Confundus Charm on you?)"
         if score_ratio <= 0.6: 
             return "Trivia Enthusiast. Keep going!"
         if score_ratio <= 0.8: 
             return "Trivia Expert! You know your stuff!"
-        return "Absolutely brilliant Master of HP Trivia! You crushed it!"
+        return "Absolutely brilliant Master of HP Trivia! You crushed it! You can give Dumbledore run for galleons!"
 
