@@ -8,21 +8,22 @@ CLI MVP (core logic) -> game module (viewer and controller)
 Currently both View and Controller are included in the same module for the MVP. 
 Handled separately through classes. 
 
-** Separation into separate VIEW and CONTROLLER modules should be considered in next phase **
+** Separation into separate VIEW and CONTROLLER modules will be considered in the next phase **
 ------------------------------------------------------------------
 
 Game Logic for Trivia Game (CLI MVP): phase 1.2
 
- State 1. Initialize the game:
+State 1. Initialize the game:
     - Load the dataset.
     - Load the trivia questions.
 State 2. Introduction to the game and rules
+    - Title + brief acknowledgements  
     - Welcome the player.
+    - Ask for player name and house - Initialize the player.
     - Explain the rules of the game (allow to skip to player initialization in later versions )
     - Explain how to play 
     - Explain how to quit 
-    - Explain the scoring system and chances. 
-    - Ask for player name and house - Initialize the player.
+    - Explain the scoring system and chances (* to be added in later)
 State 3. Start the game loop:
     - Ask the player a question.
     - Get the player's answer. check if they entered quit (if quit chosen -> end game)
@@ -70,10 +71,10 @@ class Introduction():
         The messages are stored in a dictionary for easy modification and later use.
         Each key corresponds to a section of the game intro (e.g., greeting, objective, etc.).
         """      
-        # Message dictionary - remember no commas in paranthesis for values = str otherwise tuple!
+        # Message dictionary -  No commas in paranthesis for values = str otherwise tuple!
         self.messages = {
             "greeting": (
-                "⚡️✨ Welcome, young wizard, to the world of magic! ✨⚡️\n"
+                "⚡️✨ Welcome, young withch or wizard, to the world of magic! ✨⚡️\n"
                 "🪄 You've entered the Harry Potter Trivia Challenge!\n"
             ),
             "objective": (
@@ -87,7 +88,7 @@ class Introduction():
                 "- You will earn a point for every right answer.\n"
                 "- Your final score will give determine your level of expertise!🤓\n"
                 # can add explanations for chances_left and score later
-            ),
+            ),# can consider adding "Aveda Kedavara" as an easter egg for quitting? -> can also use if out of chances! create forbidden wrods list in constants.
             "how_to_quit": (
                 "Quit mid-game:\n"
                 "- You can quit anytime by typing 'quit' and pressing enter.\n"
@@ -95,9 +96,20 @@ class Introduction():
             ),
             "start_game": (
                 "🪄✨⚡️ Think you know the books inside and out?\n"
-                "  📚🔮 Let's put your knowledge to the test!\n"
-                "\nOn with the game!\n\n"
+                "  📚🔮 Ready to test your magical knowledge?\n\n"
+                "Grab your wand, summon your house pride, and let's begin! 🪄\n\n"
             ),
+            "dedication": (
+                "\n~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~\n"
+                "\nDedicated to my daughter — the brightest witch of her age,\n"
+                "the true Headmistress of Trivia, Minister of Fun, and Beta Tester Extraordinaire.\n"
+                "This game was conjured with her magical energy, obscure knowledge, and relentless playtesting.\n\n"
+                "May it bring *you*, dear player, just as much joy and adventure.\n\n"
+                "Mischief managed... by us (R&Z)! ⚡️\n"
+                "\n~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~\n\n"
+            ),
+            "tip": "💡Tip: Press Enter to move through each section as you learn how to play!"
+            
         }
     # Add __str__ and __repr__
     
@@ -131,6 +143,16 @@ class Introduction():
         """
         # Can add extra behavior later (e.g. game quotes? more formatting? fun facts?)
         return self.messages["greeting"]
+    
+    def dedication(self):
+        """
+        Acknowledgements for game contributions :)
+        This method retrieves the 'dedication' message from the messages dictionary.
+
+        Returns:
+            str: The greeting message.
+        """
+        return '\n' + self.messages["dedication"] + '\n'
         
     @ staticmethod
     def get_player_details():
@@ -178,7 +200,9 @@ class Introduction():
         # Initialize player
         player = Player(player_name, player_house)
          # Can be replaced with function to print in color later?
-        print(f"\n\nWelcome to House {player_house}, {player_name}!\n")
+        print("\n---------------------------------------------------------")
+        print(f"\n\nWelcome to House {player_house}, {player_name}!\n\n")
+        print("---------------------------------------------------------\n")
         
         return player
     
@@ -192,21 +216,25 @@ class Introduction():
         Returns:
             str: A multiline string that explains gameplay instructions.
         """
-        # Concatenate the messages with newlines between them
-        parts = [
-            self.messages["objective"],
+        # Gather introduction messages in a sequence
+        gameplay_sequence = [
+            # Concatenate 'objective' and 'tip' -> run without input() break from the loop between the messages
+            self.messages["objective"] + "\n" + self.messages["tip"], 
             self.messages["how_to_play"],
             self.messages["how_to_quit"],
+            # self.messages["dedication"], # incase decide to run dedication here 
             self.messages["start_game"]
         ]
-        return "\n".join(parts)
+        for message in gameplay_sequence:
+            print(message)
+            input()
        
 # GAMEPLAY VIEW:
 class GamePlayView:
-        '''View methods during gameplay'''
+    '''View methods during gameplay'''
 # END VIEW:  
 class GameEndView:
-        '''View methods at the end of game play'''
+    '''View methods at the end of game play'''
     
 # ----------------------------------------------------------------------------------------------------------
     
