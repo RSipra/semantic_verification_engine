@@ -123,6 +123,14 @@
 * **(Idea) Adaptive Difficulty:** Use player performance combined with NLP features (static NER tags, maybe difficulty classification) to dynamically adjust question difficulty.
 * **(Idea) Knowledge Graph Integration:** Use static NER tags to link questions to an external HP knowledge graph, display related facts, or generate follow-up questions.
 
+## Future vision & stretch goals
+These are larger, long-term features that may be explored in future development cycles:
+- Multiplayer mode (PvP) – Compete with friends or other players
+- Auto-generated trivia using LLMs – Dynamically create new questions tailored to theme and difficulty
+- “Ask Dumbledore” conversational bot – A mentor-style assistant for hints, lore, or even wisdom
+- Gamification elements – XP, house points, badges, level progression, or themed rewards
+- Game data analytics for performance / dashboard.
+
 ----
 ### Notes on revision update:
 1.	Developed with the assistance of Google Gemini 2.5 pro (experimental) model with a clear prompt to help strategize, support, and help incorporate learning opportunities into the project.
