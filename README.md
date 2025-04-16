@@ -8,7 +8,7 @@ This is more than just a game — it’s a portfolio project to practice and sho
 
 - 🐍 Clean Python + OOP design
 - 🧠 NLP & Named Entity Recognition (NER) spells. 
-- 🎯 Building an MVP from idea to deployment (Command logic interface → Web App)
+- 🎯 Building an MVP from idea to deployment (command logic interface → web app)
 - 📦 Packaging, modular design & installable project structure
 - 🧪 Testing, versioning, and all those responsible grown-up dev things
 - 🦄 Use of DistilBERT for some really cool magic!✨ (semantic matching of answers, more conversational play, etc!) 
@@ -18,7 +18,7 @@ Whether you're here to cast code spells or just play a few rounds of trivia, wel
 ## Table of Contents
 
 1. [Description](#description)
-2. [Project development phases](#project-development-phases)
+2. [Development roadmap](#development-roadmap)
 3. [Features](#features)
 4. [Tools & Technologies Used](#️-tools--technologies-used)
 5. [Installation](#installation)
@@ -35,18 +35,18 @@ Whether you're here to cast code spells or just play a few rounds of trivia, wel
 Step into the halls of Hogwarts and test your knowledge with this interactive CLI trivia game (and later a web app)! Challenge yourself or compete for house points against a series of randomly selected questions drawn from the wizarding world. This project goes beyond simple Q&A, utilizing Natural Language Processing (NLP) with custom-trained models [Phase 2 onwards] to understand the nuances of the questions and eventually [Phase 4+] even your answers!
 
 
-## Project development phases
+## Development roadmap
 
 The main steps in the devleopment of the game are:
 
 1. Phase 1: MVP core game logic, unit testing, and pattern awareness
     - Setup environmental and data foundation (download, cleaning, EDA, preprocessing of dataset)
-    - Develop basic core logic and OOP structure for CLI game play   🟣 ← Current phase
+    - Develop basic core logic and OOP structure for CLI game play   🟣 **← Current phase**
     - Test and refactor the game throughly (using unittest and pytest)
 
 2. Phase 2: NLP / NER integration to CLI MVP.
     - Annotation of data, training of NER model with iterative active learning.
-    - static NER tagging
+    - Static NER tagging
     - Integrate logic into MVP (topic and difficulty level selection)
 
 3. Phase 3: Basic web app (with Flask)
@@ -54,10 +54,13 @@ The main steps in the devleopment of the game are:
     - styling and deployment prep.
 
 4. Phase 4+: Enhancements! (the most exciting part)
-    - runtime NLP with DistilBERT (semantic answer checking, smarter hints, etc)
-    - tagging reference of q&a to HP book of origin
-    - easter eggs and themed commands / elements
+    - Runtime NLP with DistilBERT (semantic answer checking, smarter hints, etc)
+    - Tagging reference of q&a to HP book of origin
+    - Easter eggs and themed commands / elements
     - GUI and game state enhancements 
+...
+
+5. Future vision / stretch goals: Explore and deploy innovative features, such as an auto-generated trivia mode powered by LLMs.
 
 **Project documentation**:
 
