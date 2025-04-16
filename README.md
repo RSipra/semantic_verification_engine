@@ -41,7 +41,7 @@ The main steps in the devleopment of the game are:
 
 1. Phase 1: MVP core game logic, unit testing, and pattern awareness
     - Setup environmental and data foundation (download, cleaning, EDA, preprocessing of dataset)
-    - Develop basic core logic and OOP structure for CLI game play       **🟣 <- Current phase**
+    - Develop basic core logic and OOP structure for CLI game play&nbsp;&nbsp;&nbsp;**🟣 <- Current phase**
     - Test and refactor the game throughly (using unittest and pytest)
 
 2. Phase 2: NLP / NER integration to CLI MVP.
@@ -88,7 +88,7 @@ The project phases and sprints can be found in the detailed workflow document. T
 - VS Code – Primary development environment
 - Markdown – Documentation and workflow planning
 
-📦 See [requirements.txt](requirements.txt) for packages required to run the game, and [requirements-dev.txt](requirements-dev.txt) for the complete list of tools used in notebooks, data processing, and advanced NLP work.
+📦 See [requirements.txt](requirements.txt) for packages required to run the game, and [requirements-dev.txt](requirements-dev.txt) for the complete list of tools used in the game as well as notebooks, data processing, and advanced NLP work.
 
 💡 AI-assisted support from ChatGPT 4o (free-tier), and Google Gemini 2.5 Pro (experimental, free-tier) was used for brainstorming, project planning and strategizing, code review, ideation, debugging and learning throughout development.
 </details>
