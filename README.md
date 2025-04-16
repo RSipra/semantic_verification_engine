@@ -37,13 +37,11 @@ Step into the halls of Hogwarts and test your knowledge with this interactive CL
 
 ## Project development phases
 
-<details>
-<summary>Click to expand</summary>
 The main steps in the devleopment of the game are:
 
 1. Phase 1: MVP core game logic, unit testing, and pattern awareness
     - Setup environmental and data foundation (download, cleaning, EDA, preprocessing of dataset)
-    - Develop basic core logic and OOP structure for CLI game play                  *<-- Current phase*
+    - Develop basic core logic and OOP structure for CLI game play       <span style="color:DeepPink"><strong><-- Current phase</strong></span>
     - Test and refactor the game throughly (using unittest and pytest)
 
 2. Phase 2: NLP / NER integration to CLI MVP.
@@ -66,7 +64,6 @@ The main steps in the devleopment of the game are:
 The project phases and sprints can be found in the detailed workflow document. This is a live, adaptive document to organize work and learning streams of the project.
 - [🗂️ Latest Workflow](docs/Overall%20workflow/) — Always updated with the current workflow version.  
 - Older versions are stored in [`/docs/superceded/`](docs/superceded/) for reference.
-</details>
 
 ## Features
 

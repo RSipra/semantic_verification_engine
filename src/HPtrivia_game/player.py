@@ -98,10 +98,10 @@ class Player:
         
         # Define thresholds for player levels
         if score_ratio <= 0.3: 
-            return "HP Triva Novice. You need to read more books!\n (Psst did someone use the Confundus Charm on you?)"
+            return "HP Triva Novice. You need to read more books!\n"
         if score_ratio <= 0.6: 
             return "Trivia Enthusiast. Keep going!"
         if score_ratio <= 0.8: 
             return "Trivia Expert! You know your stuff!"
-        return "Absolutely brilliant Master of HP Trivia! You crushed it! You can give Dumbledore run for galleons!"
+        return "Brilliant master of HP Trivia! You could give Dumbledore a run for his galleons!"
 
