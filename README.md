@@ -6,12 +6,12 @@ This magical little adventure started over late-night book readings and a daught
 
 This is more than just a game — it’s a portfolio project to practice and showcase:
 
-    - 🐍 Clean Python + OOP design
-    - 🧠 NLP & Named Entity Recognition (NER) spells. 
-    - 🎯 Building an MVP from idea to deployment (Command logic interface → Web App)
-    - 📦 Packaging, modular design & installable project structure
-    - 🧪 Testing, versioning, and all those responsible grown-up dev things
-    - 🦄 Use of DistilBERT for some really cool magic!✨ (semantic matching of answers, more conversational play, etc!) 
+- 🐍 Clean Python + OOP design
+- 🧠 NLP & Named Entity Recognition (NER) spells. 
+- 🎯 Building an MVP from idea to deployment (Command logic interface → Web App)
+- 📦 Packaging, modular design & installable project structure
+- 🧪 Testing, versioning, and all those responsible grown-up dev things
+- 🦄 Use of DistilBERT for some really cool magic!✨ (semantic matching of answers, more conversational play, etc!) 
 
 Whether you're here to cast code spells or just play a few rounds of trivia, welcome to a corner of the internet where passion meets Python.
 
@@ -20,27 +20,29 @@ Whether you're here to cast code spells or just play a few rounds of trivia, wel
 1. [Description](#description)
 2. [Project development phases](#project-development-phases)
 3. [Features](#features)
-4. [Installation](#installation)
-5. [Usage](#usage)
-6. [Controls](#controls)
-7. [Data Sources](#data-sources)
-8. [License](#license)
-9. [Contributing](#contributing))
-10. [Acknowledgements](#acknowledgements)
-11. [Disclaimer](#disclaimer)
+4. [Tools & Technologies Used](#️-tools--technologies-used)
+5. [Installation](#installation)
+6. [Usage](#usage)
+7. [Controls](#controls)
+8. [Data Sources](#data-sources)
+9. [License](#license)
+10. [Contributing](#contributing))
+11. [Acknowledgements](#acknowledgements)
+12. [Disclaimer](#disclaimer)
 
 ## Description
 
 Step into the halls of Hogwarts and test your knowledge with this interactive CLI trivia game (and later a web app)! Challenge yourself or compete for house points against a series of randomly selected questions drawn from the wizarding world. This project goes beyond simple Q&A, utilizing Natural Language Processing (NLP) with custom-trained models [Phase 2 onwards] to understand the nuances of the questions and eventually [Phase 4+] even your answers!
 
 
-## Project development phases
+## <summary>Project development phases</summary>
+<details>
 
 The main steps in the devleopment of the game are: 
 
 1. Phase 1: MVP core game logic, unit testing, and pattern awareness
     - Setup environmental and data foundation (download, cleaning, EDA, preprocessing of dataset)
-    - Develop basic core logic and OOP structure for CLI game play          *<-- Current phase*
+    - Develop basic core logic and OOP structure for CLI game play                  *<-- Current phase*
     - Test and refactor the game throughly (using unittest and pytest)
 
 2. Phase 2: NLP / NER integration to CLI MVP.
@@ -64,6 +66,7 @@ The project phases and sprints can be found in the detailed workflow document. T
 - [🗂️ Latest Workflow](docs/Overall%20workflow/) — Always updated with the current workflow version.  
 - Older versions are stored in [`/docs/superceded/`](docs/superceded/) for reference.
 
+</details>
 ## Features
 
 ### Current features:
@@ -74,6 +77,20 @@ The project phases and sprints can be found in the detailed workflow document. T
 ### Future features:
 - **Custom NER Model**: support topic selection (e.g. characters, locations, spells) and difficulty-level questions in the game based on custom NER class tagging.
 - **Interactive GUI**: web based up for more player engagement with visuals, audio, and interactive elements.
+
+## <summary>🛠️ Tools & Technologies Used</summary>
+<details>
+- Python – Core language for game logic, data processing, and NLP components
+- NLTK / spaCy – Natural Language Processing (NER and text analysis)
+- Jupyter Notebooks – Used for exploratory data analysis and prototyping
+- Git / GitHub – Version control and collaboration
+- VS Code – Primary development environment
+- Markdown – Documentation and workflow planning
+
+📦 See [requirements.txt](requirements.txt) for packages required to run the game, and [requirements-dev.txt](requirements-dev.txt) for the complete list of tools used in notebooks, data processing, and advanced NLP work.
+
+💡 AI-assisted support from ChatGPT 4o (free-tier), and Google Gemini 2.5 Pro (experimental, free-tier) was used for brainstorming, project planning and strategizing, code review, ideation, debugging and learning throughout development.
+</details>
 
 ## Installation
 
