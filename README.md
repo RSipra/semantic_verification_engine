@@ -41,7 +41,7 @@ The main steps in the devleopment of the game are:
 
 1. Phase 1: MVP core game logic, unit testing, and pattern awareness
     - Setup environmental and data foundation (download, cleaning, EDA, preprocessing of dataset)
-    - Develop basic core logic and OOP structure for CLI game play&nbsp;&nbsp;&nbsp;**🟣 <- Current phase**
+    - Develop basic core logic and OOP structure for CLI game play   🟣 ← Current phase
     - Test and refactor the game throughly (using unittest and pytest)
 
 2. Phase 2: NLP / NER integration to CLI MVP.
