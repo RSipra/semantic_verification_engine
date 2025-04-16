@@ -7,13 +7,13 @@ This document tracks the datasets used in this project, their sources, and any m
 ## 📌 1. Trivia Questions Dataset  
 - **Source**: Hugging Face  
 - **URL**: [https://huggingface.co/datasets/saracandu/harry-potter-trivia-human](https://huggingface.co/datasets/saracandu/harry-potter-trivia-human)  
-- **Description**: A dataset of Harry Potter trivia questions and answers. The original raw dataset is located [here](data/original_dataset_DONT_TOUCH/harry_potter_trivia_questions_HFdataset.csv). It is recommended that this file remains unmodified to preserve the original raw data. Any data cleaning or processing should be done in separate scripts or in memory within the game logic. The modified datasets for this project are [here](data/Working%20files/).
+- **Description**: A publicly available dataset of Harry Potter trivia questions and answers. The original raw dataset is located [here](data/original_dataset_DONT_TOUCH/harry_potter_trivia_questions_HFdataset.csv). It is recommended that this file remains unmodified to preserve the original raw data. Any data cleaning or processing should be done in separate scripts or in memory within the game logic. The modified datasets for this project are [here](data/Working%20files/).
 - **Modifications in processed dataset:** This project involved the following modifications to the original dataset:
   - Cleaned the data by merging train and test datasets and removing the `text` column and duplicate entries.
   - Tokenized the questions and answers for Natural Language Processing (NLP) tasks into keywords.
   - **Planned Future Modifications:** Assigning difficulty levels based on token complexity and adding a column for Named Entity Recognition (NER) predictions to use for categorization.
 - **License:** Believed to be under the [Apache License 2.0](LICENSE-APACHE2) (see the `LICENSE-APACHE2` file for the full text).
-- **Note:** A local copy of this dataset is being used for this project due to the original source being temporarily or permanently unavailable. 
+- **Note:** A local copy of the original dataset is being used for this project due to the original source being temporarily or permanently unavailable. 
 
 ---
 
