@@ -111,11 +111,15 @@ This section will provide clear, step-by-step commands to install game once read
 
 ## Data Sources
 
-For more information on the datasets used, please refer to the [Data Sources file](DATA_SOURCES.md).
+For more information on the datasets and all other data types used, please refer to the [Data_Sources.md](DATA_SOURCES.md).
 
-## License
+## Licence
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
+This project's code is licensed under the [MIT License](LICENSE-MIT). See the `LICENSE-MIT` file for details.
+
+The trivia data used in this game is sourced from the "saracandu/harry-potter-trivia-human" dataset on Hugging Face (original link: [https://huggingface.co/datasets/saracandu/harry-potter-trivia-human](https://huggingface.co/datasets/saracandu/harry-potter-trivia-human)). While the original dataset link is currently unavailable, a local copy is being used and is believed to be licensed under the [Apache License 2.0](LICENSE-APACHE2). The full text of the Apache License 2.0 can be found in the `LICENSE-APACHE2` file in this repository.
+
+**In summary:** The code for this game is under the MIT License, and the use of the trivia data is subject to the terms of the Apache License 2.0.
 
 ## Contributing
 
