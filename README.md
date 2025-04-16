@@ -35,9 +35,10 @@ Whether you're here to cast code spells or just play a few rounds of trivia, wel
 Step into the halls of Hogwarts and test your knowledge with this interactive CLI trivia game (and later a web app)! Challenge yourself or compete for house points against a series of randomly selected questions drawn from the wizarding world. This project goes beyond simple Q&A, utilizing Natural Language Processing (NLP) with custom-trained models [Phase 2 onwards] to understand the nuances of the questions and eventually [Phase 4+] even your answers!
 
 
-<details>
-## <summary>Project development phases</summary>
+## Project development phases
 
+<details>
+<summary>Click to expand</summary>
 The main steps in the devleopment of the game are:
 
 1. Phase 1: MVP core game logic, unit testing, and pattern awareness
@@ -78,9 +79,10 @@ The project phases and sprints can be found in the detailed workflow document. T
 - **Custom NER Model**: support topic selection (e.g. characters, locations, spells) and difficulty-level questions in the game based on custom NER class tagging.
 - **Interactive GUI**: web based up for more player engagement with visuals, audio, and interactive elements.
 
-<details>
+## 🛠️ Tools & Technologies Used
 
-## <summary>🛠️ Tools & Technologies Used</summary>
+<details>
+<summary>Click to expand</summary>
 
 - Python – Core language for game logic, data processing, and NLP components
 - NLTK / spaCy – Natural Language Processing (NER and text analysis)
