@@ -48,7 +48,7 @@ This document tracks the datasets used in this project, their sources, and any m
 
 ## 📌 5. AI-Generated Images  
 - **Source**: Generated using [replicate.com/fofr/consistent-character](https://replicate.com/fofr/consistent-character?prediction=erdt5f9fm5rme0cmeqcbjczbb8) / Create images of a given character in different poses.
-- **Description**: Custom poses of game MC person with different gestures and expressions.  
+- **Description**: Custom poses of game MC persona with different gestures and expressions.  
 - **Usage**:  
   - Generate multiple poses for main game MC persona for different instances in the game.   
 
