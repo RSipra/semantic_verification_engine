@@ -55,7 +55,7 @@ level display.
 import random
 from pyfiglet import figlet_format  # to create ASCII art
 from HPtrivia_game.player import Player
-from HPtrivia_game.trivia import Trivia
+# from HPtrivia_game.trivia import Trivia
 from HPtrivia_game.constants import VALID_HOUSES, NUM_QUESTIONS_PER_SESSION
 
 #-------------------------------------------------
@@ -254,7 +254,7 @@ class GameController:
     # Track current state of the game.
     def __init__(self): 
         self.player = None  # Instantiated by player during introduction
-        self.trivia = Trivia()  # loads dataset + selects 10 questions
+        #self.trivia = Trivia()  # loads dataset + selects 10 questions
         self.current_question_index = 0
         self.game_over = False
     
