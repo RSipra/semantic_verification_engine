@@ -13,7 +13,8 @@ This module manages the core trivia game functionality, including:
 - Scoring logic and question progression
 
 Classes:
-    - Trivia
+    - Trivia (load session trivia questions)
+    - Question (responsible for individual question and answer logic)
 
 Functions:
     - load_questions(): Loads questions from file or data source
@@ -26,53 +27,39 @@ This module is typically used by the GameController during gameplay.
 # Import necessary libraries:
 from dataclasses import dataclass, field
 from typing import List
-# import random
 import pandas as pd
 from HPtrivia_game.constants import NUM_QUESTIONS_PER_SESSION
 
-class Trivia: 
-    
+class Trivia:
     """
     The dataset / questions manager
     Represents the random set of questions loaded from the dataset for the Trivia game session.
     """
-    
-    # Number of questions to load (can be user defined variable later as pre-set list of options ,e.g. 10, 20, 30)
-    NUM_QUESTIONS = NUM_QUESTIONS_PER_SESSION
-    
-    def __init__(self):
-        self.questions = self._load_questions()
-    
-    
+  
     def _load_dataset(self, csv_filepath: str):
         # return dataframe of full dataset
         df = pd.read_csv(csv_filepath, index_col=False)
         return df
     
     @staticmethod
-    def _load_questions():
-        session_questions_dict={}
-        # select 10 random questions and answers and store in dict
-        # return dict with question as key
+    def _load_questions(df):
+        # select n random questions from the loaded dataframe:
+        session_df = df.sample(
+            n = NUM_QUESTIONS_PER_SESSION,
+            random_state = 26,
+            axis = 0,
+            replace = False
+        )
+        # convert session questions from df to dict for easy access.
+        session_questions_dict = session_df.to_dict()
         return session_questions_dict
-
-       
-    # --- NEXT STEP: How do I load the 20 questions? ---
-    # Option 1: Load during __init__
-    # def __init__(self, all_questions_data: list): # Pass in the full dataset
-    #     self.questions: List[Question] = self._load_random_questions(all_questions_data)
     
-    # Option 2: Load via a separate method
-    # def load_game_questions(self, all_questions_data: list):
-    #     self.questions = self._load_random_questions(all_questions_data)
+    @classmethod
+    def start(self, csv_filepaht):
+        pass
 
-    # Helper method (could be private)
-    # def _load_random_questions(self, all_questions_data: list) -> List[Question]:
-    #    # 1. Ensure you have enough questions in the source data
-    #    # 2. Use random.sample() to pick NUM_QUESTIONS unique items
-    #    # 3. Convert the selected raw data items into Question objects
-    #    # 4. Return the list of Question objects
-    #    pass # Implement this logic
+    def __init__(self,selected_questions_dict: dict):
+        self.questions = selected_questions_dict
 
 # --- NO NEED TO MANUALLY WRITE __init__, __repr__ --- @dataclass generates them automatically using 
 # type hints since Q & A are data types but choosing to override __eq__ to compare objects so 

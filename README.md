@@ -8,10 +8,10 @@ This is more than just a game — it’s a portfolio project to practice and sho
 
 - 🐍 Clean Python + OOP design
 - 🧠 NLP & Named Entity Recognition (NER) spells. 
-- 🎯 Building an MVP from idea to deployment (command logic interface → web app)
+- 🎯 Building an MVP from idea to deployment (command logic interface → web app with GUI)
 - 📦 Packaging, modular design & installable project structure
 - 🧪 Testing, versioning, and all those responsible grown-up dev things
-- 🦄 Use of DistilBERT for some really cool magic!✨ (semantic matching of answers, more conversational play, etc!) 
+- 🦄 Use of DistilBERT for some really cool magic!✨ (semantic matching of answers, more conversational play...) 
 
 Whether you're here to cast code spells or just play a few rounds of trivia, welcome to a corner of the internet where passion meets Python.
 
@@ -26,7 +26,7 @@ Whether you're here to cast code spells or just play a few rounds of trivia, wel
 7. [Controls](#controls)
 8. [Data Sources](#data-sources)
 9. [License](#license)
-10. [Contributing](#contributing))
+10. [Contributing](#contributing)
 11. [Acknowledgements](#acknowledgements)
 12. [Disclaimer](#disclaimer)
 
@@ -66,7 +66,7 @@ The main steps in the devleopment of the game are:
 
 The project phases and sprints can be found in the detailed workflow document. This is a live, adaptive document to organize work and learning streams of the project.
 - [🗂️ Latest Workflow](docs/Overall%20workflow/) — Always updated with the current workflow version.  
-- Older versions are stored in [`/docs/superceded/`](docs/superceded/) for reference.
+- Older versions are stored [here](docs/superceded/) for reference.
 
 ## Features
 

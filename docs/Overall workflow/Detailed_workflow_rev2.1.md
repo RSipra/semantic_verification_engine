@@ -130,6 +130,8 @@ These are larger, long-term features that may be explored in future development 
 - “Ask Dumbledore” conversational bot – A mentor-style assistant for hints, lore, or even wisdom
 - Gamification elements – XP, house points, badges, level progression, or themed rewards
 - Game data analytics for performance / dashboard.
+- Potion maker based on ingredients (something similar to infinitecraft would be awesome! link: https://www.gameleap.com/articles/does-infinite-craft-use-ai-explained), 
+- A spell inventor based on the same idea ^ :D
 
 ----
 ### Notes on revision update:
