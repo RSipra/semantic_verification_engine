@@ -109,7 +109,7 @@ This section will provide clear, step-by-step commands to install game once read
 4. At the end, you'll receive a score and a "Wizard Rank" (e.g., "Harry Potter Expert," "Hogwarts First-Year").
 
 ## Controls:
-- Type your answer and press **Enter** .
+- Type your answer and press **Enter**.
 - Type "quit" to exit game at any point.
 
 ## Data Sources
