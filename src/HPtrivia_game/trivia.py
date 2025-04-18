@@ -54,7 +54,6 @@ class Trivia:
         session_questions_dict = session_df.to_dict()
         return session_questions_dict
     
-    @classmethod
     def start(self, csv_filepaht):
         pass
 
