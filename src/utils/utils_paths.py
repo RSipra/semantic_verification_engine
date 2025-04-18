@@ -101,9 +101,9 @@ def find_file_path(filename: str, search_root: Optional[Path] = None) -> Path:
 
     # Input validation for search_root
     if not isinstance(search_root, Path):
-         raise TypeError("search_root must be a Path object or None.")
+        raise TypeError("search_root must be a Path object or None.")
     if not search_root.is_dir():
-         raise FileNotFoundError(f"Search root directory does not exist: {search_root}")
+        raise FileNotFoundError(f"Search root directory does not exist: {search_root}")
 
     # Collect all paths found using rglob (rglob recursively searches for filename starting from
     # project root and then subdirectores for a match).
