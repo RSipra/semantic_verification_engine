@@ -141,12 +141,12 @@ A flowchart [here](MVP_gameflow_v1_flowchart_view.svg) explains the gameflow, de
 
 The initial approach considered using a session dictionary of the session questions in the Trivia object. 
 
-###Summary of Alternative Approach & Rationale for Change
-**Alternative Approach**: Trivia holds List[Dict], Question objects are temporary
+### Summary of Alternative Approach & Rationale for Change
+**Alternative Approach**: Trivia holds `List[Dict]`, Question objects are temporary
 This approach was considered during planning:
 
 1. Initialization: Same as the chosen approach (Trivia, Player, Controller instances created).
-2. Game Setup (Trivia.start): Trivia loads the dataset, samples the DataFrame, and converts the selected rows directly into a List[Dict]. This basic list of dictionaries is stored in Trivia.questions. No Question objects are created or stored by Trivia during setup.
+2. Game Setup (Trivia.start): Trivia loads the dataset, samples the DataFrame, and converts the selected rows directly into a `List[Dict]`. This basic list of dictionaries is stored in Trivia.questions. No Question objects are created or stored by Trivia during setup.
 3. Gameplay Loop (Controller.run_game):
     - The Controller manages the current question index (i).
     - Each turn, the Controller retrieves the dictionary for the current question from Trivia (e.g., q_dict = trivia.questions[i]).
@@ -156,21 +156,21 @@ This approach was considered during planning:
     - The Controller provides feedback, updates score, and increments its index i. The temp_q object is typically discarded.
 4. Game End: Same as the chosen approach (display final score).
 
-**Rationale for Choosing the List[Question] Approach Instead**
+**Rationale for Choosing the `List[Question]` Approach Instead**
 
-While the List[Dict] approach above might seem simpler initially by reducing the work done in Trivia.start, the List[Question] approach (the one chosen and detailed in the flowchart) was preferred for these reasons, especially considering the learning goals of OOP/MVC/SoC:
+While the `List[Dict]` approach above might seem simpler initially by reducing the work done in Trivia.start, the `List[Question]` approach (the one chosen and detailed in the flowchart) was preferred for these reasons, especially considering the learning goals of OOP/MVC/SoC:
 
 - Stronger OOP Encapsulation: The chosen approach allows Trivia to manage a collection of fully realized Question objects. Each object properly bundles its data (text, answer, ID) and its behavior (check_answer method), which is a core principle of object-oriented design.
 - Clearer Class Roles & SoC: It promotes a clearer separation of concerns.
-    - `Trivia`: Prepares and provides domain objects (List[Question]).
+    - `Trivia`: Prepares and provides domain objects (`List[Question]`).
     - `Question`: Encapsulates its own data and validation logic.
     - `Controller`: Orchestrates the game flow using these complete objects. In the `List[Dict]` approach, the Controller takes on the added task of temporary object creation each turn, slightly blurring the lines.
-- Cleaner Controller Logic: The Controller's main loop becomes simpler: get the object, use the object's attributes, call the object's methods. This contrasts with the List[Dict] approach's loop: get the dictionary, create a temporary object, use the temporary object.
+- Cleaner Controller Logic: The Controller's main loop becomes simpler: get the object, use the object's attributes, call the object's methods. This contrasts with the `List[Dict]` approach's loop: get the dictionary, create a temporary object, use the temporary object.
 - Better Represents Domain: Managing a list of Question objects within Trivia provides a more intuitive and object-oriented representation of the game's state ("a trivia session contains Questions") compared to managing a list of generic dictionaries.
 
-Therefore, despite the upfront work in Trivia to convert dictionaries to Question objects, the List[Question] approach leads to a design that arguably better demonstrates object-oriented principles and separation of concerns for the rest of the application lifecycle.
+Therefore, despite the upfront work in Trivia to convert dictionaries to Question objects, the `List[Question]` approach leads to a design that arguably better demonstrates object-oriented principles and separation of concerns for the rest of the application lifecycle.
 
-**A side by side comparison:**
+**A side-by-side comparison:**
 
 | Feature             | Chosen Approach (`List[Question]`)                  | Alternative Approach (`List[Dict]` + Temp Objects)         |
 |---------------------|-----------------------------------------------------|-----------------------------------------------------------|
