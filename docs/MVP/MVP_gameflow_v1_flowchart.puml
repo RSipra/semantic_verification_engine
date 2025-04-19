@@ -1,0 +1,59 @@
+
+@startuml Trivia Flowchart (List[Question] Approach)
+
+title Harry Potter Trivia Game Flow (List[Question] Approach)
+
+start
+
+partition "Main Script" {
+    :Create Trivia instance\n(pass csv_filename);
+    :Create Player instance;
+    :Create Controller instance\n(pass Trivia, Player);
+}
+
+partition "Controller" {
+    :Call trivia_manager.start();
+}
+
+partition "Trivia" {
+    note right: Executes start() method
+    :_load_dataset()\nRead CSV to DataFrame;
+    :_load_questions()\nSample DataFrame;
+    :_load_questions()\nConvert DF to List[Dict];
+    :_create_question_objects()\nConvert Dicts to List[Question]\n(incl. session_id);
+    note right: self.questions now holds List[Question]
+}
+
+partition "Controller" {
+    :Call trivia_manager.get_session_questions();
+    :Receive/Store List[Question];
+    :Initialize Score = 0;
+
+    while (More questions in list?) is (Yes)
+        partition "Gameplay Turn" {
+            :Get current Question Object;
+            note right: Accessing object from the list
+            :"Display Question"\n(using Q_Object.session_id & Q_Object.question_text);
+            note right: Interaction with View/Console
+            :Get Player Answer;
+            note left: Interaction with View/Console
+            :Call QuestionObject.check_answer(answer);
+            note right: Calls method on Question object.\nObject compares answer internally.
+            if (Answer Correct?) then (Yes)
+                :Print "Correct!";
+                note left: Interaction with View/Console
+                :Update Score;
+            else (No)
+                :Print "Incorrect."\nShow Correct Answer\n(using Q_Object.correct_answer);
+                note left: Interaction with View/Console
+            endif
+        }
+    endwhile (No)
+
+    :Display Final Score;
+    note right: Interaction with View/Console
+}
+
+stop
+
+@enduml
