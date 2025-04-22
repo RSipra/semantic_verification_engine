@@ -341,259 +341,105 @@ print("Cleanup finished.")
 
 # Manual Test Summary:
 # --------------------
+# --- Test Setup ---
+# Project Root Found: /Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia
+# Cleaning up previous test artifacts if they exist...
+# Created temporary test output directory: data/project_datasets/temp_test_outputs_delete_me
+# Ensured default data directory exists: data/project_datasets
+# Created setup file for Test 16: data/subfolder_is_a_file_setup.txt
+# Setup complete.
 
+# --- Running save_dataframe_to_csv tests ---
 
+# --- Test Case 4.1 (Create) ---
+# Inputs: df=<DataFrame>, filename='test_output_file', version='v_test', subfolder='project_datasets/temp_test_outputs_delete_me'
+# DataFrame saved successfully to: data/project_datasets/temp_test_outputs_delete_me/test_output_file_v_test.csv
+# ✅ Test 4.1. → Output Type: PosixPath, Output Value: /Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/data/project_datasets/temp_test_outputs_delete_me/test_output_file_v_test.csv
 
+# --- Test Case 4.2 (Skip) ---
+# Inputs: df=<DataFrame>, filename='test_output_file', version='v_test', subfolder='project_datasets/temp_test_outputs_delete_me'
+# File already exists at: data/project_datasets/temp_test_outputs_delete_me/test_output_file_v_test.csv. Skipping save.
+# ✅ Test 4.2. → Output Type: NoneType, Output Value: None
+# ℹ️  Info Test 4.2: Correctly returned None.
 
+# --- Test Case 4.3 ---
+# Inputs: df=<NoneType>, filename_base='test_output_file_3', version='v_test', subfolder='project_datasets/temp_test_outputs_delete_me'
+# Error saving DataFrame to data/project_datasets/temp_test_outputs_delete_me/test_output_file_3_v_test.csv: 'NoneType' object has no attribute 'to_csv'
+# An unexpected error occurred in save_dataframe_to_csv: Failed to save CSV to /Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/data/project_datasets/temp_test_outputs_delete_me/test_output_file_3_v_test.csv: 'NoneType' object has no attribute 'to_csv'
+# ❌ Test 4.3. → Expected Error: OSError: Failed to save CSV to /Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/data/project_datasets/temp_test_outputs_delete_me/test_output_file_3_v_test.csv: 'NoneType' object has no attribute 'to_csv'
 
+# --- Test Case 4.4 ---
+# Inputs: df=<str>, filename_base='test_output_file_4', version='v_test', subfolder='project_datasets/temp_test_outputs_delete_me'
+# Error saving DataFrame to data/project_datasets/temp_test_outputs_delete_me/test_output_file_4_v_test.csv: 'str' object has no attribute 'to_csv'
+# An unexpected error occurred in save_dataframe_to_csv: Failed to save CSV to /Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/data/project_datasets/temp_test_outputs_delete_me/test_output_file_4_v_test.csv: 'str' object has no attribute 'to_csv'
+# ❌ Test 4.4. → Expected Error: OSError: Failed to save CSV to /Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/data/project_datasets/temp_test_outputs_delete_me/test_output_file_4_v_test.csv: 'str' object has no attribute 'to_csv'
 
+# --- Test Case 4.5 ---
+# Inputs: df=<int>, filename_base='test_output_file_5', version='v_test', subfolder='project_datasets/temp_test_outputs_delete_me'
+# Error saving DataFrame to data/project_datasets/temp_test_outputs_delete_me/test_output_file_5_v_test.csv: 'int' object has no attribute 'to_csv'
+# An unexpected error occurred in save_dataframe_to_csv: Failed to save CSV to /Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/data/project_datasets/temp_test_outputs_delete_me/test_output_file_5_v_test.csv: 'int' object has no attribute 'to_csv'
+# ❌ Test 4.5. → Expected Error: OSError: Failed to save CSV to /Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/data/project_datasets/temp_test_outputs_delete_me/test_output_file_5_v_test.csv: 'int' object has no attribute 'to_csv'
 
+# --- Test Case 4.6 ---
+# Inputs: df=<DataFrame>, filename_base='test_output_file_6', version='v_test', subfolder='project_datasets/temp_test_outputs_delete_me'
+# DataFrame saved successfully to: data/project_datasets/temp_test_outputs_delete_me/test_output_file_6_v_test.csv
+# ✅ Test 4.6. → Output Type: PosixPath, Output Value: /Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/data/project_datasets/temp_test_outputs_delete_me/test_output_file_6_v_test.csv
 
+# --- Test Case 4.7 ---
+# Inputs: df=<DataFrame>, filename_base='test_case_7', version='v_test', subfolder='project_datasets/temp_test_outputs_delete_me'
+# DataFrame saved successfully to: data/project_datasets/temp_test_outputs_delete_me/test_case_7_v_test.csv
+# ✅ Test 4.7. → Output Type: PosixPath, Output Value: /Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/data/project_datasets/temp_test_outputs_delete_me/test_case_7_v_test.csv
 
+# --- Test Case 4.8 ---
+# Inputs: df=<DataFrame>, filename_base='_8', version='v_test', subfolder='project_datasets/temp_test_outputs_delete_me'
+# DataFrame saved successfully to: data/project_datasets/temp_test_outputs_delete_me/_8_v_test.csv
+# ✅ Test 4.8. → Output Type: PosixPath, Output Value: /Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/data/project_datasets/temp_test_outputs_delete_me/_8_v_test.csv
 
+# --- Test Case 4.9 ---
+# Inputs: df=<DataFrame>, filename_base='@laj;/-_9', version='v_test', subfolder='project_datasets/temp_test_outputs_delete_me'
+# Error saving DataFrame to data/project_datasets/temp_test_outputs_delete_me/@laj;/-_9_v_test.csv: Cannot save file into a non-existent directory: '/Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/data/project_datasets/temp_test_outputs_delete_me/@laj;'
+# An unexpected error occurred in save_dataframe_to_csv: Failed to save CSV to /Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/data/project_datasets/temp_test_outputs_delete_me/@laj;/-_9_v_test.csv: Cannot save file into a non-existent directory: '/Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/data/project_datasets/temp_test_outputs_delete_me/@laj;'
+# ❌ Test 4.9. → Expected Error: OSError: Failed to save CSV to /Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/data/project_datasets/temp_test_outputs_delete_me/@laj;/-_9_v_test.csv: Cannot save file into a non-existent directory: '/Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/data/project_datasets/temp_test_outputs_delete_me/@laj;'
 
+# --- Test Case 4.10 ---
+# Inputs: df=<DataFrame>, filename_base='test_output_file_10', version='None', subfolder='project_datasets/temp_test_outputs_delete_me'
+# DataFrame saved successfully to: data/project_datasets/temp_test_outputs_delete_me/test_output_file_10_None.csv
+# ✅ Test 4.10. → Output Type: PosixPath, Output Value: /Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/data/project_datasets/temp_test_outputs_delete_me/test_output_file_10_None.csv
 
+# --- Test Case 4.11 ---
+# Inputs: df=<DataFrame>, filename_base='test_output_file_11', version='', subfolder='project_datasets/temp_test_outputs_delete_me'
+# DataFrame saved successfully to: data/project_datasets/temp_test_outputs_delete_me/test_output_file_11_.csv
+# ✅ Test 4.11. → Output Type: PosixPath, Output Value: /Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/data/project_datasets/temp_test_outputs_delete_me/test_output_file_11_.csv
 
+# --- Test Case 4.12 ---
+# Inputs: df=<DataFrame>, filename_base='test_output_file_12', version='@laj;/-', subfolder='project_datasets/temp_test_outputs_delete_me'
+# Error saving DataFrame to data/project_datasets/temp_test_outputs_delete_me/test_output_file_12_@laj;/-.csv: Cannot save file into a non-existent directory: '/Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/data/project_datasets/temp_test_outputs_delete_me/test_output_file_12_@laj;'
+# An unexpected error occurred in save_dataframe_to_csv: Failed to save CSV to /Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/data/project_datasets/temp_test_outputs_delete_me/test_output_file_12_@laj;/-.csv: Cannot save file into a non-existent directory: '/Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/data/project_datasets/temp_test_outputs_delete_me/test_output_file_12_@laj;'
+# ❌ Test 4.12. → Expected Error: OSError: Failed to save CSV to /Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/data/project_datasets/temp_test_outputs_delete_me/test_output_file_12_@laj;/-.csv: Cannot save file into a non-existent directory: '/Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/data/project_datasets/temp_test_outputs_delete_me/test_output_file_12_@laj;'
 
+# --- Test Case 4.13 ---
+# Inputs: df=<DataFrame>, filename_base='test_output_file_13', version='v_test', subfolder='None'
+# An unexpected error occurred in save_dataframe_to_csv: unsupported operand type(s) for /: 'PosixPath' and 'NoneType'
+# ❌ Test 4.13. → Expected Error: TypeError: unsupported operand type(s) for /: 'PosixPath' and 'NoneType'
 
+# --- Test Case 4.14 ---
+# Inputs: df=<DataFrame>, filename_base='test_output_file_14', version='v_test', subfolder=''
+# DataFrame saved successfully to: data/test_output_file_14_v_test.csv
+# ✅ Test 4.14. → Output Type: PosixPath, Output Value: /Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/data/test_output_file_14_v_test.csv
 
+# --- Test Case 4.15 ---
+# Inputs: df=<DataFrame>, filename_base='test_output_file_15', version='v_test', subfolder='nonexistent_dir'
+# Error: Cannot save file because target directory check failed: Required data directory not found or is not a directory: /Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/data/nonexistent_dir
+# ❌ Test 4.15. → Expected Error: FileNotFoundError: Required data directory not found or is not a directory: /Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/data/nonexistent_dir
 
+# --- Test Case 4.16 ---
+# Inputs: df=<DataFrame>, filename_base='test_output_file_16', version='v_test', subfolder='subfolder_is_a_file_setup.txt'
+# Error: Cannot save file because target directory check failed: Required data directory not found or is not a directory: /Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/data/subfolder_is_a_file_setup.txt
+# ❌ Test 4.16. → Expected Error: FileNotFoundError: Required data directory not found or is not a directory: /Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/data/subfolder_is_a_file_setup.txt
 
-# =========================================================================
-# Earlier run of Test 4. PASS 1 : Obsolete (kept for tracking, will delete later) 
-
-# --- Summary of Recent Test Script Fixes (2025-04-22) implemented in PASS 2 ---
-# - Addressed test interference: Resolved issue where Test 1 creating an output file
-#   caused subsequent tests (e.g., 2-6 testing invalid DataFrames) to be skipped
-#   because the file existence check in the function passed prematurely.
-# - Implemented Temporary Test Output Directory: Introduced a dedicated subdirectory
-#   (e.g., data/project_datasets/temp_test_outputs) to isolate file outputs
-#   generated during this specific test run.
-# - Updated Test Case Parameters: Modified the 'subfolder_param_value' used by most
-#   test cases to target this temporary directory, ensuring tests run independently
-#   within that clean space.
-# - Added Explicit Setup: Included code *before* the tests to automatically remove
-#   any old temp directory and recreate it, plus create other specific files needed
-#   (like the one for Test 16).
-# - Simplified Cleanup: Changed cleanup logic *after* the tests to remove the
-#   entire temporary output directory using `shutil.rmtree`, plus specific setup files.
-# - Added/Updated Test Case Descriptions: Included comments explaining the goal
-#   and expected outcome for each test case in the list.
-# --- End Summary ---
-
-
-# print("--- Test Setup ---")
-# try:
-#     project_root = up.find_project_root()
-#     print(f"Project Root Found: {project_root}")
-
-#     # Define paths needed for tests relative to data/
-#     data_dir = project_root / "data"
-#     target_test_subdir = data_dir / "project_datasets" # Using the confirmed existing default
-#     file_as_subdir_path = data_dir / "subfolder_is_a_file.txt"
-
-#     # Create necessary directory and file for tests
-#     target_test_subdir.mkdir(parents=True, exist_ok=True)
-#     print(f"Ensured directory exists: {target_test_subdir}")
-#     file_as_subdir_path.touch(exist_ok=True) # Create the file for test case 16
-#     print(f"Ensured file exists: {file_as_subdir_path}")
-
-#     # Define files expected to be created by successful test runs (for cleanup)
-#     expected_file_1 = target_test_subdir / "test_output_file_v_test.csv"
-#     expected_file_6 = target_test_subdir / "test_output_file_v_test.csv" # Same as 1 if empty df saves
-#     expected_file_8 = target_test_subdir / "_v_test.csv"
-#     expected_file_11 = target_test_subdir / "test_output_file_.csv"
-#     # Test 13 also uses target_test_subdir but re-uses filename/version from test 1
-
-#     files_to_cleanup = [
-#         expected_file_1,
-#         # expected_file_6 is same as 1
-#         expected_file_8,
-#         expected_file_11,
-#         file_as_subdir_path # Also clean up the file created for setup
-#     ]
-#     # Clean up any leftovers from previous runs before starting
-#     print("Performing pre-test cleanup...")
-#     for f_path in files_to_cleanup:
-#         f_path.unlink(missing_ok=True)
-#     print("Pre-test cleanup done.")
-
-# except (FileNotFoundError, OSError, Exception) as setup_e:
-#     print(f"💥 CRITICAL SETUP ERROR: Could not find project root or setup test dirs/files.")
-#     print(f"Error: {type(setup_e).__name__}: {setup_e}")
-#     # Optionally exit if setup fails critically
-#     # exit()
-
-# # --- Test Data and Cases ---
-
-# # Sample toy trivia DataFrame
-# toy_df = pd.DataFrame({
-#     "Question": ["Q1", "Q2"], "Answer": ["A1", "A2"],
-#     "Category": ["C1", "C2"], "Difficulty": ["Easy", "Hard"]
-# })
-
-# # Attributes for test
-# empty_df = pd.DataFrame()
-# filename = "test_output_file" # Base filename for test outputs
-# version = "v_test"          # Version for test outputs
-
-# # Subfolder parameter value for testing save_dataframe_to_csv
-# # This targets 'data/project_datasets/' based on the function's design.
-# subfolder_param_value = "project_datasets"
-
-# test_cases = [
-#     # --- Happy Path & File Existence ---
-#     (toy_df, filename, version, subfolder_param_value),     # 1. ✅ Control: Expect successful save to 'data/project_datasets/'.
-#     (toy_df, filename, version, subfolder_param_value),     # 2. ✅ File Exists: Expect skip message & None return (relies on Test 1 running first).
-#     # --- Dataframe Input Issues ---
-#     (None, filename, version, subfolder_param_value),       # 3. ❌ (df=None) Expect TypeError/AttributeError from pandas '.to_csv()'.
-#     ("", filename, version, subfolder_param_value),         # 4. ❌ (df=empty string) Expect TypeError/AttributeError from pandas '.to_csv()'.
-#     (10254, filename, version, subfolder_param_value),      # 5. ❌ (df=integer) Expect TypeError/AttributeError from pandas '.to_csv()'.
-#     (empty_df, filename, version, subfolder_param_value),   # 6. ✅ (df=empty) Expect successful save of empty file to 'data/project_datasets/'.
-#     # --- Filename_base Input Issues ---
-#     (toy_df, None, version, subfolder_param_value),         # 7. ❌ (filename=None) Expect TypeError during filename string formatting.
-#     (toy_df, "", version, subfolder_param_value),           # 8. ✅ (filename=empty string) Expect success creating file like '_v_test.csv' in 'data/project_datasets/'.
-#     (toy_df, '@laj;/-', version, subfolder_param_value),    # 9. ❌ (filename=invalid chars) Expect OSError/ValueError on save attempt.
-#     # --- Version Input Issues ---
-#     (toy_df, filename, None, subfolder_param_value),        # 10. ❌ (version=None) Expect TypeError during filename string formatting.
-#     (toy_df, filename, "", subfolder_param_value),          # 11. ✅ (version=empty string) Expect success creating file like 'test_output_file_.csv' in 'data/project_datasets/'.
-#     (toy_df, filename, '@laj;/-', subfolder_param_value),   # 12. ❌ (version=invalid chars) Expect OSError/ValueError on save attempt.
-#      # --- Subfolder Parameter Issues ---
-#     (toy_df, filename, version, None),          # 13. ✅ (subfolder=None) Expect success using default 'project_datasets'.
-#     (toy_df, filename, version, ""),            # 14. ❌ (subfolder=empty string) Expect FileNotFoundError/ValueError from get_data_folder_path.
-#     (toy_df, filename, version, "nonexistent_dir"), # 15. ❌ (subfolder=non-existent dir under data/) Expect FileNotFoundError from get_data_folder_path.
-#     (toy_df, filename, version, "subfolder_is_a_file.txt") # 16. ❌ (subfolder=is file under data/) Expect FileNotFoundError from get_data_folder_path.
-# ]
-
-# # Ran into test interference because of filename 
-# # --- Test Execution Loop ---
-# print("\n--- Running save_dataframe_to_csv tests ---")
-# i = 1
-# for df_arg, fname_arg, vers_arg, subfolder_arg in test_cases:
-#     print(f"\n--- Test Case 4.{i} ---")
-#     print(f"Inputs: df=<{type(df_arg).__name__}>, filename='{fname_arg}', version='{vers_arg}', subfolder='{subfolder_arg}'")
-#     try:
-#         result = up.save_dataframe_to_csv(df_arg, fname_arg, vers_arg, subfolder_arg)
-#         print(f"✅ Test 4.{i}. → Output Type: {type(result).__name__}, Output Value: {result}")
-#         # Manual check for test 2 (optional but helpful)
-#         if i == 2 and result is not None:
-#              print(f"⚠️ WARNING Test 4.2: Expected None return but got {type(result).__name__}")
-#         elif i == 2 and result is None:
-#              print("ℹ️  Info Test 4.2: Correctly returned None, indicating skip.")
-
-#     # Catch specific expected errors first for clarity
-#     except (FileNotFoundError, TypeError, ValueError, AttributeError, OSError, PermissionError) as e:
-#         print(f"❌ Test 4.{i}. → Expected Error: {type(e).__name__}: {e}")
-#     except Exception as e: # Catch any other unexpected errors
-#         print(f"💥 Test 4.{i}. → UNEXPECTED Error: {type(e).__name__}: {e}")
-#     i+=1
-
-# # --- Test Cleanup ---
-# print("\n--- Test Cleanup ---")
-# for f_path in files_to_cleanup:
-#     try:
-#         f_path.unlink(missing_ok=True) # missing_ok prevents error if file wasn't created
-#         print(f"Cleaned up: {f_path.relative_to(project_root)}")
-#     except Exception as clean_e:
-#         print(f"Error during cleanup of {f_path}: {type(clean_e).__name__}: {clean_e}")
-# print("Cleanup finished.")
-
-# # Output:
-# # --- Test Setup ---
-# # Project Root Found: /Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia
-# # Ensured directory exists: /Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/data/project_datasets
-# # Ensured file exists: /Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/data/subfolder_is_a_file.txt
-# # Performing pre-test cleanup...
-# # Pre-test cleanup done.
-
-# # --- Running save_dataframe_to_csv tests ---
-
-# # --- Test Case 4.1 ---
-# # Inputs: df=<DataFrame>, filename='test_output_file', version='v_test', subfolder='project_datasets'
-# # DataFrame saved successfully to: data/project_datasets/test_output_file_v_test.csv
-# # ✅ Test 4.1. → Output Type: PosixPath, Output Value: /Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/data/project_datasets/test_output_file_v_test.csv
-
-# # --- Test Case 4.2 ---
-# # Inputs: df=<DataFrame>, filename='test_output_file', version='v_test', subfolder='project_datasets'
-# # File already exists at: data/project_datasets/test_output_file_v_test.csv. Skipping save.
-# # ✅ Test 4.2. → Output Type: NoneType, Output Value: None
-# # ℹ️  Info Test 4.2: Correctly returned None, indicating skip.
-
-# # --- Test Case 4.3 ---
-# # Inputs: df=<NoneType>, filename='test_output_file', version='v_test', subfolder='project_datasets'
-# # File already exists at: data/project_datasets/test_output_file_v_test.csv. Skipping save.
-# # ✅ Test 4.3. → Output Type: NoneType, Output Value: None
-
-# # --- Test Case 4.4 ---
-# # Inputs: df=<str>, filename='test_output_file', version='v_test', subfolder='project_datasets'
-# # File already exists at: data/project_datasets/test_output_file_v_test.csv. Skipping save.
-# # ✅ Test 4.4. → Output Type: NoneType, Output Value: None
-
-# # --- Test Case 4.5 ---
-# # Inputs: df=<int>, filename='test_output_file', version='v_test', subfolder='project_datasets'
-# # File already exists at: data/project_datasets/test_output_file_v_test.csv. Skipping save.
-# # ✅ Test 4.5. → Output Type: NoneType, Output Value: None
-
-# # --- Test Case 4.6 ---
-# # Inputs: df=<DataFrame>, filename='test_output_file', version='v_test', subfolder='project_datasets'
-# # File already exists at: data/project_datasets/test_output_file_v_test.csv. Skipping save.
-# # ✅ Test 4.6. → Output Type: NoneType, Output Value: None
-
-# # --- Test Case 4.7 ---
-# # Inputs: df=<DataFrame>, filename='None', version='v_test', subfolder='project_datasets'
-# # DataFrame saved successfully to: data/project_datasets/None_v_test.csv
-# # ✅ Test 4.7. → Output Type: PosixPath, Output Value: /Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/data/project_datasets/None_v_test.csv
-
-# # --- Test Case 4.8 ---
-# # Inputs: df=<DataFrame>, filename='', version='v_test', subfolder='project_datasets'
-# # DataFrame saved successfully to: data/project_datasets/_v_test.csv
-# # ✅ Test 4.8. → Output Type: PosixPath, Output Value: /Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/data/project_datasets/_v_test.csv
-
-# # --- Test Case 4.9 ---
-# # Inputs: df=<DataFrame>, filename='@laj;/-', version='v_test', subfolder='project_datasets'
-# # Error saving DataFrame to data/project_datasets/@laj;/-_v_test.csv: Cannot save file into a non-existent directory: '/Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/data/project_datasets/@laj;'
-# # An unexpected error occurred in save_dataframe_to_csv: Failed to save CSV to /Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/data/project_datasets/@laj;/-_v_test.csv: Cannot save file into a non-existent directory: '/Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/data/project_datasets/@laj;'
-# # ❌ Test 4.9. → Expected Error: OSError: Failed to save CSV to /Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/data/project_datasets/@laj;/-_v_test.csv: Cannot save file into a non-existent directory: '/Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/data/project_datasets/@laj;'
-
-# # --- Test Case 4.10 ---
-# # Inputs: df=<DataFrame>, filename='test_output_file', version='None', subfolder='project_datasets'
-# # DataFrame saved successfully to: data/project_datasets/test_output_file_None.csv
-# # ✅ Test 4.10. → Output Type: PosixPath, Output Value: /Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/data/project_datasets/test_output_file_None.csv
-
-# # --- Test Case 4.11 ---
-# # Inputs: df=<DataFrame>, filename='test_output_file', version='', subfolder='project_datasets'
-# # DataFrame saved successfully to: data/project_datasets/test_output_file_.csv
-# # ✅ Test 4.11. → Output Type: PosixPath, Output Value: /Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/data/project_datasets/test_output_file_.csv
-
-# # --- Test Case 4.12 ---
-# # Inputs: df=<DataFrame>, filename='test_output_file', version='@laj;/-', subfolder='project_datasets'
-# # Error saving DataFrame to data/project_datasets/test_output_file_@laj;/-.csv: Cannot save file into a non-existent directory: '/Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/data/project_datasets/test_output_file_@laj;'
-# # An unexpected error occurred in save_dataframe_to_csv: Failed to save CSV to /Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/data/project_datasets/test_output_file_@laj;/-.csv: Cannot save file into a non-existent directory: '/Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/data/project_datasets/test_output_file_@laj;'
-# # ❌ Test 4.12. → Expected Error: OSError: Failed to save CSV to /Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/data/project_datasets/test_output_file_@laj;/-.csv: Cannot save file into a non-existent directory: '/Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/data/project_datasets/test_output_file_@laj;'
-
-# # --- Test Case 4.13 ---
-# # Inputs: df=<DataFrame>, filename='test_output_file', version='v_test', subfolder='None'
-# # An unexpected error occurred in save_dataframe_to_csv: unsupported operand type(s) for /: 'PosixPath' and 'NoneType'
-# # ❌ Test 4.13. → Expected Error: TypeError: unsupported operand type(s) for /: 'PosixPath' and 'NoneType'
-
-# # --- Test Case 4.14 ---
-# # Inputs: df=<DataFrame>, filename='test_output_file', version='v_test', subfolder=''
-# # DataFrame saved successfully to: data/test_output_file_v_test.csv
-# # ✅ Test 4.14. → Output Type: PosixPath, Output Value: /Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/data/test_output_file_v_test.csv
-
-# # --- Test Case 4.15 ---
-# # Inputs: df=<DataFrame>, filename='test_output_file', version='v_test', subfolder='nonexistent_dir'
-# # Error: Cannot save file because target directory check failed: Required data directory not found or is not a directory: /Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/data/nonexistent_dir
-# # ❌ Test 4.15. → Expected Error: FileNotFoundError: Required data directory not found or is not a directory: /Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/data/nonexistent_dir
-
-# # --- Test Case 4.16 ---
-# # Inputs: df=<DataFrame>, filename='test_output_file', version='v_test', subfolder='subfolder_is_a_file.txt'
-# # Error: Cannot save file because target directory check failed: Required data directory not found or is not a directory: /Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/data/subfolder_is_a_file.txt
-# # ❌ Test 4.16. → Expected Error: FileNotFoundError: Required data directory not found or is not a directory: /Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/data/subfolder_is_a_file.txt
-
-# # --- Test Cleanup ---
-# # Cleaned up: data/project_datasets/test_output_file_v_test.csv
-# # Cleaned up: data/project_datasets/_v_test.csv
-# # Cleaned up: data/project_datasets/test_output_file_.csv
-# # Cleaned up: data/subfolder_is_a_file.txt
-# # Cleanup finished.
+# --- Test Cleanup ---
+# Removing temporary test output directory: /Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/data/project_datasets/temp_test_outputs_delete_me
+# Cleaning up setup file: /Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/data/subfolder_is_a_file_setup.txt
+# Cleaning up file from Test 13: /Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/data/project_datasets/test_output_file_v_test.csv
+# Attempting cleanup for file potentially created by Test 14 in data/: /Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/data/test_output_file_14_v_test.csv
+# Cleanup finished.
