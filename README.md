@@ -67,7 +67,7 @@ Step into the halls of Hogwarts and test your knowledge with this interactive CL
 The project phases and sprints can be found in the detailed workflow document. This is a live, adaptive document to organize work and learning streams of the project.
 - [🗂️ Latest Workflow](docs/Overall%20workflow/) — Always updated with the current workflow version.  
 - Older versions are archived [here](docs/superceded/) for reference.
-- The CLI MVP gameflow is documented in both [flowchart](docs/MVP/MVP_gameflow_v1_flowchart_view.svg) and [text](docs/MVP/MVP_gameflow_v1_text.md)) formats.
+- The CLI MVP gameflow is documented in both [flowchart](docs/MVP/MVP_gameflow_v1_flowchart_view.svg) and [text](docs/MVP/MVP_gameflow_v1_text.md) formats.
 - See the [Changelog](CHANGELOG.md) for a record of updates and changes.
 
 ## Features
