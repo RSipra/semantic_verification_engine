@@ -37,7 +37,7 @@ Step into the halls of Hogwarts and test your knowledge with this interactive CL
 
 ## Development roadmap
 
-The main steps in the devleopment of the game are:
+🚧 This is a work in progress! The main steps in the devleopment of the game are:
 
 1. Phase 1: MVP core game logic, unit testing, and pattern awareness
     - Setup environmental and data foundation (download, cleaning, EDA, preprocessing of dataset)
@@ -66,7 +66,9 @@ The main steps in the devleopment of the game are:
 
 The project phases and sprints can be found in the detailed workflow document. This is a live, adaptive document to organize work and learning streams of the project.
 - [🗂️ Latest Workflow](docs/Overall%20workflow/) — Always updated with the current workflow version.  
-- Older versions are stored [here](docs/superceded/) for reference.
+- Older versions are archived [here](docs/superceded/) for reference.
+- The CLI MVP gameflow is documented in both [flowchart](docs/MVP/MVP_gameflow_v1_flowchart_view.svg) and [text](docs/MVP/MVP_gameflow_v1_text.md)) formats.
+- See the [Changelog](CHANGELOG.md) for a record of updates and changes.
 
 ## Features
 
@@ -79,21 +81,21 @@ The project phases and sprints can be found in the detailed workflow document. T
 - **Custom NER Model**: support topic selection (e.g. characters, locations, spells) and difficulty-level questions in the game based on custom NER class tagging.
 - **Interactive GUI**: web based up for more player engagement with visuals, audio, and interactive elements.
 
-## 🛠️ Tools & Technologies Used
+## 🛠️ Tech Stack
 
 <details>
 <summary>Click to expand</summary>
 
 - Python – Core language for game logic, data processing, and NLP components
 - NLTK / spaCy – Natural Language Processing (NER and text analysis)
-- Jupyter Notebooks – Used for exploratory data analysis and prototyping
+- Jupyter Notebooks – Used for exploratory data analysis, NER work, prepare dataset for the game.
 - Git / GitHub – Version control and collaboration
 - VS Code – Primary development environment
 - Markdown – Documentation and workflow planning
 
 📦 See [requirements.txt](requirements.txt) for packages required to run the game, and [requirements-dev.txt](requirements-dev.txt) for the complete list of tools used in the game as well as notebooks, data processing, and advanced NLP work.
 
-💡 AI-assisted support from ChatGPT 4o (free-tier), and Google Gemini 2.5 Pro (experimental, free-tier) was used for brainstorming, project planning and strategizing, code review, ideation, debugging and learning throughout development.
+💡 AI-assisted support from ChatGPT 4o (free-tier), and Google Gemini 2.5 Pro (experimental) was used for brainstorming, project planning and strategizing, code review, ideation, debugging and learning throughout development.
 </details>
 
 ## Installation
