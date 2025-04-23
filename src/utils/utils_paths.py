@@ -109,22 +109,47 @@ def find_project_root(start_path: Optional[str] = None) -> Path:
     # If the loop completes without finding a .git directory
     raise FileNotFoundError(f"No .git directory found in the parent directories of {effective_start_path}")
 
-def get_data_folder_path(subfolder: str = "project_datasets") -> Path:
+# --- Updated get_data_folder_path function ---
+# Note: Type hint changed to Optional[str] to reflect explicit None is possible input
+def get_data_folder_path(subfolder: Optional[str] = "project_datasets") -> Path:
     """
-        Gets the absolute path to a specific subfolder within the 'data' directory,
-        located relative to the project root.
+    Gets the absolute path to an EXISTING data subfolder relative to the project root.
 
+    Verifies the target subfolder exists within the project's 'data/'
+    directory and raises errors if not found, not a directory, or if input
+    arguments are invalid. Does NOT create directories.
 
-        Args:
-            subfolder (str): The name of the subfolder within the main 'data'
-                            directory. Defaults to 'project_datasets'.
+    Args:
+        subfolder (str, optional): The name of the subfolder within the main 'data/'
+            directory. Defaults to "project_datasets". If explicitly passed as
+            None, the default value ("project_datasets") will be used. Cannot be
+            an empty string.
 
-        Returns:
-            Path: The absolute path to the requested data subfolder.
+    Returns:
+        Path: The absolute path to the requested, existing data subfolder.
 
-        Raises:
-            FileNotFoundError: If the project root (.git) cannot be found.
-        """
+    Raises:
+        ValueError: If the 'subfolder' argument is an empty string.
+        FileNotFoundError: If the project root (.git) cannot be found by the
+                           find_project_root function call.
+        FileNotFoundError: If the target data subfolder (data/<subfolder>)
+                           does not exist or is not a directory.
+    """
+    
+    # --- Input Handling and Validation ---
+    effective_subfolder: str
+    if subfolder is None:
+        # a. Handle explicit None input by using the default value.
+        effective_subfolder = "project_datasets"
+    else:
+        # If not None, it should be a string (per type hint)
+        effective_subfolder = subfolder
+
+    # b. Check for empty string AFTER handling None.
+    if not effective_subfolder:  # This catches empty string ""
+        raise ValueError("The 'subfolder' argument cannot be an empty string.")
+
+    
     # 1. Find the project root (start search from this file's location or CWD)
     try:
         project_root = find_project_root()
@@ -134,7 +159,7 @@ def get_data_folder_path(subfolder: str = "project_datasets") -> Path:
         ) from e 
 
     # 2. Construct the full path to the target subfolder
-    target_path = project_root / "data" / subfolder
+    target_path = project_root.joinpath("data").joinpath(effective_subfolder)
 
     # 3. Check if the directory exists AND is a directory. Do NOT create.
     if not target_path.is_dir():
