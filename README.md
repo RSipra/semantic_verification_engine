@@ -20,7 +20,7 @@ Whether you're here to cast code spells or just play a few rounds of trivia, wel
 1. [Description](#description)
 2. [Development roadmap](#development-roadmap)
 3. [Features](#features)
-4. [Tools & Technologies Used](#️-tools--technologies-used)
+4. [Tech stack](#️-tech-stack)
 5. [Installation](#installation)
 6. [Usage](#usage)
 7. [Controls](#controls)
