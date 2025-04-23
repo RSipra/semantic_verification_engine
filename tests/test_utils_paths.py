@@ -1,5 +1,41 @@
-# Manual testing of utils_paths.py
+"""
+==================================================================
+HARRY POTTER TRIVA GAME 
+==================================================================
+Manual Test Script for Project Path Utilities (utils_paths).
 
+This script performs a series of manual tests on the functions defined in
+the `utils_paths.py` module, including:
+- `find_project_root`
+- `get_data_folder_path`
+- `find_file_path`
+- `save_dataframe_to_csv`
+
+It covers various scenarios such as:
+- Valid ("happy path") execution.
+- Handling of invalid inputs (None, empty strings, wrong types).
+- Edge cases (invalid filename characters, empty DataFrames).
+- Filesystem interactions (file/directory existence, non-existent paths).
+
+The script includes automated setup (creating temporary directories/files
+within the project's 'data/' structure) and cleanup (removing created artifacts)
+to facilitate testing filesystem interactions reliably.
+
+Usage:
+------
+Execute this script directly. Observe the printed output for each test case
+(prefixed with '--- Test Case X.Y ---') to manually verify the actual outcome
+against the expected behavior noted in the comments within the test case lists.
+
+Note:
+-----
+- This script is intended for manual verification by observing print statements.
+  It does not use a formal testing framework like pytest or unittest with assertions.
+- As of 2025-04-22, it may contain commented-out output from previous test runs
+  for historical diagnostic purposes.
+- Ensure the required libraries (pandas, utils_paths) are available in the
+  environment before running.
+"""
 
 from pathlib import Path
 from typing import Optional
@@ -9,7 +45,6 @@ from dotenv import load_dotenv
 load_dotenv()
 import utils.utils_paths as up
 # import test
- 
 
 test_csv_name = 'clean_trivia_dataset_v0.csv'
 
@@ -25,11 +60,11 @@ test_cases_start_root = [
     "\0invalid"
 ]
 
-# for case in test_cases_start_root:
-#     try:
-#         print(f"Test 1. Input: {case!r} → Output: {up.find_project_root(case)}")
-#     except Exception as e:
-#         print(f"Test 1. Input: {case!r} → Error: {type(e).__name__}: {e}")
+for case in test_cases_start_root:
+    try:
+        print(f"Test 1. Input: {case!r} → Output: {up.find_project_root(case)}")
+    except Exception as e:
+        print(f"Test 1. Input: {case!r} → Error: {type(e).__name__}: {e}")
 
 
 # Manual Test Summary:
@@ -61,14 +96,14 @@ test_cases_ffp = [
     (Path(test_csv_name), Path("data")),            # 12.❌ (Path objects for both filename and subfolder) - Error (OsError catchall)
     (Path.cwd() / "data" / test_csv_name, None)     # 13.❌ (No subfolder, Absolute Path as filename) - Error (OsError catchall)
 ]
-# i = 1
-# for name, subfolder in test_cases_ffp:
-#     try:
-#         print(f"✅ Test 2.{i}. → Output: {up.find_file_path(name,subfolder)}")
-#     # First pass manual testing - bypassing pylint warning for "Exception" is to generic for now.
-#     except Exception as e:  # pylint: disable=broad-exception-caught
-#         print(f"❌ Test 2.{i}. → Error: {type(e).__name__}: {e}")
-#     i+=1
+i = 1
+for name, subfolder in test_cases_ffp:
+    try:
+        print(f"✅ Test 2.{i}. → Output: {up.find_file_path(name,subfolder)}")
+    # First pass manual testing - bypassing pylint warning for "Exception" is to generic for now.
+    except Exception as e:  # pylint: disable=broad-exception-caught
+        print(f"❌ Test 2.{i}. → Error: {type(e).__name__}: {e}")
+    i+=1
         
 # Manual Test Summary: [Pass 1]
 # --------------------
@@ -119,11 +154,11 @@ subfolder_testcases = [
     "\0invalid"
 ]
 
-# for case in subfolder_testcases:
-#     try:
-#         print(f"Test 3. Input: {case!r} → Output: {up.get_data_folder_path(case)}")
-#     except Exception as e:
-#         print(f"Test 3. Input: {case!r} → Error: {type(e).__name__}: {e}")
+for case in subfolder_testcases:
+    try:
+        print(f"Test 3. Input: {case!r} → Output: {up.get_data_folder_path(case)}")
+    except Exception as e:
+        print(f"Test 3. Input: {case!r} → Error: {type(e).__name__}: {e}")
     
 # Manual Test Summary:
 # --------------------
@@ -140,7 +175,7 @@ subfolder_testcases = [
 #======================================================================
 #----------------------------------------------------------------------
 
-# 4. Test `up.save_dataframe_to_csv()`: PASS 2
+# 4. Test `up.save_dataframe_to_csv()`: 
 
 # --- Testing Context ---
 # These tests validate the 'save_dataframe_to_csv' function.
@@ -175,7 +210,7 @@ try:
     test13_output_file = project_datasets_dir / f"{TEST_FILENAME_BASE}_{TEST_VERSION}.csv"
 
     # --- 2. Perform Pre-Test Cleanup ---
-    print(f"Cleaning up previous test artifacts if they exist...")
+    print("Cleaning up previous test artifacts if they exist...")
     if temp_test_output_subdir and temp_test_output_subdir.exists():
         shutil.rmtree(temp_test_output_subdir) # Remove entire temp output dir
     if file_as_subdir_path: file_as_subdir_path.unlink(missing_ok=True)
@@ -197,7 +232,7 @@ try:
     print("Setup complete.")
 
 except (FileNotFoundError, OSError, Exception) as setup_e:
-    print(f"💥 CRITICAL SETUP ERROR: Could not find project root or setup test dirs/files.")
+    print("💥 CRITICAL SETUP ERROR: Could not find project root or setup test dirs/files.")
     print(f"Error: {type(setup_e).__name__}: {setup_e}")
     # Consider exiting if setup fails: exit()
 
@@ -225,9 +260,7 @@ test_cases_for_loop = [
     (toy_df, TEST_FILENAME_BASE, "", subfolder_param_for_temp_dir),          # 11. ✅ Expect success creating 'test_output_file_11_.csv'.
     (toy_df, TEST_FILENAME_BASE, '@laj;/-', subfolder_param_for_temp_dir),   # 12. ❌ Expect OSError/ValueError (invalid chars).
      # Subfolder Parameter Issues
-    # TODO: Fix get_data_folder_path: Handle explicit None input (should use default 'project_datasets').
     (toy_df, TEST_FILENAME_BASE, TEST_VERSION, None),          # 13. ✅ Expect success saving to default 'project_datasets' (after fix).
-    # TODO: Fix get_data_folder_path: Raise ValueError for empty string "" input.
     (toy_df, TEST_FILENAME_BASE, TEST_VERSION, ""),            # 14. ❌ Expect ValueError from get_data_folder_path (after fix).
     (toy_df, TEST_FILENAME_BASE, TEST_VERSION, "nonexistent_dir"), # 15. ❌ Expect FileNotFoundError from get_data_folder_path.
     (toy_df, TEST_FILENAME_BASE, TEST_VERSION, file_as_subdir_path_name) # 16. ❌ Expect FileNotFoundError from get_data_folder_path.
@@ -237,7 +270,7 @@ test_cases_for_loop = [
 print("\n--- Running save_dataframe_to_csv tests ---")
 
 # --- Test 1: Create File in Temp Dir (Uses NON-unique name) ---
-print(f"\n--- Test Case 4.1 (Create) ---")
+print("\n--- Test Case 4.1 (Create) ---")
 print(f"Inputs: df=<DataFrame>, filename='{TEST_FILENAME_BASE}', version='{TEST_VERSION}', subfolder='{subfolder_param_for_temp_dir}'")
 try:
     result1 = up.save_dataframe_to_csv(toy_df, TEST_FILENAME_BASE, TEST_VERSION, subfolder_param_for_temp_dir)
@@ -246,7 +279,7 @@ except Exception as e:
     print(f"💥 Test 4.1. → UNEXPECTED Error: {type(e).__name__}: {e}")
 
 # --- Test 2: Check Skip Logic for File in Temp Dir (Uses NON-unique name) ---
-print(f"\n--- Test Case 4.2 (Skip) ---")
+print("\n--- Test Case 4.2 (Skip) ---")
 print(f"Inputs: df=<DataFrame>, filename='{TEST_FILENAME_BASE}', version='{TEST_VERSION}', subfolder='{subfolder_param_for_temp_dir}'")
 try:
     result2 = up.save_dataframe_to_csv(toy_df, TEST_FILENAME_BASE, TEST_VERSION, subfolder_param_for_temp_dir)
@@ -332,16 +365,9 @@ else:
 
 print("Cleanup finished.")
 
-# --- Action Items ---
-# TODO: Modify 'get_data_folder_path' function:
-#       1. Handle Explicit None Input for 'subfolder' (should use default).
-#       2. Raise ValueError if 'subfolder' is an empty string ("").
-# TODO: Consider if 'save_dataframe_to_csv' should raise TypeError for None filename_base/version.
-# --- End Action Items ---
-
 # Manual Test Summary:
 # --------------------
-# --- Test Setup ---
+# ---- Test Setup ---
 # Project Root Found: /Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia
 # Cleaning up previous test artifacts if they exist...
 # Created temporary test output directory: data/project_datasets/temp_test_outputs_delete_me
@@ -419,13 +445,13 @@ print("Cleanup finished.")
 
 # --- Test Case 4.13 ---
 # Inputs: df=<DataFrame>, filename_base='test_output_file_13', version='v_test', subfolder='None'
-# An unexpected error occurred in save_dataframe_to_csv: unsupported operand type(s) for /: 'PosixPath' and 'NoneType'
-# ❌ Test 4.13. → Expected Error: TypeError: unsupported operand type(s) for /: 'PosixPath' and 'NoneType'
+# DataFrame saved successfully to: data/project_datasets/test_output_file_13_v_test.csv
+# ✅ Test 4.13. → Output Type: PosixPath, Output Value: /Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/data/project_datasets/test_output_file_13_v_test.csv
 
 # --- Test Case 4.14 ---
 # Inputs: df=<DataFrame>, filename_base='test_output_file_14', version='v_test', subfolder=''
-# DataFrame saved successfully to: data/test_output_file_14_v_test.csv
-# ✅ Test 4.14. → Output Type: PosixPath, Output Value: /Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/data/test_output_file_14_v_test.csv
+# An unexpected error occurred in save_dataframe_to_csv: The 'subfolder' argument cannot be an empty string.
+# ❌ Test 4.14. → Expected Error: ValueError: The 'subfolder' argument cannot be an empty string.
 
 # --- Test Case 4.15 ---
 # Inputs: df=<DataFrame>, filename_base='test_output_file_15', version='v_test', subfolder='nonexistent_dir'
