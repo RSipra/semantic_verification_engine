@@ -4,7 +4,7 @@
 
 This document outlines the step-by-step logic flow and interactions between the `Trivia`, `Question`, and `Controller` classes, assuming the `Trivia` class manages a list of fully formed `Question` objects. 
 
-A flowchart [here](MVP_gameflow_v1_flowchart_view.svg) explains the gameflow, described below, graphically.
+A flowchart [here](MVP_gameflow_v1_flowchart_view.svg) explains the gameflow, described below, graphically.This is generic right now and does not use actual class and method names. As code is developed, this will be updated to match.
 
 **Assumed Classes & Key Responsibilities:**
 
@@ -67,7 +67,7 @@ A flowchart [here](MVP_gameflow_v1_flowchart_view.svg) explains the gameflow, de
         * Assigns the returned list to `self.questions`. **`Trivia` now holds the `List[Question]`**.
 
 3.  **`Controller` state updated:** The `Controller` knows setup is complete. It can now proceed to the gameplay loop. Display Introduction.
-
+4. Controller uses thes `Introduction` class to greet the player and get details that will be used to instantiate the `Player` object for the session.
 ---
 
 ## 3. Gameplay Loop Phase
