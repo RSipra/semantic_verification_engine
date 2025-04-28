@@ -1,6 +1,6 @@
 ## Custom functions for question keyword analysis
 
-from typing import Union # For Python < 3.10
+from typing import List, Union # For Python < 3.10
 import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.feature_extraction.text import CountVectorizer
@@ -148,7 +148,7 @@ def print_common_ngrams(questions_series: pd.Series, ngram_range: tuple = (2, 3)
             for ngram, count in ngram_freq[:top_n]:
                 print(f"- '{ngram}': {count}")
         else:
-             print("No n-grams found based on the specified range and stop words.")
+            print("No n-grams found based on the specified range and stop words.")
 
     except Exception as e:
          print(f"An error occurred during n-gram analysis: {e}")
@@ -230,3 +230,114 @@ def create_ans_len_boxplot(dataframe: pd.DataFrame, keyword: str, ans_box_color:
         plt.xlabel('String length')
         plt.tight_layout() 
         plt.show()
+
+
+# generated with Google Gemini 2.5:
+def print_keyword_ngrams(
+    questions_series: pd.Series,
+    keyword: str,
+    ngram_range: tuple = (2, 3),
+    top_n: int = 10,
+    # Use Union explicitly to define the allowed types plus None
+    stop_words: Union[str, List[str], None] = None
+) -> None:
+    '''
+    Analyzes a pandas Series of text to find common n-grams starting with a specific keyword
+    and prints the top N most frequent ones. Allows optional removal of stop words
+    during n-gram generation.
+
+    Parameters:
+        questions_series (pd.Series): A pandas Series containing the text strings to analyze.
+                                       Expected to contain question text.
+        keyword (str): The keyword or phrase the n-grams must start with (case-insensitive).
+                       e.g., "what", "how many", "is it".
+        ngram_range (tuple): The lower and upper boundary of the range of n-values for the n-grams.
+                             e.g., (2, 2) for bigrams, (2, 3) for bigrams and trigrams.
+                             Defaults to (2, 3).
+        top_n (int): The number of top most frequent keyword-specific n-grams to display.
+                     Defaults to 10.
+        stop_words (Union[str, List[str], None]): Controls stop word removal *before* n-gram creation.
+                     - None (default): No words are removed. Use this if your `keyword`
+                       contains common words (e.g., "is it", "what is").
+                     - 'english': Uses scikit-learn's built-in English stop word list.
+                     - List[str]: Provide your own custom list of words to remove.
+                     *** Important Limitation: ***
+                     If your `keyword` itself contains words that are also in the `stop_words`
+                     list being used, the function will likely NOT find matches.
+    '''
+    print(f"\nAnalyzing common phrases (n-grams) starting with '{keyword}' in this set of questions:")
+    print(f"Using stop_words: {stop_words}") # Explicitly show the setting being used
+
+    # --- Input Validation ---
+    if not isinstance(questions_series, pd.Series):
+        print("Error: Input 'questions_series' must be a pandas Series.")
+        return
+    if not keyword or not isinstance(keyword, str):
+         print("Error: A valid 'keyword' string must be provided.")
+         return
+
+    # --- Data Preparation ---
+    questions_text = questions_series.dropna()
+    if questions_text.empty:
+        print("No text data available for n-gram analysis after dropping missing values.")
+        return
+
+    # Prepare keyword: lowercase and strip whitespace for reliable matching
+    keyword_lower = keyword.lower().strip()
+    if not keyword_lower:
+        print("Error: Keyword cannot be empty or only whitespace.")
+        return
+
+    # --- N-gram Calculation ---
+    # Pass the user-provided stop_words setting to the vectorizer
+    # This call should now better align with Pylance's understanding of the Union type
+    vectorizer = CountVectorizer(ngram_range=ngram_range, stop_words=stop_words, lowercase=True)
+
+    try:
+        # Fit the vectorizer and transform the text
+        ngram_matrix = vectorizer.fit_transform(questions_text)
+
+        # Get the feature names (the n-grams after potential stop word removal)
+        feature_names = vectorizer.get_feature_names_out()
+
+        # Check if any features were generated after stop word removal
+        if not feature_names.size:
+             print(f"No features (n-grams) were generated. This might be due to all words being filtered by stop_words='{stop_words}', empty input, or very short texts.")
+             return
+
+        # Sum the counts of each n-gram
+        ngram_counts = ngram_matrix.sum(axis=0)
+
+        # Create a list of all generated n-gram and count pairs
+        all_ngram_freq = [(feature_names[i], ngram_counts[0, i]) for i in range(len(feature_names))]
+
+        # --- Filtering by Keyword ---
+        keyword_ngram_freq = []
+        for ngram, count in all_ngram_freq:
+            if ngram.startswith(keyword_lower + " ") or ngram == keyword_lower:
+                keyword_ngram_freq.append((ngram, count))
+
+        # Sort the filtered n-grams by frequency in descending order
+        keyword_ngram_freq = sorted(keyword_ngram_freq, key=lambda x: x[1], reverse=True)
+
+        # --- Output Results ---
+        print(f"Top {min(top_n, len(keyword_ngram_freq))} common n-grams starting with '{keyword}':")
+        if keyword_ngram_freq:
+            for ngram, count in keyword_ngram_freq[:top_n]:
+                print(f"- '{ngram}': {count}")
+        else:
+             if not all_ngram_freq:
+                  pass # Already handled by feature_names.size check
+             else:
+                  print(f"No n-grams found starting with '{keyword}'.")
+                  if stop_words:
+                       print(f"   Note: This might happen if the keyword '{keyword}' itself was affected by the stop_words setting ('{stop_words}'), or if no matching n-grams exist in the data.")
+                  else:
+                       print("   Note: No matching n-grams exist in the data.")
+
+
+    except ValueError as ve:
+        print(f"An error occurred during n-gram analysis: {ve}")
+        print(f"This might happen if the vocabulary becomes empty after applying stop_words='{stop_words}'.")
+    except Exception as e:
+         print(f"An unexpected error occurred during n-gram analysis: {e}")
