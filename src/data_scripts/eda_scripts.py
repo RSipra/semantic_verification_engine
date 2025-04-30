@@ -2,6 +2,7 @@
 
 from typing import List, Union # For Python < 3.10
 import pandas as pd
+import re
 import matplotlib.pyplot as plt
 from sklearn.feature_extraction.text import CountVectorizer
 from IPython.display import display
@@ -38,13 +39,9 @@ def filter_df_by_keyword(dataframe: pd.DataFrame, keyword: 'str') -> Union[pd.Da
         return filter_kw_questions
 
 # 2. Helper function that returns a Series with the length of each answer  
-def get_str_lengths(dataframe: pd.DataFrame, column_name: str) -> pd.Series:
-    """Helper function that returns a Sries with the length of each answer that can be used for further analysis
-
-    :param dataframe: source dataframe that has the trivia `answer` column to be analysed.
-    :return: Series with answer lengths
-    """
-    return dataframe[column_name].str.len()
+def get_clean_word_counts(dataframe: pd.DataFrame, column_name: str) -> pd.Series:
+    """Returns a Series with the number of clean words (ignoring punctuation) in each entry."""
+    return dataframe[column_name].apply(lambda x: len(re.findall(r'\b\w+\b', x)) if pd.notnull(x) else 0)
 
 #---------------------
 ## Functions for keyword analysis
@@ -70,7 +67,7 @@ def get_question_type_info(dataframe: pd.DataFrame ,keyword: str, n_samples: int
         filtered_question_count = filter_kw_questions.shape[0] 
 
         # Get answer length using helper function
-        fq_ans_len = get_str_lengths(filter_kw_questions, 'answer')
+        fq_ans_len = get_clean_word_counts(filter_kw_questions, 'answer')
         min_ans_len = fq_ans_len.min()
         max_ans_len = fq_ans_len.max()
         total_question_count = dataframe.shape[0]
@@ -153,7 +150,7 @@ def print_common_ngrams(questions_series: pd.Series, ngram_range: tuple = (2, 3)
     except Exception as e:
          print(f"An error occurred during n-gram analysis: {e}")
          
-def create_ans_len_boxplot(dataframe: pd.DataFrame, keyword: str, ans_box_color: str = 'thistle', q_box_color: str = 'plum' ):
+def create_ans_len_boxplot(dataframe: pd.DataFrame, keyword: str, ans_box_color: str = 'thistle', q_box_color: str = 'purple' ):
     ''''Generates a boxplot comparing question and answer lengths for keyword-filtered data.
 
     This function filters an input DataFrame based on a keyword found in the 
@@ -164,7 +161,7 @@ def create_ans_len_boxplot(dataframe: pd.DataFrame, keyword: str, ans_box_color:
     colors for question and answer length distributions.
 
     Note: This function relies on external helper functions `filter_df_by_keyword` 
-    and `get_str_lengths` to perform filtering and length calculations, respectively.
+    and `get_clean_word_counts` to perform filtering and word length calculations, respectively.
 
     Parameters
     ----------
@@ -204,8 +201,8 @@ def create_ans_len_boxplot(dataframe: pd.DataFrame, keyword: str, ans_box_color:
     if filter_kw_questions is not None:
         
         # Use the helper function to get question and answer lengths
-        q_len = get_str_lengths(filter_kw_questions, 'question')
-        ans_len = get_str_lengths(filter_kw_questions, 'answer')
+        q_len = get_clean_word_counts(filter_kw_questions, 'question')
+        ans_len = get_clean_word_counts(filter_kw_questions, 'answer')
         
        # Prepare Data and Labels Lists for boxplot
         plot_data = [ans_len, q_len] 
@@ -227,7 +224,7 @@ def create_ans_len_boxplot(dataframe: pd.DataFrame, keyword: str, ans_box_color:
             patch.set_facecolor(color)
             
         plt.title(f"Distribution of Question vs. Answer Lengths for '{keyword}' questions")
-        plt.xlabel('String length')
+        plt.xlabel('Word count')
         plt.tight_layout() 
         plt.show()
 
