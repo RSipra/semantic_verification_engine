@@ -97,9 +97,10 @@ See individual function docstrings for detailed parameter and return information
 """
 
 # Import necessary libraries
-
+from collections import OrderedDict
 import re
-from typing import List, Any, Union, Optional # For Python < 3.10
+from sre_parse import Tokenizer
+from typing import List, Any, Union, Optional, Tuple, Set # For Python < 3.10
 import numpy as np
 import pandas as pd
 import seaborn as sns
@@ -109,10 +110,23 @@ from matplotlib.ticker import MultipleLocator
 from matplotlib.axes import Axes
 from IPython.display import display
 from IPython.core.display import Markdown
-from scipy import stats
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
+import networkx as nx
+from word2number import w2n
+from scipy import stats
+from scipy.sparse import spmatrix
 
+# Import custom methods from project scripts
+from utils import utils_paths as up
 
+# --- CONFIGURATION & CONSTANTS ---
+
+# master list of standard interrogative keywords to categorize types of questions in trivia dataset
+INTERROGATIVE_KEYWORDS_LIST = [
+    'what', 'name', 'who', 'where', 'wheres', 'when', 'whats', 
+    'whose', 'which', 'how', 'whom', 'why'
+]
 
 #=============================#
 ##  A. HELPER FUNCTIONS       #
@@ -137,7 +151,7 @@ def filter_df_by_keyword(dataframe: pd.DataFrame, question_keyword: 'str') -> pd
     :rtype: pd.DataFrame
     '''
     # Filter main dataframe
-    filter_kw_questions = dataframe.loc[dataframe['question keywords'].apply(lambda x: question_keyword in x)]
+    filter_kw_questions = dataframe.loc[dataframe['question tokens'].apply(lambda x: question_keyword in x)]
     return filter_kw_questions
 
 # Helper function that returns a Series of the word counts for a column of interest (e.g. 'question' or 'answer') 
@@ -156,10 +170,124 @@ def get_clean_word_counts(dataframe: pd.DataFrame, column_name: str) -> pd.Serie
     """
     return dataframe[column_name].apply(lambda x: len(re.findall(r'\b\w+\b', x)) if pd.notnull(x) else 0)
 
+# Helper function to tag questions with a `question keyword` based on question type
+def tag_questions_by_keyword_list(df: pd.DataFrame,
+                                  keyword_column: str,
+                                  trigger_keyword_list: list,
+                                  new_column_name: str) -> pd.DataFrame:
+    """
+    Tags rows in a DataFrame based on the presence of keywords from a trigger list
+    in a specified tokenized keyword column.
+
+    :param df: Input DataFrame.
+    :param keyword_column: Name of the column in df containing lists of tokens.
+    :param trigger_keyword_list: List of keywords to search for.
+    :param new_column_name: Name of the new column to create with the tags.
+    :return: DataFrame with the new tag column added.
+    :rtype: pd.DataFrame
+    """
+    df_copy = df.copy() # Work on a copy
+    df_copy[new_column_name] = 'N/A' # Default to 'N/A'
+
+    tag_results = df_copy[keyword_column].apply(
+        lambda tokens: [word for word in trigger_keyword_list if word in tokens] or 'N/A'
+    )
+    df_copy[new_column_name] = tag_results
+    return df_copy
+
+def get_main_keyword(tag_list):
+    """
+    Extracts a primary keyword or assigns a category from a tag list.
+
+    This function is designed to process the 'factual_recall_keyword' column,
+    which may contain lists of identified factual recall keywords or the string 'N/A'.
+    If the input is a non-empty list, it returns the first keyword from that list.
+    If the input is the string 'N/A', it returns 'Non-Factual'.
+    For any other input type or an empty list, it returns 'Other'.
+
+    This helps in creating a single, categorical representation for grouping
+    or analysis.
+
+    :param tag_list: The input tag, typically from a DataFrame column.
+                     Expected to be a list of strings (keywords) or the string 'N/A'.
+    :type tag_list: Any (practically list[str] | str)
+    :return: The primary keyword (first from the list), 'Non-Factual', or 'Other'.
+    :rtype: str
+    """
+    if isinstance(tag_list, list) and len(tag_list) > 0:
+        return tag_list[0]  # Take the first keyword from the list
+    elif tag_list == 'N/A':
+        return 'Non-Factual' 
+    return 'Other'
+
+# Helper function for identifying unique pairs from a cosine similarity score matrix
+def get_unique_pairwise_scores(similarity_matrix: np.ndarray, k: int = 1) -> pd.Series:
+    """
+    Extracts the unique off-diagonal elements from a square similarity matrix
+    (e.g., upper triangle with k=1) and returns them as a pandas Series.
+
+    :param similarity_matrix: An N x N NumPy array of similarity scores.
+                              Expected to be symmetric.
+    :type similarity_matrix: np.ndarray
+    :param k: Which diagonal to offset from. k=0 includes the main diagonal.
+              k=1 for upper triangle excluding main diagonal.
+              k=-1 for lower triangle excluding main diagonal.
+              Defaults to 1 (upper triangle, no diagonal).
+    :type k: int, optional
+    :return: A pandas Series containing the unique off-diagonal pairwise scores.
+             Returns an empty Series if the matrix is too small (N <= 1).
+    :rtype: pd.Series
+    """
+    if not isinstance(similarity_matrix, np.ndarray) or \
+       similarity_matrix.ndim != 2 or \
+       similarity_matrix.shape[0] != similarity_matrix.shape[1]:
+        print(f"Error: Input is not a valid square 2D NumPy array.") 
+        return pd.Series(dtype=float) # Return empty Series
+
+    n = similarity_matrix.shape[0]
+    if n <= 1:
+        print("Warning: Matrix is too small for off-diagonal pairwise comparison.")
+        return pd.Series(dtype=float) # Return empty Series
+
+    if k > 0: # Upper triangle
+        indices = np.triu_indices(n, k=k)
+    elif k < 0: # Lower triangle
+        indices = np.tril_indices(n, k=k)
+    else: # k=0, includes diagonal, want k=1 or k=-1 for unique pairs
+        # For safety, default to upper triangle if k=0 is passed mistakenly
+        print("Warning: k=0 includes the diagonal. For unique pairwise scores, use k=1 or k=-1.")
+        indices = np.triu_indices(n, k=1)
+
+    # flatten matrix into a list of tuples and then convert to a Series
+    pairwise_scores = similarity_matrix[indices]
+    scores_series = pd.Series(pairwise_scores)
+    return scores_series
+
+# helper function to search the `answer tokens` column for number-as-words
+def find_answer_with_number_word_gt_10(token_list):
+    """
+    Checks if a list of tokens contains a number word representing a value > 10.
+    This simple version checks individual tokens; it won't combine
+    tokens like ['twenty', 'one'] into 21.
+    """
+    if not isinstance(token_list, list):
+        return False # Or handle as an error/log
+    for token in token_list:
+        try:
+            # Assuming tokens are already preprocessed (e.g., lowercased)
+            num = w2n.word_to_num(token)
+            if num > 10:
+                return True # Found such a number word
+        except ValueError:
+            # Token is not a recognized number word by w2n
+            continue
+    return False
+
+
 ## A.2. Calculation Helpers
 #-------------------------#
 
-# Helper function to get the descriptive statistics for a question keyword
+# Helper function to get the descriptive statistics for a question tokens
 def get_len_descriptive_stats(question_keyword: str, question_lengths: pd.Series, answer_lengths: pd.Series) -> dict[str, Any]:
     # pylint: disable=unsubscriptable-object
     """
@@ -283,8 +411,302 @@ def get_correlation_strength(r_value: float) -> str:
     else: # abs_r >= 0.8
         return "Very Strong"
     
+
+def print_similarity_matrix_stats(
+    similarity_matrix: np.ndarray,
+    matrix_name: str = "Pairwise Similarity",
+    desired_percentiles: Optional[List[float]] = None
+) -> None:
+    """
+    Calculates and prints descriptive statistics for a square similarity matrix,
+    focusing on the unique off-diagonal elements (pairwise scores).
+
+    :param similarity_matrix: The N x N NumPy array of similarity scores.
+                              Expected to be symmetric with 1s on the diagonal
+                              if it's a self-similarity matrix (e.g., Q-Q).
+    :type similarity_matrix: np.ndarray
+    :param matrix_name: A descriptive name for the matrix, used in print statements.
+                        Defaults to "Pairwise Similarity".
+    :type matrix_name: str, optional
+    :param desired_percentiles: A list of percentiles to include in the pandas describe() output.
+                                Defaults to [0.25, 0.5, 0.65, 0.66, 0.75, 0.90, 0.95, 0.99].
+    :type desired_percentiles: list[float], optional
+    :return: None
+    :rtype: None
+    """
+    # Basic validation for the input matrix
+    if not isinstance(similarity_matrix, np.ndarray) or \
+       similarity_matrix.ndim != 2 or \
+       similarity_matrix.shape[0] != similarity_matrix.shape[1]:
+        print(f"Error: Input for '{matrix_name}' is not a valid square 2D NumPy array.")
+        return
+
+    n = similarity_matrix.shape[0]
+
+    print(f"\n--- Statistics for {matrix_name} ---")
+    print(f"* Original matrix shape: {similarity_matrix.shape}")
+
+    scores_series = get_unique_pairwise_scores(similarity_matrix)
+
+    if desired_percentiles is None:
+        desired_percentiles = [0.25, 0.5, 0.65, 0.66, 0.75, 0.90, 0.95, 0.99]
+
+    total_val = len(scores_series)
+    print(f"* Number of unique pairwise scores (off-diagonal): {total_val}")
+
+    if total_val > 0:
+        non_zero_count = (scores_series != 0).sum()
+        print(f"* Percentage of non-zero scores: {(non_zero_count / total_val) * 100:.2f}%") # Changed to .2f for percentages
+        print('\nDescriptive statistics for non-diagonal scores:\n', '-' * 50)
+        print(scores_series.describe(percentiles=desired_percentiles).round(4))
+    else:
+        print("* No off-diagonal pairwise scores to describe (e.g., for a 1x1 matrix).")
+    print('-' * 50)
+    
+
+def get_duplicates_with_graph(df_for_analysis: pd.DataFrame, threshold_list: List[float],
+                              similarity_matrix: np.ndarray) -> Tuple[pd.DataFrame, pd.DataFrame]:
+    """
+    Identifies groups of duplicate or near-duplicate questions based on a
+    similarity matrix across a list of specified thresholds. It adds flags
+    to the detailed output to indicate if questions or groups are newly
+    identified at each progressively lower threshold.
+
+    For each threshold, it finds question pairs meeting the similarity criterion
+    and groups them using a graph-based connected components approach.
+
+    It returns two DataFrames:
+    1.  `results_df`: A detailed DataFrame where each row represents a question
+        belonging to a duplicate/similar group. This includes:
+        - 'threshold': The similarity threshold at which this grouping was identified.
+        - 'group_id': A unique identifier for the group at that threshold.
+        - 'group_size': The number of questions in that specific group.
+        - 'original_question_id': The original index label of the question from df_for_analysis. # ADDED
+        - 'question_index_position': The 0-based integer position (for cross-ref with matrix).
+        - 'question_text': The text of the question.
+        - 'answer_text': The text of the answer.
+        - 'newly_grouped_q': (bool) True if this question first appeared in any
+                             group (size > 1) at this current threshold.
+        - 'new_or_expanded_group': (bool) True if the group this question belongs to
+                                   contains at least one question that is newly
+                                   grouped at this threshold.
+    2.  `threshold_summary_df`: A summary DataFrame where each row corresponds
+        to a tested threshold, detailing metrics like the number of pairs,
+        groups (size > 1), new pairs, new groups (size > 1), and new questions
+        identified at that threshold level relative to the previous (higher) threshold.
+
+    Assumptions:
+    - similarity_matrix rows/columns correspond to the 0-based integer positions
+      of questions in df_for_analysis. df_for_analysis.iloc[pos] is used.
+    - df_for_analysis is indexed by original question IDs and has 'question' and 'answer' columns.
+    - NetworkX (nx) is installed and imported (import networkx as nx).
+
+    :param df_for_analysis: DataFrame containing 'question' and 'answer' columns,
+                            indexed by original question IDs. Its row order must
+                            align with similarity_matrix dimensions for .iloc access.
+    :type df_for_analysis: pd.DataFrame
+    :param threshold_list: A list of similarity thresholds to test (e.g., [1.0, 0.98, 0.95]).
+                           Will be processed from highest to lowest.
+    :type threshold_list: list[float]
+    :param similarity_matrix: An N x N NumPy array of pairwise question similarity scores.
+    :type similarity_matrix: np.ndarray
+    :return: A tuple of two pandas DataFrames: (results_df, threshold_summary_df).
+             Returns two empty DataFrames if no groups (size > 1) are found across all thresholds.
+    :rtype: tuple[pd.DataFrame, pd.DataFrame]
+    """
+    all_rows_detailed_data = []
+    threshold_run_summary_list = []
+
+    all_pairs_found_in_higher_thresholds: Set[frozenset] = set()
+    # Stores 0-based matrix positions of questions already in any group (size > 1)
+    all_question_positions_ever_grouped: Set[int] = set()
+    num_actual_groups_in_higher_threshold = 0
+
+    # Create a mapper from 0-based matrix position to original_question_id
+    # This assumes df_for_analysis's current row order matches the similarity_matrix
+    # and it has an 'original_question_id' column.
+    if 'original_question_id' not in df_for_analysis.columns:
+        raise ValueError("df_for_analysis must contain an 'original_question_id' column.")
+    # Ensure df_for_analysis has a simple 0-N index for reliable iloc if it was changed
+    # For this mapper, we just need the values in order.
+    id_mapper_series = pd.Series(df_for_analysis['original_question_id'].values)
+
+
+    for threshold_score in sorted(list(set(threshold_list)), reverse=True):
+        row_indices, col_indices = np.where(similarity_matrix >= threshold_score)
+
+        current_threshold_pairs_set = set()
+        for r_idx, c_idx in zip(row_indices, col_indices):
+            if r_idx < c_idx: # r_idx, c_idx are 0-based matrix positions
+                current_threshold_pairs_set.add(frozenset((r_idx, c_idx)))
+
+        newly_added_pairs_at_this_step = current_threshold_pairs_set - all_pairs_found_in_higher_thresholds
+
+        G = nx.Graph()
+        # Graph nodes will be 0-based matrix positions
+        G.add_edges_from(list(current_threshold_pairs_set))
+        all_connected_components = list(nx.connected_components(G))
+        
+        actual_duplicate_groups = [g for g in all_connected_components if len(g) > 1]
+        # Sort groups based on the smallest matrix position in each group for consistent group_id
+        actual_duplicate_groups_sorted = sorted(actual_duplicate_groups, key=lambda grp: min(grp))
+
+        if not actual_duplicate_groups_sorted:
+            print(f"INFO: No groups (size > 1) formed or existing at similarity >= {threshold_score:.2f}.")
+            threshold_run_summary_list.append({
+                'threshold': threshold_score, 'total_pairs_found': len(current_threshold_pairs_set),
+                'new_pairs_at_this_threshold': len(newly_added_pairs_at_this_step),
+                'total_distinct_groups': 0,
+                'new_groups_at_this_threshold': 0 - num_actual_groups_in_higher_threshold,
+                'total_questions_in_groups': 0, 'new_questions_in_groups': 0
+            })
+            all_pairs_found_in_higher_thresholds = current_threshold_pairs_set
+            # all_question_positions_ever_grouped remains unchanged
+            num_actual_groups_in_higher_threshold = 0
+            continue
+
+        # print(f"\n--- Results for Threshold >= {threshold_score:.2f} ---")
+        # print(f"  Total unique pairs found: {len(current_threshold_pairs_set)}")
+        # print(f"  Newly identified unique pairs at this step: {len(newly_added_pairs_at_this_step)}")
+        # print(f"  Total distinct groups (size > 1) found: {len(actual_duplicate_groups_sorted)}")
+
+        group_id_counter = 1
+        current_question_positions_in_groups_this_threshold_set = set()
+
+        for group_member_positions_set in actual_duplicate_groups_sorted:
+            current_group_size = len(group_member_positions_set)
+            unique_group_identifier = f"Thresh{threshold_score:.2f}_Group{group_id_counter}"
+
+            is_group_new_or_expanded = any(
+                pos not in all_question_positions_ever_grouped for pos in group_member_positions_set
+            )
+
+            for question_pos in sorted(list(group_member_positions_set)): # question_pos is 0-based
+                current_question_positions_in_groups_this_threshold_set.add(question_pos)
+                is_this_question_newly_grouped = question_pos not in all_question_positions_ever_grouped
+
+                try:
+                    original_q_id = id_mapper_series.iloc[question_pos] # Map position to original ID
+                    question_text = df_for_analysis['question'].iloc[question_pos]
+                    answer_text = df_for_analysis['answer'].iloc[question_pos]
+                    
+                    row_data = {
+                        'threshold': threshold_score,
+                        'group_id': unique_group_identifier,
+                        'group_size': current_group_size,
+                        'original_question_id': original_q_id,       # ADDED
+                        'matrix_position': question_pos,             # RENAMED for clarity
+                        'question_text': question_text,
+                        'answer_text': answer_text,
+                        'newly_grouped_q': is_this_question_newly_grouped,
+                        'new_or_expanded_group': is_group_new_or_expanded
+                    }
+                    all_rows_detailed_data.append(row_data)
+                except (IndexError, KeyError) as e: # Catch potential errors from iloc or id_mapper
+                    print(f"    WARN: Error accessing data for position {question_pos} \
+                        (Original ID might be {id_mapper_series.get(question_pos, 'N/A')}): {e}. Skipping.")
+            group_id_counter += 1
+            
+        # Gather metrics for the threshold summary table
+        num_total_pairs_this_thresh = len(current_threshold_pairs_set)
+        num_newly_added_pairs_count = len(newly_added_pairs_at_this_step)
+        num_total_actual_groups_this_thresh = len(actual_duplicate_groups_sorted)
+        
+        num_total_questions_in_actual_groups_this_thresh = len(current_question_positions_in_groups_this_threshold_set)
+        # Compare sets of 0-based positions for "newly added questions"
+        num_newly_added_questions_in_groups = len(current_question_positions_in_groups_this_threshold_set - 
+                                                  all_question_positions_ever_grouped)
+        num_new_groups_this_thresh = num_total_actual_groups_this_thresh - num_actual_groups_in_higher_threshold
+
+        threshold_run_summary_list.append({
+            'threshold': threshold_score,
+            'total_pairs_found': num_total_pairs_this_thresh,
+            'new_pairs_at_this_threshold': num_newly_added_pairs_count,
+            'total_distinct_groups': num_total_actual_groups_this_thresh,
+            'new_groups_at_this_threshold': num_new_groups_this_thresh,
+            'total_questions_in_groups': num_total_questions_in_actual_groups_this_thresh,
+            'new_questions_in_groups': num_newly_added_questions_in_groups
+        })
+        
+        all_pairs_found_in_higher_thresholds = current_threshold_pairs_set
+        all_question_positions_ever_grouped.update(current_question_positions_in_groups_this_threshold_set)
+        num_actual_groups_in_higher_threshold = num_total_actual_groups_this_thresh
+
+    # Create the final DataFrames
+    results_df = pd.DataFrame(all_rows_detailed_data)
+    threshold_summary_df = pd.DataFrame(threshold_run_summary_list)
+
+    # Final sorting and return logic
+    if not results_df.empty:
+        results_df = results_df.sort_values(
+            by=['threshold', 'group_id', 'original_question_id'], # Sort by original_id within group
+            ascending=[False, True, True]
+        )
+    if not threshold_summary_df.empty:
+        threshold_summary_df = threshold_summary_df.sort_values(by='threshold', ascending=False)
+    
+    # # Handle case where results_df might be empty but summary is not (e.g. no groups > 1 found)
+    # if results_df.empty and not threshold_summary_df.empty:
+    #     print("No duplicate/similar groups (size > 1) found to populate detailed DataFrame, but threshold summary is available.")
+    #     return pd.DataFrame(), threshold_summary_df
+    # elif results_df.empty and threshold_summary_df.empty:
+    #     print("No pairs or groups (size > 1) found across any specified thresholds.")
+        # return pd.DataFrame(), pd.DataFrame()
+
+    return results_df, threshold_summary_df
+        
 ## A.3. Plotting and Formatting Helpers:
 #--------------------------------------#
+
+# Helper function to plot a bar chart of categorical columns using *pre-aggregated data*
+def plot_categorical_distribution(category_counts: pd.Series,
+                                  total_items: int,
+                                  title: str,
+                                  xlabel: str,
+                                  ylabel: str = "Frequency",
+                                  color: str = 'mediumpurple',
+                                  figsize: tuple = (10, 6)): # Adjusted figsize for better labels
+    """
+    Generates and displays a bar chart for the distribution of categories.
+
+    :param category_counts: pandas Series with categories as index and counts as values.
+    :param total_items: The total number of items for calculating percentages.
+    :param title: Title for the plot.
+    :param xlabel: Label for the x-axis (categories).
+    :param ylabel: Label for the y-axis (counts/frequency).
+    :param color: Color for the bars.
+    :param figsize: Figure size.
+    """
+    if category_counts.empty:
+        print(f"No data to plot for: {title}")
+        return
+
+    categories = category_counts.index.tolist()
+    counts = category_counts.values.tolist()
+    percentages = (category_counts / total_items * 100).values.tolist()
+
+    plt.figure(figsize=figsize)
+    bars = plt.bar(categories, counts, color=color)
+
+    for bar, count_val, pct_val in zip(bars, counts, percentages):
+        if count_val > 0: # Only label non-zero bars
+            label = f"{int(count_val)} ({pct_val:.0f}%)" # Ensure count_val is int for f-string
+            plt.text(bar.get_x() + bar.get_width() / 2,
+                     bar.get_height(),
+                     label,
+                     ha='center',
+                     va='bottom', # Place text at the top of the bar
+                     fontsize=9,  # Adjusted fontsize
+                     rotation=0) # Ensure labels are horizontal
+
+    plt.ylabel(ylabel)
+    plt.xlabel(xlabel)
+    plt.title(title)
+    plt.ylim(0, max(counts) * 1.25) # Increased upper limit slightly for labels
+    plt.xticks(rotation=45, ha="right") # Rotate x-labels if categories are long
+    plt.grid(axis='y', linestyle='--', alpha=0.7)
+    plt.tight_layout()
+    plt.show()
 
 # Helper function format the descriptive stats for quesiton and answer lengths in to a pretty table
 def format_descriptive_stats_table(metrics_dict: dict[str, Any]) -> pd.DataFrame:
@@ -468,6 +890,440 @@ def interpret_correlation(r_value: float, p_value: float, alpha: float =0.05) ->
 
     return interpretation_string, strength_desc
 
+## A.4. "Dataset Standardizing Pipeline" Helpers:
+#------------------------------------------------#
+# create three columns with token lists from questions, answers, and combined (question, answer) in the datagrame respectively
+def create_token_columns(dataframe: pd.DataFrame, tokenizer) -> pd.DataFrame:
+    """
+    Adds tokenized columns for questions and answers to the DataFrame.
+
+    This function applies a provided tokenizer to the 'question' and 'answer'
+    columns, creating new columns with lists of unique tokens where the order
+    of first appearance is preserved. It also adds a column with the
+    combined tokens from both.
+
+    Note: This function modifies the input DataFrame directly (in place) by
+    adding new columns, and also returns the modified DataFrame.
+
+    :param dataframe: The input pandas DataFrame. Must contain 'question'
+                      and 'answer' columns with string data.
+    :type dataframe: pd.DataFrame
+    :param tokenizer: A function that takes a string as input and returns
+                      a list of token strings.
+    :type tokenizer: Callable[[str], List[str]]
+    :return: The modified DataFrame with 'question tokens', 'answer tokens',
+             and 'combined tokens' columns added.
+    :rtype: pd.DataFrame
+    """
+    # Create unique 'keywords' column by tokenizing 'question' and 'answer', excluding unwanted words - keep the same order for TF-IDF later
+    dataframe['question tokens'] = dataframe.apply(lambda row: list(OrderedDict.fromkeys(tokenizer(row['question']))), axis=1)
+    dataframe['answer tokens'] = dataframe.apply(lambda row: list(OrderedDict.fromkeys(tokenizer(row['answer']))), axis=1)
+    dataframe['combined tokens'] = dataframe.apply(lambda row: row['question tokens']+ row['answer tokens'], axis=1)
+    
+    return dataframe
+
+
+# Create TF-IDF matricies for the new question and answer column using the existing vectorizer to transform the new questions.
+def transform_for_similarity_check(input_dataframe: pd.DataFrame, vectorizer: TfidfVectorizer) -> Tuple[spmatrix, spmatrix]:
+    """
+    Prepares text data and transforms question and answer tokens into TF-IDF
+    (or other) vector matrices using a pre-fitted vectorizer.
+
+    This function takes a DataFrame containing tokenized questions and answers,
+    converts those token lists into single strings, and then applies the
+    .transform() method of a given fitted vectorizer to generate separate
+    numerical vector representations for questions and answers.
+
+    Assumptions:
+    - The `vectorizer` has already been fitted on a representative corpus.
+    - `input_dataframe` contains the columns 'question tokens' and 'answer tokens',
+      where each entry is a list of strings (tokens).
+
+    :param input_dataframe: DataFrame containing tokenized text data.
+    :type input_dataframe: pd.DataFrame
+    :param vectorizer: A pre-fitted scikit-learn vectorizer object
+                      (e.g., TfidfVectorizer, CountVectorizer).
+    :type vectorizer: VectorizerMixin
+    :return: A tuple containing two sparse matrices: (X_questions, Y_answers).
+    :rtype: tuple[scipy.sparse.spmatrix, scipy.sparse.spmatrix]
+
+    :Example:
+        >>> # Assume global_vectorizer is a TfidfVectorizer already fitted on a corpus
+        >>> # Assume df_cleaned has 'question tokens' and 'answer tokens' columns
+        >>> X_q_cleaned, Y_a_cleaned = transform_for_similarity_check(df_cleaned, global_vectorizer)
+        >>> print(type(X_q_cleaned))
+        <class 'scipy.sparse._csr.csr_matrix'>
+    """
+    # Work on a copy to avoid modifying the original DataFrame passed to the function
+    dataframe = input_dataframe.copy()
+    
+    # Convert the token lists to space-separated strings
+    dataframe['question_tokens_str'] = dataframe['question tokens'].apply(lambda token_list: ' '.join(token_list))
+    dataframe['answer_tokens_str'] = dataframe['answer tokens'].apply(lambda token_list: ' '.join(token_list))
+
+    # Apply the pre-fitted vectorizer using .transform()
+    X_questions = vectorizer.transform(dataframe['question_tokens_str'])
+    Y_answers = vectorizer.transform(dataframe['answer_tokens_str'])
+    
+    return X_questions, Y_answers
+
+def get_input_df(input_file: Union[str , pd.DataFrame]) -> Union[pd.DataFrame, None]:
+    """
+    Ensures the input is a valid, non-empty pandas DataFrame.
+
+    If the input is already a valid DataFrame, it is returned directly.
+    If the input is a string, it is treated as a file path and validated
+    to ensure it is a readable CSV file. If valid, the CSV is loaded and
+    returned as a DataFrame.
+    If the input is neither a valid DataFrame nor a path to a readable CSV,
+    an error message is printed and None is returned.
+    
+    Note: This function is the primary input validation and loading step for
+    the main data ingestion pipeline.
+
+    :param input_file: Either a pandas DataFrame or a string representing the
+                       file path to a CSV file.
+    :type input_file: Union[str, pd.DataFrame]
+    :return: A pandas DataFrame if the input is valid, otherwise None.
+    :rtype: Union[pd.DataFrame, None]
+    """
+    # If the input_file is a dataframe and not empty, no processing is required
+    if isinstance(input_file, pd.DataFrame):
+        if not input_file.empty:
+            print("Input is already a valid DataFrame. Proceeding.")
+            return input_file
+        else:
+            print("Input is an empty DataFrame. Unable to continue.")
+            return None
+    
+    # If not a DataFrame, check if it's a string path and validate it
+    if isinstance(input_file, str):
+        if up.validate_csv_path(input_file):
+            try:
+                df = pd.read_csv("input_file")
+                print(f"CSV file '{input_file}' loaded successfully!")
+                return df
+            except Exception as e:
+                # Catch potential errors during the full read, even if validation passed
+                print(f"Error reading the full CSV file '{input_file}': {e}")
+                return None
+        else:
+            # validate_csv_path will print its own specific error message
+            return None
+        
+    # If input is not a DataFrame or a string
+    print(f"Error: Input must be a pandas DataFrame or a file path string, but got {type(input_file)}.")
+    return None
+    
+def validate_new_questions_df(dataframe: pd.DataFrame) -> Union[Tuple[pd.DataFrame, pd.DataFrame], None]:
+    """
+    Validates a DataFrame of new questions against a standard schema.
+
+    This function performs several quality checks:
+    1.  Confirms the DataFrame has the correct columns and data types, attempting
+        to cast types if necessary.
+    2.  Identifies rows with any NaN values, separates them into a `nan_df` for
+        manual review, and removes them from the main processing DataFrame.
+    3.  Removes any fully duplicate rows.
+    4.  Prints a summary report of all validation actions taken.
+
+    Note: This is a helper function intended for the first stage of the
+    main data ingestion pipeline.
+
+    :param dataframe: The input pandas DataFrame of new questions to validate.
+    :type dataframe: pd.DataFrame
+    :return: A tuple containing (cleaned_df, nan_df) if validation is successful.
+             `cleaned_df` is the validated data with bad rows removed.
+             `nan_df` contains the rows that had NaN values.
+             Returns None if a critical error occurs (e.g., wrong columns, type conversion fails).
+    :rtype: Union[Tuple[pd.DataFrame, pd.DataFrame], None]
+    """
+    # work on a copy of the dataframe for safety
+    df = dataframe.copy()
+    
+    # get shape of dataframe
+    original_num_rows = df.shape[0]
+    original_num_columns = df.shape[1]
+    
+    ## Column check
+    # check for correct size and labels:
+    expected_column_list = ['question', 'answer', 'question_type', 'is_numeric_answer', 'force_add_as_duplicate']
+    
+    if set(df.columns) != set(expected_column_list):
+        print(f"Validation Error: Columns do not match standardized format. Expected {expected_column_list}, but got {list(df.columns)}. Unable to continue.")
+        return None
+    
+    # check column type and change to type if not correct.
+    expected_column_types =  {
+        'question': str,  # str columns are 'object' in pandas
+        'answer': str,
+        'question_type': str,
+        'is_numeric_answer': bool,
+        'force_add_as_duplicate': bool
+    }
+    for col, expected_dtype in expected_column_types.items():
+        if df[col].dtype != expected_dtype:
+            try:
+                # Handle boolean conversion from strings like 'True'/'False' if needed
+                if expected_dtype == 'bool':
+                    if df[col].dtype == 'object':
+                        # Map string 'True'/'False' to boolean True/False
+                        bool_map = {'True': True, 'False': False, 'true': True, 'false': False, True: True, False: False}
+                        df[col] = df[col].map(bool_map)
+                
+                df[col] = df[col].astype(expected_dtype)
+                print(f"INFO: Converted column '{col}' to {expected_dtype}")
+            except Exception as e:
+                print(f"Validation Error: Could not convert column '{col}' to {expected_dtype}. Reason: {e}")
+                return None
+    
+    ## Row check
+    # initialize
+    num_nan = 0
+    nan_df = pd.DataFrame(columns=df.columns) 
+    
+    # check for NaN, if any NaN is found:
+    if df.isna().any().any():
+        nan_df = df[df.isna().any(axis=1)].copy()
+        num_nan = len(nan_df)
+        df.dropna(inplace=True)
+    
+    # Drop any unintentional duplicates
+    num_rows_before_drop_dupes = len(df)
+    # Id rows to check for duplicates (those NOT flagged as forced)
+    unintentional_dupes_subset = df[~df['force_add_as_duplicate']]
+    # Id which of these are duplicates based on 'question' and 'answer', keep first
+    duplicate_mask = unintentional_dupes_subset.duplicated(subset=['question', 'answer'], keep='first')
+    # Get the index labels of the unintentional duplicates to drop
+    indices_to_drop = duplicate_mask[duplicate_mask].index
+    # Drop these specific rows from the main 'df'
+    df.drop(index=indices_to_drop, inplace=True)
+    
+    # Change in df
+    new_num_rows2 = len(df)
+    duplicates_dropped = num_rows_before_drop_dupes - new_num_rows2
+    
+    # Print validation report for user:
+    print('-'*50)
+    print("Input Validation Report for New Questions")
+    print(f"* Original DataFrame size: {original_num_rows} rows x {original_num_columns} columns.")
+    print(f"* Number of rows with NaNs found: {num_nan}. These rows were removed and returned separately.")
+    print(f"* Number of duplicate rows found and dropped: {duplicates_dropped}.")
+    print(f"* Final validated DataFrame size: {new_num_rows2} rows x {df.shape[1]} columns.")
+    print('-'*50)
+    print('')
+        
+    return df, nan_df   
+
+
+def get_original_id_from_position(dataframe: pd.DataFrame, position: int) -> Any:
+    try:
+        return dataframe['original_question_id'].iloc[position]
+    except IndexError:
+        return None
+
+# check if any new questions are duplicates or near-duplicates of existing questions in the main df
+def check_for_duplicate_questions(new_questions_dataframe: pd.DataFrame,
+                                  main_dataframe: pd.DataFrame,
+                                  vectorizer: TfidfVectorizer,
+                                  critical_threshold: float = 0.90,
+                                  caution_threshold: float = 0.70) -> Tuple[str, pd.DataFrame, dict]:
+    """
+    Checks for duplicates by comparing new questions to an existing main dataset
+    using cosine similarity and returns flags and data for review.
+
+    It uses a tiered threshold system:
+    - Critical (e.g., >=0.90): Aborts the pipeline.
+    - Caution (e.g., >=0.70 to <0.90): Flags for manual review but proceeds.
+
+    :param new_questions_dataframe: DataFrame of new questions to validate.
+    :param main_dataframe: DataFrame of existing questions to compare against.
+    :param vectorizer: A pre-fitted scikit-learn TfidfVectorizer.
+    :param critical_threshold: The similarity score at or above which the pipeline should abort.
+    :param caution_threshold: The similarity score at or above which a warning is issued.
+    :return: A tuple containing:
+             - (str): Pipeline status (3 options "CRITICAL_DUPLICATE_ERROR" / "NEEDS_REVIEW" / "SUCCESS").
+             - (pd.DataFrame): The new_questions_dataframe with 'is_duplicate' and 'needs_manual_review_TEMP' flags set.
+             - (dict): A report dictionary containing two dataframes:
+                - (pd.DataFrame): A DataFrame of questions that failed the critical threshold check.
+                - (pd.DataFrame): A DataFrame of questions that fell into the caution/warning tier.
+    """
+    new_questions_df = new_questions_dataframe.copy()
+    
+    # Transform both sets of questions using the same pre-fitted vectorizer
+    X_questions_new, _ = transform_for_similarity_check(new_questions_df, vectorizer)
+    X_questions_main, _ = transform_for_similarity_check(main_dataframe, vectorizer)
+    
+    # Calculate cross-similarity. Rows: new questions, Columns: main questions.
+    cross_similarity_matrix = cosine_similarity(X_questions_new, X_questions_main)
+    
+    # Add temporary columns to new_questions_df for analysis
+    if cross_similarity_matrix.shape[1] > 0: # Ensure main_dataframe was not empty
+        new_questions_df['max_similarity_score_TEMP'] = cross_similarity_matrix.max(axis=1)
+        # Get the INTEGER POSITION of the most similar existing question
+        new_questions_df['existing_q_pos_max_score_TEMP'] = cross_similarity_matrix.argmax(axis=1)
+    else: # Handle case where main_dataframe is empty
+        new_questions_df['max_similarity_score_TEMP'] = 0.0
+        new_questions_df['existing_q_pos_max_score_TEMP'] = -1
+    
+    # Initialize flags
+    new_questions_df['is_duplicate'] = False
+    new_questions_df['needs_manual_review_TEMP'] = False
+    status = '' 
+    
+    # Tier 1: Critical Duplicate Check 
+    critical_mask = (new_questions_df['max_similarity_score_TEMP'] >= critical_threshold) & \
+                    (new_questions_df['force_add_as_duplicate'] == False)
+    
+    # Tier 2: Caution Duplicate Check ---
+    caution_mask = (new_questions_df['max_similarity_score_TEMP'] >= caution_threshold) & \
+                   (new_questions_df['max_similarity_score_TEMP'] < critical_threshold) & \
+                   (new_questions_df['force_add_as_duplicate'] == False)
+                   
+    # Tier 3: OK to Continue 
+    ok_mask = (new_questions_df['max_similarity_score_TEMP'] < caution_threshold)
+    
+    # Set Flags based on masks 
+    # 1. Intentional duplicates
+    new_questions_df.loc[new_questions_df['force_add_as_duplicate'] == True, 'is_duplicate'] = True
+    
+    # 2. Set flags for other tiers
+    new_questions_df.loc[critical_mask, 'needs_manual_review_TEMP'] = True
+    new_questions_df.loc[critical_mask, 'is_duplicate'] = True
+    new_questions_df.loc[caution_mask, 'needs_manual_review_TEMP'] = True
+    new_questions_df.loc[ok_mask, 'needs_manual_review_TEMP'] = False
+    
+    # Create the dataframes for review
+    critical_review_df = new_questions_df[critical_mask].copy()
+    caution_review_df = new_questions_df[caution_mask].copy()
+
+    # Add the `original_question_id`` of the existing question for easy lookup for manual checking
+    if not critical_review_df.empty:
+        critical_review_df['existing_original_question_id'] = critical_review_df['existing_q_pos_max_score_TEMP'].apply(
+            lambda pos: get_original_id_from_position(main_dataframe, pos)
+        )
+    if not caution_review_df.empty:
+        caution_review_df['existing_original_question_id'] = caution_review_df['existing_q_pos_max_score_TEMP'].apply(
+            lambda pos: get_original_id_from_position(main_dataframe, pos)
+        )
+    
+    # Display report
+    if not critical_review_df.empty:
+        print("\n" + "="*50)
+        print(f"CRITICAL ERROR: Pipeline stopped! {len(critical_review_df)} new question(s) are likely duplicates (score >= {critical_threshold}).")
+        print("  - Refer to the returned 'critical_review_df' for details.")
+        print("ACTION REQUIRED: Please remove these problematic question(s) from your input file and re-run the pipeline.")
+        print("="*50 + "\n")
+        status = 'CRITICAL_DUPLICATE_ERROR'
+        
+    elif not caution_review_df.empty:
+        print(f"WARNING: {len(caution_review_df)} question(s) have moderate similarity ({caution_threshold} <= score < {critical_threshold}) with existing questions.")
+        print(" ACTION Recommended: Manual review of `caution_review_df'.")
+        if not status:
+            status = 'NEEDS_REVIEW'
+     
+    else:
+        status = 'SUCCESS'    
+    # Drop temp columns from the main new_questions_df before returning
+    new_questions_df = new_questions_df.drop(columns=['max_similarity_score_TEMP', 'existing_q_pos_max_score_TEMP'])
+    
+    # data payload - data for user
+    report = {"critical_review_df": critical_review_df, "caution_review_df": caution_review_df}
+    
+    return status, new_questions_df, report
+    
+# Create a data ingestion pipeline to add new questions to main df in a standardized way
+# following the "status / payload" pattern    
+def run_data_ingestion_pipeline(new_questions_input: Union[str , pd.DataFrame], 
+                               main_dataframe: pd.DataFrame, 
+                               vectorizer: TfidfVectorizer,
+                               tokenizer: Tokenizer,
+                               critical_threshold: float = 0.90,
+                               caution_threshold: float = 0.70) -> Tuple[str, Any]:
+    """
+    Orchestrates the ingestion of new trivia questions.
+    Returns a status string and a data payload
+    """
+    main_df = main_dataframe.copy()
+    
+    ## Step 1: Process input with new questions
+    new_questions_df = get_input_df(new_questions_input)
+    
+    # CHECK 1: Ensure the initial DataFrame was loaded 
+    if new_questions_df is None:
+        print("\nPIPELINE HALTED: Input data could not be loaded or was invalid.")
+        return 'LOAD_ERROR', None
+         
+    ## Step 2: Validate input
+    validation_result = validate_new_questions_df(new_questions_df)
+    
+    # CHECK 2-1: Ensure the validation step was successful 
+    if validation_result is None:
+        print("\nPIPELINE HALTED: DataFrame validation failed. See messages above.")
+        return 'VALIDATION_ERROR', None
+    
+    # If validation succeeded, unpack the tuple
+    validated_new_df, nan_rows_df = validation_result
+    
+    # CHECK 2-2: If dataframe is empty because all rows had NaNs
+    if validated_new_df.empty:
+        print("\nPIPELINE STOPPED: No valid data rows remain after initial validation and cleaning.")
+        return 'EMPTY_AFTER_VALIDATION', nan_rows_df # review NaN manually.
+    
+    ## Step 3: Add the token columns:
+    tokenized_new_questions_df = create_token_columns(validated_new_df, tokenizer)
+    
+    ## Step 4: Add the 'interrogative_keyword' column
+    # 4.1. master list of interrogative keywords based on main_dataframe EDA
+    # 4.2. Populate the `interrogative_keyword` column
+    tokenized_new_questions_df = tag_questions_by_keyword_list(
+                            df = tokenized_new_questions_df, 
+                            keyword_column = 'question tokens', 
+                            trigger_keyword_list = INTERROGATIVE_KEYWORDS_LIST,
+                            new_column_name='interrogative_keyword')
+    
+    ## Step 5: Check for duplicates to existing questions
+    pipeline_duplicates_status, new_questions_clean_df, duplicates_user_report  = check_for_duplicate_questions(tokenized_new_questions_df, 
+                                                                                                                    main_dataframe,
+                                                                                                                    vectorizer,
+                                                                                                                    critical_threshold,
+                                                                                                                    caution_threshold)  # pylint: disable=unbalanced-tuple-unpacking
+    
+    if pipeline_duplicates_status == 'CRITICAL_DUPLICATE_ERROR':
+        # error messages already printed by check_for_duplicate_questions
+        return 'CRITICAL_DUPLICATE_ERROR', duplicates_user_report
+    
+    # unpack the duplicates_user_report
+    critical_duplicates_df = duplicates_user_report['critical_review_df']
+    caution_duplicates_df = duplicates_user_report['caution_review_df']
+                                                                                                            
+    ## Step 6: Add unique question id for each new question in the `original_question_id` column:
+    current_max_question_id = main_df['original_question_id'].max()
+    start_id_new_questions = current_max_question_id + 1
+    num_new_questions = len(new_questions_clean_df)
+    new_ids= range(start_id_new_questions, start_id_new_questions + num_new_questions, 1)
+    new_questions_clean_df['original_question_id'] = list(new_ids)
+    
+    ## Step 7-1: Remove temporary columns
+    new_questions_clean_df = new_questions_clean_df.drop(columns=['force_add_as_duplicate'])
+    
+    ## Step 7-2: concatenate the processed new_questions dataframe to main_dataframe
+    final_df = pd.concat([main_df, new_questions_clean_df], axis=0)
+    print(f"New questions have been added to the main dataframe. There are now {final_df.shape[0]} questions in the trivia dataset.")
+    print("\n--- Pipeline Completed Successfully ---")
+    
+    # Step 8: final quality checks and payload return
+    
+    # Data payload
+    final_report = {
+        'updated trivia dataset': final_df,
+        'NaN rows report': nan_rows_df,
+        'critical_duplicates_review': critical_duplicates_df,
+        'caution_duplicates_review': caution_duplicates_df
+        
+    }
+    # On success, return the final DataFrame as the payload
+    return 'SUCCESS', final_report
 
 #=====================================#
 ##  B. ANALYSIS ORCHESTRATION FUNCTION #
@@ -886,27 +1742,27 @@ def display_status_map(summary_df: pd.DataFrame) -> None:
 #=====================================#
 
 # Custom function for a keyword N-gram analysis later? e.g. "is it" or "how many"
-def print_common_ngrams(questions_series: pd.Series, ngram_range: tuple = (2, 3), top_n: int = 10) -> None:
+def print_common_ngrams(series: pd.Series, ngram_range: tuple = (2, 3), top_n: int = 10) -> None:
     '''
     Analyzes a pandas Series of text (question strings) to find common n-grams
     and prints the top N most frequent ones.
 
     parameters:
-    questions_series (pd.Series): A pandas Series containing the text strings to analyze.
-                                   Expected to contain question text from a filtered DataFrame.
+    series (pd.Series): A pandas Series containing the text strings to analyze. The method expects the raw
+                        question or answer columns from the filtered DataFrame.
     ngram_range (tuple): The lower and upper boundary of the range of n-values for the n-grams.
                          e.g., (1, 1) for unigrams, (2, 3) for bigrams and trigrams.
                          Defaults to (2, 3).
     top_n (int): The number of top most frequent n-grams to display. Defaults to 10.
     '''
-    print("\nAnalyzing common phrases (n-grams) in this set of questions:")
+    print("\nAnalyzing common phrases (n-grams) in this series:")
 
     # Ensure input is a Series and drop any potential missing values
-    if not isinstance(questions_series, pd.Series):
+    if not isinstance(series, pd.Series):
         print("Error: Input for n-gram analysis must be a pandas Series.")
         return
 
-    questions_text = questions_series.dropna()
+    questions_text = series.dropna()
 
     if questions_text.empty:
         print("No text data available for n-gram analysis after dropping missing values.")
@@ -1083,7 +1939,7 @@ def rank_ngrams_by_tfidf(dataframe: pd.DataFrame,
     """
     df_tfidf = dataframe.copy()
     
-    # 1. Prepare the `answer keywords` column for tf-idf. 
+    # 1. Prepare the `answer' or 'question' keywords` column for tf-idf. 
     #    Convert the list of tokens into a string 
     new_column_name = column_name + '_txt'
     df_tfidf[new_column_name] = df_tfidf[column_name].apply(lambda token_list: ' '.join(token_list))
@@ -1111,3 +1967,83 @@ def rank_ngrams_by_tfidf(dataframe: pd.DataFrame,
         'summed_tfidf_score' : summed_tfidf
     }) 
     return tfidf_scores_df.round(2)
+
+def print_max_simscore_record(similarity_matrix: np.ndarray, dataframe: pd.DataFrame,
+    matrix_name: str = "Pairwise Similarity", num_pairs: int =3 ) -> None:
+    
+    """
+    Finds and prints the details of question pair(s) that exhibit the
+    maximum off-diagonal similarity score in a given similarity matrix.
+
+    This function first calculates the unique off-diagonal pairwise scores,
+    identifies the maximum score, and then retrieves and prints the
+    corresponding question texts, answer texts, positional indices, and
+    original index labels from the provided DataFrame for all pairs
+    achieving this maximum similarity.
+
+    Assumptions:
+    - The rows and columns of `similarity_matrix` correspond to the 0-based
+      integer positions of the questions as they appear in `dataframe`.
+    - `dataframe` is indexed by the original, meaningful question IDs and
+      contains 'question' and 'answer' columns.
+    - `get_unique_pairwise_scores` helper function is defined and accessible.
+
+    :param similarity_matrix: An N x N NumPy array of pairwise similarity scores
+                              (e.g., Q-Q cosine similarities).
+    :type similarity_matrix: np.ndarray
+    :param dataframe: The pandas DataFrame containing the 'question' and 'answer'
+                      texts, indexed by original question IDs. Its order must
+                      match the order used to generate `similarity_matrix`.
+    :type dataframe: pd.DataFrame
+    :param num_pairs: The maximum number of question pairs to display that have the
+                        maximum similarity score. Defaults to 3.
+    :type num_pairs: int, optional
+    :param matrix_name: A descriptive name for the similarity matrix, used in
+                        print statements. Defaults to "Pairwise Similarity".
+    :type matrix_name: str, optional
+    :return: None. The function prints results to the console.
+    :rtype: None
+    """
+    print(f"\n--- Analyzing Maximum Similarity for: {matrix_name} ---")
+    scores_series = get_unique_pairwise_scores(similarity_matrix)
+    exact_max_score = scores_series.max() # avoid floating point precision issues
+    print(f"The exact maximum off-diagonal similarity score to search for is: {exact_max_score}")
+
+    # use the exact_max_score to find its indices in the full qq_similarity_matrix_cleaned
+    row_indices, col_indices = np.where(np.isclose(similarity_matrix, exact_max_score))
+    id_mapper_series = pd.Series(dataframe['original_question_id'].values)
+
+    # filter for unique pairs (r_idx < c_idx) and display
+    print("\nQuestion pair(s) with the max similarity score:")
+    pair_counter = 1
+    any_pair_printed = False
+
+    for r_idx, c_idx in zip(row_indices, col_indices):
+        if r_idx < c_idx:
+            any_pair_printed = True
+    
+            # Get original IDs using the mapper and 0-based matrix positions
+            original_q1_id = id_mapper_series.iloc[r_idx]
+            original_q2_id = id_mapper_series.iloc[c_idx]
+            
+            # Get text using 0-based matrix positions with .iloc on the DataFrame
+            question1_text = dataframe['question'].iloc[r_idx]
+            answer1_text = dataframe['answer'].iloc[r_idx]
+            question2_text = dataframe['question'].iloc[c_idx]
+            answer2_text = dataframe['answer'].iloc[c_idx]
+
+            print(f"\n--- Max Score Pair {pair_counter} (Score: {similarity_matrix[r_idx, c_idx]:.4f}) ---\n")
+            print(f"  Q.{original_q1_id}: {question1_text}")
+            print(f"  Answer: {answer1_text}")
+            print(f"  Q.{original_q2_id}: {question2_text}")
+            print(f"  Answer: {answer2_text}\n")
+            
+            pair_counter += 1
+            if pair_counter > num_pairs:
+                break
+                
+    if not any_pair_printed:
+        print("No distinct off-diagonal pairs found matching the exact max score.")
+    print('-'*50)
+    return None
+            
