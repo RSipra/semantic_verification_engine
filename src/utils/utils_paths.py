@@ -34,6 +34,52 @@ from typing import Optional, List
 # import warnings
 import pandas as pd
 
+def validate_csv_path(input_path: str) -> bool:
+    """
+    Validates a given file path to ensure it is an existing, readable CSV file.
+
+    This function performs three checks:
+    1.  Verifies that the file path has a '.csv' extension (case-insensitive).
+    2.  Confirms that the path points to an actual existing file.
+    3.  Attempts to read the first row of the file to ensure it is a valid and
+        readable CSV format, which helps catch empty or corrupted files.
+
+    Note: It prints an error message to the console if the final read check fails.
+
+    :param input_path: The string or pathlib.Path object representing the file
+                       path to validate.
+    :type input_path: Union[str, Path]
+    :return: True if the path points to a valid, readable CSV file; False otherwise.
+    :rtype: bool
+    """
+    
+    # convert to a Path object
+    file_path = Path(input_path)
+    
+    try:
+        # check if the path ends with '.csv'
+        if file_path.suffix.lower() != '.csv':
+            print(f"Validation Error: File '{input_path}' does not have a .csv extension.")
+            return False
+        
+        # check if the file exists
+        if not file_path.is_file():
+            print(f"Validation Error: File '{input_path}' does not exist or is not a file.")
+            return False
+    
+        # Try to read the first row of the csv to make sure it is readable
+        pd.read_csv(file_path, nrows=1)
+        # all checks have been passed
+        return True
+    
+    except (pd.errors.EmptyDataError, pd.errors.ParserError, FileNotFoundError, PermissionError, UnicodeDecodeError) as e:
+        print(f"Validation Error: Could not read or parse '{input_path}'. Reason: {e}")
+        return False
+    except Exception as e:
+        # Optional: A final catch-all for genuinely unexpected errors
+        print(f"An unexpected error occurred while validating '{input_path}': {e}")
+        return False
+    
 
 def find_project_root(start_path: Optional[str] = None) -> Path:
     """
