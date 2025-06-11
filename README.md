@@ -11,7 +11,7 @@ This is more than just a game — it’s a portfolio project to practice and sho
 - 🎯 Building an MVP from idea to deployment (command logic interface → web app with GUI)
 - 📦 Packaging, modular design & installable project structure
 - 🧪 Testing, versioning, and all those responsible grown-up dev things
-- 🦄 Use of DistilBERT for some really cool magic!✨ (semantic matching of answers, more conversational play...) 
+- 🦄 Use of Sentence-BERT for some really cool magic!✨ (semantic matching of answers, more conversational play...) 
 
 Whether you're here to cast code spells or just play a few rounds of trivia, welcome to a corner of the internet where passion meets Python.
 
@@ -41,6 +41,7 @@ Step into the halls of Hogwarts and test your knowledge with this interactive CL
 
 1. Phase 1: MVP core game logic, unit testing, and pattern awareness
     - Setup environmental and data foundation (download, cleaning, EDA, preprocessing of dataset)
+    - Standardize the dataset and setup a data ingestion pipeline
     - Develop basic core logic and OOP structure for CLI game play   🟣 **← Current phase**
     - Test and refactor the game throughly (using unittest and pytest)
 
@@ -54,7 +55,7 @@ Step into the halls of Hogwarts and test your knowledge with this interactive CL
     - styling and deployment prep.
 
 4. Phase 4+: Enhancements! (the most exciting part)
-    - Runtime NLP with DistilBERT (semantic answer checking, smarter hints, etc)
+    - Runtime NLP with Sentence-BERT (semantic answer checking, smarter hints, etc)
     - Tagging reference of q&a to HP book of origin
     - Easter eggs and themed commands / elements
     - GUI and game state enhancements 
