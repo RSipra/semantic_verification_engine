@@ -100,7 +100,7 @@ See individual function docstrings for detailed parameter and return information
 from collections import OrderedDict
 import re
 from sre_parse import Tokenizer
-from typing import List, Any, Union, Optional, Tuple, Set # For Python < 3.10
+from typing import List, Any, Union, Optional, Tuple, Set, Callable # For Python < 3.10
 import numpy as np
 import pandas as pd
 import seaborn as sns
@@ -125,7 +125,10 @@ from utils import utils_paths as up
 # master list of standard interrogative keywords to categorize types of questions in trivia dataset
 INTERROGATIVE_KEYWORDS_LIST = [
     'what', 'name', 'who', 'where', 'wheres', 'when', 'whats', 
-    'whose', 'which', 'how', 'whom', 'why'
+    'whose', 'which', 'how', 'whom', 'why',
+    # Add common YN starting words
+    'is', 'are', 'was', 'were', 'do', 'does', 'did', 
+    'can', 'could', 'will', 'would', 'should', 'has', 'have'
 ]
 
 #=============================#
@@ -220,6 +223,32 @@ def get_main_keyword(tag_list):
         return 'Non-Factual' 
     return 'Other'
 
+# This helper function to get the top n words from a series - typically used on 'question tokens' and 'answer tokens'
+def get_top_keywords(series_of_keyword_lists: pd.Series, top_n: int = 3) -> str:
+    """
+    Takes a Series of keyword lists, flattens it, and returns a formatted
+    string of the top N most frequent keywords and their counts.
+    """
+    # Step 1: Flatten the list of lists into a single list of all keywords in the group
+    # It also handles 'N/A' strings by checking if the item is a list.
+    all_keywords = [
+        keyword for sublist in series_of_keyword_lists 
+        if isinstance(sublist, list) 
+        for keyword in sublist
+    ]
+
+    if not all_keywords:
+        return "N/A" # Return 'N/A' if no keywords were found for the group
+        
+    # Step 2: Convert to a Series and use .value_counts()
+    keyword_counts = pd.Series(all_keywords).value_counts()
+    
+    # Step 3: Use .nlargest() to get the top N
+    top_items = keyword_counts.nlargest(top_n)
+    
+    # Step 4: Format for display
+    return ', '.join([f'{idx} ({val})' for idx, val in top_items.items()])
+
 # Helper function for identifying unique pairs from a cosine similarity score matrix
 def get_unique_pairwise_scores(similarity_matrix: np.ndarray, k: int = 1) -> pd.Series:
     """
@@ -300,7 +329,8 @@ def get_len_descriptive_stats(question_keyword: str, question_lengths: pd.Series
     Assumption: This function assumes the input Series (`question_lengths`, `answer_lengths`)
     are valid, non-empty, and have the same length. Input validation should
     be performed by the calling function.
-c
+    :param question_keyword: The interrogative question keyword (typically from the 'interrogative_keyword' column) that
+        is used as the search keyword in questions to derive the statistics for.
     :param question_lengths: Series of (non-empty) numerical question lengths (typically derived from get_clean_word_counts).
     :type question_lengths: pd.Series[int]
     :param answer_lengths: Series of (non-empty) numerical answer lengths (typically derived from get_clean_word_counts).
@@ -518,58 +548,45 @@ def get_duplicates_with_graph(df_for_analysis: pd.DataFrame, threshold_list: Lis
     threshold_run_summary_list = []
 
     all_pairs_found_in_higher_thresholds: Set[frozenset] = set()
-    # Stores 0-based matrix positions of questions already in any group (size > 1)
     all_question_positions_ever_grouped: Set[int] = set()
     num_actual_groups_in_higher_threshold = 0
-
-    # Create a mapper from 0-based matrix position to original_question_id
-    # This assumes df_for_analysis's current row order matches the similarity_matrix
-    # and it has an 'original_question_id' column.
+    
     if 'original_question_id' not in df_for_analysis.columns:
-        raise ValueError("df_for_analysis must contain an 'original_question_id' column.")
-    # Ensure df_for_analysis has a simple 0-N index for reliable iloc if it was changed
-    # For this mapper, we just need the values in order.
-    id_mapper_series = pd.Series(df_for_analysis['original_question_id'].values)
-
+        raise ValueError("Input DataFrame `df_for_analysis` must contain an 'original_question_id' column.")
 
     for threshold_score in sorted(list(set(threshold_list)), reverse=True):
         row_indices, col_indices = np.where(similarity_matrix >= threshold_score)
 
         current_threshold_pairs_set = set()
         for r_idx, c_idx in zip(row_indices, col_indices):
-            if r_idx < c_idx: # r_idx, c_idx are 0-based matrix positions
+            if r_idx < c_idx:
                 current_threshold_pairs_set.add(frozenset((r_idx, c_idx)))
 
         newly_added_pairs_at_this_step = current_threshold_pairs_set - all_pairs_found_in_higher_thresholds
 
         G = nx.Graph()
-        # Graph nodes will be 0-based matrix positions
         G.add_edges_from(list(current_threshold_pairs_set))
         all_connected_components = list(nx.connected_components(G))
-        
-        actual_duplicate_groups = [g for g in all_connected_components if len(g) > 1]
-        # Sort groups based on the smallest matrix position in each group for consistent group_id
-        actual_duplicate_groups_sorted = sorted(actual_duplicate_groups, key=lambda grp: min(grp))
 
+        actual_duplicate_groups = [g for g in all_connected_components if len(g) > 1]
+        # Sort the groups for consistent group_id assignment
+        actual_duplicate_groups_sorted = sorted(actual_duplicate_groups, key=lambda grp: min(grp))
+        
         if not actual_duplicate_groups_sorted:
-            print(f"INFO: No groups (size > 1) formed or existing at similarity >= {threshold_score:.2f}.")
+            # Add a row for this threshold to the summary table, even if no groups of size > 1 were found
             threshold_run_summary_list.append({
-                'threshold': threshold_score, 'total_pairs_found': len(current_threshold_pairs_set),
+                'threshold': threshold_score,
+                'total_pairs_found': len(current_threshold_pairs_set),
                 'new_pairs_at_this_threshold': len(newly_added_pairs_at_this_step),
                 'total_distinct_groups': 0,
                 'new_groups_at_this_threshold': 0 - num_actual_groups_in_higher_threshold,
-                'total_questions_in_groups': 0, 'new_questions_in_groups': 0
+                'total_questions_in_groups': 0,
+                'new_questions_in_groups': 0
             })
             all_pairs_found_in_higher_thresholds = current_threshold_pairs_set
-            # all_question_positions_ever_grouped remains unchanged
-            num_actual_groups_in_higher_threshold = 0
-            continue
-
-        # print(f"\n--- Results for Threshold >= {threshold_score:.2f} ---")
-        # print(f"  Total unique pairs found: {len(current_threshold_pairs_set)}")
-        # print(f"  Newly identified unique pairs at this step: {len(newly_added_pairs_at_this_step)}")
-        # print(f"  Total distinct groups (size > 1) found: {len(actual_duplicate_groups_sorted)}")
-
+            num_actual_groups_in_higher_threshold = 0 # No actual groups at this threshold
+            continue # Skip to the next threshold
+        
         group_id_counter = 1
         current_question_positions_in_groups_this_threshold_set = set()
 
@@ -581,12 +598,17 @@ def get_duplicates_with_graph(df_for_analysis: pd.DataFrame, threshold_list: Lis
                 pos not in all_question_positions_ever_grouped for pos in group_member_positions_set
             )
 
-            for question_pos in sorted(list(group_member_positions_set)): # question_pos is 0-based
+            for question_pos in sorted(list(group_member_positions_set)):
                 current_question_positions_in_groups_this_threshold_set.add(question_pos)
                 is_this_question_newly_grouped = question_pos not in all_question_positions_ever_grouped
 
                 try:
-                    original_q_id = id_mapper_series.iloc[question_pos] # Map position to original ID
+                    # Use your helper function to get the stable original ID
+                    original_q_id = get_original_id_from_position(df_for_analysis, question_pos)
+                    
+                    if original_q_id is None: # Skip if the helper function failed
+                         continue
+
                     question_text = df_for_analysis['question'].iloc[question_pos]
                     answer_text = df_for_analysis['answer'].iloc[question_pos]
                     
@@ -594,28 +616,25 @@ def get_duplicates_with_graph(df_for_analysis: pd.DataFrame, threshold_list: Lis
                         'threshold': threshold_score,
                         'group_id': unique_group_identifier,
                         'group_size': current_group_size,
-                        'original_question_id': original_q_id,       # ADDED
-                        'matrix_position': question_pos,             # RENAMED for clarity
+                        'original_question_id': original_q_id,
+                        'matrix_position': question_pos,
                         'question_text': question_text,
                         'answer_text': answer_text,
                         'newly_grouped_q': is_this_question_newly_grouped,
                         'new_or_expanded_group': is_group_new_or_expanded
                     }
                     all_rows_detailed_data.append(row_data)
-                except (IndexError, KeyError) as e: # Catch potential errors from iloc or id_mapper
-                    print(f"    WARN: Error accessing data for position {question_pos} \
-                        (Original ID might be {id_mapper_series.get(question_pos, 'N/A')}): {e}. Skipping.")
+                except (IndexError, KeyError) as e:
+                    print(f"    WARN: Error accessing data for position {question_pos}. Error: {e}. Skipping.")
             group_id_counter += 1
-            
+        
         # Gather metrics for the threshold summary table
         num_total_pairs_this_thresh = len(current_threshold_pairs_set)
         num_newly_added_pairs_count = len(newly_added_pairs_at_this_step)
         num_total_actual_groups_this_thresh = len(actual_duplicate_groups_sorted)
         
         num_total_questions_in_actual_groups_this_thresh = len(current_question_positions_in_groups_this_threshold_set)
-        # Compare sets of 0-based positions for "newly added questions"
-        num_newly_added_questions_in_groups = len(current_question_positions_in_groups_this_threshold_set - 
-                                                  all_question_positions_ever_grouped)
+        num_newly_added_questions_in_groups = len(current_question_positions_in_groups_this_threshold_set - all_question_positions_ever_grouped)
         num_new_groups_this_thresh = num_total_actual_groups_this_thresh - num_actual_groups_in_higher_threshold
 
         threshold_run_summary_list.append({
@@ -628,15 +647,16 @@ def get_duplicates_with_graph(df_for_analysis: pd.DataFrame, threshold_list: Lis
             'new_questions_in_groups': num_newly_added_questions_in_groups
         })
         
+        # Update state for the next (lower) threshold iteration
         all_pairs_found_in_higher_thresholds = current_threshold_pairs_set
         all_question_positions_ever_grouped.update(current_question_positions_in_groups_this_threshold_set)
         num_actual_groups_in_higher_threshold = num_total_actual_groups_this_thresh
 
-    # Create the final DataFrames
+    # Finalization
     results_df = pd.DataFrame(all_rows_detailed_data)
     threshold_summary_df = pd.DataFrame(threshold_run_summary_list)
 
-    # Final sorting and return logic
+    # Sort the final DataFrames
     if not results_df.empty:
         results_df = results_df.sort_values(
             by=['threshold', 'group_id', 'original_question_id'], # Sort by original_id within group
@@ -644,15 +664,11 @@ def get_duplicates_with_graph(df_for_analysis: pd.DataFrame, threshold_list: Lis
         )
     if not threshold_summary_df.empty:
         threshold_summary_df = threshold_summary_df.sort_values(by='threshold', ascending=False)
-    
-    # # Handle case where results_df might be empty but summary is not (e.g. no groups > 1 found)
-    # if results_df.empty and not threshold_summary_df.empty:
-    #     print("No duplicate/similar groups (size > 1) found to populate detailed DataFrame, but threshold summary is available.")
-    #     return pd.DataFrame(), threshold_summary_df
-    # elif results_df.empty and threshold_summary_df.empty:
-    #     print("No pairs or groups (size > 1) found across any specified thresholds.")
-        # return pd.DataFrame(), pd.DataFrame()
 
+    # Return statement logic simplified to return what's been created
+    if results_df.empty and threshold_summary_df.empty:
+        print("No pairs or groups found across any specified thresholds.")
+    
     return results_df, threshold_summary_df
         
 ## A.3. Plotting and Formatting Helpers:
@@ -920,6 +936,14 @@ def create_token_columns(dataframe: pd.DataFrame, tokenizer) -> pd.DataFrame:
     dataframe['answer tokens'] = dataframe.apply(lambda row: list(OrderedDict.fromkeys(tokenizer(row['answer']))), axis=1)
     dataframe['combined tokens'] = dataframe.apply(lambda row: row['question tokens']+ row['answer tokens'], axis=1)
     
+    
+    # Create the final column of unique combined tokens, preserving order
+    dataframe['combined_unique_tokens'] = dataframe['combined tokens'].apply(
+                    lambda x: list(OrderedDict.fromkeys(x)) if isinstance(x, list) else [])
+    
+    # Drop the intermediate 'combined tokens' column as it's no longer needed
+    dataframe.drop(columns=['combined tokens'], inplace=True)
+    
     return dataframe
 
 
@@ -1015,7 +1039,7 @@ def get_input_df(input_file: Union[str , pd.DataFrame]) -> Union[pd.DataFrame, N
     print(f"Error: Input must be a pandas DataFrame or a file path string, but got {type(input_file)}.")
     return None
     
-def validate_new_questions_df(dataframe: pd.DataFrame) -> Union[Tuple[pd.DataFrame, pd.DataFrame], None]:
+def validate_new_questions_df(new_dataframe: pd.DataFrame) -> Union[Tuple[pd.DataFrame, pd.DataFrame], None]:
     """
     Validates a DataFrame of new questions against a standard schema.
 
@@ -1039,11 +1063,11 @@ def validate_new_questions_df(dataframe: pd.DataFrame) -> Union[Tuple[pd.DataFra
     :rtype: Union[Tuple[pd.DataFrame, pd.DataFrame], None]
     """
     # work on a copy of the dataframe for safety
-    df = dataframe.copy()
+    df = new_dataframe.copy()
     
     # get shape of dataframe
-    original_num_rows = df.shape[0]
-    original_num_columns = df.shape[1]
+    new_df_num_rows = df.shape[0]
+    new_df_num_columns = df.shape[1]
     
     ## Column check
     # check for correct size and labels:
@@ -1076,6 +1100,26 @@ def validate_new_questions_df(dataframe: pd.DataFrame) -> Union[Tuple[pd.DataFra
             except Exception as e:
                 print(f"Validation Error: Could not convert column '{col}' to {expected_dtype}. Reason: {e}")
                 return None
+    ## Detecting common `question_type` typos
+    # Define a map of common typos/variations to the correct standard
+    q_type_correction_map = {
+        'MC': 'MCQ',
+        'mc': 'MCQ',
+        'fr': 'FR',
+        'ex': 'EX',
+        'yn': 'YN'
+    }
+
+    # Replace typos
+    df['question_type'] = df['question_type'].replace(q_type_correction_map)
+    
+    # check if there are typos that were missed
+    allowed_types = {'FR', 'EX', 'YN', 'MCQ'}
+    found_types = set(df['question_type'].unique())
+    unknown_types = found_types - allowed_types
+    # user will have to manually check - can use it to update map above afterwards
+    if unknown_types:
+        print(f"WARN: Found unknown question types after standardization: {unknown_types}. Please review.")
     
     ## Row check
     # initialize
@@ -1106,7 +1150,7 @@ def validate_new_questions_df(dataframe: pd.DataFrame) -> Union[Tuple[pd.DataFra
     # Print validation report for user:
     print('-'*50)
     print("Input Validation Report for New Questions")
-    print(f"* Original DataFrame size: {original_num_rows} rows x {original_num_columns} columns.")
+    print(f"* New DataFrame size: {new_df_num_rows} rows x {new_df_num_columns} columns.")
     print(f"* Number of rows with NaNs found: {num_nan}. These rows were removed and returned separately.")
     print(f"* Number of duplicate rows found and dropped: {duplicates_dropped}.")
     print(f"* Final validated DataFrame size: {new_num_rows2} rows x {df.shape[1]} columns.")
@@ -1117,9 +1161,22 @@ def validate_new_questions_df(dataframe: pd.DataFrame) -> Union[Tuple[pd.DataFra
 
 
 def get_original_id_from_position(dataframe: pd.DataFrame, position: int) -> Any:
+    """
+    Retrieves the original question ID from a specific integer position (row)
+    in the DataFrame.
+
+    This function assumes the original IDs are stored in a column named
+    'original_question_id' and uses .iloc for robust positional lookup.
+
+    :param dataframe: The DataFrame to search, which must contain 'original_question_id'.
+    :param position: The 0-based integer position of the row.
+    :return: The original question ID, or None if the position is out of bounds.
+    """
     try:
+        # Use .iloc for robust integer-position based lookup on the specified column
         return dataframe['original_question_id'].iloc[position]
     except IndexError:
+        print(f"WARN: Position {position} is out of bounds for the DataFrame.")
         return None
 
 # check if any new questions are duplicates or near-duplicates of existing questions in the main df
@@ -1225,7 +1282,7 @@ def check_for_duplicate_questions(new_questions_dataframe: pd.DataFrame,
     else:
         status = 'SUCCESS'    
     # Drop temp columns from the main new_questions_df before returning
-    new_questions_df = new_questions_df.drop(columns=['max_similarity_score_TEMP', 'existing_q_pos_max_score_TEMP'])
+    new_questions_df = new_questions_df.drop(columns=['max_similarity_score_TEMP', 'existing_q_pos_max_score_TEMP','needs_manual_review_TEMP'])
     
     # data payload - data for user
     report = {"critical_review_df": critical_review_df, "caution_review_df": caution_review_df}
@@ -1237,7 +1294,7 @@ def check_for_duplicate_questions(new_questions_dataframe: pd.DataFrame,
 def run_data_ingestion_pipeline(new_questions_input: Union[str , pd.DataFrame], 
                                main_dataframe: pd.DataFrame, 
                                vectorizer: TfidfVectorizer,
-                               tokenizer: Tokenizer,
+                               tokenizer: Callable[[str], List[str]],
                                critical_threshold: float = 0.90,
                                caution_threshold: float = 0.70) -> Tuple[str, Any]:
     """
@@ -1245,6 +1302,10 @@ def run_data_ingestion_pipeline(new_questions_input: Union[str , pd.DataFrame],
     Returns a status string and a data payload
     """
     main_df = main_dataframe.copy()
+    print('-'*50)
+    print("Baseline: Main Standard Trivia Dataset before data ingestion")
+    print(f"* The Main DataFrame size: {main_df.shape[0]} rows x {main_df.shape[1]} columns.")
+    print('-'*50)
     
     ## Step 1: Process input with new questions
     new_questions_df = get_input_df(new_questions_input)
@@ -1272,6 +1333,9 @@ def run_data_ingestion_pipeline(new_questions_input: Union[str , pd.DataFrame],
     
     ## Step 3: Add the token columns:
     tokenized_new_questions_df = create_token_columns(validated_new_df, tokenizer)
+    # Add length columns ONLY to the new dataframe
+    tokenized_new_questions_df['question_length'] = get_clean_word_counts(tokenized_new_questions_df, 'question')
+    tokenized_new_questions_df['answer_length'] = get_clean_word_counts(tokenized_new_questions_df, 'answer')
     
     ## Step 4: Add the 'interrogative_keyword' column
     # 4.1. master list of interrogative keywords based on main_dataframe EDA
@@ -1312,16 +1376,52 @@ def run_data_ingestion_pipeline(new_questions_input: Union[str , pd.DataFrame],
     print(f"New questions have been added to the main dataframe. There are now {final_df.shape[0]} questions in the trivia dataset.")
     print("\n--- Pipeline Completed Successfully ---")
     
-    # Step 8: final quality checks and payload return
+    # Step 8: final quality checks
+    # Final check for NaNs
+    if final_df.isna().any().any():
+        print("\n" + "="*50)
+        print("WARNING: NaN values were found in the final combined DataFrame. These rows were dropeed.")
+        print("Rows with NaNs:")
+        display(final_df[final_df.isna().any(axis=1)])
+        print("="*50 + "\n")
+        final_df.dropna(inplace=True)
     
+    # Final check for duplicates on the whole concatenated dataframe in case of unexpected redundancies
+    initial_row_count = len(final_df)
+    final_df.drop_duplicates(subset=['original_question_id'], keep='first', inplace=True)
+    final_row_count = len(final_df)
+    if initial_row_count > final_row_count:
+        print(f"INFO: Final safeguard removed {initial_row_count - final_row_count} unexpected duplicate rows.")
+
+    # Check and report on the shape of the final dataframe
+    expected_rows = len(main_dataframe) + len(new_questions_df)
+
+    if final_row_count != expected_rows:
+        print("INFO: Shape verification shows a difference due to de-duplication.")
+        print(f"  - Started with {len(main_dataframe)} main questions.")
+        print(f"  - Processed {len(new_questions_df)} new questions.")
+        print(f"  - Expected total before final duplicate check: {expected_rows}")
+        print(f"  - Final total after all checks: {final_row_count}")
+    else:
+        print(f"\nSUCCESS: Final row count ({final_row_count}) matches expected count.")
+        
+    # Determine if any question type remains uncategorized - check if  the `interrogative_keywords` master list needs updating
+    final_df['question_type'] = final_df['question_type'].replace('N/A', 'Uncategorized')
+    
+    # Step 9: Prepare updated status map and data payload for return
+    print("\nGenerating final status report for the updated dataset...")
+    initial_raw_total = main_df.shape[0]
+    # Call the helper function to display the full dashboard
+    generate_dataset_status_report(final_df, initial_total=initial_raw_total)
+      
     # Data payload
     final_report = {
-        'updated trivia dataset': final_df,
-        'NaN rows report': nan_rows_df,
+        'updated_trivia_dataset': final_df,
+        'NaN_rows_report': nan_rows_df,
         'critical_duplicates_review': critical_duplicates_df,
         'caution_duplicates_review': caution_duplicates_df
-        
     }
+    
     # On success, return the final DataFrame as the payload
     return 'SUCCESS', final_report
 
@@ -1697,46 +1797,167 @@ def display_correlation_summary(summary_df: pd.DataFrame) -> pd.DataFrame:
     print("\nCorrelation Summary Table by Question Keywords:")
     display(correlation_summary_df)
 
-def display_status_map(summary_df: pd.DataFrame) -> None:
-    """ 
-    Formats a subset of the master summary DataFrame for displaying the status map
-    of the dataset. This is a summary view of questions types and their counts and 
-    percentages to give an idea of the diversity of question types within the dataset.
 
-    Selects, formats, and displays a summary view for the status map view from the 
-    master summary DataFrame.
+def generate_dataset_status_report(input_dataframe: pd.DataFrame, initial_total: Optional[int] = None) -> None:
+    """
+    Generates and displays a comprehensive status report ("Dashboard") for the
+    trivia dataset, including key metrics, tables, and plots.
 
-    :param summary_df: The comprehensive summary DataFrame (output of
-                       create_comprehensive_summary_table) containing all metrics.
-                       Expected columns include: 'Keyword', 'question_type',
-                       'question_count', 'question_percentage', 'question_mean',
-                       'answer_mean', 'correlation_r', 'correlation_p', 'interpretation'.
-    :type summary_df: pd.DataFrame
-    :return: None
+    This function provides a high-level overview of the dataset's composition
+    after cleaning and processing, breaking down metrics by the 'question_type'
+    category.
+
+    Assumptions:
+    - The input DataFrame has been cleaned and contains the necessary columns:
+      'question_type', 'interrogative_keyword', 'question_length', 'answer_length',
+      'answer', 'answer_tokens', and 'is_numeric_answer'.
+
+    :param dataframe: The final, cleaned DataFrame to be analyzed.
+    :type dataframe: pd.DataFrame
+    :param initial_total: (Optional) The total number of questions in the dataset
+                          before cleaning, used to calculate how many were removed.
+    :type initial_total: int, optional
+    :return: None. The function prints and displays the report directly.
     :rtype: None
     """
-    # List of columns to display in the status map
-    columns_to_display =  ['Keyword', 'question_type', 'question_count', 'question_percentage']
+    dataframe = input_dataframe.copy()
     
-    # copy and filter the summary df
-    status_map_df = summary_df[columns_to_display].copy()
+    if not isinstance(dataframe, pd.DataFrame) or dataframe.empty:
+        print("Cannot generate report: Input is not a valid or non-empty DataFrame.")
+        return
+        
+    # add the length columns to the df copy
+    dataframe['question length'] = get_clean_word_counts(dataframe, "question")
+    dataframe['answer length'] = get_clean_word_counts(dataframe, "answer")
     
-    # rename the columns for display
+    # --- Component 1: High-Level Metrics ---
+    display(Markdown("## Trivia Dataset Status Map"))
+    display(Markdown("---"))
+
+    total_questions_final = len(dataframe)
+    display(Markdown("### 1. Key Metrics"))
+    
+    # Create a formatted string with Markdown syntax
+    metrics_text = (f"**- Total Unique Questions in Final Dataset:** {total_questions_final}<br>")
+    if initial_total is not None:
+        net_change = total_questions_final - initial_total
+        metrics_text += f"**- Net Change in Questions:** {net_change:+.0f}<br>"
+        metrics_text += "   *(Note: A positive number indicates new questions were added; a negative number indicates questions were removed.)*<br>"
+
+    if 'is_numeric_answer' in dataframe.columns:
+        numeric_count = dataframe['is_numeric_answer'].sum()
+        metrics_text += f"**- Total Questions with Numeric Answers:** {numeric_count} ({numeric_count/total_questions_final:.1%})<br>"
+
+    # Display the entire block as a single Markdown object
+    display(Markdown(metrics_text))
+
+    # --- Component 2: Main Summary Table ---
+    display(Markdown("\n### 2. Breakdown by Question Type"))
+
+    # Define a helper function to count uncategorized keywords
+    def count_uncategorized(series):
+        return (series == 'N/A').sum()
+
+    # Step A: Perform all simple aggregations at once for efficiency
+    aggregations = {
+        'question': ('question', 'size'),          # Will be renamed to 'Count'
+        'answer': ('answer', 'nunique'),          # Will be renamed
+        'question_length': ('question_length', 'median'), # Will be renamed
+        'answer_length': ('answer_length', 'median'),     # Will be renamed
+        'interrogative_keyword': ('interrogative_keyword', count_uncategorized) # Custom agg
+    }
+    status_map_df = dataframe.groupby('question_type').agg(**aggregations)
+    
+    # Step B: Calculate top keywords separately using .apply() for complex logic
+    top_interrogative_keywords = dataframe.groupby('question_type')['interrogative_keyword'].apply(
+        lambda s: get_top_keywords(s, top_n=3)
+    )
+    top_answer_keywords = dataframe.groupby('question_type')['answer tokens'].apply(
+        lambda s: get_top_keywords(s, top_n=3)
+    )
+
+    # Step C: Merge all results together
+    status_map_df = status_map_df.merge(top_interrogative_keywords, on='question_type')
+    status_map_df = status_map_df.merge(top_answer_keywords, on='question_type')
+
+    # Step D: Calculate percentage and rename/reorder columns for presentation
+    status_map_df['Percentage (%)'] = (status_map_df['question'] / total_questions_final * 100)
+    
     status_map_df = status_map_df.rename(columns={
-        'Keyword': 'Question Keyword',
-        'question_count': 'Keyword Count',
-        'question_percentage': '(%) of total'
-    })  
+        'question': 'Question Count',
+        'answer': 'Unique Answer Count',
+        'question_length': 'Median Q Len',
+        'answer_length': 'Median A Len',
+        'interrogative_keyword_x': 'Unassigned Interrogative Keyword', # from agg
+        'interrogative_keyword_y': 'Top Interrogative Keywords', # from apply
+        'answer tokens': 'Top Answer Keywords'
+    })
     
-    # sort the columns by keyword count
-    status_map_df = status_map_df.sort_values(by='Keyword Count', ascending=False).round({
-    'perc. of total': 0,
-    'Mean Ques Length': 0,
-    'Mean Ans Length': 0,
-})
-    # display the status map in the notebook
-    print("\nStatus Map of the Trivia dataset based on Question Types:")
-    display(status_map_df)
+    # Define final column order
+    final_columns = [
+        'Question Count', 'Percentage (%)', 'Unique Answer Count',
+        'Median Q Len', 'Median A Len', 'Top Answer Keywords',
+        'Top Interrogative Keywords', 'Unassigned Interrogative Keyword'
+    ]
+    # Ensure all columns exist before trying to reorder
+    status_map_df = status_map_df[[col for col in final_columns if col in status_map_df.columns]]
+    status_map_df = status_map_df.sort_values(by='Question Count', ascending=False)
+    # --- Add this line right before you display the table ---
+    status_map_df.index.name = 'Question Type'
+    # status_map_df_for_display = status_map_df.reset_index()
+    display(status_map_df.style.format({'Percentage (%)': '{:.1f}%', 'Median Q Len': '{:.1f}', 'Median A Len': '{:.1f}'}))
+    print("\nNote:")
+    print("Question types: FR (Factual Recall), EX (Explanatory), YN (Yes/No or True/False), MCQ (Multiple Choice Question)")
+
+    # --- Component 3: Visualizations ---
+    display(Markdown("\n### 3. Visualizations by Question Type"))
+    
+    category_order = status_map_df.index.tolist()
+    # Create an explicit color map
+    num_categories = len(category_order)
+    colors = sns.color_palette('Purples_r', n_colors=num_categories)
+    color_map = dict(zip(category_order, colors))
+
+    # Create side-by-side subplots
+    fig, axes = plt.subplots(1, 2, figsize=(16, 6)) # Adjusted size
+    fig.suptitle('Analysis by Question Type', fontsize=16)
+
+    # Plot 1: Bar Chart of Question Type Distribution
+    sns.barplot(
+        data=status_map_df,
+        x=status_map_df.index,
+        y='Question Count',
+        hue=status_map_df.index, # Use index for hue
+        palette=color_map,
+        order=category_order,
+        ax=axes[0],
+        legend=False
+    )
+    axes[0].set_title('Distribution of Question Types')
+    axes[0].set_xlabel('Question Type')
+    axes[0].set_ylabel('Number of Questions')
+    axes[0].tick_params(axis='x', rotation=45)
+
+    # Plot 2: Box Plot of Answer Lengths
+    sns.boxplot(
+        data=dataframe,
+        x='question_type',
+        y='answer_length',
+        hue='question_type',
+        palette=color_map,
+        order=category_order,
+        ax=axes[1],
+        legend=False
+    )
+    axes[1].set_title('Answer Length Distribution by Question Type')
+    axes[1].set_xlabel('Question Type')
+    axes[1].set_ylabel('Answer Length (Words)')
+    axes[1].tick_params(axis='x', rotation=45)
+
+    plt.tight_layout(rect=[0, 0, 1, 0.96])
+    plt.show()
+
+    display(Markdown("\n" + "---"))
 #=====================================#
 ## D. N-GRAM UTILITY FUNCTIONS        #
 #=====================================#
@@ -2011,7 +2232,7 @@ def print_max_simscore_record(similarity_matrix: np.ndarray, dataframe: pd.DataF
 
     # use the exact_max_score to find its indices in the full qq_similarity_matrix_cleaned
     row_indices, col_indices = np.where(np.isclose(similarity_matrix, exact_max_score))
-    id_mapper_series = pd.Series(dataframe['original_question_id'].values)
+    # id_mapper_series = pd.Series(dataframe['original_question_id'].values)
 
     # filter for unique pairs (r_idx < c_idx) and display
     print("\nQuestion pair(s) with the max similarity score:")
@@ -2022,9 +2243,16 @@ def print_max_simscore_record(similarity_matrix: np.ndarray, dataframe: pd.DataF
         if r_idx < c_idx:
             any_pair_printed = True
     
-            # Get original IDs using the mapper and 0-based matrix positions
-            original_q1_id = id_mapper_series.iloc[r_idx]
-            original_q2_id = id_mapper_series.iloc[c_idx]
+            # # Get original IDs using the mapper and 0-based matrix positions
+            # original_q1_id = id_mapper_series.iloc[r_idx]
+            # original_q2_id = id_mapper_series.iloc[c_idx]
+            # Use the new helper function for lookups
+            original_q1_id = get_original_id_from_position(dataframe, r_idx)
+            original_q2_id = get_original_id_from_position(dataframe, c_idx)
+        
+            # Check if the helper returned valid IDs before proceeding
+            if original_q1_id is None or original_q2_id is None:
+                continue # Skip this pair if an ID couldn't be found
             
             # Get text using 0-based matrix positions with .iloc on the DataFrame
             question1_text = dataframe['question'].iloc[r_idx]
@@ -2046,4 +2274,79 @@ def print_max_simscore_record(similarity_matrix: np.ndarray, dataframe: pd.DataF
         print("No distinct off-diagonal pairs found matching the exact max score.")
     print('-'*50)
     return None
-            
+
+# Handling and displaying different results from the data ingestion pipeline based on the status
+def display_pipeline_results(pipeline_status: str, pipeline_payload: Union[dict, None]) -> None:
+    """
+    Displays the results from the data ingestion pipeline in a user-friendly format
+    based on the returned status and data payload.
+
+    :param pipeline_status: The status string returned by the pipeline.
+    :type pipeline_status: str
+    :param pipeline_payload: The data payload returned by the pipeline, which can
+                             be a dictionary or None.
+    :type pipeline_payload: Union[Dict[str, Any], None]
+    """
+
+    print("\n" + "="*50)
+    print(f"PIPELINE EXECUTION FINISHED WITH STATUS: {pipeline_status}")
+    print("="*50)
+
+    # --- ADDED: A general check for the payload before the if/elif block ---
+    if pipeline_payload is None:
+        # This handles statuses like 'LOAD_ERROR', 'VALIDATION_ERROR', or any other
+        # case where the pipeline might have aborted without generating a report dict.
+        display(Markdown(f"### PIPELINE FAILED with status: {pipeline_status}"))
+        print("No data payload was returned. Please review the log messages above for details.")
+        return
+
+    # Now we can safely assume pipeline_payload is a dictionary for the specific statuses below
+    if pipeline_status == 'SUCCESS':
+        # Safely get each DataFrame from the payload dictionary using .get()
+        # Provide an empty DataFrame as a default if the key is missing.
+        df_cleaned_updated = pipeline_payload.get('updated_trivia_dataset', pd.DataFrame())
+        nan_rows_found = pipeline_payload.get('nan_rows_report', pd.DataFrame())
+        caution_rows_found = pipeline_payload.get('caution_duplicates_review', pd.DataFrame())
+
+        display(Markdown("### Pipeline Successful!"))
+        if not df_cleaned_updated.empty:
+            print(f"The main dataset has been updated. New total questions: {len(df_cleaned_updated)}")
+        else:
+             print("The main dataset was processed, but the final result is empty.")
+
+        # --- ADDED: Check if the DataFrame exists and is not empty before displaying ---
+        if caution_rows_found is not None and not caution_rows_found.empty:
+            display(Markdown("#### The following questions were added but are recommended for manual review:"))
+            display(caution_rows_found)
+
+        if nan_rows_found is not None and not nan_rows_found.empty:
+            display(Markdown("#### The following rows from your input file had NaN values and were excluded:"))
+            display(nan_rows_found)
+
+    elif pipeline_status == 'CRITICAL_DUPLICATE_ERROR':
+        # Safely get the critical review DataFrame
+        critical_review_df = pipeline_payload.get('critical_review_df', pd.DataFrame())
+
+        display(Markdown("### PIPELINE ABORTED: Critical Duplicates Found"))
+        print("The pipeline was stopped because new questions were found to be too similar to existing questions.")
+        print("ACTION: Please remove or edit these questions from your input file and re-run the pipeline.")
+
+        if not critical_review_df.empty:
+            display(critical_review_df)
+
+    elif pipeline_status == 'EMPTY_AFTER_VALIDATION':
+        # Safely get the NaN report DataFrame
+        nan_rows_found = pipeline_payload.get('nan_rows_report', pd.DataFrame())
+
+        display(Markdown("### PIPELINE STOPPED: No Valid Data Remained"))
+        print("All rows from the input file were removed during initial validation (e.g., due to NaNs).")
+
+        if not nan_rows_found.empty:
+            display(Markdown("#### Rows with NaN values that were removed:"))
+            display(nan_rows_found)
+
+    else: # Handles any other status
+        display(Markdown(f"### PIPELINE FINISHED with unhandled status: {pipeline_status}"))
+        print("Please review logs for details. Payload content:")
+        # Print the payload content for debugging if it's an unexpected status
+        print(pipeline_payload)
