@@ -7,34 +7,17 @@ CLI MVP (core logic) -> player module (model)
 
 ------------------------------------------------------------------
 '''
-from HPtrivia_game.constants import VALID_HOUSES
+from HPtrivia_game.constants import House, Rank
 
 class Player:
     ''' This class represents a player in a game session.'''
     
-    def __init__(self, name: str, hogwarts_house: str):
-        
-        """Initialize the Player with a name and Hogwarts house."""
-        # where is the best place to validate? i shoud check at input instead of initialization.
-        # Validate the name
-        if not isinstance(name, str) or not name.strip():
-            raise ValueError("Player name must be a non-empty string.")
-        
-        # Validate the Hogwarts house
-        if not isinstance(hogwarts_house, str) or not hogwarts_house.strip():
-            raise ValueError("Hogwarts house must be a non-empty string.")
-        valid_houses = VALID_HOUSES
-        
-        if hogwarts_house not in valid_houses:
-            raise ValueError(f"Invalid house '{hogwarts_house}'. Valid houses are {valid_houses}.")
-        
-        # Initialize player attributes
+    def __init__(self, name: str, hogwarts_house: House):
+        """Initialize the Player with a name and Hogwarts house and all other attributes."""
         self._name = name.strip().title()
-        self._hogwarts_house = hogwarts_house.strip().capitalize()
-        # Initialize score to 0
+        self._hogwarts_house = hogwarts_house
         self._score = 0
-        # Initialize chances left to 3 - can adjust this later
-        self._chances_left = 3
+        self._chances_left = 3 
 
     def __str__(self):
         return f"Player '{self._name}' is a member of {self._hogwarts_house} \
@@ -67,6 +50,15 @@ class Player:
         """Return the player's hogwarts house"""
         return self._hogwarts_house
     
+    @property    
+    def get_chances(self) -> int:
+        """Returns the current number of chances left."""
+        return self._chances_left
+
+    def has_chances_left(self) -> bool:
+        """Returns True if the player has 1 or more chances, False otherwise."""
+        return self._chances_left > 0
+    
     def add_score(self, points=1):
         '''Increase the player's score by 1 point'''
         self._score += points
@@ -78,30 +70,27 @@ class Player:
         return self._score
     
     def lose_chance(self):
-        '''Reduce the player's chances by 1'''
-        if self._chances_left <= 0:
-            raise ValueError("No chances left.")
-        self._chances_left -= 1
-        return self._chances_left
+        """Reduces the player's chances by 1 if any are left."""
+        if self._chances_left > 0:
+            self._chances_left -= 1
     
-    def find_player_wizard_rank(self, total_questions: int):
-        '''Return the player's level based on their score at the end of the game'''
-        
-        # Validate the total_questions and score inputs
+    def find_player_wizard_rank(self, total_questions: int) -> Rank:
+        """
+        Calculates and returns the player's rank category based on score.
+        Returns a string key like 'NOVICE', 'EXPERT', etc.
+        """
+
+        # Prevent zero-division error
         if total_questions <= 0:
-            raise ValueError("Total questions must be greater than 0.")
-        if self._score < 0:
-            raise ValueError("Score cannot be negative.")
+            return Rank.UNKNOWN
         
-        # Calculate the score ratio -> basecase is a total of 10 questions
+        # calculate ratio for rank thresholds
         score_ratio = self._score / total_questions
         
-        # Define thresholds for player levels
         if score_ratio <= 0.3: 
-            return "HP Triva Novice. You need to read more books!\n"
-        if score_ratio <= 0.6: 
-            return "Trivia Enthusiast. Keep going!"
-        if score_ratio <= 0.8: 
-            return "Trivia Expert! You know your stuff!"
-        return "Brilliant master of HP Trivia! You could give Dumbledore a run for his galleons!"
-
+            return Rank.NOVICE
+        if score_ratio <= 0.6:
+            return Rank.ENTHUSIAST
+        if score_ratio <= 0.8:
+            return Rank.EXPERT
+        return Rank.MASTER
