@@ -1,17 +1,24 @@
-# 🧙‍♀️ Hogwarts Trivia Game – A Passion Project Turned Portfolio Spell 🌟
+#  NLP Trivia Engine: A Modular, Semantic-Answer Game Using NLP & NER  
+*Themed: Harry Potter | CLI MVP → Web App in Progress*
 
-This repository contains the source code, notebooks, and support documents for a Harry Potter trivia game built with Python featuring NLP-driven features.
+> 🎯 **This project demonstrates applied NLP, semantic search, software engineering, and full-stack thinking — all through an interactive trivia game.**  
+>
+> It’s both a passion project and a showcase of technical fluency in Python, NLP pipelines, and modular design.
+
+---
+
+## ✨ What Is This?
 
 This magical little adventure started over late-night book readings and a daughter who just won’t stop dropping Harry Potter trivia around the clock. Naturally, a trivia game was born – for her to play, and for me (a muggle-turned-data-wizard) to build.
 
-This is more than just a game — it’s a portfolio project to practice and showcase:
+More than just a game, this project was designed to **apply and demonstrate data and software engineering skills**, including:
 
 - 🐍 Clean Python + OOP design
-- 🧠 NLP & Named Entity Recognition (NER) spells. 
-- 🎯 Building an MVP from idea to deployment (command logic interface → web app with GUI)
-- 📦 Packaging, modular design & installable project structure
-- 🧪 Testing, versioning, and all those responsible grown-up dev things
-- 🦄 Use of Sentence-BERT for some really cool magic!✨ (semantic matching of answers, more conversational play...) 
+- 🧠 NLP & Named Entity Recognition (NER) pipelines
+- 🔎 Semantic answer matching with Sentence-BERT embeddings
+- 🎯 MVP thinking: CLI → GUI (Flask) → interactive enhancements
+- 📦 Modular design, installable packaging
+- 🧪 Testing, version control, structured documentation
 
 Whether you're here to cast code spells or just play a few rounds of trivia, welcome to a corner of the internet where passion meets Python.
 
@@ -19,16 +26,17 @@ Whether you're here to cast code spells or just play a few rounds of trivia, wel
 
 1. [Description](#description)
 2. [Development roadmap](#development-roadmap)
-3. [Features](#features)
-4. [Tech stack](#️-tech-stack)
-5. [Installation](#installation)
-6. [Usage](#usage)
-7. [Controls](#controls)
-8. [Data Sources](#data-sources)
-9. [License](#license)
-10. [Contributing](#contributing)
-11. [Acknowledgements](#acknowledgements)
-12. [Disclaimer](#disclaimer)
+3. [Phase 1: MVP Development & Data Analysis Outcomes](#phase-1-mvp-development--data-analysis-outcomes)
+4. [Features](#features)
+5. [Tech stack](#️-tech-stack)
+6. [Installation](#installation)
+7. [Usage](#usage)
+8. [Controls](#controls)
+9. [Data Sources](#data-sources)
+10. [License](#license)
+11. [Contributing](#contributing)
+12. [Acknowledgements](#acknowledgements)
+13. [Disclaimer](#disclaimer)
 
 ## Description
 
@@ -71,6 +79,27 @@ The project phases and sprints can be found in the detailed workflow document. T
 - The CLI MVP gameflow is documented in both [flowchart](docs/MVP/MVP_gameflow_v1_flowchart_view.svg) and [text](docs/MVP/MVP_gameflow_v1_text.md) formats.
 - See the [Changelog](CHANGELOG.md) for a record of updates and changes.
 
+## Phase 1: MVP Development & Data Analysis Outcomes
+
+### Data Analysis Results
+- Deduplicated ~37% of the dataset using semantic similarity (cosine similarity + graph analysis), improving data quality and reducing redundancy.
+- Identified and corrected all incomplete multiple-choice questions using semantic checks.
+- Achieved 100% classification accuracy of question types (factual recall, explanatory, multiple-choice) through tokenization and keyword-based feature engineering.
+- Discovered dataset imbalance: 97% factual recall questions, mostly focused on potions and magical creatures.
+- Developed an automated data ingestion pipeline with integrated quality checks and duplicate detection using learned cosine similarity thresholds; the pipeline automatically generates a detailed dashboard summarizing ingestion status and data quality metrics on completion.
+- Built a reusable `eda_scripts` module for standardized dataset exploration and preprocessing.
+- Augmented the dataset by adding 100+ explanatory questions to balance question types and showcase semantic NLP capabilities.
+- Plan to generate another 500 additional high-quality questions (primarily explanatory type) using LLM prompt engineering and API integration, to significantly improve dataset diversity and coverage.
+
+### MVP Development & Testing
+- Built CLI MVP with core trivia gameplay, house point scoring, and user interaction.
+- [Link to CLI Docker container / demo] (add once deployed)
+- Plan to begin user testing next week, tracking metrics such as:
+  - Number of game sessions played
+  - User accuracy and response patterns
+  - Bug reports and feature requests
+- Screenshots of current CLI interface and gameplay experience:
+
 ## Features
 
 ### Current features:
@@ -80,6 +109,7 @@ The project phases and sprints can be found in the detailed workflow document. T
 
 ### Future features:
 - **Custom NER Model**: support topic selection (e.g. characters, locations, spells) and difficulty-level questions in the game based on custom NER class tagging.
+- **Conversational play**: semantic-answer checking with sentence-BERT (phase-2), convesational game-play using Distil-BERT.
 - **Interactive GUI**: web based up for more player engagement with visuals, audio, and interactive elements.
 
 ## 🛠️ Tech Stack
@@ -87,16 +117,37 @@ The project phases and sprints can be found in the detailed workflow document. T
 <details>
 <summary>Click to expand</summary>
 
-- Python – Core language for game logic, data processing, and NLP components
-- NLTK / spaCy – Natural Language Processing (NER and text analysis)
-- Jupyter Notebooks – Used for exploratory data analysis, NER work, prepare dataset for the game.
-- Git / GitHub – Version control and collaboration
-- VS Code – Primary development environment
-- Markdown – Documentation and workflow planning
+<table>
+  <tr>
+    <td align="center"><sub><b>Concepts</b></sub></td>
+    <td><img src="https://img.shields.io/badge/Python-3.10-blue?logo=python&logoColor=white" alt="Python"></td>
+    <td><img src="https://img.shields.io/badge/Design-OOP-informational" alt="OOP"></td>
+    <td><img src="https://img.shields.io/badge/NLP-spaCy%20%7C%20Sentence--BERT-brightgreen" alt="NLP"></td>
+    <td><img src="https://img.shields.io/badge/NER-Custom%20Model%20Planned-important" alt="NER"></td>
+  </tr>
+  <tr>
+    <td align="center"><sub><b>Engineering</b></sub></td>
+    <td><img src="https://img.shields.io/badge/Architecture-Modular%20%7C%20Installable-lightgrey" alt="Modular"></td>
+    <td><img src="https://img.shields.io/badge/Testing-unittest%20%7C%20pytest-yellow" alt="Testing"></td>
+    <td><img src="https://img.shields.io/badge/Git-versioned-critical?logo=git" alt="Version Control"></td>
+    <td><img src="https://img.shields.io/badge/Containerized-Docker-blue?logo=docker" alt="Containerized"></td>
+  </tr>
+  <tr>
+    <td align="center"><sub><b>Project Status</b></sub></td>
+    <td><img src="https://img.shields.io/badge/Interface-CLI%20%2B%20Web%20App-orange" alt="Interface"></td>
+    <td><img src="https://img.shields.io/badge/Status-Phase%201%3A%20MVP%20Complete-blueviolet" alt="Project Status"></td>
+    <td><img src="https://img.shields.io/badge/Web%20Access-Embedded%20Shell-success" alt="Deployment"></td>
+    <td><img src="https://img.shields.io/badge/License-MIT-lightgrey" alt="License"></td>
+  </tr>
+</table>
+
+The core application is built in Python, following Object-Oriented Programming (OOP) principles for a clean, modular architecture. All Natural Language Processing (NLP) and NER work is prototyped and analyzed in Jupyter Notebooks using libraries like spaCy.
+
+The entire development process is versioned with Git/GitHub and documented in Markdown, with VS Code as the primary editor.
 
 📦 See [requirements.txt](requirements.txt) for packages required to run the game, and [requirements-dev.txt](requirements-dev.txt) for the complete list of tools used in the game as well as notebooks, data processing, and advanced NLP work.
 
-💡 AI-assisted support from ChatGPT 4o (free-tier), and Google Gemini 2.5 Pro (experimental) was used for brainstorming, project planning and strategizing, code review, ideation, debugging and learning throughout development.
+💡 AI-assisted support from ChatGPT 4o (free-tier), and Google Gemini 2.5 Pro was used for brainstorming, project planning and strategizing, code review, ideation, debugging and learning throughout development.
 </details>
 
 ## Installation
