@@ -143,7 +143,7 @@ The final, curated dataset serves as a strong foundation for the trivia game MVP
     <td align="center"><sub><b>Engineering</b></sub></td>
     <td><img src="https://img.shields.io/badge/Architecture-Modular%20%7C%20Installable-lightgrey" alt="Modular"></td>
     <td><img src="https://img.shields.io/badge/Testing-unittest%20%7C%20pytest-yellow" alt="Testing"></td>
-    <td><img src="https://img.shields.io/badge/Git-versioned-blue?logo=git" alt="Version Control"></td>
+    <td><img src="https://img.shields.io/badge/versioned-Git-blue?logo=git&logoPosition=right" alt="Version Control"></td>
     <td><img src="https://img.shields.io/badge/Containerized-Docker-blue?logo=docker" alt="Containerized"></td>
   </tr>
   <tr>
