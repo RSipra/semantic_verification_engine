@@ -100,7 +100,7 @@ Through a comprehensive process of Exploratory Data Analysis (EDA) and data cura
 <br>
 
 - **Developed a robust automated data ingestion pipeline** with integrated quality checks (schema validation, NaN handling) and a tiered duplicate detection system utilising semantic similarity that can validate and process new, curated questions.
-- **Developed reusable analysis tools**.Built a reusable `eda_scripts` module to encapsulate all data processing, analysis, and reporting functions, including a *"Status Map" dashboard* that visualizes the final dataset's composition.
+- **Developed reusable analysis tools**. Built a reusable `eda_scripts` module to encapsulate all data processing, analysis, and reporting functions, including a *"Status Map" dashboard* that visualizes the final dataset's composition.
 - **Curated the unique questions down to a final, validated MVP dataset of 902 questions.** This process involved extensive domain-specific edits, including re-authoring 203 questions for clarity and replacing over 100 flawed entries with new, lore-accurate MCQs.
 
 The final, curated dataset serves as a strong foundation for the trivia game MVP. The next phase will focus on expanding the dataset with an additional 500+ questions (primarily explanatory type) using a guided AI generation pipeline to showcase advanced semantic NLP capabilities.
@@ -143,7 +143,7 @@ The final, curated dataset serves as a strong foundation for the trivia game MVP
     <td align="center"><sub><b>Engineering</b></sub></td>
     <td><img src="https://img.shields.io/badge/Architecture-Modular%20%7C%20Installable-lightgrey" alt="Modular"></td>
     <td><img src="https://img.shields.io/badge/Testing-unittest%20%7C%20pytest-yellow" alt="Testing"></td>
-    <td><img src="https://img.shields.io/badge/Git-versioned-critical?logo=git" alt="Version Control"></td>
+    <td><img src="https://img.shields.io/badge/Git-versioned-blue?logo=git" alt="Version Control"></td>
     <td><img src="https://img.shields.io/badge/Containerized-Docker-blue?logo=docker" alt="Containerized"></td>
   </tr>
   <tr>
