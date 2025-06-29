@@ -93,10 +93,11 @@ Through a comprehensive process of Exploratory Data Analysis (EDA) and data cura
 - **Achieved near-100% classification accuracy** for question types (Factual Recall, Explanatory, etc.) and interrogative keywords by engineering features from tokenized text.
 - **Discovered and addressed dataset imbalance** Identifyied there was 97% skew towards factual recall questions, balancing the dataset with new Explanatory and MCQ questions focused on core book lore to improve game variety.
 
-<figure>
-  <img src="assets/docs/phase1/Screenshot_finalDataset_dashboard_visuals.png" alt="Screenshot of visuals from automated dashboard of final dataset" width="600"/>
-  <figcaption><em>Figure 1: A snapshot from the project's automated Status Map report, visualizing the more balanced question type distribution in the final, curated dataset. Factual Recall (FR) questions remain the most prominent category, highlighting an opportunity for further expansion</em></figcaption>
-</figure>
+<div align="center">
+  <img src="assets/docs/phase1/Screenshot_finalDataset_dashboard_visuals.png" alt="Screenshot of visuals from automated dashboard of final dataset" width="800"/>
+  <p style="font-size: 0.9em; color: gray;"><em>Figure 1: A snapshot from the project's automated Status Map report, visualizing the more balanced question type distribution in the final, curated dataset. Factual Recall (FR) questions remain the most prominent category, highlighting an opportunity for further expansion.</em></p>
+</div>
+<br>
 
 - **Developed a robust automated data ingestion pipeline** with integrated quality checks (schema validation, NaN handling) and a tiered duplicate detection system utilising semantic similarity that can validate and process new, curated questions.
 - **Developed reusable analysis tools**.Built a reusable `eda_scripts` module to encapsulate all data processing, analysis, and reporting functions, including a *"Status Map" dashboard* that visualizes the final dataset's composition.
