@@ -26,7 +26,7 @@ Whether you're here to cast code spells or just play a few rounds of trivia, wel
 
 1. [Description](#description)
 2. [Development roadmap](#development-roadmap)
-3. [Phase 1: MVP Development & Data Analysis Outcomes](#phase-1-mvp-development--data-analysis-outcomes)
+3. [Key findings and Outcomes](#key-findings-and-outcomes)
 4. [Features](#features)
 5. [Tech stack](#️-tech-stack)
 6. [Installation](#installation)
@@ -67,7 +67,6 @@ Step into the halls of Hogwarts and test your knowledge with this interactive CL
     - Tagging reference of q&a to HP book of origin
     - Easter eggs and themed commands / elements
     - GUI and game state enhancements 
-...
 
 5. Future vision / stretch goals: Explore and deploy innovative features, such as an auto-generated trivia mode powered by LLMs.
 
@@ -79,21 +78,35 @@ The project phases and sprints can be found in the detailed workflow document. T
 - The CLI MVP gameflow is documented in both [flowchart](docs/MVP/MVP_gameflow_v1_flowchart_view.svg) and [text](docs/MVP/MVP_gameflow_v1_text.md) formats.
 - See the [Changelog](CHANGELOG.md) for a record of updates and changes.
 
-## Phase 1: MVP Development & Data Analysis Outcomes
+## Key findings and Outcomes
 
-### Data Analysis Results
-- Deduplicated ~37% of the dataset using semantic similarity (cosine similarity + graph analysis), improving data quality and reducing redundancy.
-- Identified and corrected all incomplete multiple-choice questions using semantic checks.
-- Achieved 100% classification accuracy of question types (factual recall, explanatory, multiple-choice) through tokenization and keyword-based feature engineering.
-- Discovered dataset imbalance: 97% factual recall questions, mostly focused on potions and magical creatures.
-- Developed an automated data ingestion pipeline with integrated quality checks and duplicate detection using learned cosine similarity thresholds; the pipeline automatically generates a detailed dashboard summarizing ingestion status and data quality metrics on completion.
-- Built a reusable `eda_scripts` module for standardized dataset exploration and preprocessing.
-- Augmented the dataset by adding 100+ explanatory questions to balance question types and showcase semantic NLP capabilities.
-- Plan to generate another 500 additional high-quality questions (primarily explanatory type) using LLM prompt engineering and API integration, to significantly improve dataset diversity and coverage.
+### Phase 1: MVP Development & Data Analysis Outcomes
 
-### MVP Development & Testing
+#### Data Analysis of the HuggingFace dataset:
+
+This project transformed a raw, publicly sourced dataset of over 1,200 trivia questions into a high-quality, standardized, and feature-rich dataset ready for an MVP game and advanced NLP applications. The initial data contained significant redundancy, formatting inconsistencies, and lore inaccuracies.
+
+Through a comprehensive process of Exploratory Data Analysis (EDA) and data curation, the following key outcomes were achieved:
+
+- **De-duplicated 28% of the dataset**. Reduced dataset from 1,279 to 914 unique questions through a multi-stage de-duplication process, where a deep semantic similarity analysis using TF-IDF, cosine similarity and graph clustering identified an additional ~8% of non-obvious, near-duplicates missed by standard methods.
+- **Identified and re-authored all incomplete or flawed questions**, creating dozens of new, high-quality Multiple-Choice, Yes/No, and Factual Recall questions to ensure fairness and lore accuracy.
+- **Achieved near-100% classification accuracy** for question types (Factual Recall, Explanatory, etc.) and interrogative keywords by engineering features from tokenized text.
+- **Discovered and addressed dataset imbalance** Identifyied there was 97% skew towards factual recall questions, balancing the dataset with new Explanatory and MCQ questions focused on core book lore to improve game variety.
+
+<figure>
+  <img src="assets/docs/phase1/Screenshot_finalDataset_dashboard_visuals.png" alt="Screenshot of visuals from automated dashboard of final dataset" width="600"/>
+  <figcaption><em>Figure 1: A snapshot from the project's automated Status Map report, visualizing the more balanced question type distribution in the final, curated dataset. Factual Recall (FR) questions remain the most prominent category, highlighting an opportunity for further expansion</em></figcaption>
+</figure>
+
+- **Developed a robust automated data ingestion pipeline** with integrated quality checks (schema validation, NaN handling) and a tiered duplicate detection system utilising semantic similarity that can validate and process new, curated questions.
+- **Developed reusable analysis tools**.Built a reusable `eda_scripts` module to encapsulate all data processing, analysis, and reporting functions, including a *"Status Map" dashboard* that visualizes the final dataset's composition.
+- **Curated the unique questions down to a final, validated MVP dataset of 902 questions.** This process involved extensive domain-specific edits, including re-authoring 203 questions for clarity and replacing over 100 flawed entries with new, lore-accurate MCQs.
+
+The final, curated dataset serves as a strong foundation for the trivia game MVP. The next phase will focus on expanding the dataset with an additional 500+ questions (primarily explanatory type) using a guided AI generation pipeline to showcase advanced semantic NLP capabilities.
+
+#### MVP Development & Testing
 - Built CLI MVP with core trivia gameplay, house point scoring, and user interaction.
-- [Link to CLI Docker container / demo] (add once deployed)
+- [Link to CLI Docker container / demo] (containerized web deployment of MVP is under development)
 - Plan to begin user testing next week, tracking metrics such as:
   - Number of game sessions played
   - User accuracy and response patterns
