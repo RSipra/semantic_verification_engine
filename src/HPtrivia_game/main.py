@@ -15,9 +15,13 @@ from HPtrivia_game.constants import MVP_TRIVIA_CSV_NAME
 
 def main():
     """Sets up and runs the main application loop for the game."""
+    # 1. setup the dependencies
     trivia_session = Trivia(MVP_TRIVIA_CSV_NAME)
     controller = GameController(trivia_session)
-    
+    # 2. Run the one-time introduction to the game
+    if not controller.start_game():
+        return # Exit if player setup fails or user quits
+    # 3. Run question sessons until player quits
     while True:
         # Run one full session that returns bool to continue or not
         play_game_again = controller.run_game()
