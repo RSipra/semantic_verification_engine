@@ -50,20 +50,22 @@ Step into the halls of Hogwarts and test your knowledge with this interactive CL
 1. Phase 1: MVP core game logic, unit testing, and pattern awareness
     - Setup environmental and data foundation (download, cleaning, EDA, preprocessing of dataset)
     - Standardize the dataset and setup a data ingestion pipeline
-    - Develop basic core logic and OOP structure for CLI game play   🟣 **← Current phase**
-    - Test and refactor the game throughly (using unittest and pytest)
+    - Develop basic core logic and OOP structure for CLI game play (Model-View-Controller pattern).   
+    - Test and refactor the game throughly (using unittest and pytest) 🟣 **← Current phase**
 
-2. Phase 2: NLP / NER integration to CLI MVP.
+2. Phase 2: NLP, NER, Sentence-BERT integration to CLI MVP.
+    - Generate ~500 lexically and contextually rich questions using prompt enginnering & API calls
     - Annotation of data, training of NER model with iterative active learning.
     - Static NER tagging
+    - Hybrid answer checking using direct and fuzzy matching (for factual types, multiple-choice etc) and sentence-BERT (for explanatory type of questions)
     - Integrate logic into MVP (topic and difficulty level selection)
+    - containerize CLI MVP demo and deploy online
 
 3. Phase 3: Basic web app (with Flask)
     - setup and integrate game logic backend with audio and visuals.
     - styling and deployment prep.
 
 4. Phase 4+: Enhancements! (the most exciting part)
-    - Runtime NLP with Sentence-BERT (semantic answer checking, smarter hints, etc)
     - Tagging reference of q&a to HP book of origin
     - Easter eggs and themed commands / elements
     - GUI and game state enhancements 
@@ -99,15 +101,15 @@ Through a comprehensive process of Exploratory Data Analysis (EDA) and data cura
 </div>
 <br>
 
-- **Developed a robust automated data ingestion pipeline** with integrated quality checks (schema validation, NaN handling) and a tiered duplicate detection system utilising semantic similarity that can validate and process new, curated questions.
+- **Developed a robust automated data ingestion pipeline** based on the *status / payload" pattern with integrated quality checks (schema validation, NaN handling) and a tiered duplicate detection system utilising semantic similarity that can validate and process new, curated questions.
 - **Developed reusable analysis tools**. Built a reusable `eda_scripts` module to encapsulate all data processing, analysis, and reporting functions, including a *"Status Map" dashboard* that visualizes the final dataset's composition.
 - **Curated the unique questions down to a final, validated MVP dataset of 902 questions.** This process involved extensive domain-specific edits, including re-authoring 203 questions for clarity and replacing over 100 flawed entries with new, lore-accurate MCQs.
 
 The final, curated dataset serves as a strong foundation for the trivia game MVP. The next phase will focus on expanding the dataset with an additional 500+ questions (primarily explanatory type) using a guided AI generation pipeline to showcase advanced semantic NLP capabilities.
 
 #### MVP Development & Testing
-- Built CLI MVP with core trivia gameplay, house point scoring, and user interaction.
-- [Link to CLI Docker container / demo] (containerized web deployment of MVP is under development)
+- Built CLI MVP with core trivia gameplay, house point scoring, and user interaction. The logic was developed based on the Model-View-Controller (MVC) architectural pattern.
+- [Link to CLI Docker container / demo](#) (containerized web deployment of MVP is under development)
 - Plan to begin user testing next week, tracking metrics such as:
   - Number of game sessions played
   - User accuracy and response patterns
@@ -143,8 +145,8 @@ The final, curated dataset serves as a strong foundation for the trivia game MVP
     <td align="center"><sub><b>Engineering</b></sub></td>
     <td><img src="https://img.shields.io/badge/Architecture-Modular%20%7C%20Installable-lightgrey" alt="Modular"></td>
     <td><img src="https://img.shields.io/badge/Testing-unittest%20%7C%20pytest-yellow" alt="Testing"></td>
-    <td><img src="https://img.shields.io/badge/versioned-Git-blue?logo=git&logoPosition=right" alt="Version Control"></td>
-    <td><img src="https://img.shields.io/badge/Containerized-Docker-blue?logo=docker" alt="Containerized"></td>
+    <td><img src="https://img.shields.io/badge/Git-versioned-grey?logo=git&labelColor=blue" alt="Version Control"></td>
+    <td><img src="https://img.shields.io/badge/Docker-Containerized-grey?logo=docker&labelColor=blue" alt="Containerized"></td>
   </tr>
   <tr>
     <td align="center"><sub><b>Project Status</b></sub></td>
