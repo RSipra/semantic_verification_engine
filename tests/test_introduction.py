@@ -1,32 +1,23 @@
 # Testing Introduction class - core logic MVP - manual testing.
+
 from dotenv import load_dotenv
 load_dotenv() 
-from HPtrivia_game.controller import Introduction as intro
+from HPtrivia_game.game_controller import GameView as View
+from HPtrivia_game.player import Player
+import time
 
-# # Individual methods:
-
-# Initialize intro instance:
-# introduction = intro()
-# #1.a. Print ASCII Art:
-# intro.print_ascii_art()
-# # #1.b. Print ASCII Art: custom font
-# intro.print_ascii_art(font_style='digital')
-# intro.print_ascii_art(font_style='ogre')
-
-# # # 2. Greeting
-# print(introduction.greet())
-
-# # # 3. get player info():
-# intro.get_player_details()
-
-# 4. explain the game:
-# print(introduction.explain_gameplay())
-# print(gameplay)
+# Initialize
+View = View()
 
 # Full Introduction:
-introduction = intro()
-intro.print_ascii_art(font_style='ogre')
-print(introduction.dedication())
-print(introduction.greet())
-intro.get_player_details()
-introduction.explain_gameplay()
+View.print_ascii_art(font_style='ogre')
+View.print_dedication()
+time.sleep(0.5)
+View.print_greeting()
+time.sleep(0.5)
+player_name = View.get_player_name()
+player_house = View.get_player_house()
+test_player = Player(player_name, player_house)
+View.print_personalized_player_welcome(test_player)
+View.explain_gameplay(total_questions=10)
+

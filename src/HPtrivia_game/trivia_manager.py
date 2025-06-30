@@ -192,7 +192,7 @@ class Trivia:
             pkg_data_path = resources.files('HPtrivia_game.data').joinpath(self.data_csv_filename)
             
             with resources.as_file(pkg_data_path) as filepath:
-                print(f"DEBUG: Loading bundled data from: {filepath}")
+                # print(f"DEBUG: Loading bundled data from: {filepath}")
                 self.data_csv_path = filepath
                 self.trivia_df = pd.read_csv(filepath)
 
@@ -223,7 +223,7 @@ class Trivia:
         # Select n random questions from the loaded DataFrame
         session_df = self.trivia_df.sample(
             n = num_questions_to_load,
-            random_state=26,
+            # random_state=26,
             axis=0,
             replace=False
         )
@@ -339,6 +339,6 @@ class Trivia:
         questions_dict = self._load_questions(num_questions_to_load)
         # Confirmation message
         self.questions = self._create_question_objects(questions_dict) 
-        print(f"DEBUG: Trivia started. Loaded {len(self.questions) if self.questions else 0} questions for the session.") # Example log
+        # print(f"DEBUG: Trivia started. Loaded {len(self.questions) if self.questions else 0} questions for the session.") # Example log
 
 

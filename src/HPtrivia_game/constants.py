@@ -16,6 +16,9 @@ NUM_QUESTIONS_PER_SESSION = 10
 # Name of the trivia dataset csv to use to extract questions from
 MVP_TRIVIA_CSV_NAME = "cleaned_trivia_dataset_MVP_v0.csv"
 
+# Number of chances a player gets every question session
+PLAYER_CHANCES = 3
+
 # The main HP houses for players to select from
 class House(str, Enum):
     """ 
@@ -60,10 +63,10 @@ HOUSE_TO_HEAD_MAPPING = {
 
 # A dictionary mapping House enums to rich style strings
 HOUSE_STYLES = {
-    House.GRYFFINDOR: "bold red on gold1",
-    House.SLYTHERIN:  "bold green on grey70",  
-    House.RAVENCLAW:  "bold blue on #CD7F32", 
-    House.HUFFLEPUFF: "bold yellow3 on black"
+    House.GRYFFINDOR: "bold red3",
+    House.SLYTHERIN:  "bold green3",
+    House.RAVENCLAW:  "bold blue1",
+    House.HUFFLEPUFF: "bold yellow1"
 }
 
 # Wizard ranks for players based on their final score
@@ -80,4 +83,10 @@ class Rank(str, Enum):
     EXPERT = "Expert"
     MASTER = "Master"
     UNKNOWN = "Unknown"
+    
+# Custom Exceptions (can later go in a separate module)
+
+class UserWantsToQuit(Exception):
+    """Custom exception raised when the user types 'quit' at any prompt."""
+    pass    
     

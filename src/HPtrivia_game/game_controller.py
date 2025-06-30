@@ -56,9 +56,10 @@ import random
 import time
 from typing import List, Any, Dict, Optional
 from pyfiglet import figlet_format  # to create ASCII art
-from rich.console import Console
+from rich.console import Console, RenderableType
 from rich.panel import Panel
 from rich.text import Text
+from rich.align import Align 
 from HPtrivia_game.player import Player
 from HPtrivia_game.trivia_manager import Question
 import HPtrivia_game.constants as const
@@ -75,12 +76,12 @@ class GameView:
     # 1.  Colour theme for the `rich` cli formatting package
     THEME = {
         "intro": "bold purple",
-        "question_border": "dark_violet",
+        # "question_border": "dark_violet",
         "prompt": "magenta",
-        "success": "bold green",
-        "error": "bold red",
-        "feedback": "yellow",
-        "goodbye": "bold cyan"
+        "success": "bold green3",
+        "error": "bold red3",
+        "feedback": "yellow1",
+        "goodbye": "bold purple"
     }
 
     # 2. Messages used in the various sections of the game introduction
@@ -91,7 +92,7 @@ class GameView:
             "🪄 You've entered the Harry Potter Trivia Challenge!\n"
         ),
         "objective": (
-            "You have been selected as a member of the house trivia team.\n"
+            "\nYou have been selected as a member of the house trivia team.\n"
             "Answer the trivia questions correctly and make your team proud! 🏅\n"
         ),
         "how_to_play": (
@@ -162,7 +163,7 @@ class GameView:
                 "✅ McGonagall: Well done. Keep this up and you’ll go far.",
                 "✅ McGonagall: Excellent work — more points to your house.",
                 "✅ McGonagall: That is the correct answer. Good. Very good.",
-                "✅ McGonagall: Quite satisfactory. I shall make note of your progress."
+                "✅ McGonagall: Quite satisfactory. I shall make note of your progress.",
                 "✅ Snape: Hmph. Even you get one right occasionally.",
                 "✅ Snape: Acceptable. Barely.",
                 "✅ Snape: Correct. Try not to look so pleased with yourself.",
@@ -278,12 +279,28 @@ class GameView:
     def __init__(self):
         self.console = Console()  # for using the 'rich' formatting in CLI
     
+    def _create_centered_panel(self, content: RenderableType, style: str, title: str) -> Panel:
+        """A helper method to create a styled, centered Panel."""
+        return Panel(
+             Align.center(content, style=style),
+            border_style=style,
+            title=f"[{style}]{title}[/]",
+            padding=(1, 2)
+        )
+    
+    def display_error(self, message: str) -> None:
+        """Displays a generic, formatted error message to the user."""
+        # For now, it can be a simple print statement.
+        # Later, this is where you would make the text red with rich.
+        self.console.print(f"\n {message}\n", style=self.THEME['error'])
+
 ## VIEW Introduction
     # Game title
-    @staticmethod
-    def print_ascii_art(font_style: str = 'standard'):
+    
+    def print_ascii_art(self, font_style: str = 'standard'):
         """
-        Print the game title as ASCII art in the terminal using the pyfiglet package.
+        Print the game title as ASCII art in the terminal using the pyfiglet package
+        inside a rich Panel.
 
         This method is used in the CLI version of the game to display a stylized title.
         It uses the 'standard' font from pyfiglet by default. 
@@ -294,9 +311,19 @@ class GameView:
         - Font examples: http://www.figlet.org/examples.html
         """
         ## Can consider a random font selector for more fun later.
+        # 1. Generate ASCII art
         game_title_text = "Harry Potter Trivia"
         # Try 'digital', 'ogre, 'gothic' or 'smscript' for a different vibe!
-        print( '\n\n' + figlet_format(text=game_title_text, font= font_style) + '\n')
+        ascii_art_str = figlet_format(text=game_title_text, font= font_style)
+        
+        #2. Use the helper function to create display panel
+        title_panel = self._create_centered_panel(
+                content=ascii_art_str,
+                style=self.THEME["intro"],
+                title="If cleverness is what you seek, this trivia game will test your peak!!"
+        )
+        self.console.print('\n\n')
+        self.console.print(title_panel)
  
     # display game dedication / acknowledgements
     def print_dedication(self) -> None:
@@ -304,8 +331,9 @@ class GameView:
         Acknowledgements for game contributions :)
         This method retrieves the 'dedication' message from the messages dictionary.
         """
-        print('\n' + self.INTRO_MESSAGES["dedication"] + '\n') 
-            
+        dedication_text = self.INTRO_MESSAGES["dedication"]
+        self.console.print(dedication_text, justify="center", style="italic plum2")
+        
     # Initial greeting to player 
     def print_greeting(self) -> None:
         """
@@ -314,56 +342,93 @@ class GameView:
         Future enhancements might add additional formatting or dynamic behavior.
         """
         # Can add extra behavior later (e.g. game quotes? more formatting? fun facts?)
-        print(self.INTRO_MESSAGES["greeting"])
-    
+        greeting_text = self.INTRO_MESSAGES["greeting"]
+        self.console.print(greeting_text,justify="center", style=self.THEME["intro"])
+
     # Player details - a. get their name    
-    @staticmethod
-    def get_player_name() -> str:
+    def get_player_name(self) -> str:
         """Internal method to get player name"""
-        print("First, let's get to know you better!")
+        self.console.print("First, let's get to know you better!\n", style=self.THEME["intro"])
         while True:
-            player_name = input("So what should I call you? Please enter your name: ").strip().title()
+            player_name = self.console.input(
+                f"[{self.THEME['prompt']}]So what should I call you? Please enter your name: > [/]"
+                ).strip().title()
             if player_name:
                 break
-            print("Oops! Please enter a valid, non-empty name.")
+            self.console.print(
+                f"[{self.THEME['error']}]Oops! Please enter a valid, non-empty name.[/]"
+                )
+        self.console.print(f"[{self.THEME['intro']}]\nNice to meet you, {player_name}!! [/]")
+        time.sleep(1.5)
         return player_name
     
     # Player details - b. get their Hogwart's house  
-    @staticmethod    
-    def get_player_house() -> const.House:
+    def get_player_house(self) -> const.House:
         """Internal method to get player's Hogwart house with fun dialogue"""
         
-        print("\n\nHmmm, what would your house be....?\n\n")      
+        # Playful house suggestion by sorting hat as a defaut
+        self.console.print("\n\nHmmm, what would your house be....?\n\n", style=self.THEME["intro"])   
         random_house = random.choice(list(const.House)) 
+        # Get the full style string (e.g., "bold red on gold1")
+        house_colour = const.HOUSE_STYLES.get(random_house, "default")
+    
         time.sleep(1.5)  
-        print(f"The Sorting Hat thinks you *might* be a good fit for {random_house.upper()}!🎩\n\n ")
+        
+        # Format the string (text in intro colours, house displayed in house forecolour)
+        suggestion_text = Text()    
+        # Append first colour text to Text object
+        suggestion_text.append(
+            "The Sorting Hat thinks you *might* be a good fit for ",
+            style=self.THEME["intro"]
+        )
+        # Append the house name in house colours
+        suggestion_text.append(random_house.value.upper(), style=house_colour)
+        # Append the rest of the text in the intro colours
+        suggestion_text.append("!🎩\n\n", style=self.THEME["intro"])
+        # Print assembled rich Text object
+        self.console.print(suggestion_text)    
+            
         time.sleep(1) 
         
+        # Prompt player to choose own house if they don't like default
         while True:
-            prompt = f"Which Hogwart's house do you choose? (Press Enter to stay in {random_house.value}): " 
-            player_house_input = input(prompt).strip().title()
+            prompt = f"[{self.THEME['prompt']}]Which Hogwart's house do you choose? (Press Enter to stay in {random_house.value}): [/]"
+            player_house_input = self.console.input(prompt).strip().title()
             
             # If the user just hits Enter, input will be empty
             if not player_house_input:
                 player_house = random_house  # Accept the suggestion
                 break
-            # Otherwise, valideate and accept their choice
+            # Otherwise, validate and accept their choice
             try:
                 player_house = const.House(player_house_input)
                 break 
             except ValueError:
                 valid_house_names = [h.value for h in const.House]
-                print(f"Uhoh! Please enter a valid house from: {', '.join(valid_house_names)}.")
+                self.console.print(
+                    f"[{self.THEME['error']}]Uhoh! Please enter a valid house from: {', '.join(valid_house_names)}.[/]")
         
         return player_house
     
     # Print a personalized message based on the player details
     def print_personalized_player_welcome(self, player: Player) -> None:
         """Print a personalized message to welcome them to their house"""
-        print("\n---------------------------------------------------------")
-        print(f"\n\nWelcome to House {player.house}, {player.name}!\n\n")
-        print("---------------------------------------------------------\n")
-  
+        # 1. get the house colours 
+        house_colour = const.HOUSE_STYLES.get(player.house, "white")
+        
+        # 2. Create a rich Text object to build the message.
+        welcome_text = Text("Welcome to House ", style=self.THEME["intro"])
+        welcome_text.append(player.house.value, style=house_colour)
+        welcome_text.append(f", {player.name}!",  style=self.THEME["intro"])
+        
+        # 3. Create the rich panel
+        welcome_panel = self._create_centered_panel(
+            content=welcome_text,
+            style=house_colour,
+            title="[bold]A New Contestant![/bold]")
+        # 4. Print panel
+        self.console.print('\n', welcome_panel, '\n')
+        
     # Explain game logic to player  
     def explain_gameplay(self, total_questions: int) -> None:
         """
@@ -382,51 +447,59 @@ class GameView:
             self.INTRO_MESSAGES["how_to_quit"],
             self.INTRO_MESSAGES["start_game"]
         ]
+        display_style = self.THEME["intro"]
+        
         for message in gameplay_sequence:
-            print(message)
-            input()
+            self.console.print(message, style=display_style)
+            self.console.input()
     
 ## VIEW Game play
             
     def display_question(self, question: Question):
         """Displays a single formatted question."""
         print(f"\n--- Question {question.session_id} ---")
-        print(question.question_text)
+        self.console.print(question.question_text, style=self.THEME['prompt'])
         
     def get_player_answer(self) -> str:
         """Prompts the player for an answer and returns the input."""
-        player_answer = input("Your answer: > ")
-        return player_answer
+        player_answer = self._get_user_input(f"[{self.THEME['prompt']}]Your answer: > [/]")
+        return player_answer.strip()
     
     def give_feedback(self, is_correct: bool, correct_answer: str, chances_left: int) -> None:
         """Displays feedback to the player after they answer."""
         if is_correct:
-            print(random.choice(self.CORRECT_ANS_FEEDBACK))
+            self.console.print(random.choice(self.CORRECT_ANS_FEEDBACK), style=self.THEME['success'])
         else:
-            print(random.choice(self.WRONG_ANS_FEEDBACK))
-            print(f"The correct answer is: {correct_answer}")
+            self.console.print(random.choice(self.WRONG_ANS_FEEDBACK), style=self.THEME['error'])
+            self.console.print(f"The correct answer is: {correct_answer}", style=self.THEME['feedback'])
             if chances_left > 1:
-                print(f"Be careful! You have {chances_left} chances remaining.")
+                self.console.print(f"Be careful! You have {chances_left} chances remaining.", style=self.THEME['feedback'])
             elif chances_left == 1:
-                print("Watch out, you have one chance left!")
+                self.console.print("Watch out, you have one chance left!", style=self.THEME['error'])
             
             # can later add special messages: e.g.
             # 1. on a streak (3 questions in a row)
             # 2. relate it to answer keywords
             # 3. Maybe pick one professor / character to give responses through out game?
-    
-    def display_error(self, message: str) -> None:
-        """Displays a generic, formatted error message to the user."""
-        # For now, it can be a simple print statement.
-        # Later, this is where you would make the text red with rich.
-        print(f"\n! ERROR: {message}\n")  
-## VIEW Game end    
+
+        
+## VIEW Game end 
+    def display_game_over(self) -> None:
+        """Header to print game over before results"""
+        time.sleep(1)
+        self.console.print("\n‘Alas, all good things must end...’", style=self.THEME['goodbye'])
+        time.sleep(1)
+        self.console.print("\n--- Game Over! ---\n", style=self.THEME['goodbye'])
+        time.sleep(1)
+   
     def display_final_score(self, score: int, total_questions: int) -> None:
         """Display the final score for the session"""
-        print('---- Final Score ----')
+        self.console.print('---- Final Score ----', style=self.THEME['goodbye'])
         if total_questions > 0:
             percentage = (score / total_questions) * 100
-            print(f"You scored: {score} / {total_questions} ({percentage:.1f}%)!!")
+            self.console.print(
+                f"You scored: {score} / {total_questions} ({percentage:.1f}%)!!", 
+                style=self.THEME['goodbye'])
     
     @staticmethod  # doesn't rely on specific instance of Class       
     def get_random_feedback_from_key(d: dict, key: Any) -> Optional[str]:
@@ -456,22 +529,43 @@ class GameView:
                 house_head=house_head_name, 
                 house=player.house.value
             )
-            print(f"\n{final_message}")
-
+            self.console.print(f"\n{final_message}", style=self.THEME['feedback'])
+    
     def display_player_rank(self, rank: const.Rank, player: Player) -> None:
         """Displays the player's final rank and a corresponding feedback message."""
         # 1. Select a roast based on rank
         roast = self.get_random_feedback_from_key(self.ROASTS, rank)
         # 2. Announce the rank
-        print(f'Splendid work, {player.name}! You have attained the rank of "{rank}"! 🏆 \n')
+        self.console.print(
+            f'Alright, {player.name}, you have attained the rank of "{rank}"! 🏆 \n',
+            style=self.THEME['goodbye'])
         # 3. Pause to build anticipation
         time.sleep(1.5)  
         # 4. "thinking" ellipsis for some drama✨
-        print('...')
+        self.console.print('...', style=self.THEME['goodbye'])
         time.sleep(1)
         # 5. Deliver the roast :D
-        print(f"\n{roast}")
-
+        self.console.print(f"\n{roast}", style=self.THEME['feedback'])
+        
+    def display_final_housepoints(self, final_score:int, player: Player) -> None:
+        """Display final points earned by player for their house"""
+        house_colour = const.HOUSE_STYLES.get(player.house, "white")
+        
+        if player.score:
+            points_message = f"{final_score} points for {player.house}!!"
+            # centered_text = Align.center(points_message, style=house_colour)
+            # house_points_panel = Panel(
+            #     centered_text,
+            #     border_style=house_colour,
+            #     padding=1
+            # )
+            # 4. Create rich panel
+            house_points_panel = self._create_centered_panel(
+                points_message,
+                style=house_colour,
+                title='House Points Awarded!')
+            self.console.print('\n', house_points_panel, '\n')      
+        
     def ask_game_renew(self) -> bool:
         """
         Asks the player if they want to play another round.
@@ -484,29 +578,55 @@ class GameView:
         """
         tries = 0
         while tries < 3:
-            prompt = "\nWould you like to play another round? (y/n): "
-            renewal_answer = input(prompt).strip().lower()
+            prompt_question = "\nWould you like to play another round? (y/n): "
+            renewal_answer = self.console.input(f"[{self.THEME['prompt']}]{prompt_question}[/]").strip().lower()
 
             if renewal_answer in ['y', 'yes']:
-                print("\nExcellent! Preparing a new set of questions...")
+                self.console.print("\nExcellent! Preparing a new set of questions...\n\n", style=self.THEME['intro'])
                 return True
             if renewal_answer in ['n', 'no']:
                 return False
             
             tries += 1
-            print(f"Sorry, I didn't get that. Please enter 'y' or 'n'. (Attempt {tries} of 3)")
+            self.console.print(
+                f"Sorry, I didn't get that. Please enter 'y' or 'n'. (Attempt {tries} of 3)", 
+                style=self.THEME['error'])
 
-        print("\nToo many invalid entries. Ending the game. Mischief managed!")
+        self.console.print(
+            "\nToo many invalid entries. Ending the game. Mischief managed!",
+            style=self.THEME['goodbye'])
         return False 
-    
+
     def display_goodbye(self, player_name: str) -> None:
         """Goodbye message when player quits game"""
-        print(f"\nThat was positively enchanting, {player_name}! You've survived a round of magical mischief. ⚡")
-        print("Until next time — keep your wand polished and your wits sharper! 🧙‍♀️")
-    
+        self.console.print(
+            f"\nThat was positively enchanting, {player_name}! You've survived a round of magical mischief. ⚡",
+            style=self.THEME['goodbye'])
+        self.console.print(
+            "Until next time — keep your wand polished and your wits sharper! 🧙‍♀️\n",
+            style=self.THEME['goodbye'])
+
     def display_generic_goodbye(self):
         """Displays a generic goodbye message when no player was created."""
-        print("\nThanks for playing! Mischief managed. ✨")                    
+        self.console.print("\nThanks for playing! Mischief managed. ✨\n", style=self.THEME['goodbye'])
+
+## VIEW Quit game 
+    # check if user enters quit        
+    def _get_user_input(self, prompt: str) -> str:
+        """A private helper to get user input and check for 'quit' command."""
+        response = self.console.input(prompt)
+        if response.strip().lower() == 'quit':
+            # Raise the exception using the 'const' alias
+            raise const.UserWantsToQuit()
+        return response
+    
+    # Display message if player quits in-game:
+    def display_quit_message(self):
+        """Display goodbye message after a player quits mid-game"""
+        self.console.print(
+            "Expelliarmus! Your wand — and the game — have been dropped.\nThanks for playing!",
+            style=self.THEME['goodbye'])
+                       
     
 ## GAMEPLAY CONTROLLER: manage flow between the game states.
     
@@ -529,14 +649,14 @@ class GameController():
         self.current_score = 0
         self.game_over = False
         self.view = GameView()  # Persistent component  
-        print("DEBUG: GameController initialized.")
+        # print("DEBUG: GameController initialized.")
     
 ## CNTL: Initialization
 
     # Use trivia_manager to setup the questions for the session
     def _setup_session(self, total_questions: int): # State 1
         """Handles the entire data setup process for a new game session."""
-        print("Preparing your questions...")
+        # print("Preparing your questions...")
         try:
             # Tell the trivia_manager to load the data
             self.trivia_manager.start(num_questions_to_load= total_questions)
@@ -575,6 +695,20 @@ class GameController():
         # Explain game play
         self.view.explain_gameplay(total_questions)
 
+    def start_game(self) -> bool:
+        """
+        Handles the one-time player setup and introduction.
+        This is so the introduction is only required once if the 
+        player wants to play multiple rounds.
+        Returns True if the setup was successful, False otherwise.
+        """
+        # 0. Configuration
+        total_questions = const.NUM_QUESTIONS_PER_SESSION
+        # State 1: Introduction
+        self._handle_introduction(total_questions)
+        
+        return self.player is not None
+
 ## CNTL: Run session    
     def run_game(self) -> bool:
         """
@@ -593,38 +727,42 @@ class GameController():
                    application loop in `main.py` to determine whether to
                    start a new game or exit the program.
         """
+        try:
+            # 0. Configuration
+            total_questions = const.NUM_QUESTIONS_PER_SESSION
+            
+            # State 1: handled once only at start of game in main
+            
+            # Guard Clause: Check if player initialized successfully
+            if not self.player:
+                self.view.display_error("Cannot play a round without a player. Please start the game first.")
+                return False # Exit the round gracefully
+
+            # State 2: Data setup
+            session_questions = self._setup_session(total_questions)
+            # Guard Clause: Check if questions were loaded successfully
+            if not session_questions:
+                self.view.display_error("Could not load questions for the session.")
+                return False
+
+            # State 3: Gameplay loop
+            # Reset the player's stats for the new round before the questions begin.
+            self.player.reset_stats()
+
+            for question in session_questions:
+                self._handle_turn(question)
+                # make sure they have chances left
+                if not self.player.has_chances_left():
+                    self.view.display_error("Uh oh! You've run out of chances! 🥺")
+                    break
+
+            # State 4: End game
+            return self._end_game(total_questions) # returns bool to main.py (T: another round, F: quit)
         
-        # 0. Configuration
-        total_questions = const.NUM_QUESTIONS_PER_SESSION
-        
-        # State 1: Introduction
-        self._handle_introduction(total_questions)
-        # Guard Clause: Check if player was created successfully before proceeding.
-        if not self.player:
-            self.view.display_error("Player not created. Aborting game.")
+        # custom exception to quit if player enters 'quit' at any input and end game.
+        except const.UserWantsToQuit: 
+            self.view.display_quit_message() 
             return False
-
-        # State 2: Data setup
-        session_questions = self._setup_session(total_questions)
-        # Guard Clause: Check if questions were loaded successfully
-        if not session_questions:
-            self.view.display_error("Could not load questions for the session.")
-            return False
-
-
-        # State 3: Gameplay loop
-        self.current_score = 0
-        print(f"\nLet's begin! There are {total_questions} questions in this session.")
-
-        for question in session_questions:
-            self._handle_turn(question)
-            # make sure they have chances left
-            if not self.player.has_chances_left():
-                self.view.display_error("Uh oh! You've run out of chances! 🥺")
-                break
-
-        # State 4: End game
-        return self._end_game(total_questions) # returns bool to main.py (T: another round, F: quit)
     
     # Handle a single turn with the Question object    
     def _handle_turn(self, question: Question) -> None: # state 3
@@ -650,40 +788,38 @@ class GameController():
         #3. Check the answer & chances left
         is_correct = question.check_answer(player_answer)
         
-        #4. Provide player feedback on answer
-        self.view.give_feedback(is_correct, 
-                                question.correct_answer, 
-                                chances_left= self.player.get_chances)
-        
-        #5. update player score and state
+        #4. update player score and state
         if is_correct:
             self.player.add_score()
         else:
             self.player.lose_chance()
+            
+        #5. Provide player feedback on answer
+        self.view.give_feedback(is_correct, 
+                                question.correct_answer, 
+                                chances_left= self.player.get_chances)
 
 ## CNTL: End session    
     def _end_game(self, total_questions: int) -> bool:  # State 4
         """Orchestrates the entire end-game sequence by calling the View."""
-        # 0. setup for displaying results
-        time.sleep(1)
-        print("\n‘Alas, all good things must end...’")
-        time.sleep(1)
-        print("\n--- Game Over! ---")
-        time.sleep(1)
-        
-        # Guard clause incase player was not instantiated in Introduction - defensive programming to avoid an None state
+
+        # Guard clause incase player was not instantiated in Introduction 
         if self.player is None:
             self.view.display_error("No player data available to show a final score.")
             # Since there's no player, we can't really ask them to play again.
             return False
-        
+
+        # 0. display game-over message
+        self.view.display_game_over()
+
         # 1. get player final score and display it
         final_score = self.player.score
         self.view.display_final_score(final_score, total_questions)
-        
+
         # 2. Get player rank and display rank and roast! :D
         final_rank = self.player.find_player_wizard_rank(total_questions)
         self.view.display_player_rank(final_rank, self.player)
+        self.view.display_final_housepoints(final_score, self.player) 
         
         # 3. Offer another round otherwise quit game
         # a. ask if player wants to continue
