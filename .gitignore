@@ -1,6 +1,9 @@
 # Ignore the script used to download datasets
 src/download_data.py
 
+# Ignore extra documents
+docs/Overall workflow/.extra_docs
+
 # Ignore token files or sensitive configs
 .env
 config.env
