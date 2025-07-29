@@ -54,6 +54,10 @@ level display.
 '''
 import random
 import time
+import string 
+from datetime import datetime
+from pathlib import Path
+import json
 from typing import List, Any, Dict, Optional
 from pyfiglet import figlet_format  # to create ASCII art
 from rich.console import Console, RenderableType
@@ -63,6 +67,8 @@ from rich.align import Align
 from HPtrivia_game.player import Player
 from HPtrivia_game.trivia_manager import Question
 import HPtrivia_game.constants as const
+from utils import utils_general as ut
+
 
 #-----------------------------------------
        
@@ -273,7 +279,7 @@ class GameView:
         const.Rank.NOVICE: "{house_head} lets out a quiet sigh. 'Perhaps... reading more would help.'",
         const.Rank.ENTHUSIAST: "{house_head} nods slowly. 'Not bad. You’re starting to show promise.'",
         const.Rank.EXPERT: "{house_head} smiles with approval. 'Excellent work. A fine showing indeed.'",
-        const.Rank.MASTER: "{house_head} beams with pride. 'Outstanding! You’ve done {your_house} proud!'"
+        const.Rank.MASTER: "{house_head} beams with pride. 'Outstanding! You’ve done {house} proud!'"
     }
     
     def __init__(self):
@@ -502,17 +508,20 @@ class GameView:
                 style=self.THEME['goodbye'])
     
     @staticmethod  # doesn't rely on specific instance of Class       
-    def get_random_feedback_from_key(d: dict, key: Any) -> Optional[str]:
-        """Picks a random message from a list in a dict based on a given key."""
-        # 1. Retrieve the list of feedback based on the Key.
+    def get_random_feedback_from_key(d: dict, key: Any, default: str = "...") -> str:
+        """
+        Picks a random message from a list in a dict based on a given key.
+        Returns a provided default message if the key is not found or the list is empty.
+        """
+        # 1. Safely retrieve the list of messages using .get().
         message_list = d.get(key)
         
-        # 2. Confirm list is not empty and then retrieve a random feedback message
+        # 2. Check if the list exists and is not empty.
         if message_list:
             return random.choice(message_list)
         
-        # 3. Return a default message instead of None for a better user experience.
-        return "The Sorting Hat is silent on this matter."
+        # 3. If the key was not found or the list was empty, return the default.
+        return default
     
     def house_head_reaction(self, rank: const.Rank, player: Player) -> None:
         """ Displays a customized message from the house head based on the Players selected
@@ -534,7 +543,10 @@ class GameView:
     def display_player_rank(self, rank: const.Rank, player: Player) -> None:
         """Displays the player's final rank and a corresponding feedback message."""
         # 1. Select a roast based on rank
-        roast = self.get_random_feedback_from_key(self.ROASTS, rank)
+        roast = self.get_random_feedback_from_key(
+            self.ROASTS, 
+            rank,
+            default="unknown... hmmm, you could be a squib?")
         # 2. Announce the rank
         self.console.print(
             f'Alright, {player.name}, you have attained the rank of "{rank}"! 🏆 \n',
@@ -553,13 +565,7 @@ class GameView:
         
         if player.score:
             points_message = f"{final_score} points for {player.house}!!"
-            # centered_text = Align.center(points_message, style=house_colour)
-            # house_points_panel = Panel(
-            #     centered_text,
-            #     border_style=house_colour,
-            #     padding=1
-            # )
-            # 4. Create rich panel
+            # Create rich panel
             house_points_panel = self._create_centered_panel(
                 points_message,
                 style=house_colour,
@@ -579,12 +585,13 @@ class GameView:
         tries = 0
         while tries < 3:
             prompt_question = "\nWould you like to play another round? (y/n): "
-            renewal_answer = self.console.input(f"[{self.THEME['prompt']}]{prompt_question}[/]").strip().lower()
+            renewal_answer = self.console.input(f"[{self.THEME['prompt']}]{prompt_question}[/]")
+            cleaned_response = ut.clean_input_string(renewal_answer)
 
-            if renewal_answer in ['y', 'yes']:
+            if cleaned_response in ['y', 'yes']:
                 self.console.print("\nExcellent! Preparing a new set of questions...\n\n", style=self.THEME['intro'])
                 return True
-            if renewal_answer in ['n', 'no']:
+            if cleaned_response in ['n', 'no']:
                 return False
             
             tries += 1
@@ -614,11 +621,14 @@ class GameView:
     # check if user enters quit        
     def _get_user_input(self, prompt: str) -> str:
         """A private helper to get user input and check for 'quit' command."""
-        response = self.console.input(prompt)
-        if response.strip().lower() == 'quit':
+        raw_response = self.console.input(prompt)
+        
+        # clean input (strip, lower, punctuation)
+        command_check_string = ut.clean_input_string(raw_response)
+        if command_check_string == 'quit':
             # Raise the exception using the 'const' alias
             raise const.UserWantsToQuit()
-        return response
+        return raw_response  # Answer processing and checking is done by Question
     
     # Display message if player quits in-game:
     def display_quit_message(self):
@@ -626,8 +636,24 @@ class GameView:
         self.console.print(
             "Expelliarmus! Your wand — and the game — have been dropped.\nThanks for playing!",
             style=self.THEME['goodbye'])
-                       
     
+    # Ask if the user wants to save a report of the session's questions for troubleshooting    
+    def prompt_to_save_report(self) -> bool:
+        """
+        Asks the user if they want to save a report of the session's questions.
+        Returns True for 'yes', False for 'no'.
+        """
+        # We can reuse the robust input logic from prompt_for_replay
+        prompt = "\n[bold]Did you spot an error? Save a report of this session's questions? (y/n): > [/]"
+        response = self.console.input(prompt)
+        cleaned_response = ut.clean_input_string(response)
+
+        if cleaned_response in ('y', 'yes'):
+            self.console.print("[italic]Saving session report...[/italic]")
+            return True
+
+        return False
+
 ## GAMEPLAY CONTROLLER: manage flow between the game states.
     
 class GameController():
@@ -799,7 +825,37 @@ class GameController():
                                 question.correct_answer, 
                                 chances_left= self.player.get_chances)
 
-## CNTL: End session    
+## CNTL: End session 
+    
+    # Generate trivia set report incase any errors are spotted in the dataset.
+    def _save_session_report(self):
+        """Gets session data from Trivia and saves it as a JSON report."""
+        # 1. Get the data from the trivia manager
+        report_data = self.trivia_manager.get_session_report_data()
+
+        if not report_data:
+            print("DEBUG: No questions in session, skipping report.")
+            return
+
+        # 2. Define a directory for reports and make sure it exists
+        reports_dir = Path("reports")
+        reports_dir.mkdir(exist_ok=True)
+
+        # 3. Create a unique filename with a timestamp
+        timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+        filename = f"trivia_session_{timestamp}.json"
+        filepath = reports_dir / filename
+
+        # 4. Write the data to a JSON file
+        try:
+            with open(filepath, 'w', encoding='utf-8') as f:
+                json.dump(report_data, f, indent=4, ensure_ascii=False)
+            print(f"DEBUG: Session report saved to {filepath}")
+        except Exception as e:
+            # Use the view to display the error to the user
+            self.view.display_error(f"Could not save session report: {e}")
+                
+    # End game sequence   
     def _end_game(self, total_questions: int) -> bool:  # State 4
         """Orchestrates the entire end-game sequence by calling the View."""
 
@@ -821,8 +877,12 @@ class GameController():
         self.view.display_player_rank(final_rank, self.player)
         self.view.display_final_housepoints(final_score, self.player) 
         
-        # 3. Offer another round otherwise quit game
-        # a. ask if player wants to continue
+        # 3. Ask the player if they want to save a report by calling the view.
+        if self.view.prompt_to_save_report():
+            # 2. If they say yes, then call the internal save method.
+            self._save_session_report()
+        
+        # 4. Offer another round otherwise quit game
         continue_game = self.view.ask_game_renew()
         
         return continue_game
