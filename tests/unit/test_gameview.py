@@ -13,23 +13,31 @@ from rich.align import Align
 from rich.console import Console
 from HPtrivia_game.game_controller import GameView
 from HPtrivia_game.player import Player
+from HPtrivia_game.trivia_manager import Question
 import HPtrivia_game.constants as const
 
 # NOTE on testing:
 # ------------------
+# mocker and patches are used to search and replace methods with mocks to check logic in isolation.
 # Since almost all methods are player-facing, they need to be tested.
 # Using pytest built-in methods:
 #    - monkeypatch -> sed to temporarily replace methods that bring input or externalities (like random numbers, 
 #          file access, or the current time) to the method being tested. It's automatically torn down after the test.
 #    - capsys -> Captures what is printed to the console (stdout and stderr) so it can be checked in an assert statement.
 
-# TODO: Refactor tests to use io.StringIO for future robustness.
+# TODO 1: Refactor tests to use io.StringIO for future robustness.
 # -------------------
 # Although `capsys` is currently working for all tests, its interaction with
 # the `rich` library can be unpredictable. This is ok for the MVP.
 # The recommended, most reliable pattern for capturing `rich.console.Console` output
 # is to redirect it to an io.StringIO buffer. This will prevent potential intermittent
 # test failures in the future.
+
+# TODO 2: Refactor code into test classes (e.g. Class TestSmartMethods) and then use:
+# def setup_method(self):
+#         """This method runs before each test in this class."""
+#         self.view = GameView()
+# once instead of using view = GameView() everytime
 
 ## --- FIXTURES ---
 
@@ -48,6 +56,19 @@ def slytherin_player():
     """
     player = Player(name='Draco', hogwarts_house=const.House.SLYTHERIN)
     return player
+
+@pytest.fixture
+def sample_question():
+    """Provides a standard Question instance for testing."""
+    return Question(
+        question_id=214,
+        question_text = "What was the name of Neville Longbottom's pet toad?",
+        correct_answer="Trevor",
+        interrogative_keyword=['what'],
+        question_keywords=['what', 'name', 'Neville', 'Longbottom', 'pet', 'toad'],
+        answer_keywords=['Trevor'],
+        session_id= 5
+        )
 
 ## --- UNIT TESTS ---
 
@@ -70,8 +91,7 @@ def test_give_feedback_when_answer_correct(monkeypatch, capsys):
     view.give_feedback(is_correct=True, correct_answer="any string", chances_left=3 ) # type: ignore
     # Assert
     captured = capsys.readouterr()
-    expected_feedback = "✅ Snape: You finally got it."
-    assert expected_feedback in captured.out
+    assert feedback in captured.out
 
 # give_feedback - unhappy path (answer is incorrect, chance >1)
 def test_give_feedback_when_answer_incorrect_and_chances_left(monkeypatch, capsys):
@@ -90,9 +110,8 @@ def test_give_feedback_when_answer_incorrect_and_chances_left(monkeypatch, capsy
     view.give_feedback(is_correct=False, correct_answer="any string", chances_left=2 ) # type: ignore
     # Assert
     captured = capsys.readouterr()
-    expected_feedback = "💥 Not quite..."
-    assert expected_feedback in captured.out
-    assert "any string" in captured.out 
+    assert feedback in captured.out
+    assert "any string" in captured.out
     assert "Be careful! You have 2 chances remaining." in captured.out
     
 # give_feedback - unhappy path (answer is incorrect, chance = 1)
@@ -112,10 +131,9 @@ def test_give_feedback_when_answer_incorrect_and_no_chances_left(monkeypatch, ca
     view.give_feedback(is_correct=False, correct_answer="any string", chances_left=1 ) # type: ignore
     # Assert
     captured = capsys.readouterr()
-    expected_feedback = "💥 Not quite..."
-    assert expected_feedback in captured.out
-    assert "any string" in captured.out 
-    assert "Watch out, you have one chance left!" in captured.out    
+    assert feedback in captured.out
+    assert "any string" in captured.out
+    assert "Watch out, you have one chance left!" in captured.out
 
 # display_player_rank -> HAPPY path 
 def test_display_player_rank_happy_path(monkeypatch, slytherin_player, capsys):
@@ -469,7 +487,7 @@ def test_prompt_to_save_report_user_says_yes(capsys, monkeypatch):
     """
     GIVEN the player enters "Yes" 
     WHEN prompted by prompt_to_save_report() to save session data in case they spotted an error
-    THEN return False
+    THEN return True
     """
     # Arrange
     view = GameView()
@@ -560,7 +578,7 @@ def test_ask_game_renew_player_inputs_all_invalid(capsys, monkeypatch):
 ## INTRO view
 
 # display_error
-def test_dislay_error_prints_message(capsys):
+def test_display_error_prints_message(capsys):
     """
     GIVEN an error message
     WHEN display_error is called
@@ -643,7 +661,7 @@ def test_print_ascii_art_calls_figlet_correctly(mock_figlet):
     mock_figlet.return_value = "mocked art"
     string_io = io.StringIO()
     view.console = Console(file=string_io)
-    
+
     # Act
     view.print_ascii_art(font_style=test_font)
     captured_output = string_io.getvalue()
@@ -674,7 +692,7 @@ def test_print_greeting_displays_welcome_message(capsys):
     captured = capsys.readouterr()  # Capture the printed output
     expected_text = "Welcome, young withch or wizard"
     assert expected_text in captured.out
-    
+
 # print_personalized_player_welcome
 def test_print_personalized_welcome_for_player(gryffindor_player, capsys):
     """
@@ -694,15 +712,131 @@ def test_print_personalized_welcome_for_player(gryffindor_player, capsys):
     assert "Hermione" in captured.out
 
 # explain_gameplay
+def test_explain_gameplay_displays_messages(monkeypatch, capsys):
+    """
+    GIVEN a dict of messages
+    WHEN explain_gameplay is called
+    THEN it displays the correct greetings and instructions on the console
+    """
+    # Arrange
+    view = GameView()
+    total_questions = 3
+    monkeypatch.setattr(view.console, 'input', lambda : "")  # user pressing enter to continue
+    expected_text = [
+        "Answer the trivia questions correctly",
+        "Press Enter to move through",
+        f"You will be given {total_questions} random questions in this session",
+        "How to play the game:",
+        "Quit mid-game:",
+        "Press Enter to move through"
+    ]
+    # Act
+    view.explain_gameplay(total_questions)
+    captured = capsys.readouterr()
+    # Assert
+    for phrase in expected_text:
+        assert phrase in captured.out
 
 ## PLAY view
+
 # display_question
+def test_display_question_prints_sample(sample_question, capsys):
+    """
+    GIVEN controller needs to display a question
+    WHEN display_question is called
+    THEN the formatted correct question is displayed on console
+    """
+    # Arrange
+    view = GameView()
+    # Act
+    view.display_question(sample_question)
+    captured = capsys.readouterr()
+    # Assert
+    assert "--- Question 5 ---" in captured.out
+    assert "What was the name of Neville Longbottom's pet toad?" in captured.out
 
 ## END view
+
 # display_game_over
+def test_display_game_over_message(capsys, monkeypatch):
+    """
+    GIVEN the game has ended
+    WHEN display_game_over is called
+    THEN the formatted correct message is displayed on console
+    """
+    # Arrange
+    view = GameView()
+    expected_text = ["Alas, all good things must end...",
+                     "--- Game Over! ---"
+                    ]
+    monkeypatch.setattr(time, 'sleep', lambda _: None)
+    # Act
+    view.display_game_over()
+    captured = capsys.readouterr()
+    # Assert
+    for text in expected_text:
+        assert text in captured.out
+
 # get_random_feedback_from_key
+def test_get_random_feedback_from_key_for_correct_answer(monkeypatch):
+    """
+    GIVEN the dict and key to pick feedback for the correct answer
+    WHEN get_random_feedback_from_key
+    THEN will pick a random message and return it
+    """
+    # Arrange
+    view = GameView()
+    test_dict = {"any_key": ["some_message"]}
+    feedback = "✅ Yes, that's right! 👌🏼"
+    monkeypatch.setattr(random, 'choice', lambda _: feedback )
+    # Act
+    test_result = view.get_random_feedback_from_key(d=test_dict, key="any_key")
+    # Assert
+    assert test_result == feedback
+
 # display_goodbye
+def test_display_goodbye_prints_message(gryffindor_player, capsys):
+    """
+    GIVEN the player name
+    WHEN display_goodbye is called 
+    THEN it prints a personalized goodbye message to the console
+    """
+    # Arrange
+    view = GameView()
+    # Act
+    view.display_goodbye(gryffindor_player.name)
+    captured = capsys.readouterr()
+    # Assert
+    assert "That was positively enchanting, Hermione!" in captured.out
+    assert "Until next time — keep your wand polished and your wits sharper!" in captured.out
+    
 # display_generic_goodbye
+def test_display_generic_goodbye_prints_message(capsys):
+    """
+    GIVEN the game has ended and Player not initiated 
+    WHEN display_generic_goodby is called
+    THEN it will print a generic goodbye to the screen
+    """
+    #Arrange
+    view = GameView()
+    # Act
+    view.display_generic_goodbye()
+    captured = capsys.readouterr()
+    # Assert
+    assert "Thanks for playing! Mischief managed." in captured.out
 
 ## QUIT view
 # display_quit_message
+def test_display_quit_message_prints_to_console(capsys):
+    """
+    GIVEN the player quits the game
+    WHEN display_quit_message is called
+    THEN it prints goodbye message to console
+    """
+    # Arrange
+    view = GameView()
+    # Act
+    view.display_quit_message()
+    captured = capsys.readouterr()
+    # Assert
+    assert "Expelliarmus! Your wand — and the game — have been dropped." in captured.out
