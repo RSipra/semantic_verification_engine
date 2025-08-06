@@ -1,4 +1,5 @@
-#  NLP Trivia Engine: A Modular, Semantic-Answer Game Using NLP & NER  
+#  NLP Trivia Engine: Semantic Q&A with Custom NER, Sentence-BERT, and Modular Design
+
 *Themed: Harry Potter | CLI MVP → Web App in Progress*
 
 > 🎯 **This project demonstrates applied NLP, semantic search, software engineering, and full-stack thinking — all through an interactive trivia game.**  
@@ -14,8 +15,10 @@ This magical little adventure started over late-night book readings and a daught
 More than just a game, this project was designed to **apply and demonstrate data and software engineering skills**, including:
 
 - 🐍 Clean Python + OOP design
-- 🧠 NLP & Named Entity Recognition (NER) pipelines
+- 🧠 NLP & custom-entity classes for Named Entity Recognition (NER)
 - 🔎 Semantic answer matching with Sentence-BERT embeddings
+- ⚙️ Data engineering: schema enforcement and automated reusable pipelines with validation logic
+- 🤖 LLM prompt engineering: content generation via API calls to enhance dataset diversity
 - 🎯 MVP thinking: CLI → GUI (Flask) → interactive enhancements
 - 📦 Modular design, installable packaging
 - 🧪 Testing, version control, structured documentation

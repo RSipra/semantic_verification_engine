@@ -1,6 +1,11 @@
 # Project Workflow & Development Plan
 
-This document outlines the sequential, multi-phase development workflow for the Harry Potter Trivia Game project. The strategy is to build a robust foundation by first creating a high-quality, curated dataset and a functional Command-Line Interface (CLI) MVP. Subsequent phases will then build upon this foundation to integrate advanced NLP features and deploy a full-featured web application.
+This document outlines the sequential, multi-phase development workflow for the Harry Potter Trivia Game project. The project follows a phased-agile methodology, combining a high-level roadmap with iterative development sprints. Each phase builds upon a tested and refined foundation, allowing for flexibility and the integration of key learnings discovered during development.
+
+## A Note on Agile Practice
+While the phases are sequential, the work within them is iterative. Sprints are treated as focused development cycles that include not just building, but also learning, testing, and refactoring. Feedback from user testing (Phase 1.5) and insights gained during complex tasks (like NLP prototyping in Phase 2) directly inform the next steps, ensuring the project remains adaptable and robust.
+
+
 
 ## Phase 1: Core Game Logic & CLI Foundation
 ### Sprint 1.1: Environment & Data Foundation
