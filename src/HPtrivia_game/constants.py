@@ -88,7 +88,6 @@ class Rank(str, Enum):
     UNKNOWN = "Unknown"
     
 # Custom Exceptions (can later go in a separate module)
-
 class UserWantsToQuit(Exception):
     """Custom exception raised when the user types 'quit' at any prompt."""
     pass    

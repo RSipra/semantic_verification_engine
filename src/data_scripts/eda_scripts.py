@@ -1774,25 +1774,27 @@ def display_correlation_summary(summary_df: pd.DataFrame) -> pd.DataFrame:
     
     # copy and filter the summary df
     correlation_summary_df = summary_df[columns_to_display].copy()
-    # rename the columns for display
+    # Rename the columns for display
     correlation_summary_df = correlation_summary_df.rename(columns={
         'Keyword': 'Question Keyword',
         'question_count': 'Keyword Count',
         'question_percentage': '(%) of total',
         'question_mean': 'Mean Question Length',
-        'answer_mean': 'Mean Anwer Length',
+        'answer_mean': 'Mean Answer Length',  # ✅ fixed typo
         'correlation_r': "Pearson's r",
         'correlation_p': "P-value",
         'interpretation': "Interpretation"
     })
-    # sort the columns by keyword count and round the values
+
+    # Round the values using the **correct** column names
     correlation_summary_df = correlation_summary_df.sort_values(by='Keyword Count', ascending=False).round({
-    'perc. of total': 0,
-    'Mean Ques Length': 0,
-    'Mean Ans Length': 0,
-    "Pearson's r": 3,
-    "P-value": 3
-})
+        '(%) of total': 0,
+        'Mean Question Length': 0,
+        'Mean Answer Length': 0,
+        "Pearson's r": 3,
+        "P-value": 3
+    })
+    
     # display the correlation summary table
     print("\nCorrelation Summary Table by Question Keywords:")
     display(correlation_summary_df)
