@@ -1,0 +1,55 @@
+question,answer,question_type,is_numeric_answer,force_add_as_duplicate
+"Which of these is an ingredient in Befuddlement Draughts: Powdered Bicorn Horn, Bezoar, Sneezewort, or Dittany?",Sneezewort,MCQ,FALSE,FALSE
+"Which of these charms is the dancing-feet jinx? Tarantallegra, Rictusempra, Locomotor, or Serpensortia?
+",Tarantallegra,MCQ,FALSE,FALSE
+"Which of the following was a key reason why 14th-century witch burnings were often pointless against actual witches and wizards: The Protego Charm, Apparition, The Flame-Freezing Charm, or Fire-Protection Potion?",Flame-Freezing Charm,MCQ,FALSE,FALSE
+"Which of the following traits does the Occamy exhibit: Animagus Transformation, Blast-Ended Propulsion, Choranaptyxis, or Emotional Empathy?",Choranaptyxis,MCQ,FALSE,FALSE
+"Which of these plants bloom instantly: Mandrake, Devil’s Snare, Puffapod, or Bubotuber?",Puffapod,MCQ,FALSE,FALSE
+"Which of the following is NOT a Horcrux: The Diary of Tom Riddle, The Ring of Marvolo Gaunt, The Gryffindor Goblet, or The Locket of Slytherin?",The Gryffindor Goblet,MCQ,FALSE,FALSE
+"Which of these is needed for successful broom casting?Which of these is needed for successful broom casting: speed, balance, courage, or strength?",Balance,MCQ,FALSE,FALSE
+"Which of the following is NOT a type of Transfiguration: human transfiguration, summoning, vanishing, or animagus transformation?",Summoning,MCQ,FALSE,FALSE
+"Which of these is an ancient predecessor to Quidditch: Creaothceann, Muggle Soccer, Wizard Chess, or Gobstones?",Creaothceann.,MCQ,FALSE,FALSE
+"Which of the following is another dive commonly used by Seekers: Porskoff Ploy, Bludger Backbeat, Spiral Dive, or Kestrel Plunge?",Spiral Dive,MCQ,FALSE,FALSE
+"Screechsnaps are capable of which of the following: moving, changing colors, making noise, or flying?",Move & Make Noise,MCQ,FALSE,FALSE
+"Which of these titles or identities has NOT been held by Harry Potter: Seeker for Gryffindor, SPEW Treasurer, Prefect, or Triwizard Champion?",SPEW Treasurer,MCQ,FALSE,FALSE
+"Which of the following was NOT a breed of dragon faced by the Triwizard Tournament champions: Hungarian Horntail, Chinese Fireball, Swedish Short-Snout, or Norwegian Ridgeback?",Norwegian Ridgeback,MCQ,FALSE,FALSE
+"Which of these creatures' blood will keep a human alive, albeit at a terrible price: Phoenix, Dragon, Unicorn, or Thestral?""",Unicorn,MCQ,FALSE,FALSE
+"Which of the following is NOT a type of Dark Magic: the Cruciatus Curse, the Imperius Curse, the Killing Curse, or the Stunning Spell?",Stunning Spell,MCQ,FALSE,FALSE
+"In which of these scenarios would you use the Impediment Jinx: to slow a rushing opponent, to block a spell, to create a magical barrier, or to make an object invisible?",To slow a rushing opponent.,MCQ,FALSE,FALSE
+"Which of these spells is not a cleaning spell: Scourgify, Tergeo, Confrigo, or Reparo?",Confrigo,MCQ,FALSE,FALSE
+"Which of these spells is a severing charm: Diffindo, Incendio, Reducto, or Aguamenti?",Diffindo,MCQ,FALSE,FALSE
+"Which of these spells keeps a charm stable: Fianto Duri, Protego, Episkey, or Rictusempra?",Fianto Duri,MCQ,FALSE,FALSE
+"According to Madam Hooch, which of the following increases your chances of falling to your death: A long, flowing cloak, Flying in heavy rain, Long hair, or An untrimmed broom tail?",Long hair,MCQ,FALSE,FALSE
+"Which of these spells can summon an object: Accio, Alohomora, Engorgio, or Mobilicorpus?",Accio,MCQ,FALSE,FALSE
+"Which one of the following is not a founder of Hogwarts: Godric Gryffindor, Salazar Slytherin, Helena Ravenclaw, or Helga Hufflepuff?",Helena Ravenclaw,MCQ,FALSE,FALSE
+"Which of these books covers ancient runes: Spellman’s Syllabery, Divination Today, A Brief History of Muggles, or Hogwarts: A History?",Spellman's Syllabery,MCQ,FALSE,FALSE
+"An intended transformation is directly influenced by which of the following: Emotion, Time of Day, Concentration, or Wand Length?",Concentration,MCQ,FALSE,FALSE
+"Which of these tasks can NOT be aided by a Vanishing Spell: Cleaning a room, Hiding evidence, Dancing, or Emptying a cauldron?",Dancing,MCQ,FALSE,FALSE
+"Which of the following books was NOT written by Rita Skeeter: The Life and Lies of Albus Dumbledore, Armando Dippet: Master or Moron?, Easy Spells to Fool Muggles, or Snape: Scoundrel or Saint?",Easy Spells to fool Muggles,MCQ,FALSE,FALSE
+"What is the primary effect of Wiggenweld Potion: Inducing euphoria, Inducing luck, Healing injuries, or Shrinking a target",Healing injuries,MCQ,FALSE,FALSE
+"Which of these is an ingredient in Polyjuice Potion: Powdered Bicorn Horn, Mandrake Root, Moonstone, or Phoenix Feather?",Powdered Bicorn Horn,MCQ,FALSE,FALSE
+"Which of these is a Wiggenweld potion ingredient from the sea: Gillyweed, Kelp, Lionfish Spine, or Mandrake Root?",Lionfish Spine,MCQ,FALSE,FALSE
+"Which of the following transformations would be considered the easiest due to the similarity in form between the two objects: Human to Ferret, Teapot to Tortoise, Desk to Pig, or Porcupine to Pincushion?",Porcupine to Pincushion,MCQ,FALSE,FALSE
+"In which of these scenarios would you use the spell Cistem Aperio: Mending a Broken Object, Summoning an Object, Blasting Open a Locked Trunk, or Unlocking a Door?",Blasting Open a Locked Trunk,MCQ,FALSE,FALSE
+"Which of the following reptile's blood is used for Wiggenweld Potion: Powdered Dragon Horn, Basilisk Venom, Salamander, or Newt Spleen?",Salamander,MCQ,FALSE,FALSE
+"Which of the following is NOT another name for Belladonna: Death’s Herb, Devil’s Berries, Flitterbloom, Atropa Belladonna?",Flitterbloom,MCQ,FALSE,FALSE
+"Which of these is not a species of dragon: Hungarian Horntail, Chinese Fireball, Finnish Flamethrower, or Swedish Short-Snout?",Finnish Flamethrower,MCQ,FALSE,FALSE
+"Which of the following creatures eat fairy eggs: Bowtruckles, Nifflers, Cornish Pixies, or Grindylows?",Bowtruckles,MCQ,FALSE,FALSE
+"Which of the following Charms did students learn in their first year at Hogwarts: Levitation Charm (Wingardium Leviosa), Knockback Jinx (Flipendo), Disarming Charm (Expelliarmus), or Stunning Spell (Stupefy)",Levitation Charm (Wingardium Leviosa),MCQ,FALSE,FALSE
+"Which of these factors does NOT affect Transfiguration: Concentration, Wand Power, Hue, or Viciousness of Intent?",Hue,MCQ,FALSE,FALSE
+"Which of these beings does not live on the Hogwarts grounds: House-elves, Ghosts, Goblins, or Centaurs?",Goblins,MCQ,FALSE,FALSE
+"Which of the following is NOT an ingredient in the Antidote to Common Poisons: Red Myrrh, Valerian Root, Sopophorous Bean, or Knotgrass?",Red Myrrh,MCQ,FALSE,FALSE
+"Which of these plants has healing properties?Which of these plants has healing properties: Dittany, Mandrake, Devil's Snare, or Wolfsbane?",Dittany,MCQ,FALSE,FALSE
+"Which of these plants doesn't bite: Fanged Geranium, Venomous Tentacula, Whomping Willow, or Mandrake?",Whomping Willow,MCQ,FALSE,FALSE
+"Which of these plants is classified by the Ministry of Magic as a Class C Non-Tradeable Substance: Mandrake, Devil's Snare, Venomous Tentacula, or Alihotsy?",Venomous Tentacula,MCQ,FALSE,FALSE
+"An Infusion of Wormwood is NOT an ingredient in which of these potions: Draught of Living Death, Elixir to Induce Euphoria, Beautification Potion, or Draught of Peace?",Beautification Potion,MCQ,FALSE,FALSE
+"Which of these spells does NOT make something smaller: Reducto, Engorgio, Reducio, or Shrinking Charm?",Engorgio,MCQ,FALSE,FALSE
+"Which of these is not a type of concealment charm: Disillusionment Charm, Fidelius Charm, Confundus Charm, or Muffliato Charm?",Confundus Charm,MCQ,FALSE,FALSE
+"Regerminating Potions work wonders on which of the following: Dead plants, Cracked cauldrons, Magical wounds, or Burnt-out wands?",Dead plants.,MCQ,FALSE,FALSE
+"In which of these scenarios would you use the Muffliato Charm: Whispering in the library without being overheard, Disarming an opponent mid-duel, Crossing a magically sealed threshold, or Reading hidden text in an enchanted book?",Whispering in the library without being overheard,MCQ,FALSE,FALSE
+"According to Quidditch Through the Ages, how many possible fouls are there in the game of Quidditch: 150, 325, 700, or 950?",700,MCQ,TRUE,FALSE
+"In Harry Potter and the Philosopher's Stone, how many challenges or obstacles protected the Philosopher's Stone: 3, 5, 7, or 10?",7,MCQ,TRUE,FALSE
+"In wizarding currency, how many Knuts are there in one Sickle: 17, 25, 29, or 31?",29,MCQ,TRUE,FALSE
+"Albus Dumbledore is famous for discovering how many uses of dragon's blood: 7, 10, 12, or 15?",12,MCQ,TRUE,FALSE
+"What was the number of the high-security Gringotts vault where the Philosopher's Stone was kept: 687, 711, 713, or 717?",713,MCQ,TRUE,FALSE
+"How many O.W.L. (Ordinary Wizarding Level) exams did Harry Potter pass: 5, 7, 9, or 10?",7,MCQ,TRUE,FALSE
