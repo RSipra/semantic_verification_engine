@@ -1,0 +1,158 @@
+# This file defines and logs all prompt engineering experiments.
+# 1. Manually define your experiments and set the 'status' of runs to 'pending'.
+# 2. Run the `run_experiments.py` script.
+# 3. The script will execute pending runs and fill in the metrics below.
+# 4. Manually add your qualitative scores and notes after reviewing the outputs.
+
+metadata:
+  project: harry_potter_trivia
+  owner: reemasipra
+  created_date: 2025-10-17
+  description: "Prompt engineering experiments for generating trivia questions using Gemini models."
+  question_types:
+    - "explanatory (EX)"
+    - "factual recall (FR)"
+    - "multiple choice (MCQ)"
+  version: 0
+
+experiments:
+  # --- EXPERIMENT 1:
+  - id: ex_temperature
+    description: "Measure the output variation across different temperature settings"
+    model: gemini-2.5-pro
+    common_parameters:
+        max_output_tokens: 12000
+        top_p: 0.95
+        candidate_count: 3
+
+    runs:
+      - version: _02_baseline_v1.1
+        goal: "Test for consistency at low temperature. Expect outputs to be nearly identical."
+        prompt_file: "scripts/prompts/_iterations/explanatory_v0.txt"
+        source_text_files:
+          - "data/06_books/prisoner_of_azkaban_chapter_19.txt"
+          - "data/06_books/goblet_of_fire_chapter_01.txt"
+        source_info: "Prisoner of Azkaban, Chapter 19 and Goblet of Fire, Chapter 1"
+        # Filled by script:
+        output_files: null
+        model_parameters:
+          temperature: 0.2
+        metrics:
+          response_time_seconds: null
+          prompt_feedback: null
+          finish_reason: null
+          tokens:
+            input_cached: null
+            input_uncached: null
+            output: null
+            total: null
+        # filled manually after review:
+        quality:
+          factual_accuracy: null
+          readability: null
+          formatting: null
+        notes: >
+          Initial baseline run with the first version of the prompt using yaml for configuration.
+          Rephrased instructions to avoid ambiguous reference to books.
+        status: "pending"
+        status_history:
+          - {status: draft, timestamp: 2025-10-17T18:00:00Z}
+          - {status: pending, timestamp: 2025-10-20T14:11:30.753153Z}
+
+      - version: _05_v1.2
+        goal: "Test for minor creative variations."
+        prompt_file: "scripts/prompts/_iterations/explanatory_v0.txt"
+        source_text_files:
+          - "data/06_books/prisoner_of_azkaban_chapter_19.txt"
+          - "data/06_books/goblet_of_fire_chapter_01.txt"
+        source_info: "Prisoner of Azkaban, Chapter 19 and Goblet of Fire, Chapter 1"
+        # Filled by script:
+        output_files: null
+        model_parameters:
+          temperature: 0.5
+        metrics:
+          response_time_seconds: null
+          prompt_feedback: null
+          finish_reason: null
+          tokens:
+            input_cached: null
+            input_uncached: null
+            output: null
+            total: null
+        # filled manually after review:
+        quality:
+          factual_accuracy: null
+          readability: null
+          formatting: null
+        notes: >
+          x
+        status: "pending"
+        status_history:
+          - {status: draft, timestamp: 2025-10-19T18:00:00Z}
+          - {status: pending, timestamp: 2025-10-20T14:11:30.753153Z}
+
+      - version: _07_v1.3
+        goal: "Test for a good balance of creativity and consistency."
+        prompt_file: "scripts/prompts/_iterations/explanatory_v0.txt"
+        source_text_files:
+          - "data/06_books/prisoner_of_azkaban_chapter_19.txt"
+          - "data/06_books/goblet_of_fire_chapter_01.txt"
+        source_info: "Prisoner of Azkaban, Chapter 19 and Goblet of Fire, Chapter 1"  
+        # Filled by script:
+        output_files: null
+        model_parameters:
+          temperature: 0.7
+        metrics:
+          response_time_seconds: null
+          prompt_feedback: null
+          finish_reason: null
+          tokens:
+            input_cached: null
+            input_uncached: null
+            output: null
+            total: null
+        # filled manually after review:
+        quality:
+          factual_accuracy: null
+          readability: null
+          formatting: null
+        notes: >
+          x
+        status: "pending"
+        status_history:
+          - {status: draft, timestamp: 2025-10-19T18:00:00Z}
+          - {status: pending, timestamp: 2025-10-20T14:11:30.753153Z}
+
+      - version: _09_v1.4
+        goal: "Test for high creativity. Watch for potential drops in quality or factual accuracy."
+        prompt_file: "scripts/prompts/_iterations/explanatory_v0.txt"
+        source_text_files:
+          - "data/06_books/prisoner_of_azkaban_chapter_19.txt"
+          - "data/06_books/goblet_of_fire_chapter_01.txt"
+        source_info: "Prisoner of Azkaban, Chapter 19 and Goblet of Fire, Chapter 1"
+        # Filled by script:
+        output_files: null
+        model_parameters:
+          temperature: 0.9
+        metrics:
+          response_time_seconds: null
+          prompt_feedback: null
+          finish_reason: null
+          tokens:
+            input_cached: null
+            input_uncached: null
+            output: null
+            total: null
+        # filled manually after review:
+        quality:
+          factual_accuracy: null
+          readability: null
+          formatting: null
+        notes: >
+          x
+        status: "pending"
+        status_history:
+          - {status: draft,  timestamp: 2025-10-19T18:00:00Z}
+          - {status: pending, timestamp: 2025-10-20T14:11:30.753153Z}              
+
+  

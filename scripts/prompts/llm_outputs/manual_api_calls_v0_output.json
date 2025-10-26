@@ -1,0 +1,77 @@
+[
+  {
+    "question_type": "Explanatory (Why/How)",
+    "category": "Character Arc/Motive",
+    "difficulty": "Medium",
+    "question": "Why was Severus Snape so determined to capture Sirius Black and Remus Lupin in the Shrieking Shack?",
+    "answer": "Snape believed Lupin was helping Black, and he harbored a deep, long-standing grudge against Black (and James Potter) from their school days, seeking vengeance for past humiliations.",
+    "answer_variations": [
+      "Snape's actions were fueled by his conviction that Lupin was aiding Black, combined with a desire for revenge stemming from his bitter school rivalry with Black and James Potter.",
+      "He was driven by a powerful sense of vengeance against Sirius Black, whom he blamed for past torments, and suspected Remus Lupin of complicity.",
+      "His intense animosity towards Black, rooted in their shared history at Hogwarts, and his belief that Lupin was a traitor, motivated his aggressive pursuit.",
+      "Snape sought to settle old scores with Black, whom he saw as a criminal, and believed Lupin was betraying Dumbledore's trust by assisting him."
+    ],
+    "source_reference": "Prisoner of Azkaban, Chapter 17",
+    "source_quote": "I've told the headmaster again and again that you're helping your old friend Black into the castle, Lupin, and here's the proof. Not even I dreamed you would have the nerve to use this old place as your hideout --\" \"Vengeance is very sweet,\" Snape breathed at Black. \"How I hoped I would be the one to catch you....\""
+  },
+  {
+    "question_type": "Explanatory (Why/How)",
+    "category": "Magical Theory/Lore",
+    "difficulty": "Hard",
+    "question": "How did Sirius Black manage to escape from Azkaban Prison?",
+    "answer": "His knowledge of his own innocence kept him sane, allowing him to retain his Animagus ability. He transformed into his dog form, which dementors couldn't sense as effectively, and was thin enough to slip through the bars after seeing Peter Pettigrew in the Daily Prophet.",
+    "answer_variations": [
+      "Sirius maintained his sanity in Azkaban by focusing on his innocence, which preserved his Animagus powers, enabling him to escape as a dog after spotting Pettigrew in a newspaper.",
+      "He escaped Azkaban by transforming into his dog Animagus form; dementors struggled to perceive his less complex animal emotions, and his emaciated state allowed him to pass through the cell bars.",
+      "The key to his escape was his unwavering belief in his innocence, which protected his mind from the dementors and allowed him to use his Animagus form to bypass their senses and physical barriers.",
+      "Sirius's ability to transform into a dog, combined with the dementors' difficulty in sensing animal emotions and his extreme weight loss, facilitated his unprecedented escape from Azkaban."
+    ],
+    "source_reference": "Prisoner of Azkaban, Chapter 17",
+    "source_quote": "I don't know how I did it,\" he said slowly. \"I think the only reason I never lost my mind is that I knew I was innocent. That wasn't a happy thought, so the dementors couldn't suck it out of me... but it kept me sane and knowing who I am... helped me keep my powers... so when it all became ... too much... I could transform in my cell... become a dog. Dementors can't see, you know.... They feel their way toward people by feeding off their emotions.... They could tell that my feelings were less -- less human, less complex when I was a dog... but they thought, of course, that I was losing my mind like everyone else in there, so it didn't trouble them. But I was weak, very weak, and I had no hope of driving them away from me without a wand.... But then I saw Peter in that picture... I realized he was at Hogwarts with Harry... perfectly positioned to act, if one hint reached his ears that the Dark Side was gathering strength again.... It was as if someone had lit a fire In my head, and the dementors couldn't destroy it.... It wasn't a happy feeling... it was an obsession... but it gave me strength, it cleared my mind. So, one night when they opened my door to bring food, I slipped past them as a dog.... It's so much harder for them to sense animal emotions that they were confused.... I was thin, very thin... thin enough to slip through the bars.... I swam as a dog back to the mainland.... I journeyed north and slipped into the Hogwarts grounds as a dog."
+  },
+  {
+    "question_type": "Explanatory (Why/How)",
+    "category": "Plot Event",
+    "difficulty": "Medium",
+    "question": "How did Crookshanks assist Sirius Black in his efforts to capture Peter Pettigrew?",
+    "answer": "Crookshanks recognized Peter Pettigrew as an Animagus, tried to bring him to Sirius, and stole the Gryffindor Tower passwords for Sirius to gain entry.",
+    "answer_variations": [
+      "Crookshanks, being highly intelligent, identified Peter Pettigrew's true form and actively aided Sirius by attempting to deliver Pettigrew and by stealing passwords for Sirius.",
+      "The cat helped Sirius by discerning Peter Pettigrew's Animagus identity, facilitating attempts to capture him, and providing Sirius with access to Gryffindor Tower.",
+      "Crookshanks played a crucial role by recognizing Pettigrew as a human in Animagus form, trying to get him to Sirius, and acquiring the necessary passwords for Sirius to enter the castle.",
+      "Sirius received assistance from Crookshanks, who knew Peter was an Animagus, attempted to bring Peter to him, and procured the Gryffindor Tower entry codes."
+    ],
+    "source_reference": "Prisoner of Azkaban, Chapter 17",
+    "source_quote": "He's the most intelligent of his kind I've ever met. He recognized Peter for what he was right away. And when he met me, he knew I was no dog. It was a while before he trusted me.... Finally, I managed to communicate to him what I was after, and he's been helping me. .. He tried to bring Peter to me, but couldn't... so he stole the passwords into Gryffindor Tower for me.... As I understand it, he took them from a boy's bedside table...."
+  },
+  {
+    "question_type": "Explanatory (Why/How)",
+    "category": "Plot Event",
+    "difficulty": "Medium",
+    "question": "Why did Lord Voldemort decide to delay his plan until after the Quidditch World Cup?",
+    "answer": "He reasoned that wizards from all over the world would be in the country for the event, leading to heightened security and increased vigilance from the Ministry of Magic, making it too risky to act.",
+    "answer_variations": [
+      "Voldemort postponed his plans because the Quidditch World Cup would draw numerous wizards and Ministry officials, resulting in intense security measures that would expose his activities.",
+      "The presence of international wizards and the Ministry's focus on security during the World Cup made it strategically unwise for Voldemort to proceed with his plan immediately.",
+      "He decided to wait until after the World Cup to avoid the heightened scrutiny and security checks by the Ministry of Magic, which would be on high alert for unusual magical activity.",
+      "Voldemort delayed his actions to bypass the increased wizarding population and the Ministry's intensified security protocols that would be in place during the Quidditch World Cup."
+    ],
+    "source_reference": "Goblet of Fire, Chapter 1",
+    "source_quote": "Because, fool, at this very moment wizards are pouring into the country from all over the world, and every meddler from the Ministry of Magic will be on duty, on the watch for signs of ususual activity, checking and double-checking identities. They will be obsessed with security, lest the Muggles notice anything. So we wait."
+  },
+  {
+    "question_type": "Explanatory (Why/How)",
+    "category": "Character Arc/Motive",
+    "difficulty": "Hard",
+    "question": "Why was Lord Voldemort so insistent on using Harry Potter for his plan, despite Wormtail suggesting another wizard would be quicker?",
+    "answer": "Voldemort had specific, deeply personal reasons for using Harry, having waited thirteen years, and believed his plan for Harry would be effective. He also saw it as a way to test Wormtail's loyalty and ensure his return to power was complete.",
+    "answer_variations": [
+      "Voldemort was adamant about using Harry Potter due to personal motivations and a belief in the efficacy of his specific plan, which had been years in the making.",
+      "His insistence on Harry stemmed from a long-held, personal agenda and the conviction that his chosen method involving Harry was the only truly effective path to his full restoration.",
+      "Despite Wormtail's suggestions, Voldemort's deep-seated reasons and confidence in his thirteen-year-old plan necessitated Harry Potter's involvement for his return.",
+      "Voldemort's determination to use Harry was rooted in his personal history and the belief that Harry's involvement was crucial for the success and symbolic completion of his resurrection plan."
+    ],
+    "source_reference": "Goblet of Fire, Chapter 1",
+    "source_quote": "I have my reasons for using the boy, as I have already explained to you, and I will use no other. I have waited thirteen years. A few more months will make no difference. As for the protection surrounding the boy, I believe my plan will be effective. All that is needed is a little courage from you, Wormtail -- courage you will find, unless you wish to feel the full extent of Lord Voldermort's wrath --"
+  }
+]

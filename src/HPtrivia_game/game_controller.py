@@ -67,7 +67,7 @@ from rich.align import Align
 from HPtrivia_game.player import Player
 from HPtrivia_game.trivia_manager import Question
 import HPtrivia_game.constants as const
-from utils import utils_general as ut
+from HPtrivia_game.utils import utils_general as ut
 
 
 #-----------------------------------------

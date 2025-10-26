@@ -1,14 +1,15 @@
 #  NLP Trivia Engine: Semantic Q&A with Custom NER, Sentence-BERT, and Modular Design
 
-*Themed: Harry Potter | CLI MVP → Web App in Progress*
+*Themed: Harry Potter | CLI MVP → Web App (in progress)*
 
-> 🎯 **This project demonstrates applied NLP, semantic search, software engineering, and full-stack thinking — all through an interactive trivia game.**  
+> **A hands-on exploration of applied NLP, semantic similarity, modular software design, and product management combined to create an interactive trivia game.**
 >
-> It’s both a passion project and a showcase of technical fluency in Python, NLP pipelines, and modular design.
+>This project is my *learning playground*, an evolving ecosystem of mini-projects and experiments structured into agile sprints.
+>Here I delve deeply, explore widely, and experiment intentionally ... focusing my learning to build fluency in Python, NLP, and modular software design.
 
 ---
 
-## ✨ What Is This?
+## ✨ What is this?
 
 This magical little adventure started over late-night book readings and a daughter who just won’t stop dropping Harry Potter trivia around the clock. Naturally, a trivia game was born – for her to play, and for me (a muggle-turned-data-wizard) to build.
 
@@ -54,10 +55,10 @@ Step into the halls of Hogwarts and test your knowledge with this interactive CL
     - Setup environmental and data foundation (download, cleaning, EDA, preprocessing of dataset)
     - Standardize the dataset and setup a data ingestion pipeline
     - Develop basic core logic and OOP structure for CLI game play (Model-View-Controller pattern).   
-    - Test and refactor the game throughly (using unittest and pytest) 🟣 **← Current phase**
+    - Test and refactor the game throughly (using unittest and pytest)
 
 2. Phase 2: NLP, NER, Sentence-BERT integration to CLI MVP.
-    - Generate ~500 lexically and contextually rich questions using prompt enginnering & API calls
+    - Generate ~500 lexically and contextually rich questions using prompt enginnering & API calls  🟣 **← Current phase**
     - Annotation of data, training of NER model with iterative active learning.
     - Static NER tagging
     - Hybrid answer checking using direct and fuzzy matching (for factual types, multiple-choice etc) and sentence-BERT (for explanatory type of questions)
@@ -196,18 +197,6 @@ This project's code is licensed under the [MIT License](LICENSE-MIT). See the `L
 The trivia data used in this game is sourced from the "saracandu/harry-potter-trivia-human" dataset on Hugging Face (original link: [https://huggingface.co/datasets/saracandu/harry-potter-trivia-human](https://huggingface.co/datasets/saracandu/harry-potter-trivia-human)). While the original dataset link is currently unavailable, a local copy is being used and is believed to be licensed under the [Apache License 2.0](LICENSE-APACHE2). The full text of the Apache License 2.0 can be found in the `LICENSE-APACHE2` file in this repository.
 
 **In summary:** The code for this game is under the MIT License, and the use of the trivia data is subject to the terms of the Apache License 2.0.
-
-## Contributing
-
-We welcome contributions to improve the game! Here’s how you can help:
-
-1. Fork this repository.
-2. Create a branch for your feature or bug fix (`git checkout -b feature-name`).
-3. Commit your changes (`git commit -am 'Add new feature'`).
-4. Push to the branch (`git push origin feature-name`).
-5. Open a pull request.
-
-Please follow the [Code of Conduct](CODE_OF_CONDUCT.md) and ensure your changes are well-documented.
 
 ## Acknowledgements
 To my daughter — an endless source of joy and inspiration. You brought the *fun* to this project, and are my go-to expert for all things Harry Potter, especially those rapid-fire and obscure references. Thank you for being my alpha/beta tester and ever-patient reviewer!
