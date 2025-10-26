@@ -5,8 +5,6 @@ This document outlines the sequential, multi-phase development workflow for the 
 ## A Note on Agile Practice
 While the phases are sequential, the work within them is iterative. Sprints are treated as focused development cycles that include not just building, but also learning, testing, and refactoring. Feedback from user testing (Phase 1.5) and insights gained during complex tasks (like NLP prototyping in Phase 2) directly inform the next steps, ensuring the project remains adaptable and robust.
 
-
-
 ## Phase 1: Core Game Logic & CLI Foundation
 ### Sprint 1.1: Environment & Data Foundation
 - *Status*: DONE
@@ -104,7 +102,20 @@ While the phases are sequential, the work within them is iterative. Sprints are 
 - *Tasks*: Fine-tune a DistilBERT model for custom Harry Potter entities. Run the trained model over the entire dataset offline to generate and save NER tags for each question. (Free GPU access with Google Colab?)
 - *Outcome*: The dataset is enriched with NER tags, enabling features like topic-based question selection without runtime model loading.
 
-### Sprint 2.5: Architectural Refactoring
+### Sprint 2.5: Automated Near-Duplicate Detection
+- *Objective*: To develop a smart, scalable tool for identifying near-duplicate questions, addressing the limitations of the initial manual-only approach.
+- *Tasks*: 
+    1. Develop a Multi-Factor Similarity Model: In a notebook, create a sophisticated duplicate detection model that leverages the NLP features built throughout Phase 2. The model will assess similarity based on a combination of:
+        - Semantic Similarity: Use the Sentence-BERT embeddings (from Sprint 2.2) as the primary indicator of semantic overlap between questions.
+        - Entity Matching: Use the custom NER tags (from Sprint 2.4) as a hard filter. Questions about different key entities (e.g., "Harry Potter" vs. "Hermione Granger") will not be considered duplicates, even if phrased similarly.
+        - Thematic Consistency: Use thematic categories (derived from NER) to narrow the search space, only comparing questions within the same theme.
+    2. Validate Against Manual Baseline: Test the model's accuracy against the manually curated dataset from Phase 1. The goal is for the model to learn to replicate the nuanced decisions made during the initial manual review.
+    3. Pipeline Integration: Integrate the validated model as a new, automated step in two key areas:
+        - Data Ingestion Pipeline: Act as a quality gate, automatically flagging potential duplicates when new questions are added.
+        - Dataset Maintenance: Allow for periodic, full-dataset scans to identify any subtle duplicates that may have been missed previously.
+- *Outcome*: A robust, automated duplicate detection system that ensures long-term dataset quality, reduces manual curation effort, and scales effectively as the project grows.
+
+### Sprint 2.6: Architectural Refactoring
 - *Objective*: To separate the core game engine from the UI, preparing it for multiple frontends (CLI and Web).
 - *Tasks*:  separate and abstract.
     - Define an abstract GameView interface using Python's abc module.
@@ -138,18 +149,61 @@ While the phases are sequential, the work within them is iterative. Sprints are 
 
 *Some aspirational ideas to consider. A thought experiment right now in the possibilities of where the game could be taken.*
 
-### Sprint 4.3: Moonshot - Autonomous Content Generation (RAG Pipeline)?
-- *Objective*: Evolve the semi-automated pipeline from Sprint 2.1 into a fully autonomous RAG (Retrieval-Augmented Generation) system that can be integrated into the AI Quiz Master.
+### Sprint 4.3: Moonshot - Autonomous Content Generation factory
+- *Overall Objective*: To build a fully automated, end-to-end MLOps system for generating, validating, and ingesting new trivia questions, evolving from a prompt-based engine to a fully autonomous RAG-powered system. This would likely be carried out in two phases:
+
+**Phase A**:
+- *Phase objective*: automate the existing, proven prompt-engineering workflow -> orchestrate the individual data scripts (Generation, QA, Ingestion) into a single, cohesive, end-to-end automated system incorporating professional MLOps practices.
+- *Tasks*: 
+    1. *Develop a master orchestration script*: create a central workflow manager script that orchestrates the entire data enrichment process. Its logic will sequentially trigger the Question Generation Script, run the QA Scoring Pipeline, pause at a manual approval gate, and upon confirmation, call the final Data Ingestion Pipeline. The script will automatically trigger:
+        - The Question Generation Script to create a new batch of raw questions.
+        - The QA Scoring Pipeline to enrich the raw data with quality scores and generate a report of flagged items.
+        - Implement a manual approval gate: the pipeline will pause after the QA step and present the report, requiring a manual "go/no-go" confirmation from the user before proceeding.
+        - Trigger the final ingestion: Upon approval, the script will automatically call the Data Ingestion Pipeline to merge the new, validated data into the main baseline dataset.
+    2. *Integrate MLOps for Experiment Tracking*: Enhance the master script by incorporating a formal experiment tracking tool like MLflow or Weights & Biases. This will automate the logging of all experiment parameters, metrics, and output artifacts from the YAML configuration, replacing the manual update process.
+    3. *Implement a CI/CD Workflow*: Create a CI/CD pipeline (e.g., using GitHub Actions) that can be configured to automatically trigger the full master orchestration script. This enables automated runs based on events like a push to the main branch or an update to a prompt file.
+    4. *Deploy as a Scheduled Service (Stretch Goal)*: As a final enhancement, deploy the entire workflow as a scheduled service (e.g., a cron job or a scheduled GitHub Action) that can automatically enrich the dataset over time.
+- *Phase outcome*: A professional, production-grade MLOps system for managing the entire data enrichment lifecycle. The final result will be a single, command-line callable script that turns a multi-step manual process into a streamlined, reproducible, and automated workflow.    
+
+**Some aspirational ideas to consider. A thought experiment right now in the possibilities of where the game could be taken.**
+
+**Phase B: Moonshot** 
+- *Phase objective*: To replace the prompt-engineering component of the factory with a more advanced, autonomous RAG (Retrieval-Augmented Generation) system.
 - *Tasks*:
     1. Set up a vector database with canonical source texts (e.g., the seven books).
-    2. Implement a "Retriever" component to find relevant passages for a given topic.
-    3. Implement a "Generator" component that creates questions based only on the retrieved context.
+    2. Implement a "Retriever" component to find relevant passages for a given topic or entity.
+    3. Implement a "Generator" component that creates questions based only on the retrieved context from the vector database.
     4. Implement an automated "Verifier" AI call to self-check for quality and lore-consistency.
+    5. Integrate into the phase A factory. Swap out the old prompt-engineering script in the master orchestrator with new, more intelligent RAG engine.
+- *Resource Note*: This step would require significant API usage, potential vector database costs, and more complex engineering compared to the semi-automated approach. Iteresting learning but might be costly. Could put API call caps to keep in free tier. Smaller open source that can run on cpu?
+- *Sprint Outcome*: A professional, production-grade MLOps system for managing the entire data enrichment lifecycle, with a clear path for evolving its core generation logic from a static, prompt-based system to a dynamic, RAG-powered one.
 
-    *Resource Note*: This step would require significant API usage, potential vector database costs, and more complex engineering compared to the semi-automated approach. Iteresting learning but might be costly. Could put API call caps to keep in free tier. Smaller open source that can run on cpu.
-- *Outcome*: An agentic system capable of generating new, verified trivia on demand.
+### Sprint 4.5: Moonshot - Agentic Quiz Master? 
+- *Objective*: To progressively evolve the `GameController` from a simple game engine into a sophisticated, conversational AI Quiz Master with a dynamic, personalized persona. This would likely be done in a phased approach.
 
-### Sprint 4.3: Moonshot - Agentic Quiz Master? 
-- *Tasks*: Evolve the GameController into an autonomous agent that manages the entire trivia session, plans question sequences based on topic and difficulty, and uses more advanced NLU for player interaction.
+**Phase A: Conversational Interface (the MC)**
+- *Phase objective*: wrap the existing game logic in a conversational interface (~a super-layer on top of the existing game), turning the game into a playable chatbot (with API calls).
+- *Tasks*:
+    1. *Develop a Chat UI*: Build a simple chat interface (e.g., within the Flask web app).
+    2. *Create a Base Persona*: Design a `system_prompt` that defines the Quiz Master's base personality (e.g., witty, knowledgeable).
+    3. *Integrate the Game Engine*: The AI's primary role will be to act as an "MC." It will call the existing GameController to get a question, present it to the player, and pass the player's answer back to the GameController for validation.
+- *Phase outcome*: A functional, chat-based trivia game where the AI acts as a simple but engaging host for the core game logic.
+
+**Phase B: Intelligent agent (a "smart MC")**
+- *Phase objective*: elevate the AI from a simple host to an autonomous agent that strategically directs the game flow -> Evolve the GameController into an autonomous agent that manages the entire trivia session, plans question sequences based on topic and difficulty, and uses more advanced NL techniques for player interaction.
+- *Tasks*: 
 - [Architecture]: The agent will be designed with a "Right Tool for the Job" approach, using different models for different tasks: a small, specialized open-source model (e.g., Sentence-BERT) for high-volume semantic answer checking, and potentially larger models or APIs for more complex tasks like conversational hints or on-the-fly question generation. To be explored, this is a whole new project in its own right.
-- *Outcome*: A more dynamic and intelligent "Quiz Master" AI.
+    1. *Expose Game Logic as "tools"*: Refactor the GameController's methods (e.g., select_question, provide_hint) into "tools" that the LLM can choose to call.
+    2. *Enhance the Agent's prompt*: Update the system prompt to instruct the agent to manage the trivia session. It will be responsible for deciding when to provide a hint or what kind of question to ask next, using its tools to execute those decisions.
+    3. *Establish the Quiz Master's persona with foundational UI/UX*: e.g. Design a custom avatar and a themed UI (parchment, magical fonts). Implement a base conversational tone (e.g., witty, friendly) with lore-specific slang. Create custom interaction elements like a themed typing indicator (e.g., "Consulting the Pensieve...")
+    4. **Integrate with other models**: Connect the agent's select_question tool to the *Predictive Difficulty Model* from [Sprint 4.1](#sprint-41-predictive-difficulty-modeling--adaptive-logic), allowing it to make data-driven decisions to adapt the game's difficulty in real-time.
+- *Phase outcome*: A more dynamic and intelligent "Quiz Master" AI with a distinct personality that actively manages the gameplay experience by planning question sequences based on topic and difficulty.
+
+**Phase C: Personalized companion (a "Memorable MC" or "friend and fellow HP enthusiast")**
+- *Phase objective*: To give the agent long-term memory, enabling a unique personalized and adaptive experience for each player -> integrate a *dynamic adaptive player persona* in .
+- *Tasks*:
+    1. *Develop a Player profile system*: Create a persistent storage system to track a "Player Profile" for each user, logging performance by theme (e.g., 80% on 'Spells', 30% onf 'Potions'), last played date, and memorable conversation snippets.
+    2. *Implement a dynamic system prompt*: Before each game session, generate a dynamic prompt that combines the Quiz Master's base persona with a summary of the current player's profile.
+    3. *Enhance the AI persona with adaptive UI/UX*: e.g.  Design UI elements that explicitly reference past events (e.g., a "memory" icon).Adapt the UI in real-time based on player performance (e.g., add a "winning streak" visual effect). Leverage the player profile to generate highly personalized conversational banter.
+    4. *Enable personalized gameplay*: Leverage the dynamic prompt to offer personalized greetings, adapt question selection to challenge a player's strengths or reinforce weaknesses, and tailor conversational banter by referencing past interactions.
+- *Phase outcome*: A sophisticated and intelligent "Quiz Master" AI that provides a unique, engaging, and personalized trivia experience that evolves with each player through sessions, transforming the game from a simple Q&A bot into an adaptive conversational companion.

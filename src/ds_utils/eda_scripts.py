@@ -11,96 +11,112 @@ question and answer data from the trivia dataset. Key analyses include
 calculating descriptive statistics for text lengths and examining the
 correlation between question and answer lengths for various question types.
 
-Core Architecture & Workflow:
------------------------------
-The functions follow a Separation of Concerns pattern to enhance clarity,
-reusability, and maintainability:
+## Core Architecture 
+--------------------
 
-A.  **Low-Level Helper Functions:** Perform specific, isolated tasks such as:
-A.1. Data Preparation Helpers    
-    * Filtering data by keyword (`filter_df_by_keyword`)
-    * Calculating word counts (`get_clean_word_counts`)
-A.2. Calculation Helpers
-    * Calculating descriptive stats (`get_len_descriptive_stats`)
-    * Calculating Pearson correlation (`calculate_correlation`)
-    * Categorizing correlation strength (`get_correlation_strength`)
-    * Generating interpretation strings (`interpret_correlation`)
-A.3. Plotting and Formatting Helpers
-    * Creating specific plots (`create_correlation_scatterplot`, `create_ans_len_boxplot`)
-    * Formatting tables (`format_descriptive_stats_table`)
+The functions in this script follow a Separation of Concerns pattern to enhance 
+clarity and reusability,organized into the following categories:
 
-B.  **Analysis Orchestration Functions:**
-    "Manager" Function (`calculate_all_keyword_metrics`):**
-    * Orchestrates the analysis workflow for a single keyword.
-    * Calls the necessary low-level helpers for filtering and calculation.
-    * Performs validation checks (e.g., sufficient data for correlation).
-    * Returns a comprehensive 'results package' (dictionary). This package includes:
-+       - 'keyword_for_display' (str): The input keyword, passed through for consistent
-            use in display function titles/labels.
-+       - 'metrics_for_summary' (dict): A dictionary of all calculated metrics (count, 
-            stats, correlation info, etc.). This sub-dictionary does **not** internally 
-            duplicate the keyword, making it clean for aggregation into summary tables.
-+       - 'filtered_data_df' (pd.DataFrame): The actual DataFrame filtered by the input keyword.
-+       - 'q_lengths_series' (pd.Series): Question lengths for the filtered data.
-+       - 'a_lengths_series' (pd.Series): Answer lengths for the filtered data.
-+   * This function does NOT perform any display actions itself.
-    "Aggregate" Function (`create_comprehensive_summary_df`- Usually called from Notebook):**
-    * Takes in a list of questions keywords to generate summary for. 
-    * Takes in a list of keywords that are considered 'factual-recall' type.
-    * Takes in a dataframe to generate the summary from
-    * Calls the 'Manager' function (`calculate_all_keyword_metrics`) for each keyword in the input list.
-+   * It then takes the 'metrics_for_summary' dictionary from the manager's output package.
-+   * Crucially, it adds a 'Keyword' column to these metrics using the keyword from its own 
-        iteration loop, and also adds the 'Question Type' classification.
-+   * Aggregates these enriched metrics dictionaries into a single summary pandas DataFrame.
+# A. Low-Level Helper Functions
+These perform specific, isolated tasks and act as the reusable building blocks for
+all analyses. They are grouped into helpers for data preparation, calculation, and plotting.
+> Examples: filter_df_by_keyword, calculate_correlation, create_correlation_scatterplot
 
-C.  **"Display Orchestration and View Functions"
-    Function (`display_keyword_analysis` - Usually called from Notebook):**
-    * Takes the 'results package' (output of `calculate_all_keyword_metrics`) as input.
-    * Handles all presentation: printing formatted statistics, interpretations,
-        generating plots by calling plotting helpers, and displaying sample data.
-    * It uses the 'keyword_for_display' from the package for titles and labels,
-+       and 'metrics_for_summary', 'filtered_data_df', 'q_lengths_series',
-+       'a_lengths_series' for displaying the respective content.
+# B. Analysis Orchestration Functions
+These "manager" functions coordinate multiple helper functions to perform a complete 
+analysis.This includes workflows like gathering statistics for a single keyword 
+(calculate_keyword_metrics),creating a summary table(create_comprehensive_summary_df), 
+or running the full pipeline to validate and add new data (run_data_ingestion_pipeline).
 
-D.  **N-gram Utility Functions**
-    Specific utilities that calculate and directly print N-gram phrases 
-    * List common phrases in the questions (print_common_ngrams)
-    * List question keyword-based N-gram analysis (print_keyword_ngrams)
-        (combining calculation and display for convenience).
-    * Determine obsure unique n-grams using TF-IDF (rank_ngrams_by_tfidf)
-        as a preliminary measure of answer difficulty (in development)
+# C. Display Functions
+These functions handle all presentation. They take the data packages generated by the 
+orchestration functions and create the final, formatted tables and visualizations
+seen in the notebook.
+> Examples: display_keyword_analysis, generate_dataset_status_report
 
-How to Use:
------------
-The typical workflow involves:
+# D. N-gram Utilities
+A specific set of utilities for calculating and displaying n-gram statistics.
+> Examples: print_common_ngrams, rank_ngrams_by_tfidf
 
-I.  **For Detailed EDA per Keyword (in Notebook):**
-    1.  Call `calculate_all_keyword_metrics(keyword, df)` to get the `results_package`.
-    2.  Call `display_keyword_analysis(results_package)` to view the full standard report.
-    3.  Call `print_keyword_ngrams(dataframe['question'], keyword)` to view common 
-            phrases starting with the specific `keyword` across all questions, potentially 
-            varying n-gram ranges or stop words. This method uses the raw question column 
-            from the dataframe (not the filtered_df).
+## Typical Workflows
+--------------------
 
-II. **For Generating Summary Tables (in Notebook):**
-    1. Create a list of question keywords to include in the summary_df
-    2. Create a second (sublist) list from the keywords list that will be considered
-        'factual-recall' type.
-    3. Call `create_comprehensive_summary_df(question_keyword_list, factual_keywords_list, df)`
-    4. Display the results:
-        * direcly print the summary_df
-        * or use the helper functions `display_correlation_summary()`, `display_status_map()`
+This guide shows how to combine functions from this module to perform
+common analysis tasks.
 
-See individual function docstrings for detailed parameter and return information.
+## Workflow 1: Detailed Analysis of a Single Keyword
 
-"""
+Goal: To perform a deep-dive analysis on all questions containing a
+      specific keyword (e.g., 'what').
+
+1.  **Calculate All Metrics:**
+    Call `calculate_keyword_metrics()` to generate a comprehensive
+    "results package" containing all stats and filtered data.
+    
+    >>> results = calculate_keyword_metrics('what', my_dataframe)
+
+2.  **Display the Full Report:**
+    Pass the `results` package to `display_keyword_analysis()` to see a
+    standardized report with tables, plots, and sample data.
+
+    >>> display_keyword_analysis(results)
+
+3.  **(Optional) Analyze Common Phrases:**
+    To see the most common phrases associated with the keyword, use
+    `print_keyword_ngrams()`.
+
+    >>> print_keyword_ngrams(my_dataframe['question'], 'what')
+
+---
+## Workflow 2: Creating an Aggregate Summary Table
+
+Goal: To compare statistics across multiple keywords in a single,
+      clean table.
+
+1.  **Define Your Keyword Lists:**
+    Create a list of all keywords you want to analyze and a sub-list
+    of those you consider "Factual-Recall."
+
+2.  **Generate the Summary DataFrame:**
+    Call `create_comprehensive_summary_df()` to loop through your
+    keywords and aggregate all their metrics into one table.
+
+    >>> summary_table = create_comprehensive_summary_df(
+            all_keywords, factual_keywords, my_dataframe
+        )
+
+3.  **Display a Formatted View:**
+    Pass the `summary_table` to a specific display helper, like
+    `display_correlation_summary()`, to see a polished, formatted view.
+
+    >>> display_correlation_summary(summary_table)
+
+---
+## Workflow 3: Adding New Questions (Data Ingestion)
+
+Goal: To safely validate, check for duplicates, and add new questions
+      to the main dataset.
+
+1.  **Run the Ingestion Pipeline:**
+    Call `run_data_ingestion_pipeline()`, providing the path to your
+    new data, the main DataFrame, and your fitted tokenizer/vectorizer.
+
+    >>> status, payload = run_data_ingestion_pipeline(
+            'path/to/new_questions.csv', main_df, vectorizer, tokenizer
+        )
+
+2.  **Display the Pipeline Results:**
+    Use `display_pipeline_results()` to see a user-friendly report of
+    the outcome (e.g., success, critical error, needs review).
+
+    >>> display_pipeline_results(status, payload)
+    """
 
 # Import necessary libraries
 from collections import OrderedDict
 import re
-from sre_parse import Tokenizer
-from typing import List, Any, Union, Optional, Tuple, Set, Callable # For Python < 3.10
+# from sre_parse import Tokenizer
+from typing import List, Any, Union, Optional, Tuple, Set, Callable, Dict # For Python < 3.10
 import numpy as np
 import pandas as pd
 import seaborn as sns
@@ -115,21 +131,11 @@ from sklearn.metrics.pairwise import cosine_similarity
 import networkx as nx
 from word2number import w2n
 from scipy import stats
-from scipy.sparse import spmatrix
+from scipy.sparse import spmatrix, csr_matrix
 
 # Import custom methods from project scripts
-from utils import utils_paths as up
-
-# --- CONFIGURATION & CONSTANTS ---
-
-# master list of standard interrogative keywords to categorize types of questions in trivia dataset
-INTERROGATIVE_KEYWORDS_LIST = [
-    'what', 'name', 'who', 'where', 'wheres', 'when', 'whats', 
-    'whose', 'which', 'how', 'whom', 'why',
-    # Add common YN starting words
-    'is', 'are', 'was', 'were', 'do', 'does', 'did', 
-    'can', 'could', 'will', 'would', 'should', 'has', 'have'
-]
+from ds_utils import utils_paths as up
+from ds_utils import ds_constants as const
 
 #=============================#
 ##  A. HELPER FUNCTIONS       #
@@ -140,22 +146,17 @@ INTERROGATIVE_KEYWORDS_LIST = [
 
 # Helper function to filter dataframe based on keyword
 def filter_df_by_keyword(dataframe: pd.DataFrame, question_keyword: 'str') -> pd.DataFrame:
-    '''
-    This function filters for questions in the dataset based on a search of the provided `question_keyword` parameter.
+    """
+    Filters the DataFrame for questions where the primary interrogative keyword
+    in the 'main_fr_keyword' column matches the specified keyword.
 
-    :parame dataframe: the data frame on which to perform the search on. The dataframe MUST have a column with a
-    list of tokens generated from the question and the column is called `question keywords`
-    :type dataframe: pd.DataFrame
-    
-    :param question_keyword: the search word to look for in the token lists within the `question keywords` column
-    :type question_keyword: str
-    
-    :return: The filtered dataframe if matches are found (empty if none are found)
-    :rtype: pd.DataFrame
-    '''
+    :param dataframe: The DataFrame to filter. Must contain the 'main_keyword' column.
+    :param question_keyword: The main keyword to filter by (e.g., 'what', 'who').
+    :return: A new DataFrame containing only the rows that match the keyword.
+    """
     # Filter main dataframe
-    filter_kw_questions = dataframe.loc[dataframe['question tokens'].apply(lambda x: question_keyword in x)]
-    return filter_kw_questions
+    filter_kw_questions = dataframe[dataframe['main_keyword'] == question_keyword]
+    return filter_kw_questions.copy()  # Return a copy to avoid SettingWithCopyWarning. Make sure an independent df is returned.
 
 # Helper function that returns a Series of the word counts for a column of interest (e.g. 'question' or 'answer') 
 def get_clean_word_counts(dataframe: pd.DataFrame, column_name: str) -> pd.Series:
@@ -172,6 +173,26 @@ def get_clean_word_counts(dataframe: pd.DataFrame, column_name: str) -> pd.Serie
     
     """
     return dataframe[column_name].apply(lambda x: len(re.findall(r'\b\w+\b', x)) if pd.notnull(x) else 0)
+
+# search for specific tokens in a column of lists (e.g. 'question tokens' or 'answer tokens')
+def find_rows_with_token(dataframe: pd.DataFrame, column_name: str, token_to_find: str) -> pd.DataFrame:
+    """
+    Filters a DataFrame to find all rows where a specific token is present
+    in a specified column containing lists of tokens.
+
+    Args:
+        dataframe (pd.DataFrame): The DataFrame to search.
+        column_name (str): The name of the column containing token lists 
+                           (e.g., 'question tokens', 'answer tokens').
+        token_to_find (str): The specific token to search for.
+
+    Returns:
+        pd.DataFrame: A new DataFrame containing only the rows that include the token.
+    """
+    mask = dataframe[column_name].apply(
+        lambda token_list: token_to_find in token_list if isinstance(token_list, list) else False
+    )
+    return dataframe[mask]
 
 # Helper function to tag questions with a `question keyword` based on question type
 def tag_questions_by_keyword_list(df: pd.DataFrame,
@@ -190,23 +211,22 @@ def tag_questions_by_keyword_list(df: pd.DataFrame,
     :rtype: pd.DataFrame
     """
     df_copy = df.copy() # Work on a copy
-    df_copy[new_column_name] = 'N/A' # Default to 'N/A'
-
-    tag_results = df_copy[keyword_column].apply(
-        lambda tokens: [word for word in trigger_keyword_list if word in tokens] or 'N/A'
+    # Using a set for the trigger list for much faster lookups
+    trigger_set = set(trigger_keyword_list)
+    df_copy[new_column_name] = df_copy[keyword_column].apply(
+        lambda tokens: [token for token in tokens if token in trigger_set]  # preserves order of the tokens.
     )
-    df_copy[new_column_name] = tag_results
     return df_copy
 
-def get_main_keyword(tag_list):
+def get_main_keyword(tag_list) -> str:
     """
     Extracts a primary keyword or assigns a category from a tag list.
 
-    This function is designed to process the 'factual_recall_keyword' column,
-    which may contain lists of identified factual recall keywords or the string 'N/A'.
+    This function is designed to process a column containing lists of keywords
+    (e.g., the 'interrogative_keywords' column), which may contain lists of identified factual recall keywords or an empty list.
     If the input is a non-empty list, it returns the first keyword from that list.
-    If the input is the string 'N/A', it returns 'Non-Factual'.
-    For any other input type or an empty list, it returns 'Other'.
+    If the input is an empty string, it returns 'Non-Factual'.
+    For any other input type, it returns 'Other'.
 
     This helps in creating a single, categorical representation for grouping
     or analysis.
@@ -217,37 +237,100 @@ def get_main_keyword(tag_list):
     :return: The primary keyword (first from the list), 'Non-Factual', or 'Other'.
     :rtype: str
     """
-    if isinstance(tag_list, list) and len(tag_list) > 0:
-        return tag_list[0]  # Take the first keyword from the list
-    elif tag_list == 'N/A':
-        return 'Non-Factual' 
+    # First pass: Check for any Priority 1 keywords
+    for keyword in tag_list:
+        if keyword in const.PRIORITY_1_KEYWORDS:
+            return keyword # Found a high-priority word, we're done.
+
+    # Second pass: If no P1 keywords were found, check for Priority 2
+    for keyword in tag_list:
+        if keyword in const.PRIORITY_2_KEYWORDS:
+            return keyword # Found a lower-priority word, we're done.
+
+    # Fallback if no priority keywords were found at all
+    return tag_list[0] if tag_list else 'unassigned'
+
+# categorize each question into the main "type" categories
+# Build the MCQ regex pattern once, outside the function, for efficiency
+mcq_phrase_pattern = r'\b(' + '|'.join([re.escape(phrase) for phrase in const.MCQ_INDICATOR_PHRASES]) + r')'
+
+def categorize_question(row):
+    """
+    Categorizes a question into predefined types using a hierarchical, rule-based approach.
+
+    The categorization logic is as follows:
+    1.  **MCQ Check**: It first checks if the question starts with a common MCQ phrase.
+    2.  **Explicit Keyword Check**: If not an MCQ, it checks the 'main_keyword' for
+        unambiguous FR (Factual Recall), EX (Explanatory), and YN (Yes/No) types.
+    3.  **Special 'how' Logic**: For the keyword 'how', it uses n-grams to distinguish
+        between FR and EX types.
+    4.  **Fallback**: If no rules match, the question is assigned the 'Other' category.
+
+    Args:
+        row (pd.Series): A row from a pandas DataFrame. It is expected to contain
+            the following columns:
+            - 'main_keyword' (str): The primary interrogative keyword of the question.
+            - 'question' (str): The full text of the question.
+
+    Returns:
+        str: A string representing the assigned category. Possible values are
+             'MCQ', 'FR', 'EX', 'YN', or 'Other'.
+    """
+    keyword = row['main_keyword']
+    question_text = row['question'].lower()  # Use the full question text for n-gram check
+
+    # Rule 0: Check for MCQ patterns first (highest priority)
+    # Layer 1: Check for known starting phrases
+    if re.search(f'^{mcq_phrase_pattern}', question_text, re.IGNORECASE):
+        return 'MCQ'
+    # Layer 2: Check for general MCQ formatting patterns anywhere in the question
+    if re.search(const.MCQ_FORMAT_PATTERN, question_text, re.IGNORECASE):
+        return 'MCQ'
+    
+    # Rule 1: Handle explicit keywords first
+    if keyword in const.FACTUAL_RECALL_KEYWORDS:
+        return 'FR'
+    if keyword in const.EXPLANATORY_KEYWORDS:
+        return 'EX'
+    if keyword in const.YES_NO_KEYWORDS:
+        return 'YN'
+    
+    # Rule 2: Use n-gram patterns for "how" questions
+    if keyword == 'how':
+        # Check if any of the factual n-grams are in the question
+        if any(ngram in question_text for ngram in const.FACTUAL_HOW_NGRAMS):
+            return 'FR'
+        else:
+            # If it's a "how" question but not a known factual type, it's explanatory
+            return 'EX'
+            
+    # Fallback for any keywords not explicitly covered
     return 'Other'
 
 # This helper function to get the top n words from a series - typically used on 'question tokens' and 'answer tokens'
-def get_top_keywords(series_of_keyword_lists: pd.Series, top_n: int = 3) -> str:
+def get_top_keywords(series_of_keyword_lists: pd.Series, top_n: int = 3, exclude_list=None):
     """
-    Takes a Series of keyword lists, flattens it, and returns a formatted
-    string of the top N most frequent keywords and their counts.
+    Flattens a series of token lists, counts frequencies, and returns top N keywords.
+    Optionally excludes a list of specified words.
     """
-    # Step 1: Flatten the list of lists into a single list of all keywords in the group
-    # It also handles 'N/A' strings by checking if the item is a list.
-    all_keywords = [
-        keyword for sublist in series_of_keyword_lists 
-        if isinstance(sublist, list) 
-        for keyword in sublist
-    ]
+    if exclude_list is None:
+        exclude_list = set()
+    else:
+        exclude_list = set(exclude_list)
 
-    if not all_keywords:
-        return "N/A" # Return 'N/A' if no keywords were found for the group
-        
-    # Step 2: Convert to a Series and use .value_counts()
-    keyword_counts = pd.Series(all_keywords).value_counts()
-    
-    # Step 3: Use .nlargest() to get the top N
-    top_items = keyword_counts.nlargest(top_n)
-    
-    # Step 4: Format for display
-    return ', '.join([f'{idx} ({val})' for idx, val in top_items.items()])
+    # Flatten the list of lists while filtering out excluded words
+    all_tokens = [
+        token for sublist in series_of_keyword_lists 
+        for token in sublist 
+        if token not in exclude_list
+    ]
+    if not all_tokens:
+        return []
+    # Get the top N keywords and their counts as a pandas Series
+    top_series = pd.Series(all_tokens).value_counts().nlargest(top_n)
+
+    # Format the Series into a readable string: "keyword1 (count1), keyword2 (count2)"
+    return ", ".join([f"{keyword} ({count})" for keyword, count in top_series.items()])
 
 # Helper function for identifying unique pairs from a cosine similarity score matrix
 def get_unique_pairwise_scores(similarity_matrix: np.ndarray, k: int = 1) -> pd.Series:
@@ -299,7 +382,7 @@ def find_answer_with_number_word_gt_10(token_list):
     This simple version checks individual tokens; it won't combine
     tokens like ['twenty', 'one'] into 21.
     """
-    if not isinstance(token_list, list):
+    if not isinstance(token_list, (list, np.ndarray)):
         return False # Or handle as an error/log
     for token in token_list:
         try:
@@ -312,6 +395,50 @@ def find_answer_with_number_word_gt_10(token_list):
             continue
     return False
 
+# Helper function to classify answer types using a hierarchical, rule-based approach
+def classify_answer_type(row):
+    """
+    Classifies an answer into 'text', 'date', 'year', or 'numeric' using a
+    robust, hierarchical rule-based approach.
+    """
+    answer_str = str(row['answer']).strip()
+    answer_lower = answer_str.lower()
+
+    # Rule 1: Check for dates (UPDATED LOGIC)
+    # Split the answer into a set of words to check for whole-word matches.
+    words_in_answer = set(re.split(r'\W+', answer_lower))
+    contains_month = words_in_answer.intersection(const.MONTH_NAMES)
+    
+    contains_digits = any(char.isdigit() for char in answer_str)
+
+    if contains_month and contains_digits:
+        return 'date'
+    try:
+        if '-' in answer_str and pd.to_datetime(answer_str) is not pd.NaT:
+            return 'date'
+    except (ValueError, TypeError):
+        pass
+
+    # Rule 2: Check for year patterns
+    is_historical_year = re.fullmatch(r'\d{1,4}\s*(BC|AD)', answer_str, re.IGNORECASE)
+    is_standalone_year = re.fullmatch(r'\d{4}', answer_str)
+    is_century = re.search(r'\b\d{1,2}(st|nd|rd|th)\s+century\b', answer_lower)
+    if is_historical_year or is_standalone_year or is_century:
+        return 'year'
+
+    # Rule 3: Check for numeric (now runs on all inputs)
+    cleaned_for_num = re.sub(r'[^\d\.]', '', answer_str) # Keep digits and decimal points
+    if cleaned_for_num:
+        try:
+            float(cleaned_for_num)
+            letters = sum(c.isalpha() for c in answer_str)
+            if letters == 0: # If there are no letters, it's numeric
+                return 'numeric'
+        except (ValueError, TypeError):
+            pass
+
+    # Rule 4: If all else fails, it's text
+    return 'text'
 
 ## A.2. Calculation Helpers
 #-------------------------#
@@ -329,7 +456,7 @@ def get_len_descriptive_stats(question_keyword: str, question_lengths: pd.Series
     Assumption: This function assumes the input Series (`question_lengths`, `answer_lengths`)
     are valid, non-empty, and have the same length. Input validation should
     be performed by the calling function.
-    :param question_keyword: The interrogative question keyword (typically from the 'interrogative_keyword' column) that
+    :param question_keyword: The interrogative question keyword (typically from the 'interrogative_keywords' column) that
         is used as the search keyword in questions to derive the statistics for.
     :param question_lengths: Series of (non-empty) numerical question lengths (typically derived from get_clean_word_counts).
     :type question_lengths: pd.Series[int]
@@ -670,7 +797,120 @@ def get_duplicates_with_graph(df_for_analysis: pd.DataFrame, threshold_list: Lis
         print("No pairs or groups found across any specified thresholds.")
     
     return results_df, threshold_summary_df
-        
+
+# This is specifically for the v1 update and v0 baseline for near-duplicates
+def tag_duplicates_with_override(
+    df_for_analysis: pd.DataFrame, 
+    results_df: pd.DataFrame, 
+    df_v0_cleaned: pd.DataFrame
+) -> pd.DataFrame:
+    """
+    Creates final duplicate tags using a hybrid approach: an automated 'golden 
+    record' selection provides a baseline, which is then corrected by the definitive
+    manual tags from the v0 dataset.
+
+    The automated "golden record" is selected based on a clear hierarchy of rules:
+    1.  Best Answer: The question with the highest answer word count.
+    2.  Best Question: If answers are tied, the question with the highest word count.
+    3.  First Occurrence: As a final tie-breaker, the question with the lowest
+        original_question_id.
+    
+    The final 'is_duplicate' flag is determined by this logic: if a manual v0 tag
+    exists for a question, use it; otherwise, use the new automated tag.
+
+    :param df_for_analysis: The main DataFrame with all questions (v1).
+    :param results_df: The DataFrame of duplicate groups found in the v1 data.
+    :param df_v0_cleaned: The v0 DataFrame containing the manual 'is_duplicate' tags.
+    :return: The df_for_analysis DataFrame with the final, corrected 'is_duplicate' column.
+    """
+    # --- Step 1: Perform Automated Tagging to get a baseline ---
+    df_auto_tagged = df_for_analysis.copy()
+    
+    results_with_counts = results_df.copy()
+    results_with_counts['answer_word_count'] = get_clean_word_counts(results_with_counts, 'answer_text')
+    results_with_counts['question_word_count'] = get_clean_word_counts(results_with_counts, 'question_text')
+    
+    sorted_results = results_with_counts.sort_values(
+        by=['group_id', 'answer_word_count', 'question_word_count', 'original_question_id'],
+        ascending=[True, False, False, True]
+    )
+    
+    automated_choices = sorted_results.drop_duplicates(subset='group_id', keep='first')
+    golden_record_map = pd.Series(
+        automated_choices.original_question_id.values, 
+        index=automated_choices.group_id
+    ).to_dict()
+
+    ids_to_keep_auto = set(golden_record_map.values())
+    all_ids_in_duplicate_groups = results_df['original_question_id'].unique()
+    ids_to_flag_auto = set(all_ids_in_duplicate_groups) - ids_to_keep_auto
+    
+    df_auto_tagged['is_duplicate_auto'] = False
+    df_auto_tagged.loc[df_auto_tagged['original_question_id'].isin(ids_to_flag_auto), 'is_duplicate_auto'] = True
+
+    # --- Step 2: Prepare and Merge Manual v0 Tags ---
+    manual_flags_df = df_v0_cleaned[['original_question_id', 'is_duplicate']].rename(
+        columns={'is_duplicate': 'is_duplicate_manual'}
+    )
+    
+    comparison_df = df_auto_tagged.merge(manual_flags_df, on='original_question_id', how='left')
+
+    # --- Step 3: Apply Override Logic to Create Final Column ---
+    # The final decision is the v0 manual tag IF it exists, otherwise it's the v1 auto tag.
+    comparison_df['is_duplicate'] = comparison_df['is_duplicate_manual'].combine_first(comparison_df['is_duplicate_auto'])
+    
+    # Clean up and ensure correct boolean type
+    comparison_df['is_duplicate'] = comparison_df['is_duplicate'].astype(bool)
+    
+    # --- Step 4: Finalize DataFrame and Return ---
+    final_df = comparison_df.drop(columns=['is_duplicate_auto', 'is_duplicate_manual'])
+    
+    # --- Verification ---
+    print(f"Final dataset contains {final_df[final_df['is_duplicate'] == False].shape[0]} unique questions to keep.")
+    print(f"Final dataset flagged {final_df['is_duplicate'].sum()} questions as duplicates.")
+
+    return final_df
+
+# verify that the v1 near-duplicate tags match v0 and id any disagreements
+def validate_tagging_changes(
+    new_df: pd.DataFrame,
+    old_df: pd.DataFrame,
+    id_col: str = 'original_question_id',
+    flag_col: str = 'is_duplicate') -> Tuple[Dict[str, int], pd.DataFrame]:
+    """
+    Compares two versions of a duplicate flagging process and reports on the changes.
+
+    :param new_df: The DataFrame with the latest 'is_duplicate' flags.
+    :param old_df: The previous DataFrame with the old 'is_duplicate' flags.
+    :param id_col: The name of the unique identifier column for questions.
+    :param flag_col: The base name of the boolean duplicate flag column.
+    :return: A tuple containing:
+             1. A dictionary summarizing the comparison results.
+             2. A DataFrame containing only the rows where the flags disagree.
+    """
+    # 1. Prepare old flags, renaming for a clean merge
+    old_flag_col_name = f"{flag_col}_manual"
+    manual_flags_df = old_df[[id_col, flag_col]].rename(
+        columns={flag_col: old_flag_col_name}
+    )
+
+    # 2. Create a temporary comparison DataFrame
+    comparison_df = new_df.merge(manual_flags_df, on=id_col, how='left')
+    comparison_df[old_flag_col_name] = comparison_df[old_flag_col_name].fillna(False).astype(bool)
+
+    # 3. Calculate comparison metrics
+    summary = {
+        'Agreed Duplicates': len(comparison_df[(comparison_df[flag_col] == True) & (comparison_df[old_flag_col_name] == True)]),
+        'Agreed Non-Duplicates': len(comparison_df[(comparison_df[flag_col] == False) & (comparison_df[old_flag_col_name] == False)]),
+        'Newly Flagged by Script': len(comparison_df[(comparison_df[flag_col] == True) & (comparison_df[old_flag_col_name] == False)]),
+        'Missed by Script': len(comparison_df[(comparison_df[flag_col] == False) & (comparison_df[old_flag_col_name] == True)])
+    }
+
+    # 4. Isolate disagreements for manual review
+    disagreements_df = comparison_df[comparison_df[flag_col] != comparison_df[old_flag_col_name]].copy()
+
+    return summary, disagreements_df
+
 ## A.3. Plotting and Formatting Helpers:
 #--------------------------------------#
 
@@ -1024,7 +1264,7 @@ def get_input_df(input_file: Union[str , pd.DataFrame]) -> Union[pd.DataFrame, N
     if isinstance(input_file, str):
         if up.validate_csv_path(input_file):
             try:
-                df = pd.read_csv("input_file")
+                df = pd.read_csv(input_file)
                 print(f"CSV file '{input_file}' loaded successfully!")
                 return df
             except Exception as e:
@@ -1071,7 +1311,7 @@ def validate_new_questions_df(new_dataframe: pd.DataFrame) -> Union[Tuple[pd.Dat
     
     ## Column check
     # check for correct size and labels:
-    expected_column_list = ['question', 'answer', 'question_type', 'is_numeric_answer', 'force_add_as_duplicate']
+    expected_column_list = ['question', 'answer','is_numeric_answer', 'question_type', 'force_add_as_duplicate']
     
     if set(df.columns) != set(expected_column_list):
         print(f"Validation Error: Columns do not match standardized format. Expected {expected_column_list}, but got {list(df.columns)}. Unable to continue.")
@@ -1337,14 +1577,22 @@ def run_data_ingestion_pipeline(new_questions_input: Union[str , pd.DataFrame],
     tokenized_new_questions_df['question_length'] = get_clean_word_counts(tokenized_new_questions_df, 'question')
     tokenized_new_questions_df['answer_length'] = get_clean_word_counts(tokenized_new_questions_df, 'answer')
     
-    ## Step 4: Add the 'interrogative_keyword' column
+    ## Step 4: Add the 'interrogative_keywords' column
     # 4.1. master list of interrogative keywords based on main_dataframe EDA
-    # 4.2. Populate the `interrogative_keyword` column
+    # 4.2. Populate the `interrogative_keywords` column and the main_interrogative_keywords column
     tokenized_new_questions_df = tag_questions_by_keyword_list(
                             df = tokenized_new_questions_df, 
                             keyword_column = 'question tokens', 
-                            trigger_keyword_list = INTERROGATIVE_KEYWORDS_LIST,
-                            new_column_name='interrogative_keyword')
+                            trigger_keyword_list = const.INTERROGATIVE_KEYWORDS_LIST,
+                            new_column_name='interrogative_keywords')
+    
+     # 4.3. In case some records have multiple interrogative keywords, select the main leading one.
+    tokenized_new_questions_df['main_keyword'] = tokenized_new_questions_df['interrogative_keywords'].apply(get_main_keyword)
+    # TODO: automate question categorization based after handling "what" as FR or EX based on answer length - currently included as an input column
+    # 4.4. Apply the rule-based classifier to create the 'question_type' column
+    #tokenized_new_questions_df['question_type'] = tokenized_new_questions_df.apply(categorize_question, axis=1)
+    # 4.5. Convert the new column to a memory-efficient category type
+    tokenized_new_questions_df['question_type'] = tokenized_new_questions_df['question_type'].astype('category')
     
     ## Step 5: Check for duplicates to existing questions
     pipeline_duplicates_status, new_questions_clean_df, duplicates_user_report  = check_for_duplicate_questions(tokenized_new_questions_df, 
@@ -1361,15 +1609,18 @@ def run_data_ingestion_pipeline(new_questions_input: Union[str , pd.DataFrame],
     critical_duplicates_df = duplicates_user_report['critical_review_df']
     caution_duplicates_df = duplicates_user_report['caution_review_df']
                                                                                                             
-    ## Step 6: Add unique question id for each new question in the `original_question_id` column:
+    ## Step 6-1: Add unique question id for each new question in the `original_question_id` column:
     current_max_question_id = main_df['original_question_id'].max()
     start_id_new_questions = current_max_question_id + 1
     num_new_questions = len(new_questions_clean_df)
     new_ids= range(start_id_new_questions, start_id_new_questions + num_new_questions, 1)
     new_questions_clean_df['original_question_id'] = list(new_ids)
+    ## Step 6-2: Add 'answer_type` column and change to category type
+    new_questions_clean_df['answer_type'] = new_questions_clean_df.apply(classify_answer_type, axis=1)
+    new_questions_clean_df['answer_type'] = new_questions_clean_df['answer_type'].astype('category')
     
     ## Step 7-1: Remove temporary columns
-    new_questions_clean_df = new_questions_clean_df.drop(columns=['force_add_as_duplicate'])
+    new_questions_clean_df = new_questions_clean_df.drop(columns=['force_add_as_duplicate', 'is_duplicate'])
     
     ## Step 7-2: concatenate the processed new_questions dataframe to main_dataframe
     final_df = pd.concat([main_df, new_questions_clean_df], axis=0)
@@ -1407,7 +1658,7 @@ def run_data_ingestion_pipeline(new_questions_input: Union[str , pd.DataFrame],
         
     # Determine if any question type remains uncategorized - check if  the `interrogative_keywords` master list needs updating
     final_df['question_type'] = final_df['question_type'].replace('N/A', 'Uncategorized')
-    
+
     # Step 9: Prepare updated status map and data payload for return
     print("\nGenerating final status report for the updated dataset...")
     initial_raw_total = main_df.shape[0]
@@ -1445,17 +1696,13 @@ def calculate_keyword_metrics(question_keyword: str, dataframe: pd.DataFrame) ->
     :type dataframe: pd.DataFrame
     :raises ValueError: If input is invalid (e.g., not a DataFrame, empty DataFrame,
                         invalid keyword).
-    :return: A dictionary containing metrics like counts, percentages, descriptive
-             statistics for question and answer lengths, correlation coefficient,
-             p-value, correlation strength, and interpretation.  Returns None if
-             the input DataFrame is empty or no questions are found for the keyword.
     :return: A dictionary ('results package') containing:
-         - 'keyword_for_display' (str): The input keyword, for display purposes.
-         - 'metrics_for_summary' (dict): Metrics for table rows (does NOT include keyword).
-         - 'filtered_data_df' (pd.DataFrame): The filtered DataFrame.
-         - 'q_lengths_series' (pd.Series): Question lengths.
-         - 'a_lengths_series' (pd.Series): Answer lengths.
-         Returns None if initial filtering finds no data or major validation fails.
+         - 'keyword_for_display' (str): The input keyword.
+         - 'metrics' (dict): A dictionary of all calculated metrics.
+         - 'filtered_df' (pd.DataFrame): The filtered DataFrame containing relevant questions.
+         - 'q_lengths' (pd.Series): A Series of word counts for the questions.
+         - 'a_lengths' (pd.Series): A Series of word counts for the answers.
+         Returns None if validation fails or no data is found for the keyword.
     """
     # Step 0: Input validation
     if not isinstance(dataframe, pd.DataFrame):
@@ -1501,8 +1748,15 @@ def calculate_keyword_metrics(question_keyword: str, dataframe: pd.DataFrame) ->
             r_strength = 'N/A'
             interpretation = 'Insufficient data for correlation'
         else:
-            r_coeff, p_val = calculate_correlation(question_lengths, answer_lengths)
-            interpretation, r_strength = interpret_correlation(r_coeff, p_val)
+            if question_lengths.std() == 0 or answer_lengths.std() == 0:
+                print(f"INFO: Correlation for '{question_keyword}' skipped. "
+                      f"All question (or answer) lengths are the same so there is no variance to measure.")
+                r_coeff, p_val = np.nan, np.nan
+                r_strength = 'N/A'
+                interpretation = 'Insufficient variance for correlation'
+            else:
+                r_coeff, p_val = calculate_correlation(question_lengths, answer_lengths)
+                interpretation, r_strength = interpret_correlation(r_coeff, p_val)
         
         # Step 5: Create a summary dictionary with all the results
         results = {
@@ -1805,32 +2059,20 @@ def generate_dataset_status_report(input_dataframe: pd.DataFrame, initial_total:
     Generates and displays a comprehensive status report ("Dashboard") for the
     trivia dataset, including key metrics, tables, and plots.
 
-    This function provides a high-level overview of the dataset's composition
-    after cleaning and processing, breaking down metrics by the 'question_type'
-    category.
-
     Assumptions:
-    - The input DataFrame has been cleaned and contains the necessary columns:
-      'question_type', 'interrogative_keyword', 'question_length', 'answer_length',
-      'answer', 'answer_tokens', and 'is_numeric_answer'.
+    - The input DataFrame contains the necessary columns: 'question_type', 
+      'main_keyword', 'interrogative_keywords', 'question', 'answer', and 'answer_tokens'.
 
-    :param dataframe: The final, cleaned DataFrame to be analyzed.
-    :type dataframe: pd.DataFrame
-    :param initial_total: (Optional) The total number of questions in the dataset
-                          before cleaning, used to calculate how many were removed.
+    :param input_dataframe: The final, cleaned DataFrame to be analyzed.
+    :type input_dataframe: pd.DataFrame
+    :param initial_total: (Optional) The total number of questions before cleaning.
     :type initial_total: int, optional
-    :return: None. The function prints and displays the report directly.
-    :rtype: None
     """
     dataframe = input_dataframe.copy()
     
     if not isinstance(dataframe, pd.DataFrame) or dataframe.empty:
         print("Cannot generate report: Input is not a valid or non-empty DataFrame.")
         return
-        
-    # add the length columns to the df copy
-    dataframe['question length'] = get_clean_word_counts(dataframe, "question")
-    dataframe['answer length'] = get_clean_word_counts(dataframe, "answer")
     
     # --- Component 1: High-Level Metrics ---
     display(Markdown("## Trivia Dataset Status Map"))
@@ -1846,9 +2088,9 @@ def generate_dataset_status_report(input_dataframe: pd.DataFrame, initial_total:
         metrics_text += f"**- Net Change in Questions:** {net_change:+.0f}<br>"
         metrics_text += "   *(Note: A positive number indicates new questions were added; a negative number indicates questions were removed.)*<br>"
 
-    if 'is_numeric_answer' in dataframe.columns:
-        numeric_count = dataframe['is_numeric_answer'].sum()
-        metrics_text += f"**- Total Questions with Numeric Answers:** {numeric_count} ({numeric_count/total_questions_final:.1%})<br>"
+    if 'answer_type' in dataframe.columns:
+        summary_line = ", ".join([f"{atype} ({count})" for atype, count in dataframe['answer_type'].value_counts().items()])
+        metrics_text += f"**- Answer Type Distribution:** {summary_line}<br>"
 
     # Display the entire block as a single Markdown object
     display(Markdown(metrics_text))
@@ -1858,7 +2100,7 @@ def generate_dataset_status_report(input_dataframe: pd.DataFrame, initial_total:
 
     # Define a helper function to count uncategorized keywords
     def count_uncategorized(series):
-        return (series == 'N/A').sum()
+        return series.apply(lambda x: isinstance(x, list) and len(x) == 0).sum()
 
     # Step A: Perform all simple aggregations at once for efficiency
     aggregations = {
@@ -1866,20 +2108,20 @@ def generate_dataset_status_report(input_dataframe: pd.DataFrame, initial_total:
         'answer': ('answer', 'nunique'),          # Will be renamed
         'question_length': ('question_length', 'median'), # Will be renamed
         'answer_length': ('answer_length', 'median'),     # Will be renamed
-        'interrogative_keyword': ('interrogative_keyword', count_uncategorized) # Custom agg
+        'interrogative_keywords': ('interrogative_keywords', count_uncategorized) # Custom agg
     }
-    status_map_df = dataframe.groupby('question_type').agg(**aggregations)
+    status_map_df = dataframe.groupby('question_type', observed=False).agg(**aggregations)
     
     # Step B: Calculate top keywords separately using .apply() for complex logic
-    top_interrogative_keywords = dataframe.groupby('question_type')['interrogative_keyword'].apply(
-        lambda s: get_top_keywords(s, top_n=3)
+    top_main_keywords = dataframe.groupby('question_type', observed=False)['main_keyword'].apply(
+    lambda s: ", ".join([f"{kw} ({ct})" for kw, ct in s.value_counts().nlargest(3).items()])
     )
-    top_answer_keywords = dataframe.groupby('question_type')['answer tokens'].apply(
-        lambda s: get_top_keywords(s, top_n=3)
+    top_answer_keywords = dataframe.groupby('question_type', observed=False)['answer tokens'].apply(
+        lambda s: get_top_keywords(s, top_n=3, exclude_list=const.INTERROGATIVE_KEYWORDS_LIST)
     )
 
     # Step C: Merge all results together
-    status_map_df = status_map_df.merge(top_interrogative_keywords, on='question_type')
+    status_map_df = status_map_df.merge(top_main_keywords, on='question_type')
     status_map_df = status_map_df.merge(top_answer_keywords, on='question_type')
 
     # Step D: Calculate percentage and rename/reorder columns for presentation
@@ -1890,8 +2132,8 @@ def generate_dataset_status_report(input_dataframe: pd.DataFrame, initial_total:
         'answer': 'Unique Answer Count',
         'question_length': 'Median Q Len',
         'answer_length': 'Median A Len',
-        'interrogative_keyword_x': 'Unassigned Interrogative Keyword', # from agg
-        'interrogative_keyword_y': 'Top Interrogative Keywords', # from apply
+        'interrogative_keywords': 'Unassigned Keyword Count', # from agg
+        'main_keyword': 'Top main_keyword',  # from apply
         'answer tokens': 'Top Answer Keywords'
     })
     
@@ -1899,7 +2141,7 @@ def generate_dataset_status_report(input_dataframe: pd.DataFrame, initial_total:
     final_columns = [
         'Question Count', 'Percentage (%)', 'Unique Answer Count',
         'Median Q Len', 'Median A Len', 'Top Answer Keywords',
-        'Top Interrogative Keywords', 'Unassigned Interrogative Keyword'
+        'Top main_keyword', 'Unassigned Keyword Count'
     ]
     # Ensure all columns exist before trying to reorder
     status_map_df = status_map_df[[col for col in final_columns if col in status_map_df.columns]]
@@ -1956,7 +2198,7 @@ def generate_dataset_status_report(input_dataframe: pd.DataFrame, initial_total:
     axes[1].set_ylabel('Answer Length (Words)')
     axes[1].tick_params(axis='x', rotation=45)
 
-    plt.tight_layout(rect=[0, 0, 1, 0.96])
+    plt.tight_layout(rect=(0, 0, 1, 0.96))
     plt.show()
 
     display(Markdown("\n" + "---"))
@@ -2132,7 +2374,7 @@ def print_keyword_ngrams(
     except Exception as e:
         print(f"An unexpected error occurred during n-gram analysis: {e}")
         
-# Estimate difficulty of a question with TF-IDF
+# Get contextual understanding of a question and answers with TF-IDF
 def rank_ngrams_by_tfidf(dataframe: pd.DataFrame,
                          column_name: str, 
                          ngram_range: tuple = (1, 2),
@@ -2141,7 +2383,7 @@ def rank_ngrams_by_tfidf(dataframe: pd.DataFrame,
                          stop_words: Union[list[str],None] = None) -> pd.DataFrame:
     """
     This method uses tf-idf vectorization to find n-grams in a Series (with the already tokenized
-    `answer keywords` or `question keywords` columns) as a proxy for difficulty. 
+    `answer keywords` or `question keywords` columns) for contextual analysis. 
     It uses the `idf_score` as a measure of rarity, obscurity, or uniqueness.
     It uses the `summed_TFIDF_score` of the n-gram as a measure of its overall importance within the
     dataset.
@@ -2181,7 +2423,7 @@ def rank_ngrams_by_tfidf(dataframe: pd.DataFrame,
     # 5. Get the obscurity / rareness score, ie. the idf score iteslf
     rarity_idf_score = vectorizer.idf_
     # 6. Get the overall importance score
-    tfidf_matrix = vectorizer.transform(df_tfidf[new_column_name])
+    tfidf_matrix = vectorizer.transform(df_tfidf[new_column_name]) 
     summed_tfidf = np.asarray(tfidf_matrix.sum(axis=0)).ravel()
     # 7. Create a score dataframe to return the results with
     tfidf_scores_df = pd.DataFrame({

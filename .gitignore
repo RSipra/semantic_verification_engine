@@ -21,6 +21,7 @@ src/.DS_Store
 .ipynb_checkpoints/
 tempCodeRunnerFile*.ipynb
 venv/
+hptrivia_game.egg-info
 
 # Ignore temporary Word files
 ~$*.docx
@@ -39,3 +40,6 @@ db.sqlite3-journal
 # Flask stuff:
 instance/
 .webassets-cache
+
+# Ingnore test files cache
+.pytest_cache/
