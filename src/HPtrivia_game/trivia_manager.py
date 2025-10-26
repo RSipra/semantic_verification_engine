@@ -35,7 +35,7 @@ import ast
 import pandas as pd
 from pandas.errors import EmptyDataError, ParserError
 import HPtrivia_game.constants as const
-from utils import utils_general as ut
+from HPtrivia_game.utils import utils_general as ut
 
 # --- NO NEED TO MANUALLY WRITE __init__, __repr__ --- @dataclass generates them 
 # automatically using type hints since Q & A are data types but choosing to override

@@ -3,7 +3,6 @@
 This document tracks the datasets used in this project, their sources, and any modifications made.
 
 ---
-
 ## 📌 1. Trivia Questions Dataset  
 - **Source**: Hugging Face  
 - **URL**: [https://huggingface.co/datasets/saracandu/harry-potter-trivia-human](https://huggingface.co/datasets/saracandu/harry-potter-trivia-human)  
@@ -16,52 +15,34 @@ This document tracks the datasets used in this project, their sources, and any m
 - **Note:** A local copy of the original dataset is being used for this project due to the original source being temporarily or permanently unavailable. 
 
 ---
+## 📌 2. Harry Potter Book Corpus
+- **Source**: R package on GitHub
+- **URL**: [https://github.com/bradleyboehmke/harrypotter]https://github.com/bradleyboehmke/harrypotter)
+- **Description**: A collection of the full text of the seven main Harry Potter books, originally packaged for R in .rda format. These files were read into Python using the pyreadr library.
+- **Usage**:   Serves as the canonical source text for the LLM-based question generation process. This ensures that all new questions are factually grounded in the main book series.
+- **License**: Not specified in the source repository. Used here for a non-commercial portfolio project.
 
-## 📌 2. Harry Potter Character List  
+---
+## 📌 3. Harry Potter Character List  
 - **Source**: GitHub Repository  
 - **URL**: [https://gist.github.com/jennynz/7eaf7ea4eeb3d686b19e997e721bda0c](https://gist.github.com/jennynz/7eaf7ea4eeb3d686b19e997e721bda0c)  
 - **Description**: A list of all 689 Harry Potter characters.  
-- **Usage**:  
-  - Planned: Used for Named Entity Recognition (NER) model training / Helps categorize trivia questions based on character mentions.  
+- **Usage**: Planned: Use to create a gazetteer for the custom Named Entity Recognition (NER) model, which helps with entity validation and question categorization.
 
 ---
+## 📌 4. AI-Generated Assets
+- **Source**: Generated using [recraft.ai](https://www.recraft.ai/) / AI-powered design tool and [replicate.com/fofr/consistent-character](https://replicate.com/fofr/consistent-character?prediction=erdt5f9fm5rme0cmeqcbjczbb8) / Create images of a given character in different poses.
+- **Description**: Custom images for the game UI and persona, including different poses, gestures, and expressions for the game's MC.
+- **Usage**: Game backgrounds, logo, and illustrations for major trivia themes and the MC persona.
 
-## 📌 3. Sound Effects & Background Music  
-- **Source**: Free Sound Effects Library  
+---
+## 📌 5. Sound Effects & Background Music  
+- **Source**: Free Sound Effects Library (Placeholder)
 - **URL**: [xx](xx)  
 - **Description**: Collection of magical sound effects for game feedback.  
-- **Usage**:  
-  - Correct/incorrect answer sounds.  
-  - Background music for atmosphere.  
-  - Planned: Sound cues for special achievements.  
+- **Usage**: Correct/incorrect answer sounds and background music.
 
 ---
-
-## 📌 4. AI-Generated Images  
-- **Source**: Generated using [recraft.ai](https://www.recraft.ai/) / AI-powered design tool 
-- **Description**: Custom images for game UI and storytelling.  
-- **Usage**:  
-  - Game backgrounds, logo, and game MC persona.  
-  - Illustrations for major trivia themes.  
-
----
-
-## 📌 5. AI-Generated Images  
-- **Source**: Generated using [replicate.com/fofr/consistent-character](https://replicate.com/fofr/consistent-character?prediction=erdt5f9fm5rme0cmeqcbjczbb8) / Create images of a given character in different poses.
-- **Description**: Custom poses of game MC persona with different gestures and expressions.  
-- **Usage**:  
-  - Generate multiple poses for main game MC persona for different instances in the game.   
-
----
-
 ## 📌 6. Additional Notes  
 - All external datasets are used under their respective licenses.  
- 
-
 ---
-
-### 📌 **Contributing**  
-If you find a better dataset or need updates, submit a pull request or open an issue on GitHub.
-
----
-
