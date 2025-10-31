@@ -11,7 +11,6 @@ from datetime import datetime, timezone
 import time
 from pathlib import Path
 import yaml
-import json
 from dotenv import load_dotenv
 import google.generativeai as genai
 
@@ -69,11 +68,31 @@ def prepare_prompt(run_config: dict, paths: dict) -> tuple[str, str]:
     # get the prompt template location for the specific experiment run and read it
     prompt_template_path = project_root / run_config['prompt_file']
     prompt_template = prompt_template_path.read_text(encoding="utf-8")
+    
+    # Integrity checks for the prompt template from unit testing
+    #1. incase the prompt template is empty
+    if not prompt_template or prompt_template.isspace():
+        raise ValueError(f"Prompt template file is empty: {run_config['prompt_file']}")
+    #2. if the prompt template doesn't have a placeholder for the chapters (source text)    
+    if "{source_text}" not in prompt_template:
+        raise ValueError("Prompt template is missing the required '{source_text}' placeholder.")
+    #3. if the prompt template doesn't have a placeholder for the source info (references)    
+    if "{book_and_chapter}" not in prompt_template:
+        raise ValueError("Prompt template is missing the required '{book_and_chapter}' placeholder.")
+    
     # Read and combine the source text files from the run configuration
     source_texts = []
+    # in cases there are nested list of chapter pairs to combine
     for file_batch in run_config.get('source_text_files', []):
+        # get each chapter within given batch
         for file_path in file_batch:
             full_path = project_root / file_path
+            # Prevent silent failure (empty source files)
+            text_content = full_path.read_text(encoding="utf-8")
+            if not text_content or text_content.isspace():
+                # Fail fast and loud with a specific error!
+                raise ValueError(f"Source file is empty or contains only whitespace: {file_path}")
+            # ----------------------------------------
             source_texts.append(full_path.read_text(encoding="utf-8"))
     combined_text = "\n\n--- END OF CHAPTER ---\n\n".join(source_texts)
     # get the book and chapter reference
