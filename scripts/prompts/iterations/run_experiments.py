@@ -28,7 +28,7 @@ def setup_file_paths()-> dict:
     return {
     'project_root' : project_root, 
     'config' : project_root / 'config.env',
-    'yaml' : project_root / 'scripts/prompts/experiment.yaml',
+    'yaml' : project_root / 'scripts/prompts/experiments.yaml',
     'output_dir': output_dir
     }
 
@@ -136,7 +136,7 @@ def make_api_call(model: genai.GenerativeModel, final_prompt:str, final_paramete
         response_mime_type="application/json"
         )
     # make the API call and return values
-    print("--- Making a real API call ---")
+    print("--- Making the API call ---")
     start_time = time.time()
 
     response = model.generate_content(final_prompt, generation_config=generation_config)
@@ -157,8 +157,19 @@ def extract_metrics(response, response_time: float, prompt_template_tokens: int)
 
     # Get usage metadata
     usage_metadata = getattr(response, 'usage_metadata', {})
-    api_total_input = usage_metadata.get('prompt_token_count', 0)
-    api_output = usage_metadata.get('candidates_token_count', 0)
+    
+    if usage_metadata:
+        # The real object uses dot-notation, not .get()
+        # We use getattr() to safely access attributes, which is the
+        # equivalent of .get() for objects.
+        api_total_input = getattr(usage_metadata, 'prompt_token_count', 0)
+        api_output = getattr(usage_metadata, 'candidates_token_count', 0)
+        total_tokens = getattr(usage_metadata, 'total_token_count', 0)
+    else:
+        # Handle case where usage_metadata is missing entirely
+        api_total_input = 0
+        api_output = 0
+        total_tokens = 0
 
     # Perform your token calculations
     cached_tokens = prompt_template_tokens
@@ -172,7 +183,7 @@ def extract_metrics(response, response_time: float, prompt_template_tokens: int)
             'input_cached': cached_tokens,
             'input_uncached': uncached_tokens,
             'output': api_output,
-            'total': usage_metadata.get('total_token_count', 0)
+            'total': total_tokens
         }
     }
     return metrics 

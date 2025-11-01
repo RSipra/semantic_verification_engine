@@ -69,5 +69,5 @@ Provide the output as a single, valid JSON array. Each object in the array must 
 Now, using the ---SOURCE TEXT--- below to generate your questions.
 
 ---SOURCE TEXT---
-{chapter_text}
+{source_text}
 ---END SOURCE TEXT---

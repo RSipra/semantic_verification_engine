@@ -76,30 +76,38 @@ def test_main_orchestrator(mocker, tmp_path):
     class MockContent:
         def __init__(self, text):
             self.parts = [MockPart(text)]
+            
     class MockPart:
         def __init__(self, text):
             self.text = text
+            
     class MockCandidate:
         def __init__(self, text, finish_reason):
             self.content = MockContent(text)
             self.finish_reason = MockFinishReason(finish_reason)
+            
     class MockFinishReason:
         def __init__(self, name):
             self.name = name
+            
+    # This class is the key! We are no longer using a dict.
+    class MockUsage:
+        def __init__(self, prompt, candidates, total):
+            self.prompt_token_count = prompt
+            self.candidates_token_count = candidates
+            self.total_token_count = total
+            
     class MockResponse:
         def __init__(self, text, finish_reason="STOP"):
             self.candidates = [MockCandidate(text, finish_reason)]
-            # --- FIX: This is now a dictionary ---
-            self.usage_metadata = {
-                'prompt_token_count': 500,
-                'candidates_token_count': 150,
-                'total_token_count': 650
-            }
+            # We now assign the MockUsage *object* here
+            self.usage_metadata = MockUsage(500, 150, 650) # Fake token counts
             self.prompt_feedback = "N/A"
-
+    
     mock_api_response = MockResponse(
         text='{"summary": "This is the mock API response"}'
     )
+    
     
     # fake api key extraction - mimic method, return nothing
     mocker.patch('scripts.prompts.iterations.run_experiments.configure_api', return_value=None)
