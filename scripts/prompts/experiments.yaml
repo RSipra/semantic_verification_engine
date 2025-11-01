@@ -1,158 +1,167 @@
-# This file defines and logs all prompt engineering experiments.
-# 1. Manually define your experiments and set the 'status' of runs to 'pending'.
-# 2. Run the `run_experiments.py` script.
-# 3. The script will execute pending runs and fill in the metrics below.
-# 4. Manually add your qualitative scores and notes after reviewing the outputs.
-
 metadata:
   project: harry_potter_trivia
   owner: reemasipra
   created_date: 2025-10-17
-  description: "Prompt engineering experiments for generating trivia questions using Gemini models."
+  description: Prompt engineering experiments for generating trivia questions using Gemini models.
   question_types:
-    - "explanatory (EX)"
-    - "factual recall (FR)"
-    - "multiple choice (MCQ)"
+  - explanatory (EX)
+  - factual recall (FR)
+  - multiple choice (MCQ)
   version: 0
-
 experiments:
-  # --- EXPERIMENT 1:
-  - id: ex_temperature
-    description: "Measure the output variation across different temperature settings"
-    model: gemini-2.5-pro
-    common_parameters:
-        max_output_tokens: 12000
-        top_p: 0.95
-        candidate_count: 3
-
-    runs:
-      - version: _02_baseline_v1.1
-        goal: "Test for consistency at low temperature. Expect outputs to be nearly identical."
-        prompt_file: "scripts/prompts/_iterations/explanatory_v0.txt"
-        source_text_files:
-          - "data/06_books/prisoner_of_azkaban_chapter_19.txt"
-          - "data/06_books/goblet_of_fire_chapter_01.txt"
-        source_info: "Prisoner of Azkaban, Chapter 19 and Goblet of Fire, Chapter 1"
-        # Filled by script:
-        output_files: null
-        model_parameters:
-          temperature: 0.2
-        metrics:
-          response_time_seconds: null
-          prompt_feedback: null
-          finish_reason: null
-          tokens:
-            input_cached: null
-            input_uncached: null
-            output: null
-            total: null
-        # filled manually after review:
-        quality:
-          factual_accuracy: null
-          readability: null
-          formatting: null
-        notes: >
-          Initial baseline run with the first version of the prompt using yaml for configuration.
-          Rephrased instructions to avoid ambiguous reference to books.
-        status: "pending"
-        status_history:
-          - {status: draft, timestamp: 2025-10-17T18:00:00Z}
-          - {status: pending, timestamp: 2025-10-20T14:11:30.753153Z}
-
-      - version: _05_v1.2
-        goal: "Test for minor creative variations."
-        prompt_file: "scripts/prompts/_iterations/explanatory_v0.txt"
-        source_text_files:
-          - "data/06_books/prisoner_of_azkaban_chapter_19.txt"
-          - "data/06_books/goblet_of_fire_chapter_01.txt"
-        source_info: "Prisoner of Azkaban, Chapter 19 and Goblet of Fire, Chapter 1"
-        # Filled by script:
-        output_files: null
-        model_parameters:
-          temperature: 0.5
-        metrics:
-          response_time_seconds: null
-          prompt_feedback: null
-          finish_reason: null
-          tokens:
-            input_cached: null
-            input_uncached: null
-            output: null
-            total: null
-        # filled manually after review:
-        quality:
-          factual_accuracy: null
-          readability: null
-          formatting: null
-        notes: >
-          x
-        status: "pending"
-        status_history:
-          - {status: draft, timestamp: 2025-10-19T18:00:00Z}
-          - {status: pending, timestamp: 2025-10-20T14:11:30.753153Z}
-
-      - version: _07_v1.3
-        goal: "Test for a good balance of creativity and consistency."
-        prompt_file: "scripts/prompts/_iterations/explanatory_v0.txt"
-        source_text_files:
-          - "data/06_books/prisoner_of_azkaban_chapter_19.txt"
-          - "data/06_books/goblet_of_fire_chapter_01.txt"
-        source_info: "Prisoner of Azkaban, Chapter 19 and Goblet of Fire, Chapter 1"  
-        # Filled by script:
-        output_files: null
-        model_parameters:
-          temperature: 0.7
-        metrics:
-          response_time_seconds: null
-          prompt_feedback: null
-          finish_reason: null
-          tokens:
-            input_cached: null
-            input_uncached: null
-            output: null
-            total: null
-        # filled manually after review:
-        quality:
-          factual_accuracy: null
-          readability: null
-          formatting: null
-        notes: >
-          x
-        status: "pending"
-        status_history:
-          - {status: draft, timestamp: 2025-10-19T18:00:00Z}
-          - {status: pending, timestamp: 2025-10-20T14:11:30.753153Z}
-
-      - version: _09_v1.4
-        goal: "Test for high creativity. Watch for potential drops in quality or factual accuracy."
-        prompt_file: "scripts/prompts/_iterations/explanatory_v0.txt"
-        source_text_files:
-          - "data/06_books/prisoner_of_azkaban_chapter_19.txt"
-          - "data/06_books/goblet_of_fire_chapter_01.txt"
-        source_info: "Prisoner of Azkaban, Chapter 19 and Goblet of Fire, Chapter 1"
-        # Filled by script:
-        output_files: null
-        model_parameters:
-          temperature: 0.9
-        metrics:
-          response_time_seconds: null
-          prompt_feedback: null
-          finish_reason: null
-          tokens:
-            input_cached: null
-            input_uncached: null
-            output: null
-            total: null
-        # filled manually after review:
-        quality:
-          factual_accuracy: null
-          readability: null
-          formatting: null
-        notes: >
-          x
-        status: "pending"
-        status_history:
-          - {status: draft,  timestamp: 2025-10-19T18:00:00Z}
-          - {status: pending, timestamp: 2025-10-20T14:11:30.753153Z}              
-
-  
+- id: ex_temperature
+  description: Measure the output variation across different temperature settings
+  model: gemini-2.5-pro
+  common_parameters:
+    max_output_tokens: 12000
+    top_p: 0.95
+    candidate_count: 3
+  runs:
+  - version: _02_baseline_v1.1
+    goal: Test for consistency at low temperature. Expect outputs to be nearly identical.
+    prompt_file: scripts/prompts/iterations/ex_prompt_v0.txt
+    source_text_files:
+    - - data/06_books/prisoner_of_azkaban_chapter_19.txt
+      - data/06_books/goblet_of_fire_chapter_01.txt
+    source_info: Prisoner of Azkaban, Chapter 19 and Goblet of Fire, Chapter 1
+    output_files:
+    - scripts/prompts/llm_outputs/ex_temperature__02_baseline_v1.1_candidate_1.json
+    - scripts/prompts/llm_outputs/ex_temperature__02_baseline_v1.1_candidate_2.json
+    - scripts/prompts/llm_outputs/ex_temperature__02_baseline_v1.1_candidate_3.json
+    model_parameters:
+      temperature: 0.2
+    metrics:
+      response_time_seconds: 55.98
+      finish_reason: STOP
+      prompt_feedback: ''
+      tokens:
+        input_cached: 1229
+        input_uncached: 14517
+        output: 1846
+        total: 30442
+    quality:
+      factual_accuracy: null
+      readability: null
+      formatting: null
+    notes: 'Run failed with error: Unknown field for UsageMetadata: get'
+    status: completed
+    status_history:
+    - status: draft
+      timestamp: 2025-10-17 18:00:00+00:00
+    - status: pending
+      timestamp: 2025-10-20 14:11:30.753153+00:00
+    - status: failed
+      timestamp: '2025-10-31T18:17:49.894199+00:00'
+    - status: completed
+      timestamp: '2025-10-31T18:26:40.632520+00:00'
+  - version: _05_v1.2
+    goal: Test for minor creative variations.
+    prompt_file: scripts/prompts/iterations/ex_prompt_v0.txt
+    source_text_files:
+    - - data/06_books/prisoner_of_azkaban_chapter_19.txt
+      - data/06_books/goblet_of_fire_chapter_01.txt
+    source_info: Prisoner of Azkaban, Chapter 19 and Goblet of Fire, Chapter 1
+    output_files:
+    - scripts/prompts/llm_outputs/ex_temperature__05_v1.2_candidate_1.json
+    - scripts/prompts/llm_outputs/ex_temperature__05_v1.2_candidate_2.json
+    - scripts/prompts/llm_outputs/ex_temperature__05_v1.2_candidate_3.json
+    model_parameters:
+      temperature: 0.5
+    metrics:
+      response_time_seconds: 52.47
+      finish_reason: STOP
+      prompt_feedback: ''
+      tokens:
+        input_cached: 1229
+        input_uncached: 14517
+        output: 2257
+        total: 30198
+    quality:
+      factual_accuracy: null
+      readability: null
+      formatting: null
+    notes: 'Run failed with error: Unknown field for UsageMetadata: get'
+    status: completed
+    status_history:
+    - status: draft
+      timestamp: 2025-10-19 18:00:00+00:00
+    - status: pending
+      timestamp: 2025-10-20 14:11:30.753153+00:00
+    - status: failed
+      timestamp: '2025-10-31T18:18:38.893802+00:00'
+    - status: completed
+      timestamp: '2025-10-31T18:27:33.212116+00:00'
+  - version: _07_v1.3
+    goal: Test for a good balance of creativity and consistency.
+    prompt_file: scripts/prompts/iterations/ex_prompt_v0.txt
+    source_text_files:
+    - - data/06_books/prisoner_of_azkaban_chapter_19.txt
+      - data/06_books/goblet_of_fire_chapter_01.txt
+    source_info: Prisoner of Azkaban, Chapter 19 and Goblet of Fire, Chapter 1
+    output_files:
+    - scripts/prompts/llm_outputs/ex_temperature__07_v1.3_candidate_1.json
+    - scripts/prompts/llm_outputs/ex_temperature__07_v1.3_candidate_2.json
+    - scripts/prompts/llm_outputs/ex_temperature__07_v1.3_candidate_3.json
+    model_parameters:
+      temperature: 0.7
+    metrics:
+      response_time_seconds: 46.28
+      finish_reason: STOP
+      prompt_feedback: ''
+      tokens:
+        input_cached: 1229
+        input_uncached: 14517
+        output: 2287
+        total: 27396
+    quality:
+      factual_accuracy: null
+      readability: null
+      formatting: null
+    notes: 'Run failed with error: Unknown field for UsageMetadata: get'
+    status: completed
+    status_history:
+    - status: draft
+      timestamp: 2025-10-19 18:00:00+00:00
+    - status: pending
+      timestamp: 2025-10-20 14:11:30.753153+00:00
+    - status: failed
+      timestamp: '2025-10-31T18:19:39.608768+00:00'
+    - status: completed
+      timestamp: '2025-10-31T18:28:19.618227+00:00'
+  - version: _09_v1.4
+    goal: Test for high creativity. Watch for potential drops in quality or factual accuracy.
+    prompt_file: scripts/prompts/iterations/ex_prompt_v0.txt
+    source_text_files:
+    - - data/06_books/prisoner_of_azkaban_chapter_19.txt
+      - data/06_books/goblet_of_fire_chapter_01.txt
+    source_info: Prisoner of Azkaban, Chapter 19 and Goblet of Fire, Chapter 1
+    output_files:
+    - scripts/prompts/llm_outputs/ex_temperature__09_v1.4_candidate_1.json
+    - scripts/prompts/llm_outputs/ex_temperature__09_v1.4_candidate_2.json
+    - scripts/prompts/llm_outputs/ex_temperature__09_v1.4_candidate_3.json
+    model_parameters:
+      temperature: 0.9
+    metrics:
+      response_time_seconds: 49.56
+      finish_reason: STOP
+      prompt_feedback: ''
+      tokens:
+        input_cached: 1229
+        input_uncached: 14517
+        output: 2476
+        total: 27579
+    quality:
+      factual_accuracy: null
+      readability: null
+      formatting: null
+    notes: 'Run failed with error: Unknown field for UsageMetadata: get'
+    status: completed
+    status_history:
+    - status: draft
+      timestamp: 2025-10-19 18:00:00+00:00
+    - status: pending
+      timestamp: 2025-10-20 14:11:30.753153+00:00
+    - status: failed
+      timestamp: '2025-10-31T18:20:31.433029+00:00'
+    - status: completed
+      timestamp: '2025-10-31T18:29:09.321190+00:00'

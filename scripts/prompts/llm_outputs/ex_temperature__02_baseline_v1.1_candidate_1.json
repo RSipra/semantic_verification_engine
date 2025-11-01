@@ -1,0 +1,77 @@
+[
+  {
+    "question_type": "Explanatory (Why/How)",
+    "category": "Plot Event",
+    "difficulty": "Medium",
+    "question": "How did Snape discover the group's location in the Shrieking Shack?",
+    "answer": "He went to Lupin's office to deliver the Wolfsbane Potion and found the Marauder's Map on the desk. The map showed him everyone's location and that they were heading down the secret passage.",
+    "answer_variations": [
+      "After finding Lupin's office empty, Snape spotted the Marauder's Map on the desk, which revealed their location in the Shrieking Shack.",
+      "He discovered the Marauder's Map in Lupin's office while bringing him his forgotten potion, and it showed him exactly where they were.",
+      "Snape found the group by using the Marauder's Map, which he had found lying on Lupin's desk.",
+      "While delivering the Wolfsbane Potion to an absent Lupin, Snape saw the Marauder's Map and used it to track the group to the shack."
+    ],
+    "source_reference": "Prisoner of Azkaban, Chapter 19",
+    "source_quote": "I've just been to your office, Lupin. You forgot to take your potion tonight, so I took a gobletful along. And very lucky I did... lucky for me, I mean. Lying on your desk was a certain map. One glance at it told me all I needed to know. I saw you running along this passageway and out of sight."
+  },
+  {
+    "question_type": "Explanatory (Why/How)",
+    "category": "Magical Theory/Lore",
+    "difficulty": "Hard",
+    "question": "How was Sirius Black able to escape from the Dementor-guarded prison of Azkaban?",
+    "answer": "He retained his sanity by focusing on his innocence, a non-happy thought Dementors couldn't consume. This allowed him to keep his Animagus powers. He transformed into a dog, whose simpler emotions confused the Dementors, and slipped through the bars in his thin state when they brought food.",
+    "answer_variations": [
+      "By transforming into a dog, his emotions became less complex and harder for the Dementors to sense, allowing him to slip past them while he was emaciated.",
+      "He used his Animagus ability to become a dog; the Dementors were confused by his less-human feelings and he was thin enough to get through the bars.",
+      "His innocence kept him sane, preserving his ability to become a dog. As an animal, his emotions were too simple for the Dementors to properly detect, enabling his escape.",
+      "He turned into his dog form, and because Dementors sense people through complex emotions, they were unable to track him effectively as he slipped away."
+    ],
+    "source_reference": "Prisoner of Azkaban, Chapter 19",
+    "source_quote": "I think the only reason I never lost my mind is that I knew I was innocent. That wasn't a happy thought, so the dementors couldn't suck it out of me... but it kept me sane and knowing who I am... helped me keep my powers... so when it all became ... too much... I could transform in my cell... become a dog. Dementors can't see, you know.... They could tell that my feelings were less -- less human, less complex when I was a dog... I was thin, very thin... thin enough to slip through the bars...."
+  },
+  {
+    "question_type": "Explanatory (Why/How)",
+    "category": "Character Arc/Motive",
+    "difficulty": "Medium",
+    "question": "Why did Harry intervene to prevent Sirius and Lupin from killing Peter Pettigrew?",
+    "answer": "Harry reasoned that his father, James, would not have wanted his best friends to become murderers for the sake of revenge. He decided it was better to hand Pettigrew over to the Dementors.",
+    "answer_variations": [
+      "He believed his father would not have wanted his friends to commit murder, even as revenge against their betrayer.",
+      "Harry's decision was based on the belief that James Potter wouldn't have wanted his friends to become killers on Pettigrew's account.",
+      "He stopped them because he felt his father would not have approved of his friends becoming murderers.",
+      "To honor his father's memory, Harry prevented Sirius and Lupin from becoming killers, insisting Pettigrew be sent to Azkaban instead."
+    ],
+    "source_reference": "Prisoner of Azkaban, Chapter 19",
+    "source_quote": "I'm not doing this for you. I'm doing it because -- I don't reckon my dad would've wanted them to become killers -- just for you."
+  },
+  {
+    "question_type": "Explanatory (Why/How)",
+    "category": "Plot Event",
+    "difficulty": "Hard",
+    "question": "Why was Peter Pettigrew chosen to be the Potters' Secret-Keeper instead of their trusted friend, Sirius Black?",
+    "answer": "It was Sirius's own idea to use Pettigrew as a \"bluff.\" He reasoned that Voldemort would hunt him, the obvious choice, and would never suspect they would entrust the secret to someone perceived as weak and talentless like Peter.",
+    "answer_variations": [
+      "Sirius suggested the switch, believing Voldemort would target him and overlook Pettigrew, making Peter the perfect secret decoy.",
+      "The switch was a strategic bluff proposed by Sirius, who thought Voldemort would focus on him and ignore a less likely candidate like Pettigrew.",
+      "Sirius convinced the Potters to use Pettigrew, thinking it was a clever plan to misdirect Voldemort towards himself.",
+      "It was a deliberate misdirection; Sirius advised them to use Pettigrew, assuming Voldemort would never consider such a \"weak\" person for the role."
+    ],
+    "source_reference": "Prisoner of Azkaban, Chapter 19",
+    "source_quote": "\"Lily and James only made you Secret-Keeper because I suggested it,\" Black hissed, so venomously that Pettigrew took a step backward. \"I thought it was the perfect plan... a bluff... Voldemort would be sure to come after me, would never dream they'd use a weak, talentless thing like you....\""
+  },
+  {
+    "question_type": "Explanatory (Why/How)",
+    "category": "Plot Event",
+    "difficulty": "Medium",
+    "question": "Why were the police forced to release Frank Bryce after he was arrested for the Riddle family murders?",
+    "answer": "The official medical report concluded that the Riddles had not been poisoned, stabbed, shot, or harmed in any discernible way. With no evidence that a murder had even been committed, the police had to let him go.",
+    "answer_variations": [
+      "An autopsy revealed no cause of death for any of the Riddles, leaving the police without any proof that a crime had occurred.",
+      "Frank Bryce was released because the coroner's report found the Riddles to be in perfect health, apart from being dead, offering no evidence of foul play.",
+      "The police had to release him because the medical examination of the bodies found no signs of injury or poison, meaning there was no proof of murder.",
+      "Since the official report on the Riddles' bodies could not identify a cause of death or any physical harm, there was no evidence to hold Frank Bryce."
+    ],
+    "source_reference": "Goblet of Fire, Chapter 1",
+    "source_quote": "A team of doctors had examined the bodies and had concluded that none of the Riddles had been poisoned, stabbed, shot, strangles, suffocated, or (as far as they could tell) harmed at all. In fact (the report continued, in a tone of unmistakable bewilderment), the Riddles all appeared to be in perfet health -- apart from the fact that they were all dead... As there was no proof that the Riddles had been murdered at all, the police were forced to let Frank go."
+  }
+]
