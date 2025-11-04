@@ -1,5 +1,6 @@
 # src/ds_utils/text_processing.py
 import re
+import nltk
 from nltk import pos_tag
 from nltk.stem import WordNetLemmatizer
 from nltk.corpus import stopwords, wordnet
@@ -9,6 +10,34 @@ from . import ds_constants as const
 
 lemmatizer = WordNetLemmatizer()
 ENGLISH_STOP_WORDS = set(stopwords.words('english'))
+
+def ensure_nltk_assets():
+    """
+    Checks for and downloads required NLTK data models.
+    This function is designed to be called once during setup.
+    """
+    print("Checking for NLTK assets...")
+    required_assets = [
+        ('tokenizers/punkt', 'punkt'),
+        ('taggers/averaged_perceptron_tagger', 'averaged_perceptron_tagger'),
+        ('corpora/wordnet', 'wordnet'),
+        ('corpora/stopwords', 'stopwords')
+    ]
+    
+    missing_assets = []
+    for path, asset_id in required_assets:
+        try:
+            nltk.data.find(path)
+        except LookupError:
+            missing_assets.append(asset_id)
+            
+    if not missing_assets:
+        print("All NLTK assets are already downloaded.")
+    else:
+        print(f"Downloading missing NLTK assets: {missing_assets}...")
+        for asset_id in missing_assets:
+            nltk.download(asset_id)
+        print("NLTK assets download complete.")
 
 # Function to convert POS tags for better lemmatization
 def get_wordnet_pos(nltk_tag:str) -> str:

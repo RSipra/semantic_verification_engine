@@ -10,6 +10,7 @@ metadata:
   version: 0
 experiments:
 - id: ex_temperature
+  question_type: 'EX'
   description: Measure the output variation across different temperature settings
   model: gemini-2.5-pro
   common_parameters:
