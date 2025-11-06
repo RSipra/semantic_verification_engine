@@ -166,3 +166,43 @@ experiments:
       timestamp: '2025-10-31T18:20:31.433029+00:00'
     - status: completed
       timestamp: '2025-10-31T18:29:09.321190+00:00'
+
+- id: ex_source_referencing
+  question_type: 'EX'
+  description: Improve the model's ability to reference source texts in its answers by making the model pick an option from list rather than str.
+  model: gemini-2.5-pro
+  common_parameters:
+    max_output_tokens: 12000
+    top_p: 0.95
+    candidate_count: 1
+  runs:
+  - version: v.2
+    goal: return an option from a list of sources instead of free text.
+    prompt_file: scripts/prompts/iterations/ex_prompt_v1.txt
+    source_text_files:
+    - - data/06_books/prisoner_of_azkaban_chapter_19.txt
+      - data/06_books/goblet_of_fire_chapter_01.txt
+    source_info: 
+      - "Prisoner of Azkaban, Chapter 19"
+      - "Goblet of Fire, Chapter 1"
+    output_files: null
+    model_parameters:
+      temperature: 0.9
+    metrics:
+      response_time_seconds: null
+      finish_reason: null
+      prompt_feedback: null
+      tokens:
+        input_cached: null
+        input_uncached: null
+        output: null
+        total: null
+    quality:
+      factual_accuracy: null
+      readability: null
+      formatting: null
+    notes: ''
+    status: draft
+    status_history:
+    - status: draft
+      timestamp: 2025-11-4 13:38:00+00:00
