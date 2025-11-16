@@ -1,0 +1,77 @@
+[
+  {
+    "question_type": "Explanatory (Why/How)",
+    "category": "Plot Event",
+    "difficulty": "Medium",
+    "question": "Why were the Muggle police and doctors unable to determine the cause of death for the Riddle family?",
+    "answer": "The Riddles were killed by the Killing Curse, which leaves no physical marks or signs of injury. The doctors' report stated they were in perfect health, despite being dead, which baffled the authorities.",
+    "answer_variations": [
+      "Muggle authorities were baffled because the Killing Curse, a magical attack, leaves no physical evidence on the victims' bodies.",
+      "The doctors concluded the Riddles were in perfect health, apart from being dead, because the magical curse that killed them left no detectable signs of harm.",
+      "Because they were victims of a magical curse that leaves no physical trace, the Muggle police could not identify a cause of death for the Riddle family.",
+      "The Killing Curse, which caused their deaths, left no physical trauma, making it impossible for Muggle doctors to explain why the healthy Riddles died."
+    ],
+    "source_reference": "Goblet of Fire, Chapter 1",
+    "source_quote": "A team of doctors had examined the bodies and had concluded that none of the Riddles had been poisoned, stabbed, shot, strangled, suffocated, or (as far as they could tell) harmed at all. In fact (the report continued, in a tone of unmistakable bewilderment), the Riddles all appeared to be in perfect health — apart from the fact that they were all dead."
+  },
+  {
+    "question_type": "Explanatory (Why/How)",
+    "category": "Plot Event",
+    "difficulty": "Medium",
+    "question": "Why did Lord Voldemort decide to delay his plan until after the Quidditch World Cup?",
+    "answer": "Voldemort wanted to wait because wizards from around the world would be gathering for the World Cup, leading to heightened security and increased Ministry of Magic presence, making it too risky to act.",
+    "answer_variations": [
+      "He delayed his plans because the Quidditch World Cup meant many wizards were in the country, and the Ministry of Magic would be on high alert for unusual activity.",
+      "To avoid detection by the Ministry of Magic, who would be heavily focused on security during the Quidditch World Cup, Voldemort chose to postpone his actions.",
+      "Voldemort reasoned that the influx of wizards for the World Cup and the Ministry's intense security measures would make it difficult to operate unnoticed, so he waited.",
+      "He waited until after the Quidditch World Cup because the Ministry of Magic would be preoccupied with security, preventing Muggles from noticing anything, and would be actively checking identities."
+    ],
+    "source_reference": "Goblet of Fire, Chapter 1",
+    "source_quote": "Because, fool, at this very moment wizards are pouring into the country from all over the world, and every meddler from the Ministry of Magic will be on duty, on the watch for signs of ususual activity, checking and double-checking identities. They will be obsessed with security, lest the Muggles notice anything. So we wait."
+  },
+  {
+    "question_type": "Explanatory (Why/How)",
+    "category": "Plot Event",
+    "difficulty": "Hard",
+    "question": "Why did Lord Voldemort kill Bertha Jorkins after extracting information from her?",
+    "answer": "Voldemort killed Bertha Jorkins because she was no longer useful after his questioning and would have caused problems by returning to the Ministry with news of meeting Wormtail, a wizard presumed dead, during her holidays.",
+    "answer_variations": [
+      "She was killed because she was useless and her return to the Ministry after encountering Wormtail would have led to 'awkward questions' about his presumed death.",
+      "Bertha Jorkins was murdered because she served no further purpose and her knowledge of Wormtail's survival posed a significant risk to their plans.",
+      "Voldemort eliminated Bertha Jorkins as she was compromised and her reporting back to the Ministry about encountering a 'dead' wizard would have jeopardized their secrecy.",
+      "Her death was necessary because she was 'fit for nothing' after interrogation, and her meeting with Wormtail would have inevitably led to difficult inquiries from the Ministry of Magic."
+    ],
+    "source_reference": "Goblet of Fire, Chapter 1",
+    "source_quote": "I killed Bertha because I had to. She was fit for nothing after my questioning, quite useless. In any case, awkward questions would have been asked if she had gone back to the Ministry with the news that she had met you on her holidays. Wizards who are supposed to be dead would do well not to run into Ministry of Magic witches at wayside inns..."
+  },
+  {
+    "question_type": "Explanatory (Why/How)",
+    "category": "Character Arc/Motive",
+    "difficulty": "Hard",
+    "question": "How was Sirius Black able to escape Azkaban, a feat thought impossible for others?",
+    "answer": "Sirius escaped by maintaining his sanity through the knowledge of his innocence, which dementors couldn't feed on. This allowed him to retain his magical ability to transform into his Animagus dog form, a less complex emotional state that dementors struggled to sense, and then slip through the bars once he became thin enough.",
+    "answer_variations": [
+      "He survived Azkaban's dementors by focusing on his innocence, a thought they couldn't consume, which preserved his mental and magical faculties, allowing him to transform into a dog and escape.",
+      "Sirius's ability to transform into his Animagus form, a dog, confused the dementors who couldn't sense animal emotions as well, and his extreme thinness allowed him to slip through the cell bars.",
+      "His unique escape was possible because his unwavering belief in his innocence prevented dementors from driving him mad, letting him use his Animagus form to become undetectable and physically escape his cell.",
+      "By clinging to the thought of his innocence, Sirius retained his powers and transformed into a dog, a form whose less human emotions were harder for dementors to detect, enabling him to pass unnoticed and squeeze through the bars."
+    ],
+    "source_reference": "Prisoner of Azkaban, Chapter 19",
+    "source_quote": "I don't know how I did it,\" he said slowly. \"I think the only reason I never lost my mind is that I knew I was innocent. That wasn't a happy thought, so the dementors couldn't suck it out of me... but it kept me sane and knowing who I am... helped me keep my powers... so when it all became ... too much... I could transform in my cell... become a dog. Dementors can't see, you know.... They feel their way toward people by feeding off their emotions.... They could tell that my feelings were less -- less human, less complex when I was a dog... but they thought, of course, that I was losing my mind like everyone else in there, so it didn't trouble them. But I was weak, very weak, and I had no hope of driving them away from me without a wand.... It was an obsession... but it gave me strength, it cleared my mind. So, one night when they opened my door to bring food, I slipped past them as a dog.... It's so much harder for them to sense animal emotions that they were confused.... I was thin, very thin... thin enough to slip through the bars.... I swam as a dog back to the mainland.... I journeyed north and slipped into the Hogwarts grounds as a dog."
+  },
+  {
+    "question_type": "Explanatory (Why/How)",
+    "category": "Character Arc/Motive",
+    "difficulty": "Medium",
+    "question": "Why did Harry Potter prevent Sirius Black and Remus Lupin from killing Peter Pettigrew?",
+    "answer": "Harry intervened because he felt his father, James, would not have wanted his friends to stoop to the level of killers, even for someone as despicable as Peter Pettigrew, preferring him to face justice in Azkaban instead.",
+    "answer_variations": [
+      "He believed his father would not have wanted Black and Lupin to become murderers, even for Pettigrew, and that Pettigrew deserved Azkaban more than death at their hands.",
+      "Harry stopped them out of a sense of what his father would have wanted, feeling that James would not approve of his friends becoming killers for Pettigrew's sake.",
+      "His reason was that James Potter wouldn't have wished for his friends to become murderers, and he felt Peter should go to Azkaban instead.",
+      "Harry felt it was wrong for his father's friends to kill Pettigrew, stating that his dad wouldn't have wanted them to become killers, and that Azkaban was the appropriate punishment."
+    ],
+    "source_reference": "Prisoner of Azkaban, Chapter 19",
+    "source_quote": "I'm not doing this for you. I'm doing it because -- I don't reckon my dad would've wanted them to become killers -- just for you."
+  }
+]

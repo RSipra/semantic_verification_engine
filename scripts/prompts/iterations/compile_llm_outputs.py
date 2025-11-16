@@ -94,7 +94,7 @@ def load_run_metadata(yaml_path: Path) -> pd.DataFrame:
         print(f"Error reading or parsing YAML file at {yaml_path}: {e}")
         return pd.DataFrame()
 
-def process_json_files(output_dir: Path) -> pd.DataFrame:
+def process_json_files(output_dir: Path, valid_run_ids: set[str]) -> pd.DataFrame:
     """
     Scans the output_dir for .json files and parses them into a
     DataFrame containing all individual questions.
@@ -103,7 +103,7 @@ def process_json_files(output_dir: Path) -> pd.DataFrame:
         pd.DataFrame: One row per question.
     """
     all_questions_data = []
-    
+
     # Regex to parse filenames: (run_id)_candidate_(num).json
     filename_regex = re.compile(r'^(.*?)_candidate_(\d+)\.json$')
 
@@ -111,7 +111,8 @@ def process_json_files(output_dir: Path) -> pd.DataFrame:
     if not json_files:
         print(f"Error: No .json files found in {output_dir}")
         return pd.DataFrame()
-        
+
+    processed_count = 0    
     print(f"Found {len(json_files)} JSON files to process for questions...")
 
     for json_file_path in json_files:
@@ -122,6 +123,10 @@ def process_json_files(output_dir: Path) -> pd.DataFrame:
                 continue
             
             full_run_id = match.group(1)
+            if full_run_id not in valid_run_ids:
+                continue
+            
+            processed_count += 1
             candidate_num = int(match.group(2))
             
             content = json_file_path.read_text(encoding='utf-8')
@@ -146,6 +151,7 @@ def process_json_files(output_dir: Path) -> pd.DataFrame:
                     'difficulty': question_data.get('difficulty'),
                     'raw_question_data': json.dumps(question_data),
                     'source_chapters': question_data.get('source_reference', []),
+                    'source_quote': question_data.get('source_quote', []),
                 })
 
         except Exception as e:
@@ -158,6 +164,47 @@ def process_json_files(output_dir: Path) -> pd.DataFrame:
     # --- Create DataFrame ---
     df_questions = pd.DataFrame(all_questions_data)
     return df_questions
+
+def compile_selected_runs(selected_run_ids: list[str], yaml_path: Path, 
+                          output_dir: Path) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """
+    Compiles metadata and questions for a specific list of run IDs.
+    This function does NOT save any files, it returns the DataFrames.
+
+    Args:
+        selected_run_ids (list[str]): A list of 'full_run_id' strings to compile.
+            Note: This must be the *full* ID, which is a combination of
+            the experiment 'id' and the run 'version' from the YAML
+            (e.g., 'ex_hallucination_detection_v.4').
+        yaml_path (Path): Path to the 'experiments.yaml' file.
+        output_dir (Path): Path to the 'llm_outputs' directory.
+
+    Returns:
+        tuple[pd.DataFrame, pd.DataFrame]: (df_runs_filtered, df_questions_filtered)
+    """
+    # print(f"--- Compiling {len(selected_run_ids)} selected runs ---")
+    
+    # 1. Load ALL metadata to filter from
+    df_all_runs = load_run_metadata(yaml_path)
+    if df_all_runs.empty:
+        print("Metadata is empty. Cannot proceed.")
+        return pd.DataFrame(), pd.DataFrame()
+
+    # 2. Filter the metadata DataFrame
+    selected_ids_set = set(selected_run_ids)
+    df_runs_filtered = df_all_runs.loc[df_all_runs.index.isin(selected_ids_set)]
+    
+    if df_runs_filtered.empty:
+        print(f"No runs found matching the {len(selected_run_ids)} provided IDs.")
+        return pd.DataFrame(), pd.DataFrame()
+
+    # 3. Process ONLY the corresponding JSON files
+    # print(f"Found {len(df_runs_filtered)} matching runs. Processing their JSON files...")
+    df_questions_filtered = process_json_files(output_dir, selected_ids_set)
+    
+    # 4. Return the two filtered DataFrames
+    # print("--- Compilation complete. Returning DataFrames. ---")
+    return df_runs_filtered, df_questions_filtered
 
 def main():
     """Main execution function."""
@@ -182,7 +229,14 @@ def main():
     df_runs = load_run_metadata(yaml_path)
 
     # --- 4. Process Questions (File 2) ---
-    df_questions = process_json_files(output_dir)
+    if not df_runs.empty:
+        # Get the set of ALL valid IDs from the loaded runs
+        valid_run_ids = set(df_runs.index) 
+        # Pass that set to the function
+        df_questions = process_json_files(output_dir, valid_run_ids) 
+    else:
+        print("No runs found in metadata. Skipping question processing.")
+        df_questions = pd.DataFrame()
 
     # --- 5. Save Both Files ---
     if not df_runs.empty:

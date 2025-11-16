@@ -1,0 +1,77 @@
+[
+  {
+    "question_type": "Explanatory (Why/How)",
+    "category": "Plot Event",
+    "difficulty": "Easy",
+    "question": "Why were the police forced to release Frank Bryce after arresting him for the Riddle family's murders?",
+    "answer": "The medical report on the Riddles' bodies concluded they had not been poisoned, stabbed, shot, or harmed in any physical way, meaning there was no proof a murder had even been committed.",
+    "answer_variations": [
+      "Frank Bryce was let go because the doctors' report found the Riddles to be in perfect health, apart from being dead, with no evidence of physical harm.",
+      "His release was due to a lack of evidence; the autopsy showed no discernible cause of death, making it impossible to prove a murder had occurred.",
+      "The police had to release him because the medical examination revealed no physical cause of death for any of the three Riddles, leaving no proof of foul play.",
+      "Because the official report stated the Riddles were not physically harmed in any way, the police lacked the proof of murder required to keep Frank in custody."
+    ],
+    "source_reference": "Goblet of Fire, Chapter 1",
+    "source_quote": "A team of doctors had examined the bodies and had concluded that none of the Riddles had been poisoned, stabbed, shot, strangles, suffocated, or (as far as they could tell) harmed at all... As there was no proof that the Riddles had been murdered at all, the police were forced to let Frank go."
+  },
+  {
+    "question_type": "Explanatory (Why/How)",
+    "category": "Character Arc/Motive",
+    "difficulty": "Medium",
+    "question": "In the Riddle House, why did Voldemort state that he and Wormtail had to wait until after the Quidditch World Cup to proceed with their plan?",
+    "answer": "Voldemort explained that wizards from all over the world would be in the country for the event, causing the Ministry of Magic to be on high alert and obsessed with security, making it a foolish and risky time to act.",
+    "answer_variations": [
+      "He chose to wait because the influx of wizards for the World Cup meant the Ministry of Magic would be diligently checking identities and watching for any unusual activity.",
+      "Voldemort's plan was delayed because the Quidditch World Cup brought intense security and scrutiny from the Ministry, which he wanted to avoid.",
+      "He reasoned that with so many foreign wizards present for the World Cup, Ministry officials would be too vigilant for them to execute their plan without being noticed.",
+      "Delaying the plan was a strategic move to wait until the Ministry of Magic's heightened security measures for the Quidditch World Cup had relaxed."
+    ],
+    "source_reference": "Goblet of Fire, Chapter 1",
+    "source_quote": "\"Because, fool, at this very moment wizards are pouring into the country from all over the world, and every meddler from the Ministry of Magic will be on duty, on the watch for signs of ususual activity, checking and double-checking identities. They will be obsessed with security, lest the Muggles notice anything. So we wait.\""
+  },
+  {
+    "question_type": "Explanatory (Why/How)",
+    "category": "Plot Event",
+    "difficulty": "Medium",
+    "question": "How did Sirius Black discover Peter Pettigrew's location while imprisoned in Azkaban?",
+    "answer": "During an inspection, Minister for Magic Cornelius Fudge gave Sirius his copy of the Daily Prophet. On the front page was a photo of the Weasley family, where Sirius immediately recognized Pettigrew in his rat form on Ron's shoulder.",
+    "answer_variations": [
+      "Sirius saw a picture of the Weasley family in a newspaper given to him by Cornelius Fudge and identified Scabbers as Peter Pettigrew in his Animagus form.",
+      "He located Pettigrew after Cornelius Fudge left him a newspaper in Azkaban; a front-page photo showed Pettigrew as a rat on Ron Weasley's shoulder.",
+      "While in Azkaban, Sirius was given a Daily Prophet by Fudge and saw a photograph of the Weasleys, instantly recognizing Peter Pettigrew disguised as the family's pet rat.",
+      "He found out where Pettigrew was by seeing him in rat form in a newspaper photo of the Weasley family that Minister Fudge had given him during a visit to Azkaban."
+    ],
+    "source_reference": "Prisoner of Azkaban, Chapter 19",
+    "source_quote": "\"Fudge,\" said Black. \"When he came to inspect Azkaban last year, he gave me his paper. And there was Peter, on the front page on this boy's shoulder... I knew him at once... how many times had I seen him transform?\""
+  },
+  {
+    "question_type": "Explanatory (Why/How)",
+    "category": "Magical Theory/Lore",
+    "difficulty": "Hard",
+    "question": "How did Sirius Black escape from Azkaban without using Dark Magic?",
+    "answer": "He transformed into his dog Animagus form. Since Dementors sense people through their complex human emotions, they were confused by his less-complex animal feelings and did not realize when he slipped past them as a very thin dog.",
+    "answer_variations": [
+      "Sirius escaped by turning into a dog; the Dementors couldn't properly sense his less-human emotions and thought he was just losing his mind, allowing him to slip by them.",
+      "His escape was possible because as an Animagus, his canine emotions were simpler and confused the Dementors, enabling him to get past them unnoticed when they opened his cell door.",
+      "He managed his escape by transforming into a dog. This made his emotions less human and harder for the Dementors to detect, so he could sneak out of his cell when the opportunity arose.",
+      "By becoming a dog, Sirius's emotional state became less complex, which confounded the Dementors. This allowed him, in his thin animal form, to slip past them and out of the prison."
+    ],
+    "source_reference": "Prisoner of Azkaban, Chapter 19",
+    "source_quote": "\"I could transform in my cell... become a dog. Dementors can't see, you know.... They could tell that my feelings were less -- less human, less complex when I was a dog... So, one night when they opened my door to bring food, I slipped past them as a dog....\""
+  },
+  {
+    "question_type": "Explanatory (Why/How)",
+    "category": "Character Arc/Motive",
+    "difficulty": "Medium",
+    "question": "Why did Harry stop Sirius and Lupin from killing Peter Pettigrew in the Shrieking Shack?",
+    "answer": "Harry believed that his father, James, would not have wanted his best friends to become killers just for Pettigrew. Instead, he insisted they hand Pettigrew over to the Dementors to be sent to Azkaban.",
+    "answer_variations": [
+      "He intervened because he didn't think his dad would have wanted his friends to commit murder on his behalf, suggesting Azkaban was a more fitting punishment.",
+      "Harry prevented the killing by arguing that his father wouldn't have wanted Sirius and Lupin to become murderers for the sake of revenge against Pettigrew.",
+      "His decision was based on the belief that James Potter would not have approved of his friends killing Pettigrew, leading Harry to demand he be taken to the castle instead.",
+      "Harry stopped them out of respect for his father's memory, reasoning that James would not want his friends to taint themselves by murdering the man who betrayed them."
+    ],
+    "source_reference": "Prisoner of Azkaban, Chapter 19",
+    "source_quote": "\"I'm not doing this for you. I'm doing it because -- I don't reckon my dad would've wanted them to become killers -- just for you.\""
+  }
+]

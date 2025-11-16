@@ -101,3 +101,48 @@ def tokenize_text(text: str) -> list:
     # ------------------------------------
 
     return final_tokens
+
+def clean_text_fn(text: str) -> str:
+    """
+    Normalizes a string for S-BERT vectorization.
+    - Replaces "fancy" spaces (like \u3000) with standard spaces.
+    - Replaces newlines and tabs with standard spaces.
+    - Collapses all multiple-space sequences into a single space.
+    - Strips leading/trailing whitespace.
+    """
+    if not isinstance(text, str):
+        return ""
+    
+    # 1. Replace newlines and ideographic spaces
+    text = text.replace('\n', ' ').replace('\u3000', ' ')
+    
+    # 2. Collapse all sequences of whitespace (spaces, tabs, etc.)
+    #    into a *single* standard space.
+    text = re.sub(r'\s+', ' ', text)
+    
+    # 3. Remove any leading/trailing whitespace
+    return text.strip()
+
+# chunking sentences with a sliding window (similar to n-grams)
+def create_sentence_chunks(all_sentences: list, n:int) -> list:
+    """
+    Creates "sentence n-grams" from a list of sentences using a sliding window.
+
+    This function takes a list of individual sentences and groups them into
+    overlapping "chunks" of `n` sentences. This is the "sentence-level"
+    equivalent of creating word n-grams and is critical for matching the
+    granularity of a multi-sentence `source_quote` against the full
+    chapter text.
+    
+    :param all_sentences (list[str]): A list of individual sentence strings.
+            (This is typically the output of `nltk.sent_tokenize()`).
+    :param n (int): The "n-gram" size, or the number of sentences to include
+            in each chunk (e.g., `n=3` for 3-sentence chunks).
+    """
+    chunks = [] 
+    for i in range(len(all_sentences) - n + 1):
+        sentence_window = all_sentences[i : i + n]
+        chunks.append(" ".join(sentence_window))
+    return chunks
+
+
