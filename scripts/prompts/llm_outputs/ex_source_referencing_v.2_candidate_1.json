@@ -1,0 +1,92 @@
+[
+  {
+    "question_type": "Explanatory (Why/How)",
+    "category": "Magical Theory/Lore",
+    "difficulty": "Hard",
+    "question": "How was Sirius Black able to escape from Azkaban, a feat previously thought impossible?",
+    "answer": "As an unregistered Animagus, he transformed into his dog form. The dementors, who sense complex human emotions, were confused by his simpler canine feelings, allowing him to slip past them as a thin dog when they opened his cell door.",
+    "answer_variations": [
+      "He used his Animagus ability to become a dog; this made his emotions less complex and harder for the dementors to sense, enabling him to sneak by them during feeding time.",
+      "Sirius escaped by turning into a dog. In this form, his feelings were less human, which bewildered the dementors and allowed him to pass them unnoticed.",
+      "By transforming into a dog, his Animagus form, Sirius could mask his human emotions. This confused the dementors, creating an opportunity for him to slip out of his cell.",
+      "His escape was possible because he was an Animagus. As a dog, his emotional state was too simple for the dementors to properly register, so he could get past them when his door was opened."
+    ],
+    "source_reference": "Prisoner of Azkaban, Chapter 19",
+    "source_quote": "I could transform in my cell... become a dog. Dementors can't see, you know.... They feel their way toward people by feeding off their emotions.... They could tell that my feelings were less -- less human, less complex when I was a dog... So, one night when they opened my door to bring food, I slipped past them as a dog.... I was thin, very thin... thin enough to slip through the bars...."
+  },
+  {
+    "question_type": "Explanatory (Why/How)",
+    "category": "Character Arc/Motive",
+    "difficulty": "Medium",
+    "question": "Why did Peter Pettigrew spend twelve years hiding as the Weasleys' pet rat?",
+    "answer": "He was hiding from Voldemort's former supporters, who believed he had double-crossed them and caused their master's downfall. He also used the position to stay informed about the potential return of Voldemort.",
+    "answer_variations": [
+      "Pettigrew hid as a rat to evade Voldemort's followers, as they held him responsible for Voldemort's defeat and would have sought revenge.",
+      "He lived as Scabbers to conceal himself from other Death Eaters who thought he had betrayed them, while also keeping an ear out for news of Voldemort's return.",
+      "His twelve-year disguise as a rat was a method of self-preservation, hiding from Death Eaters who would want to punish him for his role in Voldemort's disappearance.",
+      "He hid with a wizarding family as their pet to avoid retribution from Voldemort's supporters and to monitor the wizarding world for signs of his old master's resurgence."
+    ],
+    "source_reference": "Prisoner of Azkaban, Chapter 19",
+    "source_quote": "You haven't been hiding from me for twelve years,\" said Black. \"You've been hiding from Voldemort's old supporters. I heard things in Azkaban, Peter... They all think you're dead, or you'd have to answer to them.... I've heard them screaming all sorts of things in their sleep. Sounds like they think the double-crosser double-crossed them."
+  },
+  {
+    "question_type": "Explanatory (Why/How)",
+    "category": "Character Arc/Motive",
+    "difficulty": "Medium",
+    "question": "Why did Harry intervene to stop Sirius Black and Remus Lupin from killing Peter Pettigrew?",
+    "answer": "Harry believed that his father, James Potter, would not have wanted his best friends to become murderers for the sake of someone like Pettigrew.",
+    "answer_variations": [
+      "He intervened because he felt his father wouldn't have wanted Sirius and Lupin to commit murder, even against the man who betrayed him.",
+      "Harry's decision was based on the conviction that his dad would not have wanted his friends to taint themselves by becoming killers.",
+      "He saved Pettigrew's life because he didn't think his own father would approve of his friends killing someone in cold blood, regardless of the betrayal.",
+      "Reasoning that his father would not have wanted his friends to stoop to the level of a murderer, Harry stepped in to prevent them from killing Pettigrew."
+    ],
+    "source_reference": "Prisoner of Azkaban, Chapter 19",
+    "source_quote": "I'm not doing this for you. I'm doing it because -- I don't reckon my dad would've wanted them to become killers -- just for you."
+  },
+  {
+    "question_type": "Explanatory (Why/How)",
+    "category": "Plot Event",
+    "difficulty": "Easy",
+    "question": "In the Riddle House, why did Lord Voldemort tell Wormtail they must wait until after the Quidditch World Cup to enact their plan?",
+    "answer": "He knew that wizards from across the globe would be in the country for the event, causing the Ministry of Magic to be on high alert for any unusual activity, which would make it too risky to act.",
+    "answer_variations": [
+      "Voldemort delayed the plan because the massive influx of wizards for the World Cup meant Ministry security would be at its peak, increasing the chance of being discovered.",
+      "He waited because the Quidditch World Cup brought heightened security and surveillance from the Ministry of Magic, making it an inopportune time to execute their scheme.",
+      "The plan was postponed because the presence of countless foreign wizards for the World Cup would lead to intense monitoring by the Ministry, making any action dangerous.",
+      "He opted to wait until the World Cup was over to avoid the heightened vigilance of the Ministry of Magic, which was on duty to manage the international wizarding crowd."
+    ],
+    "source_reference": "Goblet of Fire, Chapter 1",
+    "source_quote": "Because, fool, at this very moment wizards are pouring into the country from all over the world, and every meddler from the Ministry of Magic will be on duty, on the watch for signs of ususual activity, checking and double-checking identities. They will be obsessed with security, lest the Muggles notice anything. So we wait."
+  },
+  {
+    "question_type": "Explanatory (Why/How)",
+    "category": "Magical Theory/Lore",
+    "difficulty": "Medium",
+    "question": "Why were the Muggle police and doctors baffled by the cause of the Riddle family's deaths?",
+    "answer": "The Riddles were killed by the Killing Curse, which leaves no physical marks or signs of injury. The doctors found the bodies to be in perfect health, except for the fact that they were dead, with looks of terror on their faces.",
+    "answer_variations": [
+      "Their deaths were a mystery to Muggles because they were victims of a magical curse that is untraceable by non-magical means, leaving their bodies unharmed.",
+      "The police were confused because the Killing Curse, the cause of death, leaves no evidence of poison, injury, or any physical harm that Muggle science could detect.",
+      "Because the Riddles were murdered with the Avada Kedavra curse, their bodies showed no signs of trauma, leading Muggle authorities to conclude they were inexplicably dead despite being healthy.",
+      "The cause of death was baffling as it was magical; the curse used to kill them left no trace, and medical examinations revealed no explanation for why three healthy people had suddenly died."
+    ],
+    "source_reference": "Goblet of Fire, Chapter 1",
+    "source_quote": "A team of doctors had examined the bodies and had concluded that none of the Riddles had been poisoned, stabbed, shot, strangles, suffocated, or (as far as they could tell) harmed at all. In fact (the report continued, in a tone of unmistakable bewilderment), the Riddles all appeared to be in perfet health -- apart from the fact that they were all dead."
+  },
+  {
+    "question_type": "Explanatory (Why/How)",
+    "category": "Plot Event",
+    "difficulty": "Medium",
+    "question": "How did Bertha Jorkins's information prove invaluable to Voldemort, and why did he subsequently kill her?",
+    "answer": "The information he extracted from her was essential for forming his plan to return to power. He killed her because the magical questioning left her mentally useless and to prevent her from alerting the Ministry that she had met Peter Pettigrew, who was supposed to be dead.",
+    "answer_variations": [
+      "Bertha provided crucial intelligence that enabled Voldemort to create his scheme, but he murdered her as the interrogation process destroyed her mind and to eliminate her as a witness to Pettigrew's survival.",
+      "Voldemort's plan was based on information he tortured out of Bertha. He then killed her because she was mentally broken and because she could have exposed Pettigrew's continued existence to the Ministry.",
+      "He killed Bertha after getting vital information for his plot from her, as she was no longer of any use and posed a threat should she report her encounter with the supposedly-dead Pettigrew.",
+      "The intelligence from Bertha was the foundation of Voldemort's plan. He killed her afterward because she was mentally ruined by his questioning and could not be allowed to reveal that she had met Peter Pettigrew."
+    ],
+    "source_reference": "Goblet of Fire, Chapter 1",
+    "source_quote": "However, I do not deny that her information was invaluable. Without it, I could never have formed our plan... I killed Bertha because I had to. She was fit for nothing after my questioning, quite useless. In any case, awkward questions would have been asked if she had gone back to the Ministry with the news that she had met you on her holidays."
+  }
+]
