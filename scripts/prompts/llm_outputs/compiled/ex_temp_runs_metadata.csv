@@ -1,6 +1,0 @@
-full_run_id,temperature,run_version,experiment_id,question_type,response_time_seconds,finish_reason,tokens_input_cached,tokens_input_uncached,tokens_output_single_candidate,tokens_total,tokens_all_other_candidate_outputs_and_processing
-ex_source_referencing_v.2,0.9,v.2,ex_source_referencing,EX,,,0,0,0,0,0
-ex_temperature__02_baseline_v1.1,0.2,_02_baseline_v1.1,ex_temperature,EX,55.98,STOP,1229,14517,1846,30442,12850
-ex_temperature__05_v1.2,0.5,_05_v1.2,ex_temperature,EX,52.47,STOP,1229,14517,2257,30198,12195
-ex_temperature__07_v1.3,0.7,_07_v1.3,ex_temperature,EX,46.28,STOP,1229,14517,2287,27396,9363
-ex_temperature__09_v1.4,0.9,_09_v1.4,ex_temperature,EX,49.56,STOP,1229,14517,2476,27579,9357
