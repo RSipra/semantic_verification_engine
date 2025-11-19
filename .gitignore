@@ -45,4 +45,4 @@ instance/
 .webassets-cache
 
 # Ingnore test files cache
-.pytest_cache/
+.pytest_cache/scripts/prompts/llm_outputs/
