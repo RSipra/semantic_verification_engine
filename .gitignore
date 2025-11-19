@@ -1,6 +1,9 @@
 # Ignore the script used to download datasets
 src/download_data.py
 
+# ignore the data folder
+data/
+
 # Ignore extra documents
 docs/Overall workflow/.extra_docs
 
