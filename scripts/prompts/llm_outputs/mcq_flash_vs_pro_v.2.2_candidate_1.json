@@ -1,0 +1,92 @@
+[
+  {
+    "question_type": "multiple choice (MCQ)",
+    "category": "Location/Setting",
+    "question_text": "Where was the Riddle House located?",
+    "options": [
+      "In the center of Great Hangleton",
+      "On a hill overlooking Little Hangleton",
+      "By the river in Little Hangleton",
+      "Hidden deep within a forest near the village"
+    ],
+    "answer": "On a hill overlooking Little Hangleton",
+    "difficulty": "Easy",
+    "source_reference": "Goblet of Fire, Chapter 1",
+    "source_quote": "It stood on a hill overlooking the village, some of its windows boarded, tiles missing from its roof, and ivy spreading unchecked over its face."
+  },
+  {
+    "question_type": "multiple choice (MCQ)",
+    "category": "Character Detail",
+    "question_text": "What was the unusual conclusion of the doctors' report regarding the Riddles' bodies?",
+    "options": [
+      "They had been poisoned but showed no external marks",
+      "They appeared to be in perfect health, despite being dead",
+      "They were stabbed, but the wounds were magically concealed",
+      "They had been petrified before dying of fright"
+    ],
+    "answer": "They appeared to be in perfect health, despite being dead",
+    "difficulty": "Medium",
+    "source_reference": "Goblet of Fire, Chapter 1",
+    "source_quote": "A team of doctors had examined the bodies and had concluded that none of the Riddles had been poisoned, stabbed, shot, strangles, suffocated, or (as far as they could tell) harmed at all. In fact (the report continued, in a tone of unmistakable bewilderment), the Riddles all appeared to be in perfet health -- apart from the fact that they were all dead."
+  },
+  {
+    "question_type": "multiple choice (MCQ)",
+    "category": "Object/Potion",
+    "question_text": "What item did Snape find on Lupin's desk that revealed the location of Harry, Ron, Hermione, Black, and Lupin?",
+    "options": [
+      "A hidden diary",
+      "A certain map",
+      "A letter from Dumbledore",
+      "An old school report"
+    ],
+    "answer": "A certain map",
+    "difficulty": "Easy",
+    "source_reference": "Prisoner of Azkaban, Chapter 19",
+    "source_quote": "Lying on your desk was a certain map. One glance at it told me all I needed to know."
+  },
+  {
+    "question_type": "multiple choice (MCQ)",
+    "category": "Character Detail",
+    "question_text": "For how many years had Peter Pettigrew been living as a rat before his true identity was revealed?",
+    "options": [
+      "Seven years",
+      "Ten years",
+      "Twelve years",
+      "Fifteen years"
+    ],
+    "answer": "Twelve years",
+    "difficulty": "Easy",
+    "source_reference": "Prisoner of Azkaban, Chapter 19",
+    "source_quote": "“Twelve years, in fact,” said Lupin. “Didn’t you ever wonder why he was living so long?”"
+  },
+  {
+    "question_type": "multiple choice (MCQ)",
+    "category": "Character Detail",
+    "question_text": "What was Sirius Black's primary method for escaping Azkaban?",
+    "options": [
+      "Using a powerful invisibility cloak",
+      "Bribing the Dementor guards",
+      "Transforming into his Animagus form as a dog",
+      "Blasting his cell door open with magic"
+    ],
+    "answer": "Transforming into his Animagus form as a dog",
+    "difficulty": "Medium",
+    "source_reference": "Prisoner of Azkaban, Chapter 19",
+    "source_quote": "I could transform in my cell... become a dog. Dementors can't see, you know.... They feel their way toward people by feeding off their emotions.... They could tell that my feelings were less -- less human, less complex when I was a dog... but they thought, of course, that I was losing my mind like everyone else in there, so it didn't trouble them. But I was weak, very weak, and I had no hope of driving them away from me without a wand.... So, one night when they opened my door to bring food, I slipped past them as a dog...."
+  },
+  {
+    "question_type": "multiple choice (MCQ)",
+    "category": "Spell/Charm",
+    "question_text": "What spell did Lupin use to levitate Professor Snape's unconscious body?",
+    "options": [
+      "Wingardium Leviosa",
+      "Ascendio",
+      "Mobilicorpus",
+      "Locomotor"
+    ],
+    "answer": "Mobilicorpus",
+    "difficulty": "Medium",
+    "source_reference": "Prisoner of Azkaban, Chapter 19",
+    "source_quote": "He muttered, “Mobilicorpus.” As though invisible strings were tied to Snape’s wrists, neck, and knees, he was pulled into a standing position, head still lolling unpleasantly, like a grotesque puppet."
+  }
+]

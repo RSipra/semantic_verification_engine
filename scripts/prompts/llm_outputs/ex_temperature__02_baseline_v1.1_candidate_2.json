@@ -1,0 +1,77 @@
+[
+  {
+    "question_type": "Explanatory (Why/How)",
+    "category": "Magical Theory/Lore",
+    "difficulty": "Hard",
+    "question": "How was Sirius Black able to escape from Azkaban, a prison guarded by Dementors?",
+    "answer": "He maintained his sanity by focusing on his innocence, a thought not happy enough for the Dementors to consume. This allowed him to retain his Animagus ability to turn into a dog. As a dog, his emotions were less complex and harder for the Dementors to sense, allowing him to slip past them when his cell door was opened.",
+    "answer_variations": [
+      "By transforming into his dog Animagus form. The Dementors couldn't properly sense his less complex, non-human emotions, which allowed him to slip past them and escape the prison.",
+      "His knowledge of his own innocence kept him sane, preserving his magical abilities. He turned into a dog, whose simpler feelings confused the Dementors, enabling him to get past them.",
+      "He used his Animagus ability to become a dog. In this form, his emotions were less human, making him difficult for the Dementors to detect and allowing him to escape.",
+      "The Dementors were unable to drain his will because he clung to the knowledge of his innocence. This let him transform into a dog, and the Dementors' inability to properly sense animal emotions gave him the chance to escape."
+    ],
+    "source_reference": "Prisoner of Azkaban, Chapter 19",
+    "source_quote": "I think the only reason I never lost my mind is that I knew I was innocent. That wasn't a happy thought, so the dementors couldn't suck it out of me... but it kept me sane and knowing who I am... helped me keep my powers... so when it all became ... too much... I could transform in my cell... become a dog. Dementors can't see, you know.... They feel their way toward people by feeding off their emotions.... They could tell that my feelings were less -- less human, less complex when I was a dog... So, one night when they opened my door to bring food, I slipped past them as a dog..."
+  },
+  {
+    "question_type": "Explanatory (Why/How)",
+    "category": "Character Arc/Motive",
+    "difficulty": "Medium",
+    "question": "Why did Harry intervene to prevent Sirius and Lupin from killing Peter Pettigrew?",
+    "answer": "Harry believed that his father, James, would not have wanted his best friends to become killers, especially not for someone as pathetic as Pettigrew. He decided it was better to hand Pettigrew over to the Dementors instead.",
+    "answer_variations": [
+      "He stopped them because he didn't think his father would have wanted his friends to commit murder on his behalf.",
+      "Harry's decision was based on honoring his father's memory; he felt James Potter wouldn't want his friends to become murderers for Pettigrew.",
+      "He acted to preserve the morality of Sirius and Lupin, believing his own father would not have wanted them to kill for revenge.",
+      "It wasn't for Pettigrew's sake, but because he concluded that his father would not have wanted his friends to stain their hands with murder."
+    ],
+    "source_reference": "Prisoner of Azkaban, Chapter 19",
+    "source_quote": "I'm not doing this for you. I'm doing it because -- I don't reckon my dad would've wanted them to become killers -- just for you."
+  },
+  {
+    "question_type": "Explanatory (Why/How)",
+    "category": "Plot Event",
+    "difficulty": "Medium",
+    "question": "Why was Peter Pettigrew, and not Sirius Black, made the Secret-Keeper for the Potters?",
+    "answer": "The switch was Sirius Black's idea. He believed it would be a clever bluff, as Voldemort would naturally target him, the Potters' best friend, and would never suspect they would entrust their secret to someone they perceived as a 'weak, talentless thing' like Pettigrew.",
+    "answer_variations": [
+      "Sirius suggested the switch as a double-bluff, reasoning that Voldemort would hunt him and never consider that the Potters would use a weaker wizard like Pettigrew.",
+      "It was a strategic deception proposed by Sirius; he thought Voldemort would focus on him as the obvious choice and overlook the seemingly insignificant Pettigrew.",
+      "At Sirius's own suggestion, they used Pettigrew as a decoy, believing Voldemort would be fixated on Sirius and ignore a less likely candidate.",
+      "The change was made as a bluff conceived by Sirius, who assumed Voldemort would target him and never imagine they'd rely on Pettigrew."
+    ],
+    "source_reference": "Prisoner of Azkaban, Chapter 19",
+    "source_quote": "\"Lily and James only made you Secret-Keeper because I suggested it,\" Black hissed, so venomously that Pettigrew took a step backward. \"I thought it was the perfect plan... a bluff... Voldemort would be sure to come after me, would never dream they'd use a weak, talentless thing like you....\""
+  },
+  {
+    "question_type": "Explanatory (Why/How)",
+    "category": "Character Arc/Motive",
+    "difficulty": "Hard",
+    "question": "Why did Voldemort choose to kill Bertha Jorkins rather than simply erase her memory?",
+    "answer": "Voldemort explained that powerful wizards can break Memory Charms, as he had done to her. Additionally, she was left useless after his interrogation, and her return to the Ministry after meeting the supposedly-dead Peter Pettigrew would have raised dangerous questions.",
+    "answer_variations": [
+      "Because Memory Charms are not foolproof and can be broken by powerful wizards, and her return to work after meeting the supposedly dead Pettigrew would have aroused suspicion.",
+      "Voldemort stated that her memory could have been restored and his interrogation had left her useless. Her reappearance would also have exposed Peter Pettigrew's continued existence.",
+      "He killed her because he knew from experience that Memory Charms could be undone, and her survival would have compromised Peter Pettigrew's cover as she was no longer useful.",
+      "He deemed it necessary because a powerful wizard could reverse a Memory Charm, and her return to the Ministry would have created problems since she had encountered Peter Pettigrew."
+    ],
+    "source_reference": "Goblet of Fire, Chapter 1",
+    "source_quote": "\"We could have modified her memory? But Memory Charms can be broken by a powerful wizard, as I proved when I questioned her. It would be an insult to her memory not to use the information I extracted from her, Wormtail.\" ... \"She was fit for nothing after my questioning, quite useless. In any case, awkward questions would have been asked if she had gone back to the Ministry with the news that she had met you on her holidays.\""
+  },
+  {
+    "question_type": "Explanatory (Why/How)",
+    "category": "Plot Event",
+    "difficulty": "Medium",
+    "question": "How did Sirius Black, while imprisoned in Azkaban, discover that Peter Pettigrew was alive and at Hogwarts?",
+    "answer": "During an inspection, Minister for Magic Cornelius Fudge gave Sirius his copy of the Daily Prophet. Sirius saw a photograph of the Weasley family on the front page, and in the photo, he recognized Ron's pet rat, Scabbers, as Peter Pettigrew in his Animagus form.",
+    "answer_variations": [
+      "He saw a picture of the Weasley family in a newspaper given to him by Cornelius Fudge and immediately recognized Peter Pettigrew in his rat form on Ron's shoulder.",
+      "Cornelius Fudge left his newspaper with Sirius during a visit to Azkaban, which contained a photo of the Weasleys featuring Peter as the rat Scabbers.",
+      "A Daily Prophet newspaper, provided by Fudge, had a photo of Ron Weasley holding Scabbers, allowing Sirius to identify Pettigrew and learn he was at Hogwarts.",
+      "He spotted Pettigrew disguised as a rat in a newspaper photograph of the Weasley family that he obtained from Minister Fudge during an official visit to the prison."
+    ],
+    "source_reference": "Prisoner of Azkaban, Chapter 19",
+    "source_quote": "\"Fudge,\" said Black. \"When he came to inspect Azkaban last year, he gave me his paper. And there was Peter, on the front page on this boy's shoulder... I knew him at once... how many times had I seen him transform? And the caption said the boy would be going back to Hogwarts... to where Harry was...\""
+  }
+]

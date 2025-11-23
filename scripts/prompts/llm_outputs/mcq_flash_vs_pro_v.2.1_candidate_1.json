@@ -1,0 +1,56 @@
+[
+  {
+    "question_type": "multiple choice (MCQ)",
+    "category": "Location/Setting",
+    "question": "What was the name of the pub in Little Hangleton where the villagers gathered to discuss the Riddle family murders: The Hanged Man, The Leaky Cauldron, The Hog's Head, or The Three Broomsticks?",
+    "answer": "The Hanged Man",
+    "difficulty": "Medium",
+    "source_reference": "Goblet of Fire, Chapter 1",
+    "source_quote": "The Hanged Man, the village pub, did a roaring trade that night; the whole village seemed to have turned out to discuss the murders."
+  },
+  {
+    "question_type": "multiple choice (MCQ)",
+    "category": "Character Detail",
+    "question": "According to the Muggle doctors' report on the Riddle family, what was their perplexing conclusion about the cause of death?",
+    "answer": "The Riddles appeared to be in perfect health, apart from the fact that they were all dead.",
+    "difficulty": "Medium",
+    "source_reference": "Goblet of Fire, Chapter 1",
+    "source_quote": "A team of doctors had examined the bodies and had concluded that none of the Riddles had been poisoned, stabbed, shot, strangles, suffocated, or (as far as they could tell) harmed at all. In fact (the report continued, in a tone of unmistakable bewilderment), the Riddles all appeared to be in perfet health -- apart from the fact that they were all dead."
+  },
+  {
+    "question_type": "multiple choice (MCQ)",
+    "category": "Character Detail",
+    "question": "How did Lord Voldemort tell Wormtail he knew that Frank Bryce was listening outside the door of the Riddle House?",
+    "answer": "Nagini the snake informed him.",
+    "difficulty": "Easy",
+    "source_reference": "Goblet of Fire, Chapter 1",
+    "source_quote": "\"Nagini has interesting news, Wormtail,\" it said. \"In-indeed, My Lord?\" said Wormtail. \"Indeed, yes,\" said the voice, \"According to Nagini, there is an old Muggle standing right outside this room, listening to every word we say.\""
+  },
+  {
+    "question_type": "multiple choice (MCQ)",
+    "category": "Character Detail",
+    "question": "How did Sirius Black obtain the Daily Prophet newspaper in Azkaban that revealed Peter Pettigrew was alive and at Hogwarts?",
+    "answer": "Cornelius Fudge gave him the paper during an inspection.",
+    "difficulty": "Medium",
+    "source_reference": "Prisoner of Azkaban, Chapter 19",
+    "source_quote": "\"Fudge,\" said Black. \"When he came to inspect Azkaban last year, he gave me his paper. And there was Peter, on the front page on this boy's shoulder... I knew him at once...\""
+  },
+  {
+    "question_type": "multiple choice (MCQ)",
+    "category": "Character Detail",
+    "question": "According to Sirius Black, how was he able to resist the Dementors' mind-altering effects and eventually escape Azkaban?",
+    "answer": "By transforming into a dog, whose less complex emotions confused the Dementors.",
+    "difficulty": "Easy",
+    "source_reference": "Prisoner of Azkaban, Chapter 19",
+    "source_quote": "I could transform in my cell... become a dog. Dementors can't see, you know.... They feel their way toward people by feeding off their emotions.... They could tell that my feelings were less -- less human, less complex when I was a dog..."
+  },
+  {
+    "question_type": "multiple choice (MCQ)",
+    "category": "Spell/Charm",
+    "question": "Which spell did Remus Lupin use to conjure bandages and a splint for Ron Weasley's broken leg: Ferula, Episkey, Mobilicorpus, or Brackium Emendo?",
+    "answer": "Ferula",
+    "difficulty": "Hard",
+    "source_reference": "Prisoner of Azkaban, Chapter 19",
+    "source_quote": "He hurried over to Ron, bent down, tapped Ron's leg with his wand, and muttered, \"Ferula.\" Bandages spun up Ron's leg, strapping it tightly to a splint."
+  }
+]

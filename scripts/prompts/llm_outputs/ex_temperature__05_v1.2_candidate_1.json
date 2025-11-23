@@ -1,0 +1,92 @@
+[
+  {
+    "question_type": "Explanatory (Why/How)",
+    "category": "Plot Event",
+    "difficulty": "Medium",
+    "question": "How did Professor Snape locate Lupin, Sirius, and the students in the Shrieking Shack?",
+    "answer": "He went to Lupin's office to deliver the forgotten Wolfsbane Potion and found the Marauder's Map on the desk. A glance at the map showed him their location in the secret passageway leading to the shack.",
+    "answer_variations": [
+      "Snape discovered their whereabouts by finding the Marauder's Map in Lupin's office after bringing him the Wolfsbane Potion.",
+      "He found the Marauder's Map lying on Lupin's desk, which revealed the secret passage and their presence within it.",
+      "When delivering the Wolfsbane Potion to Lupin's office, Snape saw the Marauder's Map and used it to track them to the Shrieking Shack.",
+      "He saw them on the Marauder's Map, which Lupin had accidentally left out, after going to his office with the potion."
+    ],
+    "source_reference": "{book_and_chapter}",
+    "source_quote": "I've just been to your office, Lupin. You forgot to take your potion tonight, so I took a gobletful along. And very lucky I did... lucky for me, I mean. Lying on your desk was a certain map. One glance at it told me all I needed to know. I saw you running along this passageway and out of sight."
+  },
+  {
+    "question_type": "Explanatory (Why/How)",
+    "category": "Character Arc/Motive",
+    "difficulty": "Medium",
+    "question": "Why did Peter Pettigrew, disguised as Scabbers, never try to harm Harry during the years he lived in the Gryffindor dormitory?",
+    "answer": "Pettigrew was a coward who only served a powerful master. With Voldemort believed to be powerless and in hiding, Pettigrew saw no benefit in attacking Harry under Dumbledore's protection and was waiting to see if Voldemort would regain his strength.",
+    "answer_variations": [
+      "He didn't act because Voldemort was a 'wreck of a wizard' who had lost his power, and Pettigrew was too cowardly to commit murder under Dumbledore's nose without a strong protector.",
+      "Pettigrew was waiting to be sure Voldemort was regaining power before rejoining him; he wouldn't risk harming Harry for a master who couldn't protect him.",
+      "His inaction was due to cowardice and self-preservation; he wouldn't risk attacking Harry for a powerless Voldemort and was instead keeping an ear out for news of his master's return.",
+      "He refrained from harming Harry because he only acts when he can see a personal benefit, and with Voldemort gone, there was no advantage to be gained from such a risky move."
+    ],
+    "source_reference": "{book_and_chapter}",
+    "source_quote": "Because you never did anything for anyone unless you could see what was in it for you. Voldemort's been in hiding for fifteen years, they say he's half dead. You weren't about to commit murder right under Albus Dumbledore's nose, for a wreck of a wizard who'd lost all of his power, were you? You'd want to be quite sure he was the biggest bully in the playground before you went back to him, wouldn't you?"
+  },
+  {
+    "question_type": "Explanatory (Why/How)",
+    "category": "Magical Theory/Lore",
+    "difficulty": "Hard",
+    "question": "How was Sirius Black able to escape from the Dementor-guarded prison of Azkaban?",
+    "answer": "He maintained his sanity by focusing on his innocence, a thought Dementors couldn't consume. He would transform into his dog Animagus form, whose less complex emotions confused the Dementors. When he grew thin enough, he slipped past them as a dog when they opened his cell door.",
+    "answer_variations": [
+      "By transforming into a dog, his emotions became less human, making him harder for the Dementors to sense, which allowed him to slip past them when his cell was opened.",
+      "His Animagus ability was key; as a dog, his simpler feelings confused the Dementors, and his innocence kept him sane, enabling him to escape.",
+      "He escaped by turning into his dog form. The Dementors couldn't properly sense his animal emotions, and he used this advantage to get past them when the door was open.",
+      "Sirius used his Animagus transformation to become a dog, whose emotions were too simple for the Dementors to detect easily, allowing him to escape his cell."
+    ],
+    "source_reference": "{book_and_chapter}",
+    "source_quote": "I think the only reason I never lost my mind is that I knew I was innocent. That wasn't a happy thought, so the dementors couldn't suck it out of me... so when it all became ... too much... I could transform in my cell... become a dog. Dementors can't see, you know.... They could tell that my feelings were less -- less human, less complex when I was a dog... So, one night when they opened my door to bring food, I slipped past them as a dog...."
+  },
+  {
+    "question_type": "Explanatory (Why/How)",
+    "category": "Character Arc/Motive",
+    "difficulty": "Easy",
+    "question": "Why did Harry stop Sirius and Lupin from killing Peter Pettigrew?",
+    "answer": "Harry believed that his father, James Potter, would not have wanted his best friends to become killers on Pettigrew's account.",
+    "answer_variations": [
+      "He stopped them because he felt his dad wouldn't want Sirius and Lupin to commit murder, even to avenge him.",
+      "Harry's decision was based on the belief that his father would not have wanted his friends to taint themselves by killing Pettigrew.",
+      "He intervened out of respect for his father's memory, concluding James wouldn't have wanted his friends to become killers.",
+      "He prevented the murder because he reasoned that his father would not have wanted his friends to kill Pettigrew, regardless of his betrayal."
+    ],
+    "source_reference": "{book_and_chapter}",
+    "source_quote": "I'm not doing this for you. I'm doing it because -- I don't reckon my dad would've wanted them to become killers -- just for you."
+  },
+  {
+    "question_type": "Explanatory (Why/How)",
+    "category": "Social & Systemic",
+    "difficulty": "Medium",
+    "question": "How was Frank Bryce cleared of the Riddle murders, leading to his release from police custody?",
+    "answer": "A medical report concluded that none of the Riddles had been harmed in any physical way; they appeared to be in perfect health, aside from being dead. With no proof that a murder had even been committed, the police were forced to release him.",
+    "answer_variations": [
+      "He was released because the autopsy report found no cause of death, stating the Riddles were physically unharmed, which meant there was no evidence of murder.",
+      "The police had to let him go after the coroner's report showed the Riddles had not been poisoned, stabbed, or otherwise injured, leaving no proof of a crime.",
+      "Frank was cleared when doctors examining the bodies could find no physical cause of death, forcing the police to release him due to a lack of evidence.",
+      "His release was secured by a perplexing medical report that found the Riddles to be perfectly healthy, apart from being dead, thus providing no proof of murder."
+    ],
+    "source_reference": "{book_and_chapter}",
+    "source_quote": "A team of doctors had examined the bodies and had concluded that none of the Riddles had been poisoned, stabbed, shot, strangles, suffocated, or (as far as they could tell) harmed at all. In fact (the report continued, in a tone of unmistakable bewilderment), the Riddles all appeared to be in perfet health -- apart from the fact that they were all dead... As there was no proof that the Riddles had been murdered at all, the police were forced to let Frank go."
+  },
+  {
+    "question_type": "Explanatory (Why/How)",
+    "category": "Plot Event",
+    "difficulty": "Easy",
+    "question": "In the Riddle House, why did Lord Voldemort decide to wait until after the Quidditch World Cup to execute his plan involving Harry Potter?",
+    "answer": "Voldemort explained that wizards from all over the world were pouring into the country for the event, meaning the Ministry of Magic would be on high alert, obsessed with security and checking for any unusual activity.",
+    "answer_variations": [
+      "He delayed the plan because the massive influx of wizards for the World Cup would lead to heightened security and scrutiny from the Ministry of Magic.",
+      "Voldemort decided to wait because the Ministry would be on high alert for the World Cup, making it too risky to act with so many wizards in the country.",
+      "He reasoned that with wizards from around the globe gathering for the World Cup, the Ministry's security measures would be too intense to risk proceeding.",
+      "The plan was postponed because the Quidditch World Cup brought international wizards and intense Ministry surveillance, making it a dangerous time to operate."
+    ],
+    "source_reference": "{book_and_chapter}",
+    "source_quote": "Because, fool, at this very moment wizards are pouring into the country from all over the world, and every meddler from the Ministry of Magic will be on duty, on the watch for signs of ususual activity, checking and double-checking identities. They will be obsessed with security, lest the Muggles notice anything. So we wait."
+  }
+]

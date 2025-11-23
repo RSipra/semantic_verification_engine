@@ -1,0 +1,72 @@
+Your task is to act as an expert trivia creator. Analyze the provided ---SOURCE TEXT--- and generate a set of unique, high-quality **Factual Recall (MCQ)** questions.
+
+Your primary goal is to ensure every generated question is high-quality, insightful, and based on a significant, non-trivial fact from the text.
+
+Your secondary goal is to generate 4-6 questions. If you can only find 1 or 2 high-quality "trivia kernels" in the provided text, generate only those. If the text contains no suitable facts for this question type, you MUST return an empty JSON array [].
+
+You must follow the instructions and format precisely. Use the ---EXAMPLES--- provided to understand the desired quality and structure.
+
+**Instructions:**
+
+For each question, follow this process:
+1.  Choose a `category` from this list: ['Object/Potion', 'Spell/Charm', 'Creature/Beast', 'Character Detail', 'Location/Setting'].
+2.  Identify a specific fact ("Trivia Kernel") from the text that fits your chosen category.  **This is the most important step**.
+3.  Formulate a concise, standalone question_text. It must end with a question mark.
+4.  Create an options array containing four choices:
+     - **One** choice must be the concise, correct answer from the text.
+     - The **three** other "distractor" choices must be plausible and thematically related, but **unambiguously incorrect**.
+     - The correct answer's position in the array should be randomized.     
+5. Assess and assign a difficulty from this list: ['Easy', 'Medium', 'Hard'].
+5. [VALID SOURCE OPTIONS] You MUST select the one correct source for your question from the following list: {valid_source_list}
+6. [SOURCE QUOTE] You MUST extract the exact, verbatim sentence(s) from the ---SOURCE TEXT--- that serve as the ground truth. DO NOT rephrase. DO NOT summarize. DO NOT write your own text.
+
+**Output Format:**
+
+Provide the output as a single, valid JSON array. Each object must contain:
+- "question_type": This should always be "multiple choice (MCQ)".
+- "category": The category you chose in Step 1.
+- "question_text": The well-phrased question from Step 3 (e.g., "What type of core is in Harry Potter's wand?").
+- "options": The array of 4 string options from Step 4 (e.g., ["Dragon heartstring", "Unicorn hair", "Phoenix feather", "Thestral tail hair"]).
+- "answer": The correct answer string, which must exactly match one of the items in the options array.
+- "difficulty": The difficulty you assigned in Step 6.
+- "source_reference": "[The single, exact string you chose from the VALID SOURCE OPTIONS list]"
+- "source_quote": "[The exact sentences from the --SOURCE TEXT-- used as the ground truth to create the question]
+
+---EXAMPLES---
+[
+ {{
+    "question_type": "multiple choice (MCQ)",
+    "category": "Character Detail",
+    "question": "When did Lily Evans first meet Severus Snape?", 
+    "options": ["On the Hogwarts Express during their first journey to school", "As children in a park near their homes before they attended Hogwarts", "During the Sorting Ceremony of their first year", "In their first Potions class, taught by Professor Slughorn"],
+    "answer": "As children in a park near their homes before they attended Hogwarts",
+    "source_reference": "Deathly Hallows, Chapter 33",
+    "source_quote": "The scene changed... a small, mousy-looking boy... was watching a girl... 'You're... you're a witch,' whispered Snape... 'I know who you are. You're Snape's son!'",
+    }},
+ {{
+  "question_type": "multiple choice (MCQ)",
+  "category": "Object/Potion",
+  "question_text": "What type of core is in Harry Potter's wand?",
+  "options": [Dragon heartstring", "Unicorn hair", "Phoenix feather", "Thestral tail hair"],
+  "answer": "Phoenix feather",
+  "source_reference": "Philosopher's Stone, Chapter 5",
+  "source_quote": "Harry took the wand. He felt a sudden warmth in his fingers... 'Eleven inches. Holly. And phoenix feather. Nice and supple.",
+ }}
+
+ {{
+    "question_type": "Factual Recall (MCQ)",
+    "category": "Character Detail",
+    "question_text": "Albus Dumbledore is famous for discovering how many uses of dragon's blood?"
+    "options": ["7", "10", "12", "15"]
+    "answer" : "12",
+    "source_reference": "Philosopher's Stone, Chapter 6"
+    "source_quote": "Albus Dumbledore... is particularly famous for... the discovery of the twelve uses of dragon's blood, and his work on alchemy with his partner, Nicolas Flamel."
+ }}
+] 
+---END EXAMPLES---
+
+Now, using the ---SOURCE TEXT--- below to generate your questions.
+
+---SOURCE TEXT---
+{source_text}
+---END SOURCE TEXT---

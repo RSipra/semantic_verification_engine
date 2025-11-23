@@ -1,0 +1,92 @@
+[
+  {
+    "question_type": "Explanatory (Why/How)",
+    "category": "Plot Event",
+    "difficulty": "Medium",
+    "question": "In the Riddle House, why did Lord Voldemort tell Wormtail they had to wait until after the Quidditch World Cup to proceed with their plan?",
+    "answer": "Voldemort explained that during the World Cup, wizards from all over the world would be in the country, causing the Ministry of Magic to be on high alert for any unusual activity and to be obsessively checking identities, making it a foolish time to act.",
+    "answer_variations": [
+      "He postponed the plan because the Ministry of Magic would have heightened security and be on the lookout for strange occurrences due to the influx of wizards for the World Cup.",
+      "Voldemort chose to wait because the country would be full of international wizards, and every Ministry official would be on duty, making it too risky to proceed.",
+      "The plan was delayed because the gathering of wizards for the World Cup meant the Ministry would be exceptionally vigilant about security and identity checks.",
+      "He decided to wait because the Ministry's focus on security during the World Cup, with so many wizards present, would make it too dangerous to execute their plan."
+    ],
+    "source_reference": "Goblet of Fire, Chapter 1",
+    "source_quote": "\"Because, fool, at this very moment wizards are pouring into the country from all over the world, and every meddler from the Ministry of Magic will be on duty, on the watch for signs of ususual activity, checking and double-checking identities. They will be obsessed with security, lest the Muggles notice anything. So we wait.\""
+  },
+  {
+    "question_type": "Explanatory (Why/How)",
+    "category": "Magical Theory/Lore",
+    "difficulty": "Hard",
+    "question": "Why did Voldemort state that he had to kill Bertha Jorkins rather than simply modify her memory after his interrogation?",
+    "answer": "Voldemort explained that Memory Charms can be broken by a powerful wizard, as he himself had done to her. He also considered it an \"insult to her memory\" not to use the invaluable information he had extracted.",
+    "answer_variations": [
+      "He killed her because a strong wizard could break a Memory Charm, which he had proven by questioning her, and he wanted to utilize the information she provided.",
+      "Voldemort chose to murder Bertha Jorkins because Memory Charms are not foolproof and can be undone by a powerful magic-user, making the spell unreliable.",
+      "He explained that killing her was necessary because memory modification is reversible by skilled wizards, and her information was too vital to risk its discovery.",
+      "Instead of a Memory Charm, Voldemort killed her because such spells can be reversed, and he intended to act on the plan he formed using her intelligence."
+    ],
+    "source_reference": "Goblet of Fire, Chapter 1",
+    "source_quote": "\"We could have modified her memory? But Memory Charms can be broken by a powerful wizard, as I proved when I questioned her. It would be an insult to her memory not to use the information I extracted from her, Wormtail.\""
+  },
+  {
+    "question_type": "Explanatory (Why/How)",
+    "category": "Plot Event",
+    "difficulty": "Medium",
+    "question": "In the investigation of the Riddle family murders, why did the villagers and police initially suspect the gardener, Frank Bryce?",
+    "answer": "Frank Bryce was the prime suspect because he possessed a spare key to the house's back door. The police found no signs of forced entry, suggesting the killer had a key, and the villagers already considered him odd and unfriendly.",
+    "answer_variations": [
+      "He was suspected because there was no forced entry into the Riddle House, and as the gardener, he had access to a spare key kept in his cottage.",
+      "The authorities focused on Frank Bryce since the doors and windows were not broken, and it was known that a spare key was kept in his cottage.",
+      "Because the house was not broken into, suspicion fell on Frank Bryce, who had a key to the back door and a local reputation for being unfriendly.",
+      "Frank was the main suspect due to his possession of a spare key, which explained how a murderer could enter the home without forcing their way in."
+    ],
+    "source_reference": "Goblet of Fire, Chapter 1",
+    "source_quote": "\"'Who else had a key to the back door, then?' barked the cook. 'There's been a spare key hanging in the gardener's cottage far back as I can remember! Nobody forced the door last night! No broken windows! All Frank had to do was creep up to the big house while we was all sleeping...'\""
+  },
+  {
+    "question_type": "Explanatory (Why/How)",
+    "category": "Magical Theory/Lore",
+    "difficulty": "Medium",
+    "question": "How was Sirius Black able to escape from the Dementor-guarded prison of Azkaban?",
+    "answer": "He transformed into his dog Animagus form. Since Dementors are blind and sense people through their complex human emotions, they were confused by his simpler, less human feelings as a dog and couldn't effectively contain him, allowing him to slip past.",
+    "answer_variations": [
+      "Sirius escaped by changing into a dog; the Dementors struggled to sense his animal emotions, which were less complex than a human's, enabling him to get by them.",
+      "His escape was possible because as an Animagus, he could become a dog. The Dementors, who feed on human feelings, found his canine emotions less distinct and were unable to track him properly.",
+      "He managed his escape by turning into his Animagus form. The guards of Azkaban couldn't perceive him clearly as a dog because his emotions were less human and complex.",
+      "By transforming into a dog, Sirius could evade the Dementors. They sense people by their emotions, and his feelings as an animal were not complex enough for them to register him properly."
+    ],
+    "source_reference": "Prisoner of Azkaban, Chapter 19",
+    "source_quote": "\"...so when it all became ... too much... I could transform in my cell... become a dog. Dementors can't see, you know.... They feel their way toward people by feeding off their emotions.... They could tell that my feelings were less -- less human, less complex when I was a dog... but they thought, of course, that I was losing my mind like everyone else in there, so it didn't trouble them.\""
+  },
+  {
+    "question_type": "Explanatory (Why/How)",
+    "category": "Character Arc/Motive",
+    "difficulty": "Hard",
+    "question": "In the Shrieking Shack, how did Sirius Black explain why Peter Pettigrew had been hiding from Voldemort's old supporters and not just from Sirius himself?",
+    "answer": "Sirius overheard things in Azkaban suggesting that Voldemort's supporters believed Pettigrew was a double-crosser who led Voldemort to his downfall at the Potters' home. They would want revenge on him if they ever learned he was still alive.",
+    "answer_variations": [
+      "According to Sirius, Voldemort's followers thought Peter had betrayed them, as Voldemort met his doom after acting on Peter's information about the Potters.",
+      "Sirius explained that other Death Eaters believed Pettigrew was responsible for Voldemort's downfall and would seek retribution if they discovered he was not dead.",
+      "He stated that Voldemort's followers blamed Pettigrew for their master's defeat at the Potters' house and would want to punish the person they saw as a double-crosser.",
+      "Sirius claimed that Peter was hiding from other Death Eaters because they held him accountable for Voldemort's disappearance, viewing him as a traitor to their cause."
+    ],
+    "source_reference": "Prisoner of Azkaban, Chapter 19",
+    "source_quote": "\"'You haven't been hiding from me for twelve years,' said Black. 'You've been hiding from Voldemort's old supporters. I heard things in Azkaban, Peter... They all think you're dead, or you'd have to answer to them.... Voldemort went to the Potters' on your information... and Voldemort met his downfall there.'\""
+  },
+  {
+    "question_type": "Explanatory (Why/How)",
+    "category": "Character Arc/Motive",
+    "difficulty": "Medium",
+    "question": "In the Shrieking Shack, why did Harry Potter stop Sirius Black and Remus Lupin from killing Peter Pettigrew?",
+    "answer": "Harry explained that he didn't think his father, James Potter, would have wanted his best friends to become killers, especially not for someone like Pettigrew.",
+    "answer_variations": [
+      "Harry intervened because he believed his own dad would not have wanted his friends to commit murder on his behalf.",
+      "He stopped them from killing Pettigrew out of a conviction that his father wouldn't have approved of his friends becoming murderers for revenge.",
+      "Harry's reason for saving Pettigrew was his belief that James Potter would not have wanted Sirius and Lupin to become killers.",
+      "He prevented the murder because he reckoned his father would not have wanted his best friends to taint themselves by killing the traitor."
+    ],
+    "source_reference": "Prisoner of Azkaban, Chapter 19",
+    "source_quote": "\"'I'm not doing this for you. I'm doing it because -- I don't reckon my dad would've wanted them to become killers -- just for you.'\""
+  }
+]
