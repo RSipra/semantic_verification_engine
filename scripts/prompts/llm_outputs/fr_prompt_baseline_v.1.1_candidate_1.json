@@ -1,0 +1,92 @@
+[
+  {
+    "question_type": "Factual Recall (FR)",
+    "category": "Location/Setting",
+    "difficulty": "Medium",
+    "question": "What was the name of the village pub in Little Hangleton where people discussed the Riddle murders?",
+    "answer": "The Hanged Man",
+    "answer_variations": [
+      "Hanged Man",
+      "The Hanged Man pub",
+      "The pub called The Hanged Man",
+      "It was the Hanged Man"
+    ],
+    "source_reference": "Goblet of Fire, Chapter 1",
+    "source_quote": "The Hanged Man, the village pub, did a roaring trade that night; the whole village seemed to have turned out to discuss the murders."
+  },
+  {
+    "question_type": "Factual Recall (FR)",
+    "category": "Creature/Beast",
+    "difficulty": "Medium",
+    "question": "How long was the gigantic snake, Nagini, that Frank Bryce saw slithering in the Riddle House?",
+    "answer": "At least twelve feet long",
+    "answer_variations": [
+      "Twelve feet long",
+      "12 feet long",
+      "A minimum of twelve feet",
+      "Over twelve feet long"
+    ],
+    "source_reference": "Goblet of Fire, Chapter 1",
+    "source_quote": "Something was slithering toward him along the dark corridor floor, and as it drew nearer to the sliver of firelight, he realized with a thrill of terror that it was a gigantic snake, at least twelve feet long."
+  },
+  {
+    "question_type": "Factual Recall (FR)",
+    "category": "Number/Year",
+    "difficulty": "Hard",
+    "question": "How old was Frank Bryce nearing when he discovered the intruders in the Riddle House?",
+    "answer": "Seventy-seventh birthday",
+    "answer_variations": [
+      "His seventy-seventh birthday",
+      "77th birthday",
+      "Around his 77th birthday",
+      "Almost seventy-seven years old"
+    ],
+    "source_reference": "Goblet of Fire, Chapter 1",
+    "source_quote": "Frank was nearing his seventy-seventh birthday now, very deaf, his bad leg stiffer than ever, but could be seen pottering around the flower beds in fine weather, even though the weeds were starting to creep up on him, try as he might to suppress them."
+  },
+  {
+    "question_type": "Factual Recall (FR)",
+    "category": "Spell/Charm",
+    "difficulty": "Easy",
+    "question": "In the Shrieking Shack, what spell did Professor Lupin use to create bandages and a splint for Ron Weasley's broken leg?",
+    "answer": "Ferula",
+    "answer_variations": [
+      "Ferula was the spell",
+      "The spell Ferula",
+      "Lupin used Ferula",
+      "He cast Ferula"
+    ],
+    "source_reference": "Prisoner of Azkaban, Chapter 19",
+    "source_quote": "He hurried over to Ron, bent down, tapped Ron's leg with his wand, and muttered, 'Ferula.' Bandages spun up Ron's leg, strapping it tightly to a splint."
+  },
+  {
+    "question_type": "Factual Recall (FR)",
+    "category": "Spell/Charm",
+    "difficulty": "Medium",
+    "question": "In the Shrieking Shack, what spell did Professor Lupin use to levitate Professor Snape's unconscious body?",
+    "answer": "Mobilicorpus",
+    "answer_variations": [
+      "Mobilicorpus was cast",
+      "The Mobilicorpus spell",
+      "Lupin used Mobilicorpus",
+      "Mobilicorpus"
+    ],
+    "source_reference": "Prisoner of Azkaban, Chapter 19",
+    "source_quote": "He muttered, 'Mobilicorpus.' As though invisible strings were tied to Snape's wrists, neck, and knees, he was pulled into a standing position, head still lolling unpleasantly, like a grotesque puppet."
+  },
+  {
+    "question_type": "Factual Recall (FR)",
+    "category": "Number/Year",
+    "difficulty": "Easy",
+    "question": "For how many years had Peter Pettigrew been living as a rat in the Weasley family?",
+    "answer": "Twelve years",
+    "answer_variations": [
+      "12 years",
+      "For twelve years",
+      "A period of twelve years",
+      "Exactly twelve years"
+    ],
+    "source_reference": "Prisoner of Azkaban, Chapter 19",
+    "source_quote": "Twelve years, in fact,\" said Lupin. \"Didn't you ever wonder why he was living so long?\""
+  }
+]

@@ -1,0 +1,56 @@
+[
+  {
+    "question_type": "multiple choice (MCQ)",
+    "category": "Location/Setting",
+    "question": "Where was the Riddle House located? In Great Hangleton, in Little Hangleton, near Ottery St Catchpole, or on the outskirts of Godric's Hollow.",
+    "answer": "in Little Hangleton",
+    "difficulty": "Easy",
+    "source_reference": "Goblet of Fire, Chapter 1",
+    "source_quote": "The villagers of Little Hangleron still called it \"the Riddle House,\" even though it had been many years since the Riddle family had lived there."
+  },
+  {
+    "question_type": "multiple choice (MCQ)",
+    "category": "Character Detail",
+    "question": "What event did Lord Voldemort and Wormtail decide to wait for before proceeding with their plan? The Triwizard Tournament, the Hogwarts Quidditch Cup, the Quidditch World Cup, or the Ministry of Magic elections.",
+    "answer": "the Quidditch World Cup",
+    "difficulty": "Medium",
+    "source_reference": "Goblet of Fire, Chapter 1",
+    "source_quote": "\"A week,\" said the cold voice. \"Perhapse longer. The place is moderately comfortable, and the plan cannot proceed yet. It would be foolish to act before the Quidditch World Cup is over.\""
+  },
+  {
+    "question_type": "multiple choice (MCQ)",
+    "category": "Creature/Beast",
+    "question": "How long was the gigantic snake, Nagini, that Frank Bryce encountered in the Riddle House? Approximately eight feet long, at least ten feet long, at least twelve feet long, or over fifteen feet long.",
+    "answer": "at least twelve feet long",
+    "difficulty": "Medium",
+    "source_reference": "Goblet of Fire, Chapter 1",
+    "source_quote": "Something was slithering toward him along the dark corridor floor, and as it drew nearer to the sliver of firelight, he realized with a thrill of terror that it was a gigantic snake, at least twelve feet long."
+  },
+  {
+    "question_type": "multiple choice (MCQ)",
+    "category": "Spell/Charm",
+    "question": "What burst from Snape's wand to bind Lupin's mouth, wrists, and ankles? Thick, thorny vines; thin, snakelike cords; glowing, ethereal chains; or heavy, metallic manacles.",
+    "answer": "thin, snakelike cords",
+    "difficulty": "Easy",
+    "source_reference": "Prisoner of Azkaban, Chapter 19",
+    "source_quote": "BANG! Thin, snakelike cords burst from the end of Snape's wand and twisted themselves around Lupin's mouth, wrists, and ankles; he overbalanced and fell to the floor, unable to move."
+  },
+  {
+    "question_type": "multiple choice (MCQ)",
+    "category": "Character Detail",
+    "question": "How did Sirius Black discover Peter Pettigrew's whereabouts after escaping Azkaban? He saw him in a vision, he overheard a conversation between Dementors, he recognized him in a Daily Prophet photograph given by Fudge, or he tracked him using the Marauder's Map.",
+    "answer": "he recognized him in a Daily Prophet photograph given by Fudge",
+    "difficulty": "Medium",
+    "source_reference": "Prisoner of Azkaban, Chapter 19",
+    "source_quote": "\"Fudge,\" said Black. \"When he came to inspect Azkaban last year, he gave me his paper. And there was Peter, on the front page on this boy's shoulder... I knew him at once... how many times had I seen him transform? And the caption said the boy would be going back to Hogwarts... to where Harry was...\""
+  },
+  {
+    "question_type": "multiple choice (MCQ)",
+    "category": "Spell/Charm",
+    "question": "What spell did Lupin use to levitate Snape's unconscious body? Wingardium Leviosa, Mobilicorpus, Locomotor Wibbly, or Levicorpus.",
+    "answer": "Mobilicorpus",
+    "difficulty": "Hard",
+    "source_reference": "Prisoner of Azkaban, Chapter 19",
+    "source_quote": "He muttered, \"Mobilicorpus.\" As though invisible strings were tied to Snape's wrists, neck, and knees, he was pulled into a standing position, head still lolling unpleasantly, like a grotesque puppet."
+  }
+]

@@ -1,0 +1,92 @@
+[
+  {
+    "question_type": "Factual Recall (FR)",
+    "category": "Location/Setting",
+    "difficulty": "Medium",
+    "question": "What was the name of the village pub in Little Hangleton where locals gathered to discuss the Riddle family murders?",
+    "answer": "The Hanged Man",
+    "answer_variations": [
+      "The Hanged Man pub",
+      "It was called The Hanged Man.",
+      "The pub was The Hanged Man.",
+      "The name of the pub was The Hanged Man."
+    ],
+    "source_reference": "Goblet of Fire, Chapter 1",
+    "source_quote": "The Hanged Man, the village pub, did a roaring trade that night; the whole village seemed to have turned out to discuss the murders."
+  },
+  {
+    "question_type": "Factual Recall (FR)",
+    "category": "Character Detail",
+    "difficulty": "Medium",
+    "question": "What was the name of the Riddles' gardener who was initially arrested for their murders?",
+    "answer": "Frank Bryce",
+    "answer_variations": [
+      "His name was Frank Bryce.",
+      "The gardener was Frank Bryce.",
+      "Frank Bryce was the gardener.",
+      "The man's name was Frank Bryce."
+    ],
+    "source_reference": "Goblet of Fire, Chapter 1",
+    "source_quote": "They were rewarded for leaving their firesides when the Riddles' cook arrived dramatically in their midst and announced to the suddenly silent pub that a man called Frank Bryce had just been arrested."
+  },
+  {
+    "question_type": "Factual Recall (FR)",
+    "category": "Character Detail",
+    "difficulty": "Hard",
+    "question": "According to the doctors' report on the Riddle family, what expression was found on each of their faces after they died?",
+    "answer": "A look of terror",
+    "answer_variations": [
+      "They each had a look of terror on their face.",
+      "A look of terror was upon each of their faces.",
+      "The doctors noted that each of the Riddles had a look of terror upon his or her face.",
+      "Each victim had a terrified expression."
+    ],
+    "source_reference": "Goblet of Fire, Chapter 1",
+    "source_quote": "The doctors did note (as though determined to find something wrong with the bodies) that each of the Riddles had a look of terror upon his or her face -- but as the frustrated police said, whoever heard of three people being frightened to death?"
+  },
+  {
+    "question_type": "Factual Recall (FR)",
+    "category": "Number/Year",
+    "difficulty": "Hard",
+    "question": "In the present day of the story, what birthday was the gardener Frank Bryce nearing?",
+    "answer": "His seventy-seventh birthday",
+    "answer_variations": [
+      "Seventy-seven",
+      "He was nearing his 77th birthday.",
+      "Frank was almost seventy-seven years old.",
+      "His seventy-seventh."
+    ],
+    "source_reference": "Goblet of Fire, Chapter 1",
+    "source_quote": "Frank was nearing his seventy-seventh birthday now, very deaf, his bad leg stiffer than ever, but could be seen pottering around the flower beds in fine weather, even though the weeds were starting to creep up on him, try as he might to suppress them."
+  },
+  {
+    "question_type": "Factual Recall (FR)",
+    "category": "Location/Setting",
+    "difficulty": "Easy",
+    "question": "In the Riddle House, what major wizarding event did Lord Voldemort tell Wormtail they must wait for to be over before their plan could proceed?",
+    "answer": "The Quidditch World Cup",
+    "answer_variations": [
+      "They had to wait for the Quidditch World Cup to finish.",
+      "It was the Quidditch World Cup.",
+      "Voldemort was waiting for the Quidditch World Cup to end.",
+      "The Quidditch World Cup was the event."
+    ],
+    "source_reference": "Goblet of Fire, Chapter 1",
+    "source_quote": "\"A week,\" said the cold voice. \"Perhapse longer. The place is moderately comfortable, and the plan cannot proceed yet. It would be foolish to act before the Quidditch World Cup is over.\""
+  },
+  {
+    "question_type": "Factual Recall (FR)",
+    "category": "Creature/Beast",
+    "difficulty": "Medium",
+    "question": "What was the estimated length of the gigantic snake, Nagini, that Frank Bryce encountered in the corridor of the Riddle House?",
+    "answer": "At least twelve feet long",
+    "answer_variations": [
+      "12 feet long",
+      "It was at least 12 feet in length.",
+      "The snake was a minimum of twelve feet long.",
+      "At least 12 feet."
+    ],
+    "source_reference": "Goblet of Fire, Chapter 1",
+    "source_quote": "Something was slithering toward him along the dark corridor floor, and as it drew nearer to the sliver of firelight, he realized with a thrill of terror that it was a gigantic snake, at least twelve feet long."
+  }
+]

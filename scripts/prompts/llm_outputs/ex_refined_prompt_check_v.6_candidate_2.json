@@ -1,0 +1,77 @@
+[
+  {
+    "question_type": "Explanatory (Why/How)",
+    "category": "Social & Systemic",
+    "difficulty": "Medium",
+    "question": "In Little Hangleton, why were the Muggle police forced to release Frank Bryce after initially arresting him for the murder of the Riddle family?",
+    "answer": "The police had to release Frank because the official medical report concluded that the three Riddles showed no signs of physical harm, such as poison or injury. With no discernible cause of death, there was no proof that a murder had even been committed.",
+    "answer_variations": [
+      "Frank was let go because the coroner's examination found the Riddles to be in perfect health, apart from being dead, leaving the authorities with no evidence of a crime.",
+      "The authorities were compelled to free Frank Bryce because the doctors' report was baffled, stating the bodies were completely unharmed, which meant there was no proof of foul play.",
+      "Because the autopsy could not determine a cause of death and found no physical trauma on the Riddle family's bodies, the police had no grounds to hold Frank Bryce.",
+      "Frank was released from custody because the medical report found no evidence of poison, stabbing, or any other harm, meaning the police could not prove a murder had occurred."
+    ],
+    "source_reference": "Goblet of Fire, Chapter 1",
+    "source_quote": "A team of doctors had examined the bodies and had concluded that none of the Riddles had been poisoned, stabbed, shot, strangles, suffocated, or (as far as they could tell) harmed at all. In fact (the report continued, in a tone of unmistakable bewilderment), the Riddles all appeared to be in perfet health -- apart from the fact that they were all dead... As there was no proof that the Riddles had been murdered at all, the police were forced to let Frank go."
+  },
+  {
+    "question_type": "Explanatory (Why/How)",
+    "category": "Character Arc/Motive",
+    "difficulty": "Hard",
+    "question": "In the Riddle House, why did Lord Voldemort explain that he had to kill Bertha Jorkins rather than simply modify her memory?",
+    "answer": "Voldemort explained that Memory Charms are not foolproof and can be broken by a powerful wizard, a fact he had proven when he questioned Bertha herself. Therefore, killing her was the only certain way to prevent the valuable information she possessed from being discovered.",
+    "answer_variations": [
+      "He chose to murder her because he knew from his own interrogation of her that a strong wizard could undo a Memory Charm, making it an unreliable method of silencing her.",
+      "Voldemort stated that killing Bertha was necessary because memory modification was not a secure option, as he had demonstrated that such charms could be broken.",
+      "His reasoning was that a powerful wizard could break a Memory Charm, so killing her was the only permanent solution to ensure her knowledge remained secret.",
+      "He killed Bertha Jorkins because he had already broken through her existing memory charms and knew it was not a secure way to protect the information he had extracted from her."
+    ],
+    "source_reference": "Goblet of Fire, Chapter 1",
+    "source_quote": "We could have modified her memory? But Memory Charms can be broken by a powerful wizard, as I proved when I questioned her. It would be an insult to her memory not to use the information I extracted from her, Wormtail."
+  },
+  {
+    "question_type": "Explanatory (Why/How)",
+    "category": "Magical Theory/Lore",
+    "difficulty": "Medium",
+    "question": "How was Sirius Black able to escape from the fortress of Azkaban without the use of Dark Magic?",
+    "answer": "Sirius escaped by transforming into his dog Animagus form. In this state, his emotions were less complex and human, which confused the Dementors who sense people through their feelings. Being very thin, he was then able to slip past them and through the bars of his cell when the door was opened to deliver food.",
+    "answer_variations": [
+      "He got out by turning into a dog. The Dementors couldn't properly sense his simpler, animal emotions, which allowed him to sneak by them and escape through the cell bars due to his emaciated state.",
+      "His Animagus ability was the key; as a dog, his feelings were less human, which baffled the Dementors. This confusion allowed him to slip out of his cell and through the bars while he was very skinny.",
+      "By becoming a dog, his emotional state was harder for the Dementors to detect. This allowed him to pass them unnoticed and, because he was so thin, squeeze through the bars of his cell.",
+      "His escape was possible because he could transform into a dog. The Dementors, who feed on complex emotions, were confused by his animal state, enabling him to slip past them and out of his cell."
+    ],
+    "source_reference": "Prisoner of Azkaban, Chapter 19",
+    "source_quote": "I could transform in my cell... become a dog. Dementors can't see, you know.... They feel their way toward people by feeding off their emotions.... They could tell that my feelings were less -- less human, less complex when I was a dog... So, one night when they opened my door to bring food, I slipped past them as a dog.... I was thin, very thin... thin enough to slip through the bars...."
+  },
+  {
+    "question_type": "Explanatory (Why/How)",
+    "category": "Character Arc/Motive",
+    "difficulty": "Medium",
+    "question": "In the Shrieking Shack, why did Harry stop Sirius Black and Remus Lupin from killing Peter Pettigrew?",
+    "answer": "Harry intervened because he believed his father, James Potter, would not have wanted his best friends to become killers, even for revenge against the person who betrayed them. He insisted they hand Pettigrew over to the Dementors instead.",
+    "answer_variations": [
+      "He stopped them because he didn't think his dad would have wanted his friends to commit murder just for Pettigrew's sake.",
+      "Harry's motive for saving Pettigrew was to honor his father's memory, believing James wouldn't have wanted his friends to become murderers.",
+      "He prevented the murder because he concluded that his father would not have approved of his friends killing Pettigrew, preferring justice over personal vengeance.",
+      "He reasoned that his father would not have wanted his best friends to taint themselves by becoming killers, so he stepped in to save Pettigrew."
+    ],
+    "source_reference": "Prisoner of Azkaban, Chapter 19",
+    "source_quote": "I'm not doing this for you. I'm doing it because -- I don't reckon my dad would've wanted them to become killers -- just for you."
+  },
+  {
+    "question_type": "Explanatory (Why/How)",
+    "category": "Plot Event",
+    "difficulty": "Easy",
+    "question": "How did Sirius Black, while imprisoned in Azkaban, discover that Peter Pettigrew was alive and at Hogwarts?",
+    "answer": "Cornelius Fudge, during an inspection of Azkaban, gave Sirius his copy of the Daily Prophet. On the front page was a picture of the Weasley family in Egypt, and Sirius immediately recognized Peter in his rat form, Scabbers, sitting on Ron's shoulder.",
+    "answer_variations": [
+      "He found out when Fudge gave him a newspaper during a visit to the prison. A photograph of Ron Weasley's family featured Peter as the rat Scabbers, and Sirius knew him at once.",
+      "Sirius learned Pettigrew's location from a Daily Prophet newspaper provided by Fudge. He saw Peter, disguised as Scabbers the rat, in a picture of the Weasley family.",
+      "During a visit, the Minister for Magic gave Sirius his newspaper, which contained a photo of the Weasleys. Sirius instantly identified Pettigrew in his Animagus form on Ron's shoulder.",
+      "He saw a picture of the Weasley family in a copy of the Daily Prophet that Fudge had left with him. In the photo, he recognized Peter Pettigrew disguised as Ron's pet rat."
+    ],
+    "source_reference": "Prisoner of Azkaban, Chapter 19",
+    "source_quote": "Fudge,\" said Black. \"When he came to inspect Azkaban last year, he gave me his paper. And there was Peter, on the front page on this boy's shoulder... I knew him at once... how many times had I seen him transform? And the caption said the boy would be going back to Hogwarts... to where Harry was..."
+  }
+]

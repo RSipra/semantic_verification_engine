@@ -1,0 +1,80 @@
+Your task is to act as an expert trivia creator. Analyze the provided ---SOURCE TEXT--- and generate a set of unique, high-quality Explanatory (Why/How) questions.
+
+Your primary goal is to generate a **diverse set** of high-quality, insightful questions. **Prioritize variety over common knowledge**; actively seek out significant, non-trivial, and **less-obvious facts** from the text.
+
+Your secondary goal is to generate 4-6 questions. If you can only find 1 or 2 high-quality "trivia kernels" in the provided text, generate only those. If the text contains no suitable facts for this question type, you MUST return an empty JSON array [].
+
+You must follow the instructions and format precisely. Use the ---EXAMPLES--- provided to understand the desired quality and structure.
+
+**Instructions:**
+
+For each question, follow this process:
+1.  Choose a `category` from this list: ['Plot Event', 'Character Arc/Motive', 'Magical Theory/Lore', 'Social & Systemic'].
+2.  [KERNEL SELECTION] Identify a specific fact ("Trivia Kernel") from the text that fits your chosen category. **This is the most important step**. To ensure variety, do not just select the 4-6 most obvious plot points. Your goal is to find different types of kernels, such as:
+    - The specific *reason* for a character's decision.
+    - A subtle *motivation or feeling* that is explained.
+    - A non-obvious piece of *background lore* or *magical theory*.
+3.  [CONTEXT] Formulate a high-quality question. The "question" string MUST be 100% standalone. It must include all necessary context, such as character names or locations (e.g., "In the Riddle House..."), so that a player can understand it without reading the source text. Do NOT assume the player knows what chapter this is from.
+    - **Do not** reveal the answer within the question.
+    - **Prioritize Brevity and Focus:** The question must be as concise as possible. **Do not** include background information or narrative summary that is not essential to asking the question. Focus only on the core fact being tested.
+4.  Write a succinct answer that directly responds to the question.
+5. [S-BERT DIVERSITY] Generate 4 answer_variations. This is critical for our S-BERT training. To be "lexically diverse" but semantically identical, you MUST prioritize using synonyms or alternative phrasings for the key *nouns* and *verbs* in the main answer.
+    - Good Example: If the answer uses "Killing Curse," a variation should use "Avada Kedavra."
+    - Good Example: If the answer uses "Albus Dumbledore," variations should use "Professor Dumbledore", "Dumbledore" or "the Headmaster."
+    - Bad Example: Just changing "was" to "is" or "the" to "a".
+6. Assess and assign a difficulty from this list: ['Easy', 'Medium', 'Hard'].
+7. [VALID SOURCE OPTIONS] You MUST select the one correct source for your question from the following list: {valid_source_list}
+8. [SOURCE QUOTE] You MUST extract the exact, verbatim sentence(s) from the ---SOURCE TEXT--- that serve as the ground truth. DO NOT rephrase. DO NOT summarize. DO NOT write your own text.
+
+**Output Format:**
+
+Provide the output as a single, valid JSON array. Each object in the array must contain:
+- "question_type": This should always be "Explanatory (Why/How)".
+- "category": The category you chose in Step 1.
+- "difficulty": The difficulty you assigned in Step 7.
+- "question": The well-phrased standalone question from Step 3.
+- "answer": A **succinct and clear** explanation, **typically 1-3 sentences**, that fully answers the question.
+- "answer_variations": An array of 4 **lexically diverse** phrasings of the answer.
+- "source_reference": "[The single, exact string you chose from the VALID SOURCE OPTIONS list]"
+- "source_quote": "[The exact sentences from the --SOURCE TEXT-- used as the ground truth to create the question]
+
+---EXAMPLES---
+[
+  {{
+    "question_type": "Explanatory (Why/How)",
+    "category": "Character Arc/Motive",
+    "difficulty": "Hard",
+    "question": "Why did Albus Dumbledore put on Marvolo Gaunt’s ring even though he suspected it was cursed?",
+    "answer": "Because the ring contained the Resurrection Stone, and he was overcome with the desire to see his lost family again, especially his sister, Ariana.",
+    "answer_variations": [
+      "The ring held the Resurrection Stone, and Dumbledore was momentarily tempted by the profound longing to see his deceased family.",
+      "It was a moment of profound personal weakness; his desire to use the Resurrection Stone to reunite with his family overrode his caution.",
+      "His decision was driven by the overwhelming hope of seeing his sister, Ariana, again through the power of the Resurrection Stone.",
+      "He wore the ring due to an intense, grief-driven desire to see his family again, as it contained the Resurrection Stone."
+    ],
+    "source_reference": "Deathly Hallows, Chapter 35",
+    "source_quote": "I quite forgot that it was now a Horcrux, that the ring was sure to carry a curse. I picked it up, and I put it on, and for a second I imagined that I was about to see Ariana, and my mother, and my father, and to tell them how very, very sorry I was"
+  }},
+  {{
+    "question_type": "Explanatory (Why/How)",
+    "category": "Social & Systemic",
+    "difficulty": "Medium",
+    "question": "Why were the Muggle police and doctors baffled by the cause of the Riddle family's deaths?",
+    "answer": "They were baffled because the Riddles were killed by the Killing Curse, which leaves no physical marks. The official coroner's report, in a state of bewilderment, concluded the bodies were in perfect health, apart from being dead.",
+    "answer_variations": [
+      "The deaths were a mystery to Muggles because they were victims of a magical curse that is untraceable by non-magical means, leaving their bodies unharmed.",
+      "The police were confused because the Killing Curse, the cause of death, leaves no evidence of poison, injury, or any physical harm that Muggle science could detect.",
+      "Because the Riddles were murdered with the Avada Kedavra curse, their bodies showed no signs of trauma, leading Muggle authorities to conclude they were inexplicably dead.",
+      "The cause of death was magical; the curse used to kill them left no trace, and medical examinations revealed no explanation for why three healthy people had suddenly died."
+    ],
+    "source_reference": "Goblet of Fire, Chapter 1",
+    "source_quote": "A team of doctors had examined the bodies and had concluded that none of the Riddles had been poisoned, stabbed, shot, strangled, suffocated, or (as far as they could tell) harmed at all. In fact (the report continued, in a tone of unmistakable bewilderment), the Riddles all appeared to be in perfect health — apart from the fact that they were all dead."
+    }}
+]
+---END EXAMPLES---
+
+Now, using the ---SOURCE TEXT--- below to generate your questions.
+
+---SOURCE TEXT---
+{source_text}
+---END SOURCE TEXT---

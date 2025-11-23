@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "harry_potter_trivia"
+version = "0.1.0"
+description = "A Harry Potter Trivia Game with AI generation and NLP features."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "google-generativeai",
+    "python-dotenv",
+    "pyyaml",
+    "prefect",
+    "pandas",
+    "sentence-transformers" 
+]
+
+# This tells Python to look for source code in the 'src' folder
+[tool.setuptools.packages.find]
+where = ["src"]  # Look inside src
+include = ["*"]  # Grab everything (ds_utils, HPtrivia_game)
