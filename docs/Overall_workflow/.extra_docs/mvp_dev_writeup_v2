@@ -1,0 +1,57 @@
+The original plan? Build a quick, simple CLI-based MVP (that’s short for Command-Line Interface Minimum Viable Product—a bit of a mouthful). I started by jotting down the game flow in high-level steps and began translating it into code.
+
+The idea was to keep it scrappy: a few basic classes in a single file to handle everything—from loading data to running the game loop. But it quickly got messy. Logic started overlapping, responsibilities blurred, and I realized it needed more structure. That’s when I turned to Separation of Concerns (SoC) and started exploring the Model-View-Controller (MVC) pattern.
+
+### Why MVC?
+
+While a single-file prototype might’ve been faster, I made a conscious decision to use the MVC pattern, especially with the long-term goals of the project in mind. Sure, it added a bit of upfront effort—more planning, more thinking—but it laid the groundwork for scalability and polish later on.
+
+**The MVC pattern, in a nutshell:**
+- Model handles the core logic and data—no idea how it's displayed.
+- View is the user interface,it presents data and handles user input/output.
+- Controller connects the two. It receives input from the View, updates the Model, and then updates the View with the results.
+
+![Generic MVC logic](https://media.geeksforgeeks.org/wp-content/uploads/20240219101004/MVC-Design-Pattern-.webp)
+*General layout of an MVC app*
+
+The MVC pattern works well for the game because:
+
+1. Keeps the responsibilities clear by isolate the complex logic into different classes by their tasks. The "heavy-lifting" is done by the \`GameController\` (game logic), \`Trivia\` (data loading and verification), and eventually \`Question\` (semantic answer checking). The \`View\` class logic is relatively straight forward with the CLI.
+2. It allows the project to be adaptable: 
+    - Swapping out the CLI for a web interface in Phase 3? Just update the View.
+    - Adding semantic answer-checking? Only modify the Question class.
+3. It makes the game states more manageable. The trivia game has a lot of states to track  (player's score, chances left, which question is next, whether the game is over....). MVC gives each of those states a home.
+
+### How the MVP took shape (one iteration at a time)
+
+With the pattern in mind, I started with three classes:
+- A Question module to load and store trivia questions
+- A Player class to track player details
+- A Controller to run the game
+
+It was a start but the boundaries were still fuzzy and the responsibilities were overlapping. So the real journey began and things began evolving:
+
+- **Iteration 1: I needed a \`Trivia\` class**: I split \`Trivia\` out from \`Question\`. Its job: load the dataset, clean it, and return a random subset of questions. The \`Question\` class then only needs to focus on individual question objects and answer validation.
+- **Iterations 2 & 3: Turning \`Introduction\` into a full \`View\`**: Originally, Introduction was just for setting up the player and welcoming them. But I noticed the same pattern in every stage of the game—intro, gameplay, end screen. They all needed to display messages and get input. So Introduction became GameView, now responsible for all CLI interaction
+- **Iteration 4: The side quests**: 
+    - Side Quest 1 (\`utils_path.py\`): I needed a reliable way to find files across environments. This utility module started small but became a go-to helper across the project(s).
+    - Side Quest 2 (data cleaning & EDA): I cleaned the raw trivia data in Jupyter notebooks and took a deep dive into the dataset and standardized it for use in the game. It wasn’t glamorous, but it saved me countless hours down the line and made the data ingestion pipeline rock-solid.
+- **Iterations 5–8: bringing it all together**: Once the core pieces were in place, it was time to polish:
+    - Built out the GameController: I built out the game loop, tied together the Trivia model and the GameView, and managed all transitions between game states.
+    - Upgraded the CLI with \`rich\`: Replaced boring print() statements with styled, interactive output using the rich library. Huge improvement in user experience.
+    - Created \`constants.py\`: Centralized enums (like Rank, House, House_Styles), plus magic values and a custom \`UserWantsToQuit\` exception. One place for all the shared stuff -> easier to maintain.
+    - Graceful exits with \`UserWantsToQuit\` Exception: Any time the player types "quit", the game now exits cleanly from anywhere in the app.
+    - Manual End-to-End Run: Finally, I played the whole thing through—intro, gameplay, end screen—to make sure everything worked together smoothly.
+
+### The final architecture: clean, modular, and MVC-inspired
+
+What started as a single-file game idea evolved into a clean, modular codebase with clear separation of concerns:
+
+- \`Trivia\` (Model) handles the dataset.
+- \`Player\` (Model) stores the player info.
+- \`GameView\` (View) handles all the input and output.
+- \`GameController\` (Controller) manages logic and game state.
+- \`Constants\` (infrastructure) holds enums, magic values, and quit exception.
+- \`main.py\` wires everything up by creating instances and injecting dependencies
+
+![Phase 1 CLI MVP software architecture based on the MVC pattern](/images/mvp_architecture.svg)

@@ -1,0 +1,39 @@
+{
+  "project_name": "Harry Potter Trivia Game",
+  "last_updated": "2025-08-29T11:51:00-04:00",
+  "current_phase": "MVP Refinement & Technical Debt Pay-down",
+  "active_sprint": {
+    "sprint_id": "DQ-1",
+    "sprint_goal": "Replace the simplistic 'is_numeric' column with a more robust, multi-class 'answer_type' column ('text', 'numeric', 'year', 'date') to enable advanced answer-checking logic.",
+    "status": "Done, 17 Sept 2025"
+  },
+  "next_steps": [
+    {
+      "step_id": "DQ-1.1",
+      "description": "Create and unit test the 'classify_answer_type' helper function in a self-contained way.",
+      "status": "Pending"
+    },
+    {
+      "step_id": "DQ-1.2",
+      "description": "Apply the new function to the baseline static dataset to create the 'answer_type' column, remove 'is_numeric', and save as a new version.",
+      "status": "Blocked by DQ-1.1"
+    },
+    {
+      "step_id": "DQ-1.3",
+      "description": "Integrate the 'classify_answer_type' function into the data ingestion pipeline for all new questions.",
+      "status": "Blocked by DQ-1.2"
+    }
+  ],
+  "key_decisions_log": [
+    {
+      "date": "2025-08-29",
+      "decision": "Decided to implement the 'answer_type' feature now using a rule-based approach, rather than waiting for Phase 2 with Sentence-BERT, as it's critical for the MVP's answer-checking logic and Sentence-BERT is the wrong tool for syntactic classification."
+    }
+  ],
+  "future_work_log": {
+    "phase_2_nlp": "The full Sentence-BERT model will be used for semantic tasks like similarity scoring and semantic answer checking, not for data type classification."
+  },
+  "schema_notes": {
+    "main_dataframe": "The 'is_numeric' boolean column is now deprecated and will be replaced by the 'answer_type' categorical column."
+  }
+}
