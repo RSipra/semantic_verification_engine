@@ -43,7 +43,6 @@ BOOK_TEXT = DATA_DIR / "06_books"
 PROMPTS_DIR = SCRIPTS_DIR / "prompts"
 
 # Pipeline Reporting & Observability Paths
-# (Level 07 in your data structure)
 PIPELINE_LOGS_ROOT = DATA_DIR / "07_pipeline_logs"
 
 MANIFESTS_DIR = PIPELINE_LOGS_ROOT / "manifests"
@@ -51,7 +50,6 @@ RUNS_DIR = PIPELINE_LOGS_ROOT / "runs"
 LOGS_DIR = PIPELINE_LOGS_ROOT / "logs"
 
 # Generated Content
-# (Level 08 in your data structure)
 GENERATED_QUESTIONS_DIR = DATA_DIR / "08_generated"
 
 print("✅ Notebook config loaded.")
