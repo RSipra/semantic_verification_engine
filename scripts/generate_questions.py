@@ -1,16 +1,24 @@
 """
 Trivia question generation pipeline 
 
-pipeline flow: (TODO: update to match script)
+Usage:
+    # Run full pipeline
+    $ python scripts/generate_questions.py
+
+    # Run specific tasks only
+    $ python scripts/generate_questions.py --tasks MCQ_Generation FR_Generation
+
+Pipeline Flow: 
+
 1. initiate at start:
-    - Save Run Manifest (Task).
     - generate pipeline_run_id, run_timestamp
-    - initialize run_stats dict (task)
+    - configure logger to save to disk as well (task)
     - configure api (task)
-    
+    - Save Run Manifest (Task).
+    - initialize run_stats dict (task)
+
 2. Loop for strategy (EX, MCQ, FR)
     - generate batch_id
-    - create strategy_batch_data (task)
     - measure template tokens once (task)
     - retrieve chapters using `get_chapters` (task)
     - Initialize consecutive_failures = 0.
@@ -19,23 +27,30 @@ pipeline flow: (TODO: update to match script)
     - Check circuit breaker: if `consecutive_failures >= 5: break`
     - generate job_id 
     - prepare_prompt (task)
+    
     try/except block
-        4. make api call (task) - retries handled by task 
-        5. parse and save (task)
-            5.1. layer 1 (helper): check if api call accepted or blocked and log feedback in metadat 
-            5.2. layer 2 (helper): calculate the tokens breakdown for the candidate
-            5.3. layer 3 (helper)process and save the resposne output in jsonl file
+        4. make api call (task) - retries handled by task
+        5. create strategy_batch_data (static data) with chapter names and job_id (dynamic)
+        6. parse and save (task)
+            6.1. layer 1 (helper): check if api call accepted or blocked and log feedback in metadata (safety)
+            6.2. layer 2 (helper): calculate tokens breakdown for the job/response
+            6.3. layer 3 (helper): process candidates, enrich with metadata, save to jsonl
+        
         - On Success: consecutive_failures = 0. Update run_stats.
         - On Failure: consecutive_failures += 1. Log Error.
-    6. Rate Limit Sleep: time.sleep(strategy.delay).
-7. wrap-up pipeline run
-    - summary report
-    - results file saved
+    
+    7. Rate Limit Sleep: time.sleep(strategy.delay).
+
+8. wrap-up pipeline run
+    - summary report (artifact) - immediate summary markdown report for user in terminal
+    - results file saved (json) / run log (task) - results report saved to file
 
 """
 import os
 from datetime import datetime, timezone
 import time
+import argparse
+import logging
 from pathlib import Path
 from typing import List, Optional, Dict, Any, Tuple
 import json
@@ -50,12 +65,19 @@ from ds_utils.schemas import StandardQuestion, MCQuestion
 ## CONSTANTS
 
 # Paths
-PROMPTS_DIR = nb_cfg.SCRIPTS_DIR / "prompts"
-OUTPUT_DIR = nb_cfg.DATA_DIR / "08_generated"
-OUTPUT_DIR.mkdir(parents=True, exist_ok=True) # Ensure output exists
+PROMPTS_DIR = nb_cfg.PROMPTS_DIR
+OUTPUT_DIR = nb_cfg.GENERATED_QUESTIONS_DIR
+# Reporting Paths (centralized)
+PIPELINE_LOGS_ROOT = nb_cfg.PIPELINE_LOGS_ROOT
+MANIFESTS_DIR = nb_cfg.MANIFESTS_DIR
+RUNS_DIR = nb_cfg.RUNS_DIR 
+LOGS_DIR = nb_cfg.LOGS_DIR
+# safety check: ensure directories that will be written to exist immediately
+for d in [OUTPUT_DIR, MANIFESTS_DIR, RUNS_DIR, LOGS_DIR]:
+    d.mkdir(parents=True, exist_ok=True)
 
 # Standardized unique identifier for this question_gerantion script with version
-PIPELINE_ID = "pipe_q_gen_v00" 
+PIPELINE_ID = "pipe_q_gen_v00"
 
 # Predefined models for each question type (model-per-type based on experimentation)
 GENERATION_STRATEGY =[
@@ -109,9 +131,32 @@ def init_run_stats() -> dict:
         "chapters_processed": 0,
         "models_used": set()
     }
+    
+@task # filter for flexibility in case not planning to run all question types in GENERATION_TYPE (default is all)
+def filter_strategy(strategy: List[Dict], tasks_to_run: Optional[List[str]] = None) -> List[Dict]:
+    """
+    Selects specific generation tasks to run. 
+    If tasks_to_run is None or empty, returns the full strategy (Default).
+    """
+    logger = get_run_logger()
+    
+    # Default: run everything
+    if not tasks_to_run:
+        logger.info("🌍 No filter applied. Running FULL strategy.")
+        return strategy
+    
+    # filter: select specific tasks
+    active_strategy = [config for config in strategy if config['task_name'] in tasks_to_run]
+    
+    # Validation: Warn if nothing matched (e.g. typo)
+    if not active_strategy:
+        logger.warning("⚠️ Filter '%s' matched 0 tasks! Check your spelling.",tasks_to_run)
+        return []
+        
+    logger.info(f"🎯 Strategy filtered to {len(active_strategy)} tasks: {tasks_to_run}")
+    return active_strategy
 
-#configure the API
-@task
+@task  #configure the API
 def configure_api(config_path:str) -> None:
     """Loads environment variables and configures the Gemini API."""
     load_dotenv(dotenv_path=config_path)
@@ -119,8 +164,50 @@ def configure_api(config_path:str) -> None:
     if not api_key:
         raise ValueError("Error: GEMINI_API_KEY not found in the config file.")
     genai.configure(api_key=api_key)  # type: ignore
-
+    
 @task
+def save_run_manifest(run_id: str, pipeline_id: str, strategy: list, target_books: list, chapters: list) -> None:
+    """
+    Saves the execution plan (*recipe*) before execution starts. This is to help distinguis 
+    between attempted runs (e.g aborted, crashed) vs. successful runs (with full reporting, artifacts)
+    
+    Args:
+        run_id: The unique UUID for this pipeline execution.
+        pipeline_id: The versioned identifier for this script logic (e.g., 'pipe_q_gen_v0').
+        strategy: The list of generation configs (models, prompts) to be executed.
+        target_books: The specific list of Book enums targeted in this run.
+    """
+    # path to save run manifest to
+    manifest_dir = MANIFESTS_DIR
+    
+    # Make strategy serializable (Path -> str)
+    serializable_strategy = []
+    for config in strategy:
+        clean = config.copy()
+        if isinstance(clean.get('prompt_file'), Path):
+            clean['prompt_file'] = clean['prompt_file'].name
+        # Remove schema class from log (not serializable)
+        clean.pop('json_response_schema', None)
+        serializable_strategy.append(clean)
+
+    manifest = {
+        "identifiers": {"run_id": run_id, "pipeline_id": pipeline_id},
+        "timestamp_start": datetime.now(timezone.utc).isoformat(),
+        "scope": {
+            "target_books": [b.name for b in target_books],
+            "total_chapters": len(chapters), 
+            "chapter_files": [p.name for p in chapters] 
+        },
+        "strategy": serializable_strategy
+    }
+    
+    filename = f"{pipeline_id}_{run_id}_manifest.json"
+    with open(manifest_dir / filename, 'w', encoding='utf-8') as f:
+        json.dump(manifest, f, indent=2)
+        
+    get_run_logger().info("Manifest saved: %s", filename)
+
+@task # get list of Paths for all the chapters for select book ready for formatting the prompt template per run
 def get_chapters(target_books: list[Book], target_book_folder: str = "06_books") -> List[Path]:
     """
     Scans the target folder and returns sorted Paths for all chapters 
@@ -143,8 +230,7 @@ def get_chapters(target_books: list[Book], target_book_folder: str = "06_books")
     relevant_file_paths = [p for p in books_dir.iterdir() if p.name.startswith(prefixes)]
     return sorted(relevant_file_paths)
 
-# prepare prompt template + text insersts (chapters for ground, chapter reference)
-@task
+@task  # prepare prompt template + text insersts (chapters for ground, chapter reference)
 def prepare_prompt(chapter_path: List[Path], prompt_path:Path) -> str:
     """
     Reads a batch of chapter files and a prompt template to construct the final prompt.
@@ -217,7 +303,7 @@ def measure_template_tokens(model_name: str, prompt_path: Path) -> int:
 # To handle the 429 error caused by sliding window (exceeding RPM limit for free-tier) 
 # -> pipeline retries with larger delays.
 @task(retries=5, retry_delay_seconds=[30, 60, 90, 120, 180])
-def make_api_call(final_prompt:str, config: dict):  
+def make_api_call(final_prompt:str, config: dict):
     """
     Calls Gemini with built-in retries and specific generation parameters.
     
@@ -343,10 +429,10 @@ def check_safety_and_feedback(response, full_metadata: Dict[str, Any], job_id: s
     return True
 
 # response output processing helper: calculate token counts
-def calculate_token_metrics(response, full_metadata: dict, template_token_count: int) -> int:
+def calculate_token_metrics(response, full_metadata: dict, template_token_count: int) -> Tuple[int, int, int]:
     """
     response processing layer 2: accounting. Updates metadata with granular token
-    breakdown. Returns total billed tokens.
+    breakdown. Returns (Total, Input, Output) counts.
     """
     # Extract raw numbers from the API
     usage = getattr(response, 'usage_metadata', None)
@@ -367,7 +453,7 @@ def calculate_token_metrics(response, full_metadata: dict, template_token_count:
         "4_output_candidates": api_output,
         "5_hidden_processing": processing_tokens
     }
-    return api_total_billed
+    return api_total_billed, api_total_input, api_output
 
 # response output helper: parse output and json output from the API call (helper)
 def process_and_save_candidates(job_id: str, response, output_file: Path,
@@ -429,35 +515,48 @@ def process_and_save_candidates(job_id: str, response, output_file: Path,
 # Process and save questions from candidates as individual entries in jsonl file
 @task
 def parse_and_save(job_id: str, response, output_file: Path, full_metadata: Dict[str,Any], 
-                   template_token_count: int) -> Tuple[int, int]:
+                   template_token_count: int) -> Tuple[int, int, int, int]:
     """
     Orchestrator task for the ETL processing of model response. it uses helper methods to:
     1. Checks safety (forensics) - was API call suceessful or blocked
     2. Calculates token counts (accounting) for the job (all candidates) 
     3. Parses individual questions_data dict and saves the data as jsonl (core logic)
+    
+    Returns: Tuple of (saved_count, input_tokens, output_tokens), where:
+    saved_count : number of questions generated and saved
+    input_tokens: total input tokens for the job (prompt template + chapters)
+    output_tokens: output token counts (single candidate if run has mulitple)
     """
     logger = get_run_logger()
-    
+
     # Step 1: forensics
     is_safe = check_safety_and_feedback(response, full_metadata, job_id, logger)
-    
-    # If step 1 failed (Safety block or empty) calculate tokens if possible,
-    # and abort to be safe.
-    if not is_safe:
-        # Try to grab tokens anyway for logging purposes, defaulting to 0
-        billed = calculate_token_metrics(response, full_metadata, template_token_count)
-        return 0, billed
 
-    # Step 2: accounting (token counts)
-    total_billed = calculate_token_metrics(response, full_metadata, template_token_count)
+    # initialize variablest
+    saved_count, t_in, t_out = 0, 0, 0
     
+    # Step 2: accounting (token counts from helper)
+    total_billed, t_in, t_out = calculate_token_metrics(response, full_metadata, template_token_count)
+    
+    # check if api call was blocked before proceeding (SAFETY, or other reason response is empty) 
+    if not is_safe:
+            # Return 0 saved, but still track the cost
+            return 0, total_billed, t_in, t_out
+
     # Step 3: core logic
     saved_count = process_and_save_candidates(job_id, response, output_file, full_metadata, logger)
-    
+
     if saved_count > 0:
-        logger.info(f"✅ [job id: {job_id}] Saved {saved_count} questions. Tokens: {total_billed}")
-        
-    return saved_count, total_billed
+        logger.info("✅ [job id: %s] Saved %s questions. Total tokens: %s",
+                    job_id, saved_count, total_billed)
+    
+    else: # explicitly log the zero question failure event + the cost incurred 
+          # (call not blocked, but no questions to parse e.g. missing '[' delimiters], 
+          # MAX_TOKENS hit in middle of first question, etc)
+        logger.warning("⚠️ [job id: %s] 0 questions saved. Tokens wasted: %s", 
+                       job_id, total_billed)    
+
+    return saved_count, total_billed, t_in, t_out,
 
 # placeholder for cost esmtimate helper if needed for later dataset expansion
 def estimate_run_cost(total_input: int, total_output: int, models_used: list) -> float:
@@ -477,35 +576,6 @@ def estimate_run_cost(total_input: int, total_output: int, models_used: list) ->
     # ... calculation logic ...
 
     return 0.0
-
-@task
-def save_run_manifest(run_id: str, pipeline_id: str, strategy: list, target_books: list) -> None:
-    """Saves the 'Recipe' before execution starts."""
-    manifest_dir = nb_cfg.DATA_DIR / "logs" / "manifests"
-    manifest_dir.mkdir(parents=True, exist_ok=True)
-    
-    # Make strategy serializable (Path -> str)
-    serializable_strategy = []
-    for config in strategy:
-        clean = config.copy()
-        if isinstance(clean.get('prompt_file'), Path):
-            clean['prompt_file'] = clean['prompt_file'].name
-        # Remove schema class from log (not serializable)
-        clean.pop('json_response_schema', None)
-        serializable_strategy.append(clean)
-
-    manifest = {
-        "identifiers": {"run_id": run_id, "pipeline_id": pipeline_id},
-        "timestamp_start": datetime.now(timezone.utc).isoformat(),
-        "target_books": [b.name for b in target_books],
-        "strategy": serializable_strategy
-    }
-    
-    filename = f"{pipeline_id}_{run_id}_manifest.json"
-    with open(manifest_dir / filename, 'w', encoding='utf-8') as f:
-        json.dump(manifest, f, indent=2)
-        
-    get_run_logger().info("📜 Manifest saved: %s", filename)
 
 # generate a completion report
 @task
@@ -563,8 +633,7 @@ def save_run_completion(run_id: str, run_stats: dict) -> None:
     This acts as the 'Receipt' proving the run finished successfully.
     """
     # Save in the same logs folder
-    log_dir = nb_cfg.DATA_DIR / "07_logs" / "runs"
-    log_dir.mkdir(parents=True, exist_ok=True)
+    runs_dir = RUNS_DIR
     
     completion_data = {
         "run_id": run_id,
@@ -580,19 +649,127 @@ def save_run_completion(run_id: str, run_stats: dict) -> None:
         "models_used": list(run_stats.get('models_used', []))
     }
     
-    file_path = log_dir / f"run_result_{run_id}.json"
+    file_path = runs_dir / f"run_result_{run_id}.json"
     
     with open(file_path, 'w', encoding='utf-8') as f:
         json.dump(completion_data, f, indent=2)
         
     logger = get_run_logger()
-    logger.info("🏁 Run Completion saved to: %s", file_path) 
+    logger.info("🏁 Run Completion saved to: %s", file_path)
 
+@task
+def configure_file_logging(run_id: str):
+    """
+    Attaches a FileHandler to the Prefect logger so logs are saved to disk
+    in addition to the Prefect UI/Database.
+    """
+    log_dir = LOGS_DIR
+    log_dir.mkdir(parents=True, exist_ok=True)
+    
+    log_file = log_dir / f"{run_id}.log"
+    
+    # Get the Prefect logger
+    # Note: We hook into the root 'prefect' logger to capture everything
+    logger = logging.getLogger("prefect")
+    
+    # Create file handler
+    fh = logging.FileHandler(log_file)
+    fh.setLevel(logging.INFO)
+    
+    # Create formatter
+    formatter = logging.Formatter('%(asctime)s | %(levelname)s | %(message)s')
+    fh.setFormatter(formatter)
+    
+    # Add handler to logger
+    logger.addHandler(fh)
+    
+    return str(log_file)
 
 ## ORCHESTRATOR
 
 # @flow(name="Harry Potter Question Generation")
-# def generate_questions_pipeline():
+# def generate_questions_pipeline(
+    # tasks_to_run: Optional[List[str]] = None,
+    # chapter_limit: Optional[int] = None
+    # ):
+"""
+    Orchestrates the end-to-end question generation workflow.
+    
+    This flow manages the lifecycle of a run:
+    1.  **Initialization:** Sets up Run IDs, Logging, and API connections.
+    2.  **Strategy Selection:** Filters the generation strategy based on `tasks_to_run`.
+    3.  **Manifest:** Persists the 'Flight Plan' before execution begins.
+    4.  **Execution:** Loops through strategies (EX, MCQ, FR) and chapters (Book 3, 4, 7).
+    5.  **Reporting:** Generates artifacts and logs the final results.
+
+    Args:
+        tasks_to_run (List[str], optional): A list of specific task names to execute. 
+            If None (default), ALL defined strategies in `GENERATION_STRATEGY` are run.
+            Valid options: ["EX_Generation", "MCQ_Generation", "FR_Generation"]
+
+    Examples:
+        >>> # Run the full pipeline (All Question Types)
+        >>> generate_questions_pipeline()
+
+        >>> # Run ONLY Multiple Choice Questions
+        >>> generate_questions_pipeline(tasks_to_run=["MCQ_Generation"])
+        
+        >>> # Run EX and FR, skipping MCQ
+        >>> generate_questions_pipeline(tasks_to_run=["EX_Generation", "FR_Generation"])
+    """
+    
+    # A. INITIALIZATION
+    # run_id = f"run_{datetime.now().strftime('%Y%m%d')}_{str(uuid.uuid4())[:8]}"
+    # pipeline_id = PIPELINE_ID
+    # run_timestamp = datetime.now(timezone.utc).isoformat()
+    
+    # # ... logging setup ...
+    
+    # # ... api setup ...
+    
+    # # B. STRATEGY SELECTION (The New Step)
+    # # We do this EARLY so the Manifest reflects exactly what will run
+    # active_strategy = filter_strategy(GENERATION_STRATEGY, tasks_to_run)
+    
+    # # Stop if filter resulted in empty list
+    # if not active_strategy:
+    #     get_run_logger().error("🛑 Pipeline aborted: No tasks to run.")
+    #     return
+
+    # # C. SAVE MANIFEST
+    # # Now we pass 'active_strategy', so the file correctly records ONLY what we ran.
+    # target_books = [Book.BOOK_3] 
+    # chapters = get_chapters(target_books)
+    
+    # ... get chapters ...
+    
+    # # APPLY LIMIT (The Safety Valve)
+    # if chapter_limit:
+    #     logger.info(f"🛑 DEMO MODE: Limiting execution to first {chapter_limit} chapters.")
+    #     chapters = chapters[:chapter_limit]
+    
+    # save_run_manifest(run_id, pipeline_id, active_strategy, target_books)
+    
+    # # ... (rest of flow uses 'active_strategy' instead of GENERATION_STRATEGY) ...
+
+    # # D. THE LOOP
+    # for config in active_strategy:
+    #      # ... same loop logic as before ...
+
+
+
+    # 1. Setup Run ID
+    # run_id = f"run_{datetime.now().strftime('%Y%m%d')}_{str(uuid.uuid4())[:8]}"
+    
+    # # 2. Configure Logging to File (NEW)
+    # log_path = configure_file_logging(run_id)
+    
+    # logger = get_run_logger()
+    # logger.info(f"🚀 Starting Pipeline: {run_id}")
+    # logger.info(f"📄 Logs mirroring to: {log_path}")
+    
+    
+    
     
     # 1. Generate Run ID (e.g., "run_20251119_a1b2c3d4")
     # # run_id = f"run_{datetime.now().strftime('%Y%m%d')}_{str(uuid.uuid4())[:8]}"
@@ -648,6 +825,44 @@ def save_run_completion(run_id: str, run_stats: dict) -> None:
 #             # Pass ALL three to your helper
 #             meta = create_metadata(pipeline_run_id, batch_id, job_id, ...)
 
+            # # Capture 4 values
+                # q_count, t_total, t_in, t_out = parse_and_save(
+                #     job_id, response, output_file, full_meta, template_tokens
+                # )
+                
+                # if q_count > 0:
+                #     consecutive_failures = 0
+                #     run_stats["total_questions"] += q_count
+                    
+                #     # Accumulate EXACT values from API
+                #     run_stats["total_billed"] += t_total 
+                #     run_stats["total_input"] += t_in
+                #     run_stats["total_output"] += t_out
+                # else:
+                #     # Even if we failed to save questions, we still paid for tokens!
+                #     # Optional: You might want to track these as "wasted_tokens"
+                #     run_stats["total_billed"] += t_total 
+                #     consecutive_failures += 1
+
 if __name__ == "__main__":
-    generate_questions_pipeline()
+    # 1. Setup the Argument Parser
+    parser = argparse.ArgumentParser(description="Run the Harry Potter Generation Pipeline.")
+    
+    # 2. Add the '--tasks' argument
+    # For selective GENERATION_STRATEGY runs insted of full execution
+    parser.add_argument(
+        "--tasks", 
+        nargs="+", # Accepts 1 or more values
+        help="List of specific tasks to run (e.g. 'MCQ_Generation'). Default is ALL.",
+        default=None
+    )
+    
+    parser.add_argument("--limit", type=int, help="Limit number of chapters (for testing).")
+    
+    # 3. Parse arguments
+    args = parser.parse_args()
+    
+    # 4. Run the Flow
+    # We pass the list directly to your flow
+    generate_questions_pipeline(tasks_to_run=args.tasks, chapter_limit=args.limit)
     

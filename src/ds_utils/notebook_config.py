@@ -39,4 +39,19 @@ METRICS_DIR = DATA_DIR / "04_metrics"
 FINAL_DATA_DIR = DATA_DIR / "05_final"
 BOOK_TEXT = DATA_DIR / "06_books"
 
+# Prompts Directory
+PROMPTS_DIR = SCRIPTS_DIR / "prompts"
+
+# Pipeline Reporting & Observability Paths
+# (Level 07 in your data structure)
+PIPELINE_LOGS_ROOT = DATA_DIR / "07_pipeline_logs"
+
+MANIFESTS_DIR = PIPELINE_LOGS_ROOT / "manifests"
+RUNS_DIR = PIPELINE_LOGS_ROOT / "runs"
+LOGS_DIR = PIPELINE_LOGS_ROOT / "logs"
+
+# Generated Content
+# (Level 08 in your data structure)
+GENERATED_QUESTIONS_DIR = DATA_DIR / "08_generated"
+
 print("✅ Notebook config loaded.")
