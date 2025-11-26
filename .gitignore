@@ -7,7 +7,7 @@ prompt_costestimate_v0/
 prompt_costestimate_v0.numbers
 
 # Ignore extra documents
-docs/Overall workflow/.extra_docs
+docs/Overall_workflow/.extra_docs
 
 # Ignore token files or sensitive configs
 .env
