@@ -1,26 +1,94 @@
 """
-Trivia question generation pipeline 
+HARRY POTTER TRIVA GAME - Automated Question Generation Pipeline using PREFECT.
+===================================================================================
 
+This module orchestrates the end-to-end flow of generating trivia questions using
+Google's Gemini models (Pro & Flash). It handles API interactions, token accounting,
+data lineage tracking via manifests, and robust error handling.
+
+Key Components:
+    - Model-per-Task Routing (Pro for EX/MCQ, Flash for FR)
+    - Prefect Orchestration (Retries, Logging, Artifacts)
+    - SBERT De-duplication Logic (Integrated via helpers)
+    
 Usage:
-    # Run full pipeline
-    $ python scripts/generate_questions.py
+    **Terminal (CLI):**
+    # Run Full Pipeline:
+    $ python scripts/generate_questions.py      
+    # Run Specific Task:                        
+    $ python scripts/generate_questions.py --tasks MCQ_Generation
+    # Run Demo mode (1 Chapter)       
+    $ python scripts/generate_questions.py --limit 1                    
+    $ python scripts/generate_questions.py --tasks EX_Generation --limit 5
 
-    # Run specific tasks only
-    $ python scripts/generate_questions.py --tasks MCQ_Generation FR_Generation
+    **Python (Notebook/Script):**
+    >>> from scripts.generate_questions import generate_questions_pipeline
+    >>> generate_questions_pipeline()
+    >>> generate_questions_pipeline(tasks_to_run=["EX_Generation"], chapter_limit=1)
 
+**Terminal (CLI):**
+    # 1. Run full pipeline for Book 3
+    $ python scripts/generate_questions.py --books BOOK_3
+    # 2. Run for ALL books
+    $ python scripts/generate_questions.py --books BOOK_3 BOOK_4 BOOK_7
+    # 3. Run specific task for specific book
+    $ python scripts/generate_questions.py --books BOOK_4 --tasks MCQ_Generation
+    # 4. Run specific task, for specific book, for specific chapters
+    $ python scripts/generate_questions.py --books BOOK_4 --tasks FR_Generation --chapters 5 12 22
+    # 5. Run specific task, for specific book, for limited number (x1, first) of chapters (demo mode)
+    $ python scripts/generate_questions.py --books BOOK_3 --tasks MCQ_Generation --limit 1
+    
+
+    **Python (Notebook/Script):**
+    >>> from scripts.generate_questions import generate_questions_pipeline
+    >>> from ds_utils.ds_constants import Book
+    >>> # Run for Book 3, EX type questions only, using first five chapter only
+    >>> generate_questions_pipeline(target_books=[Book.BOOK_3],tasks_to_run=["EX_Generation"], chapter_limit=5 )
+    >>> # Run for Book 3, MCQ type questions only, using chapters numbered 5, 12, 22 
+    >>> generate_questions_pipeline(target_books=[Book.BOOK_3],tasks_to_run=["MCQ_Generation"], target_chapters=[5,12,22])
+
+Pipeline Architecture:
+    1. **Initialization:** Setup Run IDs, Logging, and API connections. Saves
+    the 'Manifest'.
+    2. **Strategy Loop:** Iterates through defined strategies (EX, MCQ, FR).
+    3. **Chapter Loop:** Batches chapters, prepares prompts, and calls the API.
+       - Includes 'Circuit Breaker' logic (stops after 5 consecutive failures).
+       - Includes Rate Limiting logic.
+    4. **ETL & Validation:** Parses JSON responses, validates safety, calculates 
+       granular token costs, and appends to JSONL.
+    5. **Reporting:** Generates a Markdown Dashboard Artifact and a final JSON Receipt.
+        
+-----------------------------------------------------------------------------------
+Author: Reema Sipra
+Date: November 2025
+License: MIT 
+
+Attribution:
+    This pipeline architecture and strategy (Model-per-Task, SBERT De-duplication,
+    Lineage Tracking) were designed by the author. 
+    
+    The core generation logic was refactored from the author's original 
+    `run_experiments_v2.py` script. Implementation of the Prefect orchestration 
+    layer (Tasks, Flows, Artifacts) and specific logging patterns were developed 
+    with collaborative assistance from LLM tools (Gemini Pro 3) to align with MLOps 
+    best practices.
+
+-----------------------------------------------------------------------------------
 Pipeline Flow: 
 
-1. initiate at start:
+1. initiate at start [optional inputs: selected generation strategies, number of chapters limit] <-else no limits set 
     - generate pipeline_run_id, run_timestamp
+    - filter by provided selective`generation_strategy` if needed.
     - configure logger to save to disk as well (task)
     - configure api (task)
+    - retrieve chapters using `get_chapters` (task)
+    - check and apply any chapter number limits (e.g. 1 chapter for pipeline demo)
     - Save Run Manifest (Task).
     - initialize run_stats dict (task)
 
 2. Loop for strategy (EX, MCQ, FR)
     - generate batch_id
     - measure template tokens once (task)
-    - retrieve chapters using `get_chapters` (task)
     - Initialize consecutive_failures = 0.
     
     3. loop for chapters
@@ -35,17 +103,17 @@ Pipeline Flow:
             6.1. layer 1 (helper): check if api call accepted or blocked and log feedback in metadata (safety)
             6.2. layer 2 (helper): calculate tokens breakdown for the job/response
             6.3. layer 3 (helper): process candidates, enrich with metadata, save to jsonl
-        
         - On Success: consecutive_failures = 0. Update run_stats.
         - On Failure: consecutive_failures += 1. Log Error.
     
     7. Rate Limit Sleep: time.sleep(strategy.delay).
 
 8. wrap-up pipeline run
-    - summary report (artifact) - immediate summary markdown report for user in terminal
     - results file saved (json) / run log (task) - results report saved to file
-
+    - summary report (artifact) - immediate summary markdown report for user in terminal
 """
+## SETUP 
+
 import os
 from datetime import datetime, timezone
 import time
@@ -54,10 +122,13 @@ import logging
 from pathlib import Path
 from typing import List, Optional, Dict, Any, Tuple
 import json
+import uuid
 from dotenv import load_dotenv
 import google.generativeai as genai
 from prefect import flow, task, get_run_logger #pipeline orchestrator
 from prefect.artifacts import create_markdown_artifact
+from rich.console import Console
+from rich.markdown import Markdown
 from ds_utils.ds_constants import Book
 import ds_utils.notebook_config as nb_cfg
 from ds_utils.schemas import StandardQuestion, MCQuestion
@@ -67,6 +138,8 @@ from ds_utils.schemas import StandardQuestion, MCQuestion
 # Paths
 PROMPTS_DIR = nb_cfg.PROMPTS_DIR
 OUTPUT_DIR = nb_cfg.GENERATED_QUESTIONS_DIR
+CONFIG_PATH = nb_cfg.PROJECT_ROOT / 'config.env'
+
 # Reporting Paths (centralized)
 PIPELINE_LOGS_ROOT = nb_cfg.PIPELINE_LOGS_ROOT
 MANIFESTS_DIR = nb_cfg.MANIFESTS_DIR
@@ -132,6 +205,20 @@ def init_run_stats() -> dict:
         "models_used": set()
     }
     
+def short_uuid(n=8) -> str:
+    """
+    Generates a concise, random alphanumeric identifier based on UUID4.
+    This is used to create readable unique IDs for pipeline runs, batches, and jobs
+    where a full 32-character UUID would be too verbose for filenames or logs.
+
+    Args:
+        n (int, optional): The length of the identifier to generate. Defaults to 8.
+
+    Returns:
+        str: A random hexadecimal string of length `n` (e.g., "a1b2c3d4").
+    """    
+    return uuid.uuid4().hex[:n]  
+    
 @task # filter for flexibility in case not planning to run all question types in GENERATION_TYPE (default is all)
 def filter_strategy(strategy: List[Dict], tasks_to_run: Optional[List[str]] = None) -> List[Dict]:
     """
@@ -153,42 +240,155 @@ def filter_strategy(strategy: List[Dict], tasks_to_run: Optional[List[str]] = No
         logger.warning("⚠️ Filter '%s' matched 0 tasks! Check your spelling.",tasks_to_run)
         return []
         
-    logger.info(f"🎯 Strategy filtered to {len(active_strategy)} tasks: {tasks_to_run}")
+    logger.info("Strategy filtered to %s tasks: %s", len(active_strategy),tasks_to_run)
     return active_strategy
 
+@task
+def configure_file_logging(run_id: str):
+    """
+    Attaches a FileHandler to the Prefect logger so logs are saved to disk
+    in addition to the Prefect UI/Database.
+    This allows for persistent, grep-able log files that survive local database clears.
+    **Note:** This method was developed with assistance from an LLM (Gemini 3 pro).
+    """
+    # Path setup
+    log_dir = LOGS_DIR
+    # log filename
+    log_file = log_dir / f"{run_id}.log"
+
+    # Hook into the existing 'prefect' logger
+    # Note: This ensures we capture both our logs AND Prefect's system logs
+    logger = logging.getLogger("prefect")
+
+    # Create the File Handler (The Writer)
+    fh = logging.FileHandler(log_file)
+    fh.setLevel(logging.INFO)
+
+    # Create formatter: Define Format (Time | Level | Message)
+    formatter = logging.Formatter('%(asctime)s | %(levelname)s | %(message)s')
+    fh.setFormatter(formatter)
+
+    # Add handler to logger (to send a copy to this local file handler as well)
+    logger.addHandler(fh)
+
+    return str(log_file)
+
 @task  #configure the API
-def configure_api(config_path:str) -> None:
+def configure_api(config_path: Path) -> None:
     """Loads environment variables and configures the Gemini API."""
+    
+    # 1. Safety check: confirm file exists
+    if not config_path.exists():
+        get_run_logger().warning("Config file not found at: %s", config_path)
+        get_run_logger().warning("Attempting to use system environment variables...")
+    
+    # 2. load config
     load_dotenv(dotenv_path=config_path)
+    
+    # 3. verify the key (this works for both local and cloud/CI dep) > config injected directly here
     api_key = os.environ.get('GEMINI_API_KEY')
     if not api_key:
         raise ValueError("Error: GEMINI_API_KEY not found in the config file.")
-    genai.configure(api_key=api_key)  # type: ignore
     
-@task
-def save_run_manifest(run_id: str, pipeline_id: str, strategy: list, target_books: list, chapters: list) -> None:
+    # 4: configure api 
+    genai.configure(api_key=api_key)  # type: ignore
+
+@task # get list of Paths for all the chapters for select book ready for formatting the prompt template per run
+def get_chapters(target_books: list[Book], 
+                 target_book_folder: str = "06_books",
+                 chapter_filter: Optional[List[int]] = None,
+                 chapter_limit: Optional[int] = None) -> List[Path]:
     """
-    Saves the execution plan (*recipe*) before execution starts. This is to help distinguis 
+    Scans, filters, and limits chapter files.
+
+    **Processing Logic & Precedence:**
+    1. **Scan:** Find files matching the Target Books.
+    2. **Filter first:** Keep only specific chapter numbers (if `chapter_filter` is set).
+    3. **Sort second:** Order alphanumerically.
+    4. **Limit last:** Slice the top N files (if `limit` is set)
+    *Example:* Requesting chapters `[15, 16, 17]` with `limit=1` returns only `[15]`.
+    This is useful for isolating and re-running specific chapters that failed
+    without processing the whole book again."
+    
+    **Critical Assumption (File Naming Contract):**
+    This task assumes all files in `target_book_folder` follow a strict naming 
+    convention generated by the `extract_hp_corpus' script. 
+    - Format: `"{book_prefix}_{chapter_number}.txt"`
+    - Example: `prisoner_of_azkaban_chapter_1.txt`
+    
+    The logic relies on `split('_')[-1]` to extract the chapter number for filtering/sorting.
+    Files violating this format will be skipped or cause sorting errors.
+
+    
+    Args:
+        target_books (List[Book]): A list of Book Enum members defining which 
+                                   books to process (e.g., [Book.BOOK_3, Book.BOOK_4]).
+        target_book_folder (str): The subdirectory within 'data/' to search. 
+                                  Defaults to "06_books".
+        chapter_filter (List[int], optional): Allows for optional filtering of content by 
+                                  chapter number (e.g. [1, 5]).
+        limit: Maximum number of chapters to return.
+
+    Returns:
+        List[Path]: A list of pathlib.Path objects for every matching text file,
+                    sorted alphanumerically to ensure deterministic processing order.
+    """
+    books_dir = nb_cfg.DATA_DIR / target_book_folder
+    # convert Enums to a tuple of strings for startswith()
+    prefixes = tuple(book.value for book in target_books)
+    
+    # find all the chapter files by book name (prefix in the filename)
+    relevant_file_paths = [p for p in books_dir.iterdir() if p.name.startswith(prefixes)]
+    
+    # filter by chapter
+    if chapter_filter:
+        # initialize filtered list
+        filtered_files = []
+        for p in relevant_file_paths:
+            try:
+                # leveraging standardized chapter names "book_name_chapter_12.txt"
+                num = int(p.stem.split("_")[-1])
+                if num in chapter_filter:
+                    filtered_files.append(p)
+            except ValueError:
+                pass
+    
+    selected_chapter_paths = filtered_files
+   # 3. Sort
+    sorted_files = sorted(selected_chapter_paths)
+
+    # 4. Apply  chapter limit
+    if chapter_limit:
+        sorted_files = sorted_files[:chapter_limit]
+
+    return sorted_files
+
+@task
+def save_run_manifest(run_id: str, pipeline_id: str, active_strategy: list, 
+                      target_books: List[Book], chapters: list) -> None:
+    """
+    Saves the execution plan (*recipe*) before execution starts. This is to help distinguish 
     between attempted runs (e.g aborted, crashed) vs. successful runs (with full reporting, artifacts)
     
     Args:
         run_id: The unique UUID for this pipeline execution.
         pipeline_id: The versioned identifier for this script logic (e.g., 'pipe_q_gen_v0').
-        strategy: The list of generation configs (models, prompts) to be executed.
+        active_strategy: The list of active (filtered if applicable) generation configs (models, prompts) to be executed.
         target_books: The specific list of Book enums targeted in this run.
+        chapters: The specific list of chapters selected for this run.
     """
     # path to save run manifest to
     manifest_dir = MANIFESTS_DIR
-    
-    # Make strategy serializable (Path -> str)
-    serializable_strategy = []
-    for config in strategy:
+
+    # Edit question_type dict to json compatible formats
+    formatted_strategy = []
+    for config in active_strategy:
         clean = config.copy()
         if isinstance(clean.get('prompt_file'), Path):
-            clean['prompt_file'] = clean['prompt_file'].name
-        # Remove schema class from log (not serializable)
+            clean['prompt_file'] = clean['prompt_file'].name  # drop folder name
+        # Remove schema class from log (not compatible with json)
         clean.pop('json_response_schema', None)
-        serializable_strategy.append(clean)
+        formatted_strategy.append(clean)
 
     manifest = {
         "identifiers": {"run_id": run_id, "pipeline_id": pipeline_id},
@@ -198,37 +398,15 @@ def save_run_manifest(run_id: str, pipeline_id: str, strategy: list, target_book
             "total_chapters": len(chapters), 
             "chapter_files": [p.name for p in chapters] 
         },
-        "strategy": serializable_strategy
+        "strategy": formatted_strategy
     }
-    
+    # Save manifest with standardized name
     filename = f"{pipeline_id}_{run_id}_manifest.json"
     with open(manifest_dir / filename, 'w', encoding='utf-8') as f:
         json.dump(manifest, f, indent=2)
-        
+
     get_run_logger().info("Manifest saved: %s", filename)
 
-@task # get list of Paths for all the chapters for select book ready for formatting the prompt template per run
-def get_chapters(target_books: list[Book], target_book_folder: str = "06_books") -> List[Path]:
-    """
-    Scans the target folder and returns sorted Paths for all chapters 
-    belonging to the specified Books. This task relies on the `Book` Enum class 
-    (from `ds_utils.ds_constants`) to define the standardized filename prefixes
-    (e.g., 'prisoner_of_azkaban_').
-    Args:
-        target_books (List[Book]): A list of Book Enum members defining which 
-                                   books to process (e.g., [Book.BOOK_3, Book.BOOK_4]).
-        target_book_folder (str): The subdirectory within 'data/' to search. 
-                                  Defaults to "06_books".
-
-    Returns:
-        List[Path]: A list of pathlib.Path objects for every matching text file,
-                    sorted alphanumerically to ensure deterministic processing order.
-    """
-    books_dir = nb_cfg.DATA_DIR / target_book_folder
-    # convert Enums to a tuple of strings for startswith()
-    prefixes = tuple(book.value for book in target_books)
-    relevant_file_paths = [p for p in books_dir.iterdir() if p.name.startswith(prefixes)]
-    return sorted(relevant_file_paths)
 
 @task  # prepare prompt template + text insersts (chapters for ground, chapter reference)
 def prepare_prompt(chapter_path: List[Path], prompt_path:Path) -> str:
@@ -577,55 +755,6 @@ def estimate_run_cost(total_input: int, total_output: int, models_used: list) ->
 
     return 0.0
 
-# generate a completion report
-@task
-def create_run_report(run_id: str, run_stats: dict, output_root: Path):
-    """
-    Generates a Markdown summary of the run and publishes it to the Prefect UI.
-    """
-    # 1. Get (Placeholder) Cost
-    # add step for cost estimation when needed
-    
-    # 2. Format Model List
-    models_str = ", ".join(run_stats['models_used'])
-    
-    # 3. Build the Markdown Report
-    # We emphasize Tokens and Counts over Cost for now
-    report = f"""
-# 🧙‍♂️ Harry Potter Generation Report
-
-| **Global Metric** | **Value** |
-|:---|---:|
-| **Run ID** | `{run_id}` |
-| **Date** | {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC')} |
-| **Runtime** | |
-| **Chapters Processed** | {run_stats.get('chapters_processed', 0)} |
-| **Models Active** | {models_str} |
-
-## 📊 Volume Metrics
-
-| Resource | Count |
-|:---|---:|
-| **Total Input Tokens** | {run_stats['total_input']:,} |
-| **Total Output Tokens** | {run_stats['total_output']:,} |
-| **Total Billed** | **{run_stats['total_billed']:,}** |
-| **Questions Created** | **{run_stats['total_questions']}** |
-
-## 📂 Output Artifacts
-Files are saved in: `{output_root}/{run_id}/`
-"""
-
-    # 4. Publish to Prefect UI
-    create_markdown_artifact(
-        key=f"report-{run_id}",
-        markdown=report,
-        description=f"Run Summary: {run_id}"
-    )
-    
-    # 5. Log to console
-    logger = get_run_logger()
-    logger.info("📝 Artifact created. Total Questions: %s", run_stats['total_questions'])
-    
 @task
 def save_run_completion(run_id: str, run_stats: dict) -> None:
     """
@@ -657,49 +786,76 @@ def save_run_completion(run_id: str, run_stats: dict) -> None:
     logger = get_run_logger()
     logger.info("🏁 Run Completion saved to: %s", file_path)
 
+# generate a completion report
 @task
-def configure_file_logging(run_id: str):
+def create_run_report(run_id: str, run_timestamp: str, run_stats: dict, output_root: Path):
     """
-    Attaches a FileHandler to the Prefect logger so logs are saved to disk
-    in addition to the Prefect UI/Database.
+    Generates a Markdown summary of the run and publishes it to the Prefect UI.
     """
-    log_dir = LOGS_DIR
-    log_dir.mkdir(parents=True, exist_ok=True)
+    # 1. Get (placeholder) Cost
+    # add step for cost estimation when needed
     
-    log_file = log_dir / f"{run_id}.log"
+    # 2. Format Model List
+    models_str = ", ".join(run_stats['models_used'])
     
-    # Get the Prefect logger
-    # Note: We hook into the root 'prefect' logger to capture everything
-    logger = logging.getLogger("prefect")
-    
-    # Create file handler
-    fh = logging.FileHandler(log_file)
-    fh.setLevel(logging.INFO)
-    
-    # Create formatter
-    formatter = logging.Formatter('%(asctime)s | %(levelname)s | %(message)s')
-    fh.setFormatter(formatter)
-    
-    # Add handler to logger
-    logger.addHandler(fh)
-    
-    return str(log_file)
+    # 3. Build the Markdown Report
+    report = f"""
+# 🧙‍♂️ Harry Potter Trivia: Question Generation Report
+
+| **Global Metric** | **Value** |
+|:---|---:|
+| **Run ID** | `{run_id}` |
+| **Date** | {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC')} |
+| **Runtime** | {run_timestamp} |
+| **Chapters Processed** | {run_stats.get('chapters_processed', 0)} |
+| **Models Active** | {models_str} |
+
+## 📊 Result Metrics
+
+| Resource | Count |
+|:---|---:|
+| **Total Input Tokens** | {run_stats['total_input']:,} |
+| **Total Output Tokens** | {run_stats['total_output']:,} |
+| **Total Billed** | **{run_stats['total_billed']:,}** |
+| **Questions Created** | **{run_stats['total_questions']}** |
+
+## 📂 Output Artifacts
+Files are saved in: `{output_root}/{run_id}/`
+"""
+
+    # 4.1. Create Prefect Artificat for dashboard
+    create_markdown_artifact(
+        key=f"report-{run_id}",
+        markdown=report,
+        description=f"Run Summary: {run_id}"
+    )
+
+    # 4.2. Also publish report to console (Teriminal or not) using Rich
+    console = Console()
+    console.print("\n") # Add some spacing
+    console.print(Markdown(report))
+    console.print("\n")
+
+    # 5. Log to console
+    logger = get_run_logger()
+    logger.info("📝 Artifact created. Total Questions: %s", run_stats['total_questions'])
+
 
 ## ORCHESTRATOR
 
-# @flow(name="Harry Potter Question Generation")
-# def generate_questions_pipeline(
-    # tasks_to_run: Optional[List[str]] = None,
-    # chapter_limit: Optional[int] = None
-    # ):
-"""
+@flow(name="Harry Potter Question Generation")
+def generate_questions_pipeline(target_books: List[Book],
+                                tasks_to_run: Optional[List[str]] = None,
+                                chapter_limit: Optional[int] = None,
+                                target_chapters: Optional[List[int]] = None):
+    """
     Orchestrates the end-to-end question generation workflow.
     
     This flow manages the lifecycle of a run:
     1.  **Initialization:** Sets up Run IDs, Logging, and API connections.
     2.  **Strategy Selection:** Filters the generation strategy based on `tasks_to_run`.
     3.  **Manifest:** Persists the 'Flight Plan' before execution begins.
-    4.  **Execution:** Loops through strategies (EX, MCQ, FR) and chapters (Book 3, 4, 7).
+    4.  **Execution:** Loops through strategies (EX, MCQ, FR) and chapters.
     5.  **Reporting:** Generates artifacts and logs the final results.
 
     Args:
@@ -708,24 +864,63 @@ def configure_file_logging(run_id: str):
             Valid options: ["EX_Generation", "MCQ_Generation", "FR_Generation"]
 
     Examples:
-        >>> # Run the full pipeline (All Question Types)
+    **Python (Notebook/Script):**
+        >>> # 1. Run full pipeline (All types, All chapters)
         >>> generate_questions_pipeline()
 
-        >>> # Run ONLY Multiple Choice Questions
+        >>> # 2. Run ONLY Multiple Choice Questions
         >>> generate_questions_pipeline(tasks_to_run=["MCQ_Generation"])
         
-        >>> # Run EX and FR, skipping MCQ
-        >>> generate_questions_pipeline(tasks_to_run=["EX_Generation", "FR_Generation"])
+        >>> # 3. Run a "Pilot" (First 2 chapters only)
+        >>> generate_questions_pipeline(chapter_limit=2)
+
+        >>> # 4. Run specific tasks with a limit (Demo configuration)
+        >>> generate_questions_pipeline(tasks_to_run=["EX_Generation"], chapter_limit=1)
+        
+        **Terminal (CLI):**
+        $ python scripts/generate_questions.py --tasks MCQ_Generation
+        $ python scripts/generate_questions.py --limit 1
+        $ python scripts/generate_questions.py --tasks EX_Generation FR_Generation --limit 5
     """
-    
     # A. INITIALIZATION
-    # run_id = f"run_{datetime.now().strftime('%Y%m%d')}_{str(uuid.uuid4())[:8]}"
-    # pipeline_id = PIPELINE_ID
-    # run_timestamp = datetime.now(timezone.utc).isoformat()
+    """
+    1. initiate at start [optional inputs: selected generation strategies, number of chapters limit] <-else no limits set 
+    - generate pipeline_run_id, run_timestamp
+    - filter by provided selective`generation_strategy` if needed.
+    - configure logger to save to disk as well (task)
+    - configure api (task)
+    - retrieve chapters using `get_chapters` (task)
+    - check and apply any chapter number limits (e.g. 1 chapter for pipeline demo)
+    - Save Run Manifest (Task).
+    - initialize run_stats dict (task)
+    """
+    # A.1: generate identifiers
+    pipeline_id = PIPELINE_ID
+    run_id = f"run{datetime.now().strftime('%Y%m%d')}_{short_uuid()}"
+    run_timestamp = datetime.now(timezone.utc).isoformat()
     
-    # # ... logging setup ...
+    # A.2: Deterimine the specific run strategy (if filtered):
+    active_strategy = filter_strategy(GENERATION_STRATEGY, tasks_to_run)
     
-    # # ... api setup ...
+    # A.3.1: Configure the pipeline Prefect logger filehandler
+    log_path = configure_file_logging(run_id)
+    # A.3.2: Initialize logger and print initiation messages
+    logger = get_run_logger()
+    logger.info("🚀 Starting Pipeline: %s", run_id)
+    logger.info("📄 Prefects UI Logs mirroring to: %s", log_path)
+
+    # A.4: configure the pipeline API
+    configure_api(CONFIG_PATH)
+
+    # A.5: Retrieve list of chapter paths 
+    chapter_file_paths = get_chapters(target_books, 
+                                      chapter_filter=target_chapters,
+                                      limit=chapter_limit)
+    
+    if chapter_limit:
+        logger.warning("🛑 Processing Cap Applied: Limiting execution to %s chapters.",
+                       chapter_limit)
+  
     
     # # B. STRATEGY SELECTION (The New Step)
     # # We do this EARLY so the Manifest reflects exactly what will run
@@ -856,13 +1051,35 @@ if __name__ == "__main__":
         help="List of specific tasks to run (e.g. 'MCQ_Generation'). Default is ALL.",
         default=None
     )
-    
+    # limit number of chapters (e.g 1 for demo mode)
     parser.add_argument("--limit", type=int, help="Limit number of chapters (for testing).")
+    
+    # select a specific book(s) to use
+    parser.add_argument(
+        "--books", 
+        nargs="+", 
+        choices=["BOOK_3", "BOOK_4", "BOOK_7"], # Constrain inputs
+        required=True, 
+        help="Specific books to process. REQUIRED (e.g. --books BOOK_3)."
+    )
+
+    #Select specific chapters
+    parser.add_argument(
+        "--chapters",
+        nargs="+",
+        type=int,
+        help="Specific chapter numbers to run (e.g. 1 5 10). Default is all.",
+        default=None
+    )
     
     # 3. Parse arguments
     args = parser.parse_args()
+    # Convert string args to Enum objects:  "BOOK_3" -> Book.BOOK_3
+    target_book_enums = [getattr(Book, b) for b in args.books]
     
     # 4. Run the Flow
-    # We pass the list directly to your flow
-    generate_questions_pipeline(tasks_to_run=args.tasks, chapter_limit=args.limit)
+    generate_questions_pipeline(tasks_to_run=args.tasks, 
+                                chapter_limit=args.limit,
+                                target_books=target_book_enums,
+                                target_chapters=args.chapters)
     

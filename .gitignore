@@ -49,3 +49,7 @@ instance/
 # Ingnore test files cache
 .pytest_cache/scripts/prompts/llm_outputs/
 tempCodeRunnerFile.py
+
+#Others (working files)
+scripts/init_memory.py
+scripts/update_memory.py
