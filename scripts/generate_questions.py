@@ -215,7 +215,7 @@ def configure_file_logging(run_id: str):
     fh.setLevel(logging.INFO)
 
     # Create formatter: Define Format (Time | Level | Message)
-    formatter = logging.Formatter('%(asctime)s | %(levelname)s | %(message)s')
+    formatter = logging.Formatter('%(asctime)s | TRACE:%(run_id)s | %(levelname)s | %(message)s')
     fh.setFormatter(formatter)
 
     # Add handler to logger (to send a copy to this local file handler as well)
@@ -880,7 +880,10 @@ def generate_questions_pipeline(target_books: List[Book],
     # A.3.1: Configure the pipeline Prefect logger filehandler
     log_path = configure_file_logging(run_id)
     # A.3.2: Initialize logger and print initiation messages
-    logger = get_run_logger()
+    base_logger = get_run_logger()
+    # Add run_id as 'Trace' id to logger messages
+    extra_context = {'run_id': run_id}  
+    logger = logging.LoggerAdapter(base_logger, extra_context)
     logger.info("🚀 Starting Pipeline: %s", run_id)
     logger.info("Prefects UI Logs mirroring to: %s", log_path)
 
