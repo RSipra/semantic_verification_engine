@@ -99,6 +99,7 @@ Attribution:
 """
 ## SETUP
 import os
+import sys
 from datetime import datetime, timezone
 import time
 import argparse
@@ -1054,9 +1055,22 @@ if __name__ == "__main__":
     # Convert string args to Enum objects:  "BOOK_3" -> Book.BOOK_3
     target_book_enums = [getattr(Book, b) for b in args.books]
 
-    # 4. Run the Flow
-    generate_questions_pipeline(target_books=target_book_enums,
-                                target_chapters=args.chapters,
-                                tasks_to_run=args.tasks,
-                                chapter_limit=args.limit,
-                                batch_size=args.batch_size)
+    try:
+        # 4. Run the Flow
+        generate_questions_pipeline(target_books=target_book_enums,
+                                    target_chapters=args.chapters,
+                                    tasks_to_run=args.tasks,
+                                    chapter_limit=args.limit,
+                                    batch_size=args.batch_size)
+    except KeyboardInterrupt:
+        # This catches Ctrl+C
+        print("\n🛑 User aborted execution via KeyboardInterrupt.")
+        # TODO Consider: can call a cleanup function e.g., save_partial_results() 
+        logger = logging.getLogger("prefect")
+        logger.error("\n🛑 Pipeline execution aborted by user (KeyboardInterrupt).")
+        sys.exit(130) # Standard exit code for Script Terminated by Ctrl-C
+    except Exception as e:  # pylint: disable=broad-exception-caught
+        # This catches crashes
+        logger = logging.getLogger("prefect")
+        logger.error(f"\n💥 Pipeline crashed with critical error: {e}")
+        sys.exit(1)    
