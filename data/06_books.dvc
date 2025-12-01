@@ -1,0 +1,6 @@
+outs:
+- md5: 16a888f772b4693d2ca2c72cd2cb0775.dir
+  size: 2885375
+  nfiles: 96
+  hash: md5
+  path: 06_books

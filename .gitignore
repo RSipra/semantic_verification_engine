@@ -1,10 +1,19 @@
 # Ignore the script used to download datasets
 src/download_data.py
 
-# ignore the data and other folders
-data/
+# ignore llm cost estimate folders
 prompt_costestimate_v0/
 prompt_costestimate_v0.numbers
+
+# Data directory rules:
+# 1. Default: Ignore everything in data
+data/*
+# 2. Exception: Allow DVC files anywhere (recursive)
+!data/**/*.dvc
+!data/.gitignore
+!data/README.md
+# 3. Exception: Allow Pipeline Logs folder
+!data/07_pipeline_logs/
 
 # Ignore extra documents
 docs/Overall_workflow/.extra_docs
