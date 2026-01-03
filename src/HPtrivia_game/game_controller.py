@@ -283,8 +283,10 @@ class GameView:
     }
     
     def __init__(self):
-        self.console = Console()  # for using the 'rich' formatting in CLI
-    
+        # record=True allows to capture the output later
+        # width=100 ensures consistent formatting on the web
+        self.console = Console(record=True, width=100)  # for using the 'rich' formatting in CLI
+
     def _create_centered_panel(self, content: RenderableType, style: str, title: str) -> Panel:
         """A helper method to create a styled, centered Panel."""
         return Panel(
@@ -293,12 +295,27 @@ class GameView:
             title=f"[{style}]{title}[/]",
             padding=(1, 2)
         )
-    
+
     def display_error(self, message: str) -> None:
         """Displays a generic, formatted error message to the user."""
         # For now, it can be a simple print statement.
         # Later, this is where you would make the text red with rich.
         self.console.print(f"\n {message}\n", style=self.THEME['error'])
+
+    def get_latest_view(self) -> str:
+        """
+        Retrieves the recorded console output as an HTML string 
+        and clears the buffer for the next turn.
+        """
+        # 1. Export what has been printed to the buffer as HTML
+        # inline_styles=True ensures colors work without external CSS files
+        html_content = self.console.export_html(inline_styles=True, code_format="<pre>{code}</pre>")
+
+        # 2. CLEAR the buffer so old text doesn't appear in the next turn
+        # This is crucial for the "Dumb Terminal" feel
+        self.console.clear()
+
+        return html_content
 
 ## VIEW Introduction
     # Game title

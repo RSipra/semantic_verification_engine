@@ -9,7 +9,7 @@ Note: This test, its structure, and the mocking strategy
  were developed collaboratively with Gemini 2.5 pro
 """
 import yaml
-from scripts.prompts.iterations import run_experiments as exp
+from scripts.research.question_generation.iterations import run_experiments as exp
 
 def test_main_orchestrator(mocker, tmp_path):
     """

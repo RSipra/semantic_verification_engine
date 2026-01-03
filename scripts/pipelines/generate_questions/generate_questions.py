@@ -55,7 +55,7 @@ USAGE:
     >>> generate_questions_pipeline(target_books=[Book.BOOK_3, Book.BOOK_4, Book.BOOK_7])
     >>> # 2. Partial Pilot
     >>> generate_questions_pipeline(target_books=[Book.BOOK_4], tasks_to_run='MCQ_Generation', chapter_limit=5)
-    >>> # 3. Canary Run
+    >>> # 3. Canary Run (troubleshooting)
     >>> generate_questions_pipeline(target_books=[Book.BOOK_3], target_chapters=[15, 16])
     >>> # 4. Demo Run
     >>> generate_questions_pipeline(target_books=[Book.BOOK_3],chapter_limit=1)
@@ -116,7 +116,8 @@ from rich.console import Console
 from rich.markdown import Markdown
 # IMPORT PROJECT CONFIGURATION
 # Using the "Src Layout" (pip install -e .)
-from ds_utils.ds_constants import Book, GENERATION_STRATEGY
+from ds_utils.ds_constants import Book
+from scripts.pipelines.pipeline_config import GENERATION_STRATEGY
 import ds_utils.notebook_config as nb_cfg
 
 ## CONSTANTS
@@ -631,10 +632,10 @@ def calculate_token_metrics(response, full_metadata: dict,
     return api_total_billed, api_total_input, api_output
 
 # response output helper: parse output and json output from the API call (helper)
-def process_and_save_candidates(job_id: str, response, output_file: Path,
+def process_and_save_candidates(run_id: str, batch_id: str, job_id: str, response, output_file: Path,
                                full_metadata: Dict[str,Any], logger) -> int:
     """
-    response processinglayer 3: core logic. Loops candidates, parses JSON
+    response processing layer 3: core logic. Loops candidates, parses JSON
     enriches data, and saves to disk.
     
     Returns the count of successfully saved questions.
@@ -659,6 +660,11 @@ def process_and_save_candidates(job_id: str, response, output_file: Path,
                 with open(output_file, 'a', encoding='utf-8') as f:
                     # write question data with full metadata to file (make sure they are standalone)
                     for q_idx, question_data in enumerate(parsed_questions):
+                        # 0. Generate Deterministic ID
+                        # Format: {run_id}_{job_id}_{candidate_index}_{question_index}
+                        # Example: "run20251224_x9z_batch_MCQ_Generation_a7b2_job_e5f6_0_0" <- long for data quality tracking
+                        unique_id = f"{run_id}_{batch_id}_{job_id}_{i}_{q_idx}"
+                        question_data['question_id'] = unique_id
                         # 1. Identity: track exactly where the question came from
                         question_data['candidate_index'] = i
                         question_data['question_index'] = q_idx
@@ -691,7 +697,7 @@ def process_and_save_candidates(job_id: str, response, output_file: Path,
 
 # Process and save questions from candidates as individual entries in jsonl file
 @task
-def parse_and_save(job_id: str, response, output_file: Path, full_metadata: Dict[str,Any], 
+def parse_and_save(run_id:str, batch_id: str, job_id: str, response, output_file: Path, full_metadata: Dict[str,Any], 
                    template_token_count: int) -> Tuple[int, int, int, int]:
     """
     Orchestrator task for the ETL processing of model response. it uses helper methods to:
@@ -721,7 +727,7 @@ def parse_and_save(job_id: str, response, output_file: Path, full_metadata: Dict
         return 0, total_billed, t_in, t_out
 
     # Step 3: core logic
-    saved_count = process_and_save_candidates(job_id, response, output_file, full_metadata, logger)
+    saved_count = process_and_save_candidates(run_id, batch_id, job_id, response, output_file, full_metadata, logger)
 
     if saved_count > 0:
         logger.info("✅ [job id: %s] Saved %s questions. Total tokens: %s",
@@ -733,7 +739,7 @@ def parse_and_save(job_id: str, response, output_file: Path, full_metadata: Dict
         logger.warning("⚠️ [job id: %s] 0 questions saved. Tokens wasted: %s", 
                        job_id, total_billed)    
 
-    return saved_count, total_billed, t_in, t_out,
+    return saved_count, total_billed, t_in, t_out
 
 # placeholder for cost esmtimate helper if needed for later dataset expansion
 def estimate_run_cost(total_input: int, total_output: int, models_used: list) -> float:  
@@ -924,9 +930,11 @@ def generate_questions_pipeline(target_books: List[Book],
     ## B. GENERATION STRATEGY LOOP (BATCH LEVEL):
     #  B.1: Loop through the selected question types from active strategy:
     for config in active_strategy:
-        # B.1: create batch identifiers
-        task_name = config['task_name']
-        batch_id = f"batch_{short_uuid()}"
+        # create batch identifiers
+        task_name = config.get('task_name', 'UnknownTask')
+        # safety: ensure the name is URL/ID friendly (no spaces or weird chars)
+        safe_task_name = task_name.replace(" ", "_").strip()
+        batch_id = f"batch_{safe_task_name}_{short_uuid()}"
         logger.info("\n--- Starting Strategy: %s ---", task_name)
         
         # input token count for prompt template without formatting
@@ -972,7 +980,7 @@ def generate_questions_pipeline(target_books: List[Book],
                 first_chap = chapter_batch[0].stem  # chapter ref in filename
                 output_file = OUTPUT_DIR / f"{config['file_prefix']}_{first_chap}_{run_id}.jsonl"
                 # C.6.2: parse and save as jsonl with Task
-                q_count, total_tokens, tokens_in, tokens_out = parse_and_save(
+                q_count, total_tokens, tokens_in, tokens_out = parse_and_save(run_id, batch_id,
                     job_id, response, output_file, full_metadata, template_token_count)
                 
                 # C.7: Assess if run was a failure (no questions generated)

@@ -43,7 +43,7 @@ GENQ_DIR = DATA_DIR / "08_generated_questions"
 THEMES_DIR = DATA_DIR / "09_themes"
 
 # Prompts Directory
-PROMPTS_DIR = SCRIPTS_DIR / "prompts"
+PROMPTS_DIR = SCRIPTS_DIR / "pipelines/generate_questions/prompts"
 
 # Pipeline Reporting & Observability Paths
 PIPELINE_LOGS_ROOT = DATA_DIR / "07_pipeline_logs"

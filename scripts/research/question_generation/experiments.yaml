@@ -26,9 +26,9 @@ experiments:
       - data/06_books/goblet_of_fire_chapter_01.txt
     source_info: Prisoner of Azkaban, Chapter 19 and Goblet of Fire, Chapter 1
     output_files:
-    - scripts/prompts/llm_outputs/ex_temperature__02_baseline_v1.1_candidate_1.json
-    - scripts/prompts/llm_outputs/ex_temperature__02_baseline_v1.1_candidate_2.json
-    - scripts/prompts/llm_outputs/ex_temperature__02_baseline_v1.1_candidate_3.json
+    - scripts/research/question_generation/llm_outputs/ex_temperature__02_baseline_v1.1_candidate_1.json
+    - scripts/research/question_generation/llm_outputs/ex_temperature__02_baseline_v1.1_candidate_2.json
+    - scripts/research/question_generation/llm_outputs/ex_temperature__02_baseline_v1.1_candidate_3.json
     model_parameters:
       temperature: 0.2
     metrics:
@@ -63,9 +63,9 @@ experiments:
       - data/06_books/goblet_of_fire_chapter_01.txt
     source_info: Prisoner of Azkaban, Chapter 19 and Goblet of Fire, Chapter 1
     output_files:
-    - scripts/prompts/llm_outputs/ex_temperature__05_v1.2_candidate_1.json
-    - scripts/prompts/llm_outputs/ex_temperature__05_v1.2_candidate_2.json
-    - scripts/prompts/llm_outputs/ex_temperature__05_v1.2_candidate_3.json
+    - scripts/research/question_generation/llm_outputs/ex_temperature__05_v1.2_candidate_1.json
+    - scripts/research/question_generation/llm_outputs/ex_temperature__05_v1.2_candidate_2.json
+    - scripts/research/question_generation/llm_outputs/ex_temperature__05_v1.2_candidate_3.json
     model_parameters:
       temperature: 0.5
     metrics:
@@ -100,9 +100,9 @@ experiments:
       - data/06_books/goblet_of_fire_chapter_01.txt
     source_info: Prisoner of Azkaban, Chapter 19 and Goblet of Fire, Chapter 1
     output_files:
-    - scripts/prompts/llm_outputs/ex_temperature__07_v1.3_candidate_1.json
-    - scripts/prompts/llm_outputs/ex_temperature__07_v1.3_candidate_2.json
-    - scripts/prompts/llm_outputs/ex_temperature__07_v1.3_candidate_3.json
+    - scripts/research/question_generation/llm_outputs/ex_temperature__07_v1.3_candidate_1.json
+    - scripts/research/question_generation/llm_outputs/ex_temperature__07_v1.3_candidate_2.json
+    - scripts/research/question_generation/llm_outputs/ex_temperature__07_v1.3_candidate_3.json
     model_parameters:
       temperature: 0.7
     metrics:
@@ -137,9 +137,9 @@ experiments:
       - data/06_books/goblet_of_fire_chapter_01.txt
     source_info: Prisoner of Azkaban, Chapter 19 and Goblet of Fire, Chapter 1
     output_files:
-    - scripts/prompts/llm_outputs/ex_temperature__09_v1.4_candidate_1.json
-    - scripts/prompts/llm_outputs/ex_temperature__09_v1.4_candidate_2.json
-    - scripts/prompts/llm_outputs/ex_temperature__09_v1.4_candidate_3.json
+    - scripts/research/question_generation/llm_outputs/ex_temperature__09_v1.4_candidate_1.json
+    - scripts/research/question_generation/llm_outputs/ex_temperature__09_v1.4_candidate_2.json
+    - scripts/research/question_generation/llm_outputs/ex_temperature__09_v1.4_candidate_3.json
     model_parameters:
       temperature: 0.9
     metrics:
@@ -185,7 +185,7 @@ experiments:
     - Prisoner of Azkaban, Chapter 19
     - Goblet of Fire, Chapter 1
     output_files:
-    - /Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/scripts/prompts/llm_outputs/ex_source_referencing_v.2_candidate_1.json
+    - scripts/research/question_generation/llm_outputsex_source_referencing_v.2_candidate_1.json
     model_parameters:
       temperature: 0.7
     metrics:
@@ -229,9 +229,9 @@ experiments:
     - Prisoner of Azkaban, Chapter 19
     - Goblet of Fire, Chapter 1
     output_files:
-    - /Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/scripts/prompts/llm_outputs/ex_primacy_bias_v.3_candidate_1.json
-    - /Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/scripts/prompts/llm_outputs/ex_primacy_bias_v.3_candidate_2.json
-    - /Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/scripts/prompts/llm_outputs/ex_primacy_bias_v.3_candidate_3.json
+    - scripts/research/question_generation/llm_outputs/ex_primacy_bias_v.3_candidate_1.json
+    - scripts/research/question_generation/llm_outputs/ex_primacy_bias_v.3_candidate_2.json
+    - scripts/research/question_generation/llm_outputs/ex_primacy_bias_v.3_candidate_3.json
     model_parameters:
       temperature: 0.7
     metrics:
@@ -275,7 +275,7 @@ experiments:
     - Prisoner of Azkaban, Chapter 19
     - Goblet of Fire, Chapter 1
     output_files:
-    - /Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/scripts/prompts/llm_outputs/ex_hallucination_detection_v.4_candidate_1.json
+    - scripts/research/question_generation/llm_outputs/ex_hallucination_detection_v.4_candidate_1.json
     model_parameters:
       temperature: 0.7
     metrics:
@@ -323,9 +323,9 @@ experiments:
     - Prisoner of Azkaban, Chapter 19
     - Goblet of Fire, Chapter 1
     output_files:
-    - /Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/scripts/prompts/llm_outputs/ex_model_selection_v.5.1_candidate_1.json
-    - /Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/scripts/prompts/llm_outputs/ex_model_selection_v.5.1_candidate_2.json
-    - /Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/scripts/prompts/llm_outputs/ex_model_selection_v.5.1_candidate_3.json
+    - scripts/research/question_generation/llm_outputs/ex_model_selection_v.5.1_candidate_1.json
+    - scripts/research/question_generation/llm_outputs/ex_model_selection_v.5.1_candidate_2.json
+    - scripts/research/question_generation/llm_outputs/ex_model_selection_v.5.1_candidate_3.json
     model_parameters:
       temperature: 0.7
     metrics:
@@ -358,9 +358,9 @@ experiments:
     - Prisoner of Azkaban, Chapter 19
     - Goblet of Fire, Chapter 1
     output_files:
-    - /Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/scripts/prompts/llm_outputs/ex_model_selection_v.5.2_candidate_1.json
-    - /Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/scripts/prompts/llm_outputs/ex_model_selection_v.5.2_candidate_2.json
-    - /Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/scripts/prompts/llm_outputs/ex_model_selection_v.5.2_candidate_3.json
+    - scripts/research/question_generation/llm_outputs/ex_model_selection_v.5.2_candidate_1.json
+    - scripts/research/question_generation/llm_outputs/ex_model_selection_v.5.2_candidate_2.json
+    - scripts/research/question_generation/llm_outputs/ex_model_selection_v.5.2_candidate_3.json
     model_parameters:
       temperature: 0.9
     metrics:
@@ -402,9 +402,9 @@ experiments:
     - Prisoner of Azkaban, Chapter 19
     - Goblet of Fire, Chapter 1
     output_files:
-    - /Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/scripts/prompts/llm_outputs/ex_refined_prompt_check_v.6_candidate_1.json
-    - /Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/scripts/prompts/llm_outputs/ex_refined_prompt_check_v.6_candidate_2.json
-    - /Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/scripts/prompts/llm_outputs/ex_refined_prompt_check_v.6_candidate_3.json
+    - scripts/research/question_generation/llm_outputs/ex_refined_prompt_check_v.6_candidate_1.json
+    - scripts/research/question_generation/llm_outputs/ex_refined_prompt_check_v.6_candidate_2.json
+    - scripts/research/question_generation/llm_outputs/ex_refined_prompt_check_v.6_candidate_3.json
     model_parameters:
       temperature: 0.7
     metrics:
@@ -429,3 +429,193 @@ experiments:
       timestamp: 2025-11-16 21:40:01.124161+00:00
     - status: completed
       timestamp: '2025-11-16T21:42:05.323602+00:00'
+
+- id: mcq_preliminary_check
+  question_type: MCQ
+  description: Preliminary check for MCQ generation
+  model: gemini-2.5-flash
+  common_parameters:
+    max_output_tokens: 12000
+    top_p: 0.95
+    candidate_count: 1
+  runs:
+  - version: v.1
+    goal: Model selection - Gemini pro with v0 prompt to determine if it can construct MCQ with options without additional instructions
+    prompt_file: scripts/research/question_generation/iterations/mcq_prompt_v0.txt
+    source_text_files:
+    - - data/06_books/goblet_of_fire_chapter_01.txt
+      - data/06_books/prisoner_of_azkaban_chapter_19.txt
+    source_info:
+    - Prisoner of Azkaban, Chapter 19
+    - Goblet of Fire, Chapter 1
+    output_files: null
+    model_parameters:
+      temperature: 0.7
+    metrics:
+      response_time_seconds: null
+      finish_reason: null
+      prompt_feedback: null
+      tokens:
+        input_cached: null
+        input_uncached: null
+        output: null
+        total: null
+    quality:
+      factual_accuracy: null
+      readability: null
+      formatting: null
+    notes: null
+    status: pending
+    status_history:
+
+- id: mcq_flash_vs_pro
+  question_type: MCQ
+  description: MCQ model selection
+  model: gemini-2.5-pro
+  common_parameters:
+    max_output_tokens: 12000
+    top_p: 0.95
+    candidate_count: 1
+  runs:
+  - version: v.2.1
+    goal: Model selection - Gemini pro with v0 prompt to determine if it can construct MCQ with options without additional instructions
+    prompt_file: scripts/research/question_generation/iterations/mcq_prompt_v0.txt
+    source_text_files:
+    - - data/06_books/goblet_of_fire_chapter_01.txt
+      - data/06_books/prisoner_of_azkaban_chapter_19.txt
+    source_info:
+    - Prisoner of Azkaban, Chapter 19
+    - Goblet of Fire, Chapter 1
+    output_files: null
+    model_parameters:
+      temperature: 0.7
+    metrics:
+      response_time_seconds: null
+      finish_reason: null
+      prompt_feedback: null
+      tokens:
+        input_cached: null
+        input_uncached: null
+        output: null
+        total: null
+    quality:
+      factual_accuracy: null
+      readability: null
+      formatting: null
+    notes: null
+    status: pending
+    status_history:
+
+- id: mcq_flash_vs_pro
+  question_type: MCQ
+  description: MCQ model selection
+  model: gemini-2.5-flash
+  common_parameters:
+    max_output_tokens: 12000
+    top_p: 0.95
+    candidate_count: 1
+  runs:
+  - version: v.2.2
+    goal: Model selection -  Gemini flash with v1 prompt with work around instructions to provide options for MCQ.
+    prompt_file: scripts/research/question_generation/iterations/mcq_prompt_v1.txt
+    source_text_files:
+    - - data/06_books/goblet_of_fire_chapter_01.txt
+      - data/06_books/prisoner_of_azkaban_chapter_19.txt
+    source_info:
+    - Prisoner of Azkaban, Chapter 19
+    - Goblet of Fire, Chapter 1
+    output_files: null
+    model_parameters:
+      temperature: 0.7
+    metrics:
+      response_time_seconds: null
+      finish_reason: null
+      prompt_feedback: null
+      tokens:
+        input_cached: null
+        input_uncached: null
+        output: null
+        total: null
+    quality:
+      factual_accuracy: null
+      readability: null
+      formatting: null
+    notes: null
+    status: pending
+    status_history:
+
+- id: fr_prompt_baseline
+  question_type: FR
+  description: FR model selection
+  model: gemini-2.5-flash
+  common_parameters:
+    max_output_tokens: 12000
+    top_p: 0.95
+    candidate_count: 1
+  runs:
+  - version: v.1.1
+    goal: Model selection -  Gemini flash with v1 prompt.
+    prompt_file: scripts/research/question_generation/iterations/factual_recall_prompt_v1.txt
+    source_text_files:
+    - - data/06_books/goblet_of_fire_chapter_01.txt
+      - data/06_books/prisoner_of_azkaban_chapter_19.txt
+    source_info:
+    - Prisoner of Azkaban, Chapter 19
+    - Goblet of Fire, Chapter 1
+    output_files: null
+    model_parameters:
+      temperature: 0.7
+    metrics:
+      response_time_seconds: null
+      finish_reason: null
+      prompt_feedback: null
+      tokens:
+        input_cached: null
+        input_uncached: null
+        output: null
+        total: null
+    quality:
+      factual_accuracy: null
+      readability: null
+      formatting: null
+    notes: null
+    status: pending
+    status_history:    
+
+- id: fr_prompt_baseline
+  question_type: FR
+  description: FR model selection
+  model: gemini-2.5-pro
+  common_parameters:
+    max_output_tokens: 12000
+    top_p: 0.95
+    candidate_count: 1
+  runs:
+  - version: v.1.2
+    goal: Model selection -  Gemini pro with v1 prompt.
+    prompt_file: scripts/research/question_generation/iterations/factual_recall_prompt_v1.txt
+    source_text_files:
+    - - data/06_books/goblet_of_fire_chapter_01.txt
+      - data/06_books/prisoner_of_azkaban_chapter_19.txt
+    source_info:
+    - Prisoner of Azkaban, Chapter 19
+    - Goblet of Fire, Chapter 1
+    output_files: null
+    model_parameters:
+      temperature: 0.7
+    metrics:
+      response_time_seconds: null
+      finish_reason: null
+      prompt_feedback: null
+      tokens:
+        input_cached: null
+        input_uncached: null
+        output: null
+        total: null
+    quality:
+      factual_accuracy: null
+      readability: null
+      formatting: null
+    notes: null
+    status: pending
+    status_history:      
