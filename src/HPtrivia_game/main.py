@@ -8,7 +8,7 @@ The runner module that executes the game.
 ------------------------------------------------------------------
 '''
 # Import game modules:
-from HPtrivia_game.game_controller import GameController 
+from HPtrivia_game.game_controller import GameController
 from HPtrivia_game.trivia_manager  import Trivia
 from HPtrivia_game.constants import MVP_TRIVIA_CSV_NAME
 

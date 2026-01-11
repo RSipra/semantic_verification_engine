@@ -230,7 +230,7 @@ class Trivia:
             'original_question_id': int,
             'question': str,
             'answer': str,
-            'interrogative_keyword': list,
+            'interrogative_keywords': list,
             'question tokens': list,
             'answer tokens': list
         }
@@ -266,7 +266,7 @@ class Trivia:
             raw_df['original_question_id'] = raw_df['original_question_id'].apply(int)
             
                 # convert the keywords columns to lists using helper function
-            list_like_columns = ['interrogative_keyword', 'question tokens', 'answer tokens']
+            list_like_columns = ['interrogative_keywords', 'question tokens', 'answer tokens']
             for col in list_like_columns:
                 if col in raw_df.columns:
                     raw_df[col] = raw_df[col].apply(safe_eval)
@@ -294,7 +294,7 @@ class Trivia:
         # Select n random questions from the loaded DataFrame
         session_df = self.trivia_df.sample(
             n = num_questions_to_load,
-            random_state=26,
+            # random_state=26,
             axis=0,
             replace=False
         )
@@ -315,7 +315,7 @@ class Trivia:
                 question_id=q_dict['original_question_id'], 
                 question_text=q_dict['question'],
                 correct_answer=q_dict['answer'],
-                interrogative_keyword = q_dict['interrogative_keyword'],
+                interrogative_keyword = q_dict['interrogative_keywords'],
                 question_keywords = q_dict['question tokens'],
                 answer_keywords = q_dict['answer tokens']
                 )

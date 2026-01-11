@@ -10,7 +10,7 @@ Note: This test, its structure, and the mocking strategy
 """
 import yaml
 import pytest
-from scripts.prompts.iterations import run_experiments as exp
+from scripts.research.question_generation.iterations import run_experiments as exp
 
 ## MOCK Fixtures
     

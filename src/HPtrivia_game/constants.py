@@ -17,7 +17,7 @@ NUM_QUESTIONS_PER_SESSION = 10
 MAX_QUESTIONS_PER_SESSION = 50
 
 # Name of the trivia dataset csv to use to extract questions from
-MVP_TRIVIA_CSV_NAME = "cleaned_trivia_dataset_MVP_v0.csv"
+MVP_TRIVIA_CSV_NAME = "trivia_dataset_v0.1.0_baseline.csv"
 
 # Number of chances a player gets every question session
 PLAYER_CHANCES = 3

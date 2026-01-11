@@ -54,11 +54,11 @@ level display.
 '''
 import random
 import time
-import string 
+# import string 
 from datetime import datetime
 from pathlib import Path
 import json
-from typing import List, Any, Dict, Optional
+from typing import List, Any, Dict#, Optional
 from pyfiglet import figlet_format  # to create ASCII art
 from rich.console import Console, RenderableType
 from rich.panel import Panel
@@ -69,9 +69,8 @@ from HPtrivia_game.trivia_manager import Question
 import HPtrivia_game.constants as const
 from HPtrivia_game.utils import utils_general as ut
 
-
 #-----------------------------------------
-       
+        
 ## GAMEPLAY VIEW MODULE
 class GameView:
     """
@@ -91,33 +90,28 @@ class GameView:
     }
 
     # 2. Messages used in the various sections of the game introduction
-   
+    
+    # --- CHARACTER LISTS ---
+    DARK_LORD_NAMES = ["lord voldemort", "voldemort", "tom riddle", "sauron", "morgoth"]
+    HARRY_ID = ["harry", "harry potter"]
+    RON_ID = ["ron", "ron weasley"]
+    HERMIONE_ID = ["hermione", "hermione granger"]
+    
     INTRO_MESSAGES = {
         "greeting": (
-            "⚡️✨ Welcome, young withch or wizard, to the world of magic! ✨⚡️\n"
+            "⚡️✨ Welcome to the world of magic! ✨⚡️\n"
             "🪄 You've entered the Harry Potter Trivia Challenge!\n"
         ),
-        "objective": (
-            "\nYou have been selected as a member of the house trivia team.\n"
-            "Answer the trivia questions correctly and make your team proud! 🏅\n"
-        ),
         "how_to_play": (
-            "How to play the game:\n"
-            "- You will be given {num_questions} random questions in this session.\n"
-            "- Answer the questions with a short, clear, and concise sentence.\n"
-            "- You will earn a point for every right answer.\n"
-            "- Your final score will give determine your level of expertise!🤓\n"
+            "🎯 [bold]Goal:[/] Answer {num_questions} questions to earn glory for your House.\n\n"
+            "⚡ [bold]Rules:[/] Keep answers short. 3 wrong answers and the game ends!"
             # can add explanations for chances_left and score later
         ),# can consider adding "Aveda Kedavara" as an easter egg for quitting? -> can also use if out of chances! create forbidden wrods list in constants.
         "how_to_quit": (
-            "Quit mid-game:\n"
-            "- You can quit anytime by typing 'quit' and pressing enter.\n"
-            "- But keep in mind you will lose all game progress.\n"
+            "🚪 [dim italic]Type 'quit' at any time to exit.[/]"
         ),
         "start_game": (
-            "🪄✨⚡️ Think you know the books inside and out?\n"
-            "  📚🔮 Ready to test your magical knowledge?\n\n"
-            "Grab your wand, summon your house pride, and let's begin! 🪄\n\n"
+            "\n[bold white]Grab your wand, summon your house pride, and let's begin! 🪄[/]"
         ),
         "dedication": (
             "\n~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~\n"
@@ -274,13 +268,14 @@ class GameView:
                     "🪄 You're not even in the library anymore — the library is in you."
                     ]
     }
-   
+    
     FINAL_SCORE_HH_REACTION: Dict[const.Rank, str] = {
         const.Rank.NOVICE: "{house_head} lets out a quiet sigh. 'Perhaps... reading more would help.'",
         const.Rank.ENTHUSIAST: "{house_head} nods slowly. 'Not bad. You’re starting to show promise.'",
         const.Rank.EXPERT: "{house_head} smiles with approval. 'Excellent work. A fine showing indeed.'",
         const.Rank.MASTER: "{house_head} beams with pride. 'Outstanding! You’ve done {house} proud!'"
     }
+
     
     def __init__(self):
         # record=True allows to capture the output later
@@ -302,51 +297,54 @@ class GameView:
         # Later, this is where you would make the text red with rich.
         self.console.print(f"\n {message}\n", style=self.THEME['error'])
 
-    def get_latest_view(self) -> str:
-        """
-        Retrieves the recorded console output as an HTML string 
-        and clears the buffer for the next turn.
-        """
-        # 1. Export what has been printed to the buffer as HTML
-        # inline_styles=True ensures colors work without external CSS files
-        html_content = self.console.export_html(inline_styles=True, code_format="<pre>{code}</pre>")
+    # def get_latest_view(self) -> str:
+    #      """
+    #      Retrieves the recorded console output as an HTML string 
+    #      and clears the buffer for the next turn.
+    #      """
+    #      # 1. Export what has been printed to the buffer as HTML
+    #      # inline_styles=True ensures colors work without external CSS files
+    #      # html_content = self.console.export_html(inline_styles=True, code_format="<pre>{code}</pre>")
 
-        # 2. CLEAR the buffer so old text doesn't appear in the next turn
-        # This is crucial for the "Dumb Terminal" feel
-        self.console.clear()
+    #      # 2. CLEAR the buffer so old text doesn't appear in the next turn
+    #      self.console.clear()
 
-        return html_content
+    #      return html_content
 
 ## VIEW Introduction
     # Game title
     
-    def print_ascii_art(self, font_style: str = 'standard'):
+    def print_ascii_art(self, font_style: str = 'slant'):
         """
         Print the game title as ASCII art in the terminal using the pyfiglet package
         inside a rich Panel.
-
-        This method is used in the CLI version of the game to display a stylized title.
-        It uses the 'standard' font from pyfiglet by default. 
-        The method takes an optional input for font as a string.
-
-        References:
-        - pyfiglet package: https://github.com/pwaller/pyfiglet
-        - Font examples: http://www.figlet.org/examples.html
-        """
-        ## Can consider a random font selector for more fun later.
-        # 1. Generate ASCII art
-        game_title_text = "Harry Potter Trivia"
-        # Try 'digital', 'ogre, 'gothic' or 'smscript' for a different vibe!
-        ascii_art_str = figlet_format(text=game_title_text, font= font_style)
         
-        #2. Use the helper function to create display panel
-        title_panel = self._create_centered_panel(
-                content=ascii_art_str,
-                style=self.THEME["intro"],
-                title="If cleverness is what you seek, this trivia game will test your peak!!"
-        )
-        self.console.print('\n\n')
-        self.console.print(title_panel)
+        ### UX IMPROVEMENT: Auto-detects mobile screens ###
+        """
+        # 1. Clear the screen first so we start fresh
+        self.console.clear()
+        
+        # 2. Check the screen width to see if we are on a phone
+        if self.console.width < 60:
+            # MOBILE MODE: Simple, clean text header in a panel
+            self.console.print(Panel("[bold gold1]HARRY POTTER TRIVIA[/]", style=self.THEME["intro"]))
+        else:
+            # DESKTOP MODE: Full ASCII art using 'slant' or 'ogre' font
+            game_title_text = "Harry Potter Trivia"
+            # We use 'slant' here as it is often more readable than standard
+            ascii_art_str = figlet_format(text=game_title_text, font=font_style)
+            
+            # Use the helper function to create display panel
+            title_panel = self._create_centered_panel(
+                    content=ascii_art_str,
+                    style=self.THEME["intro"],
+                    title="If cleverness is what you seek, this trivia game will test your peak!!"
+            )
+            self.console.print('\n\n')
+            self.console.print(title_panel)
+ 
+        # Pause slightly so the user registers the title
+        time.sleep(1.5)
  
     # display game dedication / acknowledgements
     def print_dedication(self) -> None:
@@ -381,19 +379,50 @@ class GameView:
             self.console.print(
                 f"[{self.THEME['error']}]Oops! Please enter a valid, non-empty name.[/]"
                 )
-        self.console.print(f"[{self.THEME['intro']}]\nNice to meet you, {player_name}!! [/]")
+            
+        # EASTER EGG :D ... Fun acknowledgement for special names
+        name_lower = player_name.lower()
+        
+        # 1. The Dark Lords
+        if name_lower in self.DARK_LORD_NAMES:
+            self.console.print(f"\n[{self.THEME['error']}]...Welcome, Dark Lord. We did not expect you.[/] 🐍💀")
+        
+        # 2. The Golden Trio
+        elif name_lower in self.HARRY_ID:
+            self.console.print(f"\n[{self.THEME['prompt']}]Welcome, Chosen One. The Boy Who Lived! ⚡[/]")
+
+        elif name_lower in self.HERMIONE_ID:
+            self.console.print(f"\n[{self.THEME['prompt']}]Welcome! We expect 110% on this quiz, Miss Granger. 📚[/]")
+
+        elif name_lower in self.RON_ID:
+            self.console.print(f"\n[{self.THEME['prompt']}]Welcome, Ron! Don't let the spiders get you! 🕷️[/]")
+
+        # 4. Everyone else
+        else:
+            self.console.print(f"[{self.THEME['intro']}]\nNice to meet you, {player_name}!! [/]")
+        
         time.sleep(1.5)
         return player_name
     
     # Player details - b. get their Hogwart's house  
-    def get_player_house(self) -> const.House:
+    def get_player_house(self, player_name:str) -> const.House:
         """Internal method to get player's Hogwart house with fun dialogue"""
         
         # Playful house suggestion by sorting hat as a defaut
-        self.console.print("\n\nHmmm, what would your house be....?\n\n", style=self.THEME["intro"])   
-        random_house = random.choice(list(const.House)) 
+        self.console.print("\n\nHmmm, what would your house be....?\n\n", style=self.THEME["intro"])
+        
+        # EASTER EGG: Houses for dark lords
+        name_lower = player_name.lower()
+        
+        # Default behavior: Random   
+        suggested_house = random.choice(list(const.House)) 
+        
+        # Override for dark lords
+        if name_lower in self.DARK_LORD_NAMES:
+            suggested_house = const.House.SLYTHERIN
+            
         # Get the full style string (e.g., "bold red on gold1")
-        house_colour = const.HOUSE_STYLES.get(random_house, "default")
+        house_colour = const.HOUSE_STYLES.get(suggested_house, "default")
     
         time.sleep(1.5)  
         
@@ -405,7 +434,7 @@ class GameView:
             style=self.THEME["intro"]
         )
         # Append the house name in house colours
-        suggestion_text.append(random_house.value.upper(), style=house_colour)
+        suggestion_text.append(suggested_house.value.upper(), style=house_colour)
         # Append the rest of the text in the intro colours
         suggestion_text.append("!🎩\n\n", style=self.THEME["intro"])
         # Print assembled rich Text object
@@ -415,12 +444,18 @@ class GameView:
         
         # Prompt player to choose own house if they don't like default
         while True:
-            prompt = f"[{self.THEME['prompt']}]Which Hogwart's house do you choose? (Press Enter to stay in {random_house.value}): [/]"
-            player_house_input = self.console.input(prompt).strip().title()
+            prompt = f"[{self.THEME['prompt']}]Which Hogwart's house do you choose? (Press Enter to stay in {suggested_house.value}): [/]"
+            raw_input = self.console.input(prompt)
+            # Check for empty input (Default choice) before cleaning
+            # (cleaning might turn "   " into "" which is valid default behavior)
+            if not raw_input.strip():
+                player_house = suggested_house
+                break
+            player_house_input = ut.clean_input_string(raw_input).title()
             
             # If the user just hits Enter, input will be empty
             if not player_house_input:
-                player_house = random_house  # Accept the suggestion
+                player_house = suggested_house  # Accept the suggestion
                 break
             # Otherwise, validate and accept their choice
             try:
@@ -460,28 +495,55 @@ class GameView:
         This method retrieves and concatenates the messages for objective, rules,
         quitting instructions, and the start prompt so that they can be printed together.
         """
-        # setup message template for 'how to play' before hand
-        template = self.INTRO_MESSAGES["how_to_play"]
-    
-        # setup list of messages to loop through
-        gameplay_sequence = [
-            self.INTRO_MESSAGES["objective"] + "\n" + self.INTRO_MESSAGES["tip"],
-            template.format(num_questions=total_questions),
-            self.INTRO_MESSAGES["how_to_quit"],
-            self.INTRO_MESSAGES["start_game"]
-        ]
-        display_style = self.THEME["intro"]
+        # 1. Combine Goal/Rules and Quit info into one clean block
+        # --> format the 'how_to_play' string with actual number of questions
+        rules_content = (
+            self.INTRO_MESSAGES["how_to_play"].format(num_questions=total_questions) + "\n\n" +
+            self.INTRO_MESSAGES["how_to_quit"]
+        )
+
+        # 2. Display the Rules Panel
+        self.console.print(Panel(
+            rules_content,
+            title="[bold gold1]GAME PLAN[/]",
+            border_style="purple",
+            padding=(1, 2)
+        ))
+
+        # 3. Print the "Grab your wand" hype text directly below
+        self.console.print(self.INTRO_MESSAGES["start_game"])
+
+        # 4. Pause for user readiness (using the 'tip' message)
+        # self.console.print(f"\n{self.INTRO_MESSAGES['tip']}")
+        self.console.input()
         
-        for message in gameplay_sequence:
-            self.console.print(message, style=display_style)
-            self.console.input()
+        # 5. Clear screen so Question 1 starts fresh
+        self.console.clear()
     
 ## VIEW Game play
             
-    def display_question(self, question: Question):
-        """Displays a single formatted question."""
-        print(f"\n--- Question {question.session_id} ---")
-        self.console.print(question.question_text, style=self.THEME['prompt'])
+    def display_question(self, question: Question, current_score: int):
+        """
+        Displays a single formatted question.
+        ### UX IMPROVEMENT: One question per screen ###
+        """
+        # 1. Clear the previous screen to remove clutter
+        self.console.clear()
+        
+        # 2. Print a sticky header so score is always visible
+        header_text = f"[bold purple]HARRY POTTER TRIVIA[/] | [bold]Score: [green]{current_score}[/]"
+        self.console.print(Align.center(header_text))
+        self.console.print("\n") # Breathing room
+
+        # 3. Put the question in a Panel to make it the focal point
+        question_panel = Panel(
+            f"[bold white]{question.question_text}[/]",
+            title=f"[cyan]Question {question.session_id}[/]",
+            border_style="bright_blue",
+            padding=(1, 2)
+        )
+        self.console.print(question_panel)
+        self.console.print("\n") # Space before input prompt
         
     def get_player_answer(self) -> str:
         """Prompts the player for an answer and returns the input."""
@@ -490,11 +552,19 @@ class GameView:
     
     def give_feedback(self, is_correct: bool, correct_answer: str, chances_left: int) -> None:
         """Displays feedback to the player after they answer."""
+        
+        # Initial spacing (Separate feedback from the user's input line)
+        self.console.print()
+        
         if is_correct:
             self.console.print(random.choice(self.CORRECT_ANS_FEEDBACK), style=self.THEME['success'])
         else:
             self.console.print(random.choice(self.WRONG_ANS_FEEDBACK), style=self.THEME['error'])
+            
+            self.console.print()
             self.console.print(f"The correct answer is: {correct_answer}", style=self.THEME['feedback'])
+            
+            self.console.print()
             if chances_left > 1:
                 self.console.print(f"Be careful! You have {chances_left} chances remaining.", style=self.THEME['feedback'])
             elif chances_left == 1:
@@ -505,6 +575,10 @@ class GameView:
             # 2. relate it to answer keywords
             # 3. Maybe pick one professor / character to give responses through out game?
 
+        # ### UX IMPROVEMENT: Pacing ###
+        # Force the user to hit Enter so they can read the feedback before the screen clears
+        self.console.print("\n[dim italic]Press Enter to continue...[/]")
+        self.console.input()
         
 ## VIEW Game end 
     def display_game_over(self) -> None:
@@ -524,7 +598,7 @@ class GameView:
                 f"You scored: {score} / {total_questions} ({percentage:.1f}%)!!", 
                 style=self.THEME['goodbye'])
     
-    @staticmethod  # doesn't rely on specific instance of Class       
+    @staticmethod  # doesn't rely on specific instance of Class        
     def get_random_feedback_from_key(d: dict, key: Any, default: str = "...") -> str:
         """
         Picks a random message from a list in a dict based on a given key.
@@ -566,7 +640,7 @@ class GameView:
             default="unknown... hmmm, you could be a squib?")
         # 2. Announce the rank
         self.console.print(
-            f'Alright, {player.name}, you have attained the rank of "{rank}"! 🏆 \n',
+            f'Alright, {player.name}, you have attained the rank of "{rank.value}"! 🏆 \n',
             style=self.THEME['goodbye'])
         # 3. Pause to build anticipation
         time.sleep(1.5)  
@@ -654,7 +728,7 @@ class GameView:
             "Expelliarmus! Your wand — and the game — have been dropped.\nThanks for playing!",
             style=self.THEME['goodbye'])
     
-    # Ask if the user wants to save a report of the session's questions for troubleshooting    
+    # Ask if the user wants to save a report of the session's questions for troubleshooting     
     def prompt_to_save_report(self) -> bool:
         """
         Asks the user if they want to save a report of the session's questions.
@@ -722,21 +796,56 @@ class GameController():
         3. Displays the player greetings
         4. Retrieves the player details and initializes the Player
         5. Explains the game play that leads to the start of the game.
+    
+        Updated for Better UX: Breaks the flow into distinct 'Screens'.
         """
     
-        # Game title
+        # --- SCREEN 1: THE HOOK (Title & Greeting) ---
+        # 1. Game title (Your view already clears the screen here)
         self.view.print_ascii_art(font_style='ogre')
-        # Game dedication messsage
-        self.view.print_dedication()
-        # Greeting to the player
+        
+        # 2. Greeting (Print it below the title)
         self.view.print_greeting()
-        # Initialize player
+        
+        # 3. PAUSE: Let them read before rushing to input
+        self.view.console.print("\n[dim italic]Press Enter to enter the Great Hall...[/]\n")
+        self.view.console.input() 
+        
+        
+        # --- SCREEN 2: IDENTITY (Name & House) ---
+        self.view.console.clear() # <--- WIPE THE SLATE CLEAN
+        
+        # 4. Get Name
         player_name = self.view.get_player_name()
-        player_house = self.view.get_player_house()
+        
+        # 5. Get House 
+        # (We keep these on the same screen so it feels like filling out a form)
+        player_house = self.view.get_player_house(player_name)
+        
+        # Create Player Object
         self.player = Player(player_name, player_house)
+        
+        
+        # --- SCREEN 3: THE REVEAL (Welcome Panel) ---
+        self.view.console.clear() # <--- WIPE AGAIN
+        
+        # 6. Big Welcome Panel
         self.view.print_personalized_player_welcome(self.player)
-        # Explain game play
+        
+        # Pause to let them admire their house colors
+        self.view.console.print("\n[dim italic]Press Enter to learn the rules...[/]")
+        self.view.console.input()
+
+
+        # --- SCREEN 4: THE RULES ---
+        self.view.console.clear() # <--- WIPE AGAIN
+        
+        # 7. Explain game play 
+        # (This method has its own pauses, so it works well on a fresh screen)
         self.view.explain_gameplay(total_questions)
+        
+        # Final clear so the first question pops on a black background
+        self.view.console.clear()
 
     def start_game(self) -> bool:
         """
@@ -752,7 +861,7 @@ class GameController():
         
         return self.player is not None
 
-## CNTL: Run session    
+## CNTL: Run session     
     def run_game(self) -> bool:
         """
         Orchestrates a single, complete game session from introduction to end-game.
@@ -807,7 +916,7 @@ class GameController():
             self.view.display_quit_message() 
             return False
     
-    # Handle a single turn with the Question object    
+    # Handle a single turn with the Question object     
     def _handle_turn(self, question: Question) -> None: # state 3
         """
         One round of gameplay includes the following steps:
@@ -823,7 +932,8 @@ class GameController():
             return 
         
         #1. Ask the question
-        self.view.display_question(question)
+        # ### UX IMPROVEMENT: Passing current score to the view for the header ###
+        self.view.display_question(question, self.player.score)
         
         #2. Get the player's answer
         player_answer = self.view.get_player_answer()
@@ -872,7 +982,7 @@ class GameController():
             # Use the view to display the error to the user
             self.view.display_error(f"Could not save session report: {e}")
                 
-    # End game sequence   
+    # End game sequence    
     def _end_game(self, total_questions: int) -> bool:  # State 4
         """Orchestrates the entire end-game sequence by calling the View."""
 
