@@ -2,9 +2,16 @@
 ==================================================================
 HARRY POTTER TRIVA GAME 
 ==================================================================
-
-The runner module that executes the game.
-
+#
+# =================================================================
+# PHASE 1 STABLE VERSION - DO NOT REFACTOR IN THESE FILE
+# -----------------------------------------------------------------
+# This game version is synced to the Phase 1 GCP VM. 
+# For Phase 2 (FastAPI/Serverless) development, 
+# please work in the /HPtrivia_game_p2_refactor directory to avoid
+# overwriting the live demo via the VS Code Remote portal.
+# =================================================================
+#
 ------------------------------------------------------------------
 '''
 # Import game modules:

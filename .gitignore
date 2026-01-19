@@ -68,3 +68,7 @@ scripts/init_memory.py
 scripts/update_memory.py
 scripts/system_memory_v0.md
 scripts/system_memory_v1.md
+
+scripts/research/data_lifecycle_contract.json
+docs/designdoc_interview_questions.md
+docs/designdoc_interview_reference_answers.md

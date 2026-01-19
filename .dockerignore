@@ -1,0 +1,59 @@
+.git
+.gitignore
+__pycache__/
+*.pyc
+venv/
+.DS_Store
+*.dvc
+
+# Dev-specific files to keep the production image lean
+requirements-dev.txt
+.vscode/
+
+# Ignore unrelated repo dirs
+assets/
+data/01_raw/
+data/02_intermediate/
+data/03_models/
+data/04_metrics/
+data/06_books
+data/07_pipeline_logs/
+data/08_generated_questions/
+data/09_themes/
+docs/
+notebooks/
+reports/
+scripts/
+src/ds_utils/
+tests/
+
+# Documentation and Metadata
+config.env
+CONTRIBUTING.md
+CODE_OF_CONDUCT.md
+DATA_SOURCES.md
+LICENSE-MIT
+LICENSE-APACHE2
+pyproject.toml
+pytest.ini
+README.md
+
+
+# Mac System Files
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Development Environment Metadata
+.vscode/
+.idea/
+.venv
+.python-version
+.ipynb_checkpoints/
+.env
+
+# Version Control Metadata (Already in your list, but essential)
+.git
+.gitignore
+.dvc/
+.pytest_cache/
