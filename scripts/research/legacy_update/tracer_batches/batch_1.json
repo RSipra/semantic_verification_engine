@@ -1,0 +1,227 @@
+[
+  {
+    "original_question_id": 1130,
+    "question_source": "legacy",
+    "question_type": "MCQ",
+    "question": "Which of these titles or identities has NOT been held by Harry Potter:",
+    "mcq_options": [
+      "seeker for gryffindor",
+      "spew treasurer",
+      "prefect",
+      "triwizard champion"
+    ],
+    "answer": "spew treasurer",
+    "answer_type": "text",
+    "main_keyword": "which"
+  },
+  {
+    "original_question_id": 1279,
+    "question_source": "legacy",
+    "question_type": "MCQ",
+    "question": "Which of the following spells is considered one of the three Unforgivable Curses, punishable by a life sentence in Azkaban if cast on a human:",
+    "mcq_options": [
+      "sectumsempra",
+      "confringo",
+      "crucio",
+      "reducto"
+    ],
+    "answer": "crucio",
+    "answer_type": "text",
+    "main_keyword": "which"
+  },
+  {
+    "original_question_id": 1165,
+    "question_source": "legacy",
+    "question_type": "MCQ",
+    "question": "In which of these scenarios would you use the Muffliato Charm:",
+    "mcq_options": [
+      "whispering in the library without being overheard",
+      "disarming an opponent mid-duel",
+      "crossing a magically sealed threshold",
+      "reading hidden text in an enchanted book"
+    ],
+    "answer": "whispering in the library without being overheard",
+    "answer_type": "text",
+    "main_keyword": "which"
+  },
+  {
+    "original_question_id": 1140,
+    "question_source": "legacy",
+    "question_type": "MCQ",
+    "question": "Which one of the following is not a founder of Hogwarts:",
+    "mcq_options": [
+      "godric gryffindor",
+      "salazar slytherin",
+      "helena ravenclaw",
+      "helga hufflepuff"
+    ],
+    "answer": "helena ravenclaw",
+    "answer_type": "text",
+    "main_keyword": "which"
+  },
+  {
+    "original_question_id": 1155,
+    "question_source": "legacy",
+    "question_type": "MCQ",
+    "question": "Which of these factors does NOT affect Transfiguration:",
+    "mcq_options": [
+      "concentration",
+      "wand power",
+      "hue",
+      "viciousness of intent"
+    ],
+    "answer": "hue",
+    "answer_type": "text",
+    "main_keyword": "which"
+  },
+  {
+    "original_question_id": 1128,
+    "question_source": "legacy",
+    "question_type": "MCQ",
+    "question": "Which of the following is another dive commonly used by Seekers:",
+    "mcq_options": [
+      "porskoff ploy",
+      "bludger backbeat",
+      "spiral dive",
+      "kestrel plunge"
+    ],
+    "answer": "spiral dive",
+    "answer_type": "text",
+    "main_keyword": "which"
+  },
+  {
+    "original_question_id": 795,
+    "question_source": "legacy",
+    "question_type": "MCQ",
+    "question": "Who is NOT in Gryffindor:",
+    "mcq_options": [
+      "harry potter",
+      "ron weasley",
+      "draco malfoy",
+      "ginny weasley"
+    ],
+    "answer": "draco malfoy",
+    "answer_type": "text",
+    "main_keyword": "who"
+  },
+  {
+    "original_question_id": 1087,
+    "question_source": "legacy",
+    "question_type": "MCQ",
+    "question": "Which of the following plants is known for its tendency to slap people:",
+    "mcq_options": [
+      "fanged geranium",
+      "bubotuber",
+      "bouncing bulbs",
+      "snargaluff"
+    ],
+    "answer": "bouncing bulbs",
+    "answer_type": "text",
+    "main_keyword": "which"
+  },
+  {
+    "original_question_id": 1158,
+    "question_source": "legacy",
+    "question_type": "MCQ",
+    "question": "which of these plants has healing properties?",
+    "mcq_options": [
+      "dittany",
+      "mandrake",
+      "devil's snare",
+      "wolfsbane"
+    ],
+    "answer": "dittany",
+    "answer_type": "text",
+    "main_keyword": "which"
+  },
+  {
+    "original_question_id": 1093,
+    "question_source": "legacy",
+    "question_type": "MCQ",
+    "question": "Which of these words best describes Slytherin House:",
+    "mcq_options": [
+      "daring",
+      "patient",
+      "resourceful",
+      "witty"
+    ],
+    "answer": "resourceful",
+    "answer_type": "text",
+    "main_keyword": "which"
+  },
+  {
+    "original_question_id": 1137,
+    "question_source": "legacy",
+    "question_type": "MCQ",
+    "question": "Which of these spells keeps a charm stable:",
+    "mcq_options": [
+      "fianto duri",
+      "protego",
+      "episkey",
+      "rictusempra"
+    ],
+    "answer": "fianto duri",
+    "answer_type": "text",
+    "main_keyword": "which"
+  },
+  {
+    "original_question_id": 1145,
+    "question_source": "legacy",
+    "question_type": "MCQ",
+    "question": "What is the primary effect of Wiggenweld Potion:",
+    "mcq_options": [
+      "inducing euphoria",
+      "inducing luck",
+      "healing injuries",
+      "shrinking a target"
+    ],
+    "answer": "healing injuries",
+    "answer_type": "text",
+    "main_keyword": "what"
+  },
+  {
+    "original_question_id": 1143,
+    "question_source": "legacy",
+    "question_type": "MCQ",
+    "question": "Which of these tasks can NOT be aided by a Vanishing Spell:",
+    "mcq_options": [
+      "cleaning a room",
+      "hiding evidence",
+      "dancing",
+      "emptying a cauldron"
+    ],
+    "answer": "dancing",
+    "answer_type": "text",
+    "main_keyword": "which"
+  },
+  {
+    "original_question_id": 1229,
+    "question_source": "legacy",
+    "question_type": "MCQ",
+    "question": "When Hagrid attempts to turn Dudley Dursley into a pig, what is the only part of the transformation that succeeds:",
+    "mcq_options": [
+      "a snout",
+      "a curly tail",
+      "piggy eyes",
+      "floppy ears"
+    ],
+    "answer": "a curly tail",
+    "answer_type": "text",
+    "main_keyword": "when"
+  },
+  {
+    "original_question_id": 1153,
+    "question_source": "legacy",
+    "question_type": "MCQ",
+    "question": "Which of the following creatures eat fairy eggs:",
+    "mcq_options": [
+      "bowtruckles",
+      "nifflers",
+      "cornish pixies",
+      "grindylows"
+    ],
+    "answer": "bowtruckles",
+    "answer_type": "text",
+    "main_keyword": "which"
+  }
+]

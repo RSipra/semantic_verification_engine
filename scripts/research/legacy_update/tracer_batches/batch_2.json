@@ -1,0 +1,227 @@
+[
+  {
+    "original_question_id": 1209,
+    "question_source": "legacy",
+    "question_type": "MCQ",
+    "question": "According to the description from Professor Slughorn's classroom, what color is the Draught of Dreamless Sleep:",
+    "mcq_options": [
+      "gold",
+      "pearly white",
+      "purple",
+      "emerald green"
+    ],
+    "answer": "purple",
+    "answer_type": "text",
+    "main_keyword": "what"
+  },
+  {
+    "original_question_id": 1241,
+    "question_source": "legacy",
+    "question_type": "MCQ",
+    "question": "What are the final, advanced-level exams that Hogwarts students take in their seventh year to qualify for specific careers:",
+    "mcq_options": [
+      "o.w.l.s",
+      "w.o.m.b.a.t.s",
+      "the apparition test",
+      "n.e.w.t.s"
+    ],
+    "answer": "the n.e.w.t.s",
+    "answer_type": "text",
+    "main_keyword": "what"
+  },
+  {
+    "original_question_id": 1123,
+    "question_source": "legacy",
+    "question_type": "MCQ",
+    "question": "Which of these plants bloom instantly:",
+    "mcq_options": [
+      "mandrake",
+      "devil\u2019s snare",
+      "puffapod",
+      "bubotuber"
+    ],
+    "answer": "puffapod",
+    "answer_type": "text",
+    "main_keyword": "which"
+  },
+  {
+    "original_question_id": 1097,
+    "question_source": "legacy",
+    "question_type": "MCQ",
+    "question": "Which of these spells is most similar to Flipendo, the Knockback Jinx?",
+    "mcq_options": [
+      "depulso",
+      "accio",
+      "incendio",
+      "stupefy"
+    ],
+    "answer": "depulso",
+    "answer_type": "text",
+    "main_keyword": "which"
+  },
+  {
+    "original_question_id": 1196,
+    "question_source": "legacy",
+    "question_type": "MCQ",
+    "question": "Which of the following is NOT a plausible side effect of a miscast Silencing Charm:",
+    "mcq_options": [
+      "uncontrollable buzzing noise",
+      "temporary deafness",
+      "insatiable hunger",
+      "involuntary tongue-tying"
+    ],
+    "answer": "insatiable hunger",
+    "answer_type": "text",
+    "main_keyword": "which"
+  },
+  {
+    "original_question_id": 1147,
+    "question_source": "legacy",
+    "question_type": "MCQ",
+    "question": "Which of these is a Wiggenweld potion ingredient from the sea:",
+    "mcq_options": [
+      "gillyweed",
+      "kelp",
+      "lionfish spine",
+      "mandrake root"
+    ],
+    "answer": "lionfish spine",
+    "answer_type": "text",
+    "main_keyword": "which"
+  },
+  {
+    "original_question_id": 1085,
+    "question_source": "legacy",
+    "question_type": "MCQ",
+    "question": "Which of the following is NOT a form of Transfiguration:",
+    "mcq_options": [
+      "switching",
+      "vanishing",
+      "enchantment",
+      "conjuration"
+    ],
+    "answer": "enchantment",
+    "answer_type": "text",
+    "main_keyword": "which"
+  },
+  {
+    "original_question_id": 749,
+    "question_source": "legacy",
+    "question_type": "MCQ",
+    "question": "Who is NOT in Slytherin:",
+    "mcq_options": [
+      "lavender brown",
+      "pansy parkinson",
+      "blaise zabini",
+      "gregory goyle"
+    ],
+    "answer": "lavender brown",
+    "answer_type": "text",
+    "main_keyword": "who"
+  },
+  {
+    "original_question_id": 1095,
+    "question_source": "legacy",
+    "question_type": "MCQ",
+    "question": "Which of the following spells is not used in Transfiguration Class:",
+    "mcq_options": [
+      "vera verto",
+      "evanesco",
+      "confundo",
+      "avis"
+    ],
+    "answer": "confundo",
+    "answer_type": "text",
+    "main_keyword": "which"
+  },
+  {
+    "original_question_id": 1135,
+    "question_source": "legacy",
+    "question_type": "MCQ",
+    "question": "Which of these spells is not a cleaning spell:",
+    "mcq_options": [
+      "scourgify",
+      "tergeo",
+      "confrigo",
+      "reparo"
+    ],
+    "answer": "confrigo",
+    "answer_type": "text",
+    "main_keyword": "which"
+  },
+  {
+    "original_question_id": 1170,
+    "question_source": "legacy",
+    "question_type": "MCQ",
+    "question": "What was the number of the high-security Gringotts vault where the Philosopher's Stone was kept:",
+    "mcq_options": [
+      "687",
+      "711",
+      "713",
+      "717"
+    ],
+    "answer": "713",
+    "answer_type": "numeric",
+    "main_keyword": "what"
+  },
+  {
+    "original_question_id": 1169,
+    "question_source": "legacy",
+    "question_type": "MCQ",
+    "question": "Albus Dumbledore is famous for discovering how many uses of dragon's blood:",
+    "mcq_options": [
+      "7",
+      "10",
+      "12",
+      "15"
+    ],
+    "answer": "12",
+    "answer_type": "numeric",
+    "main_keyword": "how"
+  },
+  {
+    "original_question_id": 1168,
+    "question_source": "legacy",
+    "question_type": "MCQ",
+    "question": "In wizarding currency, how many Knuts are there in one Sickle:",
+    "mcq_options": [
+      "17",
+      "25",
+      "29",
+      "31"
+    ],
+    "answer": "29",
+    "answer_type": "numeric",
+    "main_keyword": "how"
+  },
+  {
+    "original_question_id": 1167,
+    "question_source": "legacy",
+    "question_type": "MCQ",
+    "question": "In Harry Potter and the Philosopher's Stone, how many challenges or obstacles protected the Philosopher's Stone:",
+    "mcq_options": [
+      "3",
+      "5",
+      "7",
+      "10"
+    ],
+    "answer": "7",
+    "answer_type": "numeric",
+    "main_keyword": "how"
+  },
+  {
+    "original_question_id": 1166,
+    "question_source": "legacy",
+    "question_type": "MCQ",
+    "question": "According to Quidditch Through the Ages, how many possible fouls are there in the game of Quidditch:",
+    "mcq_options": [
+      "150",
+      "325",
+      "700",
+      "950"
+    ],
+    "answer": "700",
+    "answer_type": "numeric",
+    "main_keyword": "how"
+  }
+]

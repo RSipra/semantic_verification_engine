@@ -1,0 +1,77 @@
+[
+  {
+    "original_question_id": 1209,
+    "semantic_entity_refs": ["Draught of Dreamless Sleep"],
+    "semantic_lore_concepts": ["Potion color", "Dreamless Sleep effect", "Purple hue of potion"]
+  },
+  {
+    "original_question_id": 1241,
+    "semantic_entity_refs": ["N.E.W.T.s", "Nastily Exhausting Wizarding Tests"],
+    "semantic_lore_concepts": ["Advanced Wizarding Examinations", "Seventh Year Assessment", "Career Qualification"]
+  },
+  {
+    "original_question_id": 1123,
+    "semantic_entity_refs": ["Puffapod"],
+    "semantic_lore_concepts": ["Instant blooming plant", "Herbology plant characteristic", "Puffapod properties"]
+  },
+  {
+    "original_question_id": 1097,
+    "semantic_entity_refs": ["Depulso", "Banishing Charm"],
+    "semantic_lore_concepts": ["Repelling spell effect", "Knockback Jinx equivalent", "Charms Class spell"]
+  },
+  {
+    "original_question_id": 1196,
+    "semantic_entity_refs": ["Insatiable hunger"],
+    "semantic_lore_concepts": ["Non-plausible charm side effect", "Unrelated magical ailment", "Spell miscasting consequence"]
+  },
+  {
+    "original_question_id": 1147,
+    "semantic_entity_refs": ["Lionfish spine"],
+    "semantic_lore_concepts": ["Wiggenweld Potion component", "Marine potion ingredient", "Potions ingredient from the sea"]
+  },
+  {
+    "original_question_id": 1085,
+    "semantic_entity_refs": ["Enchantment"],
+    "semantic_lore_concepts": ["Non-Transfiguration branch of magic", "Spell category distinction", "Charms discipline"]
+  },
+  {
+    "original_question_id": 749,
+    "semantic_entity_refs": ["Lavender Brown", "Gryffindor student"],
+    "semantic_lore_concepts": ["Hogwarts House affiliation", "Student sorting outcome", "Non-Slytherin character"]
+  },
+  {
+    "original_question_id": 1095,
+    "semantic_entity_refs": ["Confundo", "Confundus Charm"],
+    "semantic_lore_concepts": ["Non-Transfiguration spell", "Charms Class spell", "Bewitchment magic"]
+  },
+  {
+    "original_question_id": 1135,
+    "semantic_entity_refs": ["Confrigo", "Blasting Curse"],
+    "semantic_lore_concepts": ["Destructive spell", "Non-cleaning charm", "Battle magic"]
+  },
+  {
+    "original_question_id": 1170,
+    "semantic_entity_refs": ["Vault 713"],
+    "semantic_lore_concepts": ["Gringotts high-security storage", "Philosopher's Stone protection", "Wizarding bank vault number"]
+  },
+  {
+    "original_question_id": 1169,
+    "semantic_entity_refs": ["Twelve uses of dragon's blood"],
+    "semantic_lore_concepts": ["Dumbledore's magical discovery", "Dragon's blood properties", "Alchemical applications"]
+  },
+  {
+    "original_question_id": 1168,
+    "semantic_entity_refs": ["Twenty-nine Knuts per Sickle"],
+    "semantic_lore_concepts": ["Wizarding monetary conversion", "Magical currency denominations", "Sickle-Knut value"]
+  },
+  {
+    "original_question_id": 1167,
+    "semantic_entity_refs": ["Seven challenges for the Philosopher's Stone"],
+    "semantic_lore_concepts": ["Philosopher's Stone defenses", "Hogwarts magical traps", "Stone protection count"]
+  },
+  {
+    "original_question_id": 1166,
+    "semantic_entity_refs": ["Seven hundred Quidditch fouls"],
+    "semantic_lore_concepts": ["Quidditch rulebook detail", "Magical sports infractions", "Quidditch Through the Ages information"]
+  }
+]

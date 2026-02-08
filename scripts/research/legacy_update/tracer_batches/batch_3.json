@@ -1,0 +1,152 @@
+[
+  {
+    "original_question_id": 1179,
+    "question_source": "legacy",
+    "question_type": "EX",
+    "question": "At the beginning of Harry Potter and the Prisoner of Azkaban, where is Hedwig waiting for Harry after he flees the Dursleys' house?",
+    "mcq_options": null,
+    "answer": "In his room at the Leaky Cauldron",
+    "answer_type": "text",
+    "main_keyword": "where"
+  },
+  {
+    "original_question_id": 1190,
+    "question_source": "legacy",
+    "question_type": "EX",
+    "question": "Which puzzle guarding the Philosopher\u2019s Stone does Hermione Granger solve?",
+    "mcq_options": null,
+    "answer": "Professor Snape\u2019s logic puzzle with potion bottles",
+    "answer_type": "text",
+    "main_keyword": "which"
+  },
+  {
+    "original_question_id": 1307,
+    "question_source": "legacy",
+    "question_type": "EX",
+    "question": "Who can master a wand with a Thestral tail hair core?",
+    "mcq_options": null,
+    "answer": "One who has faced death",
+    "answer_type": "text",
+    "main_keyword": "who"
+  },
+  {
+    "original_question_id": 1342,
+    "question_source": "legacy",
+    "question_type": "EX",
+    "question": "Where was the real locket Horcrux discovered after the fake one had been retrieved from the cave?",
+    "mcq_options": null,
+    "answer": "At the Ministry of Magic, worn by Dolores Umbridge during a Muggle-born trial.",
+    "answer_type": "text",
+    "main_keyword": "where"
+  },
+  {
+    "original_question_id": 1357,
+    "question_source": "legacy",
+    "question_type": "EX",
+    "question": "Who had Severus Snape\u2019s true allegiance, and why?",
+    "mcq_options": null,
+    "answer": "Albus Dumbledore: Snape's allegiance was to him because of his enduring love for Lily Potter and his desire to protect her son.",
+    "answer_type": "text",
+    "main_keyword": "who"
+  },
+  {
+    "original_question_id": 1359,
+    "question_source": "legacy",
+    "question_type": "EX",
+    "question": "In Harry Potter and the Order of the Phoenix, Aunt Petunia refers to \"that boy,\" which Harry assumes means his father. Who is she actually talking about, and what does this reveal?",
+    "mcq_options": null,
+    "answer": "Severus Snape: Petunia reveals she had eavesdropped on Snape and Lily as children, proving she knew about the Wizarding World.",
+    "answer_type": "text",
+    "main_keyword": "which"
+  },
+  {
+    "original_question_id": 1381,
+    "question_source": "legacy",
+    "question_type": "EX",
+    "question": " In Harry Potter and the Order of the Phoenix, after Harry's Dementor attack, a mysterious Howler arrives for Aunt Petunia, stopping her from throwing Harry out. Who sent this Howler, and what was their crucial reason for doing so?",
+    "mcq_options": null,
+    "answer": "Albus Dumbledore: He sent the Howler ('Remember my last, Petunia') to remind her of her blood pact to protect Harry.",
+    "answer_type": "text",
+    "main_keyword": "who"
+  },
+  {
+    "original_question_id": 453,
+    "question_source": "legacy",
+    "question_type": "EX",
+    "question": "How should your completed Scintillation Solution look?",
+    "mcq_options": null,
+    "answer": "Sparkling.",
+    "answer_type": "text",
+    "main_keyword": "how"
+  },
+  {
+    "original_question_id": 1280,
+    "question_source": "legacy",
+    "question_type": "EX",
+    "question": "What is at the base of the Whomping Willow?",
+    "mcq_options": null,
+    "answer": "A tunnel that leads to the Shrieking Shack.",
+    "answer_type": "text",
+    "main_keyword": "what"
+  },
+  {
+    "original_question_id": 1402,
+    "question_source": "legacy",
+    "question_type": "EX",
+    "question": "After growing up as an orphan, how did Tom Riddle definitively discover his identity as the Heir of Salazar Slytherin?",
+    "mcq_options": null,
+    "answer": "By researching his mother's family, the Gaunts, encountering his uncle Morfin Gaunt, and confirming it through his own Parseltongue ability.",
+    "answer_type": "text",
+    "main_keyword": "how"
+  },
+  {
+    "original_question_id": 1425,
+    "question_source": "legacy",
+    "question_type": "EX",
+    "question": "How did Ginny Weasley come into possession of Tom Riddle\u2019s diary in Harry Potter and the Chamber of Secrets?",
+    "mcq_options": null,
+    "answer": "Lucius Malfoy secretly slipped the diary into her cauldron at Flourish and Blotts, hiding it among her school supplies.",
+    "answer_type": "text",
+    "main_keyword": "how"
+  },
+  {
+    "original_question_id": 1206,
+    "question_source": "legacy",
+    "question_type": "EX",
+    "question": "How did Fred and George get the money to open their shop?",
+    "mcq_options": null,
+    "answer": "Harry gave Fred and George his triwizard tournament prize money of a 1000 galleeons",
+    "answer_type": "text",
+    "main_keyword": "how"
+  },
+  {
+    "original_question_id": 171,
+    "question_source": "legacy",
+    "question_type": "EX",
+    "question": "How do you greet a Hippogriff?",
+    "mcq_options": null,
+    "answer": "With a bow",
+    "answer_type": "text",
+    "main_keyword": "how"
+  },
+  {
+    "original_question_id": 1415,
+    "question_source": "legacy",
+    "question_type": "EX",
+    "question": "In Half-Blood Prince, why did Professor Slughorn invite Ginny Weasley to join his exclusive 'Slug Club' despite her family's lesser fame?",
+    "mcq_options": null,
+    "answer": "Because he was impressed by her exceptional magical talent, particularly her powerful Bat-Bogey Hex",
+    "answer_type": "text",
+    "main_keyword": "why"
+  },
+  {
+    "original_question_id": 1350,
+    "question_source": "legacy",
+    "question_type": "EX",
+    "question": "In Harry Potter and the Deathly Hallows, during the Battle of Hogwarts, Narcissa Malfoy lies to Voldemort about Harry\u2019s death. What was her desperate motivation for this lie?",
+    "mcq_options": null,
+    "answer": "Her desperate need to know if her son, Draco, was alive (or to find Draco / to ensure Draco's safety).",
+    "answer_type": "text",
+    "main_keyword": "what"
+  }
+]

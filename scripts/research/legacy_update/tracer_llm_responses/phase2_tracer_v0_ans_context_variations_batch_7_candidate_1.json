@@ -1,0 +1,72 @@
+[
+  {
+    "original_question_id": 18,
+    "semantic_entity_refs": ["Hermione Granger", "Hermione Jean Granger", "Brightest Witch of Her Age"],
+    "semantic_lore_concepts": ["Basilisk venom", "Horcrux destruction", "Chamber of Secrets fang"]
+  },
+  {
+    "original_question_id": 1220,
+    "semantic_entity_refs": [],
+    "semantic_lore_concepts": ["First Wizarding War", "Voldemort's initial downfall", "Halloween 1981"]
+  },
+  {
+    "original_question_id": 1374,
+    "semantic_entity_refs": [],
+    "semantic_lore_concepts": ["Planned death", "Elder Wand transfer", "Astronomy Tower incident"]
+  },
+  {
+    "original_question_id": 1033,
+    "semantic_entity_refs": ["Hokey", "Hepzibah Smith's house-elf"],
+    "semantic_lore_concepts": ["Memory modification", "Horcrux theft accomplice", "House-elf service"]
+  },
+  {
+    "original_question_id": 582,
+    "semantic_entity_refs": ["Quaffle", "Bludger", "Golden Snitch"],
+    "semantic_lore_concepts": ["Quidditch equipment", "Scoring object", "Seeker's target", "Beater's defense"]
+  },
+  {
+    "original_question_id": 848,
+    "semantic_entity_refs": ["Penelope Clearwater", "Ravenclaw Prefect"],
+    "semantic_lore_concepts": ["Petrification", "Chamber of Secrets attack", "Basilisk victim"]
+  },
+  {
+    "original_question_id": 798,
+    "semantic_entity_refs": [],
+    "semantic_lore_concepts": ["Riddikulus Charm outcome", "Neville's Boggart disguise", "Grandmother's hat decoration"]
+  },
+  {
+    "original_question_id": 106,
+    "semantic_entity_refs": [],
+    "semantic_lore_concepts": ["Kappa habitat", "Mythical creature origin"]
+  },
+  {
+    "original_question_id": 366,
+    "semantic_entity_refs": [],
+    "semantic_lore_concepts": ["Gringotts security", "Wizarding bank vaults", "Gringotts depths"]
+  },
+  {
+    "original_question_id": 1268,
+    "semantic_entity_refs": [],
+    "semantic_lore_concepts": ["St. Mungo's entrance", "Muggle London concealment", "Wizarding hospital location", "Purge & Dowse disguise"]
+  },
+  {
+    "original_question_id": 1149,
+    "semantic_entity_refs": [],
+    "semantic_lore_concepts": ["Cistem Aperio spell", "Trunk-blasting charm", "Container-opening spell"]
+  },
+  {
+    "original_question_id": 1152,
+    "semantic_entity_refs": [],
+    "semantic_lore_concepts": ["Non-canonical dragon", "Fictional creature", "Invented dragon breed"]
+  },
+  {
+    "original_question_id": 1163,
+    "semantic_entity_refs": [],
+    "semantic_lore_concepts": ["Confundus Charm", "Confusion spell", "Disorientation magic", "Mental befuddlement charm"]
+  },
+  {
+    "original_question_id": 1361,
+    "semantic_entity_refs": [],
+    "semantic_lore_concepts": ["Pre-Hogwarts meeting", "Childhood friendship start", "Spinner's End connection"]
+  }
+]

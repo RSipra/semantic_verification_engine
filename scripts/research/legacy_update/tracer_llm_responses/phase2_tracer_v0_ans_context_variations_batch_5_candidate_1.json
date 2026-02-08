@@ -1,0 +1,77 @@
+[
+  {
+    "original_question_id": 1115,
+    "semantic_entity_refs": [],
+    "semantic_lore_concepts": ["Switching Spells", "Transfiguration mechanics"]
+  },
+  {
+    "original_question_id": 1202,
+    "semantic_entity_refs": ["Golden Snitch", "Snitch"],
+    "semantic_lore_concepts": ["Quidditch scoring", "Game-ending capture", "Seeker's catch value"]
+  },
+  {
+    "original_question_id": 1203,
+    "semantic_entity_refs": ["Wizengamot", "Wizarding high court"],
+    "semantic_lore_concepts": ["Ministry of Magic governance", "Judicial body members"]
+  },
+  {
+    "original_question_id": 1222,
+    "semantic_entity_refs": ["Quidditch team"],
+    "semantic_lore_concepts": ["Quidditch rules", "Team composition"]
+  },
+  {
+    "original_question_id": 1173,
+    "semantic_entity_refs": ["Apparition license"],
+    "semantic_lore_concepts": ["Apparition age requirement", "Wizarding legal age", "Magical maturity"]
+  },
+  {
+    "original_question_id": 1194,
+    "semantic_entity_refs": ["Azkaban Prison", "Azkaban"],
+    "semantic_lore_concepts": ["Wizarding prison establishment", "Dementor fortress history"]
+  },
+  {
+    "original_question_id": 1309,
+    "semantic_entity_refs": ["Quidditch"],
+    "semantic_lore_concepts": ["Quidditch history", "Game rules documentation", "Ancient sport records"]
+  },
+  {
+    "original_question_id": 1197,
+    "semantic_entity_refs": ["Gringotts Wizarding Bank", "Gringotts"],
+    "semantic_lore_concepts": ["Wizarding bank establishment", "Goblin-run institution history", "Magical finance origin"]
+  },
+  {
+    "original_question_id": 736,
+    "semantic_entity_refs": ["Quidditch"],
+    "semantic_lore_concepts": ["Quidditch origin", "Invention date of Quidditch", "Ancient wizarding sport inception"]
+  },
+  {
+    "original_question_id": 152,
+    "semantic_entity_refs": ["Wildcat gargoyle"],
+    "semantic_lore_concepts": ["Gargoyle incident date", "Magical creature event"]
+  },
+  {
+    "original_question_id": 1244,
+    "semantic_entity_refs": ["Harry Potter", "Lord Voldemort", "Tom Riddle", "Lily Potter", "James Potter"],
+    "semantic_lore_concepts": ["Killing Curse survival", "Love protection magic", "Voldemort's first defeat", "Accidental Horcrux creation", "Fidelius Charm breach"]
+  },
+  {
+    "original_question_id": 1298,
+    "semantic_entity_refs": ["James Potter", "Lily Potter"],
+    "semantic_lore_concepts": ["Potter family sacrifice", "Voldemort's attack on Godric's Hollow", "Fidelius Charm failure"]
+  },
+  {
+    "original_question_id": 1278,
+    "semantic_entity_refs": ["Severus Snape", "Half-Blood Prince"],
+    "semantic_lore_concepts": ["Severus Snape's birthdate", "Snape's life events"]
+  },
+  {
+    "original_question_id": 978,
+    "semantic_entity_refs": ["Harry Potter", "The Boy Who Lived"],
+    "semantic_lore_concepts": ["Harry Potter's birthdate", "Prophecy of the Chosen One", "Boy Who Lived origin"]
+  },
+  {
+    "original_question_id": 921,
+    "semantic_entity_refs": ["Battle of Hogwarts", "Lord Voldemort", "Tom Riddle", "Harry Potter"],
+    "semantic_lore_concepts": ["Voldemort's final demise", "End of Second Wizarding War", "Elder Wand mastery", "Hogwarts ultimate confrontation"]
+  }
+]

@@ -1,0 +1,139 @@
+You are generating in-universe semantic context for Harry Potter trivia answers to support a high-precision SBERT Answer Refinery.
+
+### Core Intent
+Contextual variations are NOT lexical rephrasings (synonyms). They are lore-grounded identifiers, aliases, and narrative roles that a knowledgeable fan would use to describe the same truth.
+
+### Instructions (Surgical Precision Rules)
+
+1. **The Anchor-First Rule:** Every entry in `entity_refs` MUST be a direct substitute for the answer itself. 
+   - DO NOT include victims, bystanders, or contextual characters from the question. 
+   - *Example:* If the answer is "Bellatrix Lestrange," do NOT include "Sirius Black" or "Harry Potter" as variants.
+
+2. **The "Non-Generic" Lore Rule:** Lore concepts must be DISCRIMINATIVE. 
+   - Avoid generic categories like "Wizarding school," "Magical plants," or "Spells."
+   - Include only concepts that explain the specific truth or mechanics of the answer (e.g., "Wand Allegiance," "Secret-Keeper," "Blood Pact").
+
+3. **The Alias Cap:** - Max 2 aliases per entity. 
+   - Prioritize the most common canonical alias (e.g., "Voldemort" ↔ "Tom Riddle").
+
+4. **MCQ Strictness:** - Variations for MCQ must uniquely identify the correct option. 
+   - If an alias overlaps with a distractor (e.g., using "Marauder" when both Sirius and Lupin are options), discard it.
+
+
+
+### Output Schema
+{
+  "question_id": int,
+  "semantic_variants": {
+    "entity_refs": ["List of people, objects, or creatures"],
+    "lore_concepts": ["List of specific magical events, statuses, or properties"]
+  }
+}
+
+---EXAMPLES---
+INPUT
+question_id: 1357
+question_type: EX
+question: Who had Severus Snape’s true allegiance, and why?
+answer: Albus Dumbledore: Snape's allegiance was to him because of his enduring love for Lily Potter.
+
+OUTPUT
+{
+  "question_id": 1357,
+  "semantic_variants": {
+    "entity_refs": ["Albus Dumbledore", "Severus Snape", "Lily Potter", "Harry Potter"],
+    "lore_concepts": ["Unrequited love", "Protecting the son", "Atonement", "Double agent", "Always"]
+  }
+}
+---END EXAMPLES---
+
+---QUESTIONS DICTIONARY---
+question_dict =
+{{
+597: {'question_type': 'EX',
+'question': 'What does the Philosopher’s Stone do?',
+'answer': 'It produces the Elixir of Life, granting immortality, and can turn any metal into pure gold.'},
+677: {'question_type': 'FR',
+'question': 'During the Second Task of the Triwizard Tournament, what fiercely protective and intelligent magical species presented a formidable obstacle to champions attempting to retrieve their hostages',
+'answer': 'Merpeople '},
+347: {'question_type': 'FR',
+'question': 'What animal is Dolores Umbridge obsessed with?',
+'answer': 'Cats (specifically, kittens)'},
+682: {'question_type': 'FR',
+'question': 'What is the effect of the Stupefy spell?',
+'answer': 'Stuns the target'},
+428: {'question_type': 'FR',
+'question': 'Who killed Sirius Black?',
+'answer': 'Bellatrix Lestrange'},
+184: {'question_type': 'FR',
+'question': "What kind of wood is Harry's first wand made out of?",
+'answer': 'Holly'},
+261: {'question_type': 'FR',
+'question': 'What effect does diluted Swooping Evil venom have?',
+'answer': 'Erases bad memories'},
+310: {'question_type': 'FR',
+'question': 'Harry was raised by his mother’s sister. What was his aunt named?',
+'answer': 'Petunia'},
+31: {'question_type': 'FR',
+'question': 'Where is Hogwarts located?',
+'answer': 'Scotland'},
+741: {'question_type': 'EX',
+'question': 'What was the deeper significance of Dumbledore bequeathing the Deluminator to Ron Weasley?',
+'answer': "Beyond putting out lights, its true purpose was one of guidance. Dumbledore enchanted it so that when Ron was lost, it would reveal a path of light to lead him back to his friends, showing Dumbledore's faith in Ron's loyalty"},
+665: {'question_type': 'MCQ',
+'question': 'Who betrays Lily and James Potter:',
+'answer': 'Wormtail',
+'mcq_options': ['Moony', 'Professor Snape', 'Padfoot', 'Wormtail']},
+622: {
+'question_type': 'MCQ',
+'question': 'Which of the following transformations would be considered the easiest due to the similarity in form between the two objects:',
+'answer': 'Porcupine to Pincushion',
+'mcq_options': ['Human to Ferret',
+'Teapot to Tortoise',
+'Desk to Pig',
+'Porcupine to Pincushion']},
+633: {'question_type': 'MCQ',
+'question': "Which of these plants doesn't bite:",
+'answer': 'Whomping Willow',
+'mcq_options': ['Fanged Geranium',
+'Venomous Tentacula',
+'Whomping Willow',
+'Mandrake']},
+605: {'question_type': 'MCQ',
+'question': 'Which of the following was NOT a breed of dragon faced by the Triwizard Tournament champions:',
+'answer': 'Norwegian Ridgeback',
+'mcq_options': ['Hungarian Horntail',
+'Chinese Fireball',
+'Swedish Short-Snout',
+'Norwegian Ridgeback']},
+561: {'question_type': 'MCQ',
+'question': 'Which of the following plants is known for its tendency to slap people:',
+'answer': 'Bouncing Bulbs',
+'mcq_options': ['Fanged Geranium',
+'Bubotuber',
+'Bouncing Bulbs',
+'Snargaluff']}
+1369: {
+  'question_type': 'EX',
+  'question': 'Why did Voldemort seek out the imprisoned Gellert Grindelwald in Nurmengard?',
+  'answer': 'Voldemort wanted to force Grindelwald to reveal the location of the Elder Wand, believing he could extract the information through fear or torture—unaware that Grindelwald would refuse to help and that the wand’s allegiance already belonged to Dumbledore'},
+ 1401: {'
+  'question_type': 'EX',
+  'question': 'In Chamber of Secrets, what secret did Harry discover about why Rubeus Hagrid was expelled from Hogwarts?',
+  'answer': 'He was falsely accused by Tom Riddle (Lord Voldemort) of opening the Chamber of Secrets and unleashing its monster (the Basilisk), which led to the death of a student.'},
+1345: {
+  'question_type': 'EX',
+  'question': 'What was the second true prophecy made by Professor Trelawney that occurs in Harry Potter and the Prisoner of Azkaban?',
+  'answer': 'That the Dark Lord would rise again, and his servant would break free and return to him — referring to Peter Pettigrew escaping to rejoin Voldemort'},
+1357:{
+  'question_type': 'EX',
+  'question': 'Who had Severus Snape’s true allegiance, and why?',
+  'answer': "Albus Dumbledore: Snape's allegiance was to him because of his enduring love for Lily Potter and his desire to protect her son."},
+1358:{
+  'question_type': 'EX',
+  'question': 'Why was Sirius Black sent to Azkaban?',
+  'answer': 'He was wrongly accused of betraying the Potters to Voldemort and of killing Peter Pettigrew and twelve Muggles with a single curse.'
+  }
+}}
+
+---END QUESTIONS DICTIONARY---

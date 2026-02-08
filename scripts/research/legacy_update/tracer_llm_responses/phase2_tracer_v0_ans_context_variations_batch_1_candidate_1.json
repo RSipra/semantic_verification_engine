@@ -1,0 +1,77 @@
+[
+  {
+    "original_question_id": 1130,
+    "semantic_entity_refs": ["S.P.E.W. treasurer", "Society for the Promotion of Elfish Welfare treasurer"],
+    "semantic_lore_concepts": ["S.P.E.W.", "House-elf rights advocacy", "Hermione Granger's initiatives"]
+  },
+  {
+    "original_question_id": 1279,
+    "semantic_entity_refs": ["Crucio", "Cruciatus Curse"],
+    "semantic_lore_concepts": ["Unforgivable Curses", "Torture spell", "Dark Arts"]
+  },
+  {
+    "original_question_id": 1165,
+    "semantic_entity_refs": [],
+    "semantic_lore_concepts": ["Muffliato Charm", "Privacy spell", "Eavesdropping prevention"]
+  },
+  {
+    "original_question_id": 1140,
+    "semantic_entity_refs": ["Helena Ravenclaw", "Grey Lady"],
+    "semantic_lore_concepts": ["Hogwarts Founder's child", "Ravenclaw House ghost", "Diadem of Ravenclaw connection"]
+  },
+  {
+    "original_question_id": 1155,
+    "semantic_entity_refs": ["hue", "colour"],
+    "semantic_lore_concepts": ["Transfiguration principles", "Magical property", "Visual attribute"]
+  },
+  {
+    "original_question_id": 1128,
+    "semantic_entity_refs": ["spiral dive"],
+    "semantic_lore_concepts": ["Quidditch maneuver", "Seeker tactic", "Broomstick technique"]
+  },
+  {
+    "original_question_id": 795,
+    "semantic_entity_refs": ["Draco Malfoy", "Malfoy"],
+    "semantic_lore_concepts": ["Slytherin House affiliation", "Pure-blood ideology", "School rival"]
+  },
+  {
+    "original_question_id": 1087,
+    "semantic_entity_refs": ["bouncing bulbs"],
+    "semantic_lore_concepts": ["Magical plant", "Herbology study", "Aggressive flora"]
+  },
+  {
+    "original_question_id": 1158,
+    "semantic_entity_refs": ["Dittany", "Essence of Dittany"],
+    "semantic_lore_concepts": ["Healing properties", "Potion ingredient", "Wound care"]
+  },
+  {
+    "original_question_id": 1093,
+    "semantic_entity_refs": ["resourceful", "cunning"],
+    "semantic_lore_concepts": ["Slytherin House qualities", "House characteristics", "Ambition (Slytherin trait)"]
+  },
+  {
+    "original_question_id": 1137,
+    "semantic_entity_refs": ["Fianto Duri"],
+    "semantic_lore_concepts": ["Charm strengthening", "Spell stability", "Defensive enchantment"]
+  },
+  {
+    "original_question_id": 1145,
+    "semantic_entity_refs": ["healing injuries", "restorative properties"],
+    "semantic_lore_concepts": ["Wiggenweld Potion", "Medical potion", "Counter-charm (Sleeping Draught)"]
+  },
+  {
+    "original_question_id": 1143,
+    "semantic_entity_refs": ["dancing"],
+    "semantic_lore_concepts": ["Vanishing Spell limitations", "Non-magical activity"]
+  },
+  {
+    "original_question_id": 1229,
+    "semantic_entity_refs": ["a curly tail", "pig's tail"],
+    "semantic_lore_concepts": ["Partial transfiguration", "Hagrid's accidental magic", "Dudley Dursley's transformation"]
+  },
+  {
+    "original_question_id": 1153,
+    "semantic_entity_refs": ["Bowtruckles", "Tree guardians"],
+    "semantic_lore_concepts": ["Magical creature diet", "Fairy egg predation"]
+  }
+]

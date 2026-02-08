@@ -1,0 +1,227 @@
+[
+  {
+    "question_id": 1179,
+    "question_type": "EX",
+    "question": "At the beginning of Harry Potter and the Prisoner of Azkaban, where is Hedwig waiting for Harry after he flees the Dursleys' house?",
+    "answer": "In his room at the Leaky Cauldron",
+    "hint_1": "Think about where Harry goes immediately after leaving his relatives' home.",
+    "hint_2": "This is a secret wizarding inn that serves as a gateway to Diagon Alley.",
+    "hint_3": "The location provides a safe haven for young wizards and is often a first stop when coming to London from the Muggle world.",
+    "explanation": "After Harry accidentally inflates Aunt Marge and flees Privet Drive, he is picked up by the Knight Bus and taken to the Leaky Cauldron. The Ministry of Magic decides not to punish him, and he spends the remainder of his summer there. Hedwig is waiting for him in his assigned room.",
+    "answer_variations": [
+      "[Comprehensive]: Hedwig is waiting in Harry's room at the magical inn he stays at before returning to Hogwarts.",
+      "[Semantic Core]: Hedwig is in Harry's room at the Leaky Cauldron.",
+      "[Key-Term Expansion]: Harry's room, Leaky Cauldron, wizarding inn, waiting"
+    ]
+  },
+  {
+    "question_id": 1190,
+    "question_type": "EX",
+    "question": "Which puzzle guarding the Philosopher\u2019s Stone does Hermione Granger solve?",
+    "answer": "Professor Snape\u2019s logic puzzle with potion bottles",
+    "hint_1": "This challenge required intelligence and quick thinking, not brute force or flying skills.",
+    "hint_2": "It involved a series of containers and instructions, testing reasoning abilities.",
+    "hint_3": "The task was designed by a master of Potions, requiring the identification of a safe passage.",
+    "explanation": "Hermione Granger, renowned for her brilliant mind, successfully solved Professor Snape's logic puzzle. This challenge required her to choose the correct potion from a lineup to either move forward or go back, based on a riddle. Her quick thinking allowed Harry to continue his pursuit of the Philosopher's Stone.",
+    "answer_variations": [
+      "[Comprehensive]: Hermione solves the logic puzzle created by Professor Snape, which involved choosing the correct potion.",
+      "[Semantic Core]: Hermione solves Professor Snape's logic puzzle with potion bottles.",
+      "[Key-Term Expansion]: Hermione, Snape, logic puzzle, potion bottles, riddle"
+    ]
+  },
+  {
+    "question_id": 1307,
+    "question_type": "EX",
+    "question": "Who can master a wand with a Thestral tail hair core?",
+    "answer": "One who has faced death",
+    "hint_1": "The creatures whose hair forms the core are only visible to certain individuals.",
+    "hint_2": "The ability to see these creatures, and thus master such a wand, depends on a specific experience.",
+    "hint_3": "This particular magical ingredient resonates with those who have experienced profound loss or significant existential encounters.",
+    "explanation": "Wands with Thestral tail hair cores are notoriously difficult to master. They bond with wizards who have faced death directly and understood its reality, not just witnessed it. This connection to mortality grants the wielder a unique affinity with the wand's power.",
+    "answer_variations": [
+      "[Comprehensive]: Only a wizard or witch who has truly faced and comprehended death can master a wand with a Thestral tail hair core.",
+      "[Semantic Core]: A person who has confronted death can master this wand.",
+      "[Key-Term Expansion]: Faced death, comprehended mortality, experienced loss, thestral core"
+    ]
+  },
+  {
+    "question_id": 1342,
+    "question_type": "EX",
+    "question": "Where was the real locket Horcrux discovered after the fake one had been retrieved from the cave?",
+    "answer": "At the Ministry of Magic, worn by Dolores Umbridge during a Muggle-born trial.",
+    "hint_1": "The locket was found in a prominent government building in the wizarding world.",
+    "hint_2": "It was being worn by a particularly unpleasant character known for her anti-Muggle-born sentiments.",
+    "hint_3": "The discovery occurred during a controversial legal proceeding targeting those deemed 'undesirable.'",
+    "explanation": "The real locket Horcrux was found within the Ministry of Magic. Dolores Umbridge had acquired it and was wearing it openly, using its dark influence to fuel her prejudice while presiding over the trials of Muggle-borns. Harry, Ron, and Hermione retrieved it during their infiltration.",
+    "answer_variations": [
+      "[Comprehensive]: The genuine locket Horcrux was found at the Ministry of Magic, being worn by Dolores Umbridge during a Muggle-born registration commission trial.",
+      "[Semantic Core]: Dolores Umbridge wore the locket at the Ministry of Magic.",
+      "[Key-Term Expansion]: Ministry of Magic, Dolores Umbridge, Muggle-born trial, locket horcrux"
+    ]
+  },
+  {
+    "question_id": 1357,
+    "question_type": "EX",
+    "question": "Who had Severus Snape\u2019s true allegiance, and why?",
+    "answer": "Albus Dumbledore: Snape's allegiance was to him because of his enduring love for Lily Potter and his desire to protect her son.",
+    "hint_1": "The person he was loyal to was the headmaster of Hogwarts for many years.",
+    "hint_2": "His loyalty stemmed from a deeply personal connection to Harry's mother.",
+    "hint_3": "This profound emotional tie dictated his actions and his secret life as a double agent.",
+    "explanation": "Severus Snape's true allegiance lay with Albus Dumbledore. His unwavering loyalty was driven by his lifelong love for Lily Potter, Harry's mother. This love compelled him to protect Harry and secretly work against the Dark Lord, fulfilling Dumbledore's requests until his own death.",
+    "answer_variations": [
+      "[Comprehensive]: Severus Snape's true allegiance was to Albus Dumbledore, motivated by his enduring love for Lily Potter and his commitment to protecting her son, Harry.",
+      "[Semantic Core]: Snape's allegiance was Dumbledore due to his love for Lily.",
+      "[Key-Term Expansion]: Albus Dumbledore, Lily Potter, Snape's love, protect Harry, allegiance"
+    ]
+  },
+  {
+    "question_id": 1359,
+    "question_type": "EX",
+    "question": "In Harry Potter and the Order of the Phoenix, Aunt Petunia refers to \"that boy,\" which Harry assumes means his father. Who is she actually talking about, and what does this reveal?",
+    "answer": "Severus Snape: Petunia reveals she had eavesdropped on Snape and Lily as children, proving she knew about the Wizarding World.",
+    "hint_1": "The 'boy' she mentions was a childhood acquaintance of Lily Potter, her sister.",
+    "hint_2": "This revelation surprised Harry, as it showed his aunt knew more about his mother's past than he realized.",
+    "hint_3": "Petunia's statement unveils her long-held secret awareness of the magical world from a young age.",
+    "explanation": "Aunt Petunia was actually referring to Severus Snape when she spoke of 'that boy.' This surprising revelation occurred when she mentioned hearing Snape and Lily as children. It proved that Petunia had known about the wizarding world for far longer than Harry (or the audience) had previously thought, showing her early jealousy and resentment.",
+    "answer_variations": [
+      "[Comprehensive]: Aunt Petunia was actually referring to Severus Snape, which revealed that she had known about the Wizarding World since childhood by eavesdropping on him and Lily.",
+      "[Semantic Core]: Petunia referred to Snape, revealing her childhood knowledge of magic.",
+      "[Key-Term Expansion]: Severus Snape, Aunt Petunia, Lily, childhood, Wizarding World, eavesdropped, knew"
+    ]
+  },
+  {
+    "question_id": 1381,
+    "question_type": "EX",
+    "question": " In Harry Potter and the Order of the Phoenix, after Harry's Dementor attack, a mysterious Howler arrives for Aunt Petunia, stopping her from throwing Harry out. Who sent this Howler, and what was their crucial reason for doing so?",
+    "answer": "Albus Dumbledore: He sent the Howler ('Remember my last, Petunia') to remind her of her blood pact to protect Harry.",
+    "hint_1": "The sender was the powerful headmaster of Hogwarts, who always had Harry's best interests at heart.",
+    "hint_2": "The message contained a cryptic but potent reminder about a previous agreement.",
+    "hint_3": "The magic binding Harry to his aunt's home was a vital protection, necessitating a strong intervention.",
+    "explanation": "Albus Dumbledore sent the mysterious Howler to Aunt Petunia. His crucial reason was to remind her of the blood protection she unknowingly provided Harry by allowing him to live under her roof. The Howler, by stating 'Remember my last, Petunia,' referred to his earlier letter explaining this magical pact, ensuring Harry's safety at Privet Drive.",
+    "answer_variations": [
+      "[Comprehensive]: Albus Dumbledore sent the Howler to Aunt Petunia, reminding her of the blood pact that protected Harry while he was at Privet Drive.",
+      "[Semantic Core]: Dumbledore sent a Howler reminding Petunia of her blood pact to protect Harry.",
+      "[Key-Term Expansion]: Albus Dumbledore, Howler, Aunt Petunia, blood pact, protect Harry"
+    ]
+  },
+  {
+    "question_id": 453,
+    "question_type": "EX",
+    "question": "How should your completed Scintillation Solution look?",
+    "answer": "Sparkling.",
+    "hint_1": "Think about the meaning of 'scintillation.'",
+    "hint_2": "The desired appearance suggests a bright, effervescent quality.",
+    "hint_3": "A successful preparation of this potion would involve a visually striking, luminous effect.",
+    "explanation": "The Scintillation Solution is a potion that, when correctly brewed, should exhibit a distinct and vibrant appearance. Its name itself, 'Scintillation,' directly indicates that the final product must be sparkling. This visual cue confirms the potion's successful completion and potency.",
+    "answer_variations": [
+      "[Comprehensive]: A properly completed Scintillation Solution should appear sparkling, indicating its successful preparation and quality.",
+      "[Semantic Core]: The Scintillation Solution should be sparkling.",
+      "[Key-Term Expansion]: Sparkling, bright, effervescent, luminous, scintillating"
+    ]
+  },
+  {
+    "question_id": 1280,
+    "question_type": "EX",
+    "question": "What is at the base of the Whomping Willow?",
+    "answer": "A tunnel that leads to the Shrieking Shack.",
+    "hint_1": "This discovery is made by Harry and his friends in their third year.",
+    "hint_2": "It's a secret passage associated with Remus Lupin and his transformation.",
+    "hint_3": "The entrance is a hidden pathway providing access to a famously haunted building outside Hogwarts grounds.",
+    "explanation": "At the base of the Whomping Willow, there is a knot on its trunk that, when pressed, paralyzes the aggressive tree. This action reveals a secret tunnel entrance. The tunnel serves as a passage leading directly to the Shrieking Shack, which Remus Lupin used during his Hogwarts years for his monthly transformations.",
+    "answer_variations": [
+      "[Comprehensive]: At the base of the Whomping Willow, there is a hidden tunnel entrance that leads directly to the Shrieking Shack.",
+      "[Semantic Core]: A tunnel to the Shrieking Shack is at the base.",
+      "[Key-Term Expansion]: Tunnel, Shrieking Shack, Whomping Willow, secret passage"
+    ]
+  },
+  {
+    "question_id": 1402,
+    "question_type": "EX",
+    "question": "After growing up as an orphan, how did Tom Riddle definitively discover his identity as the Heir of Salazar Slytherin?",
+    "answer": "By researching his mother's family, the Gaunts, encountering his uncle Morfin Gaunt, and confirming it through his own Parseltongue ability.",
+    "hint_1": "His investigation led him to a reclusive, pure-blood family with a strong connection to Slytherin.",
+    "hint_2": "A meeting with a specific, isolated relative provided crucial verbal confirmation.",
+    "hint_3": "His innate ability to speak a snake language served as the ultimate, undeniable proof of his heritage.",
+    "explanation": "Tom Riddle definitively discovered his identity as the Heir of Salazar Slytherin by first researching his mother's lineage, the Gaunts. He then visited their decaying home, where he encountered his uncle, Morfin Gaunt, who confirmed his parentage. Finally, his ability to speak Parseltongue, an inherited trait, cemented his understanding of his unique connection to Slytherin.",
+    "answer_variations": [
+      "[Comprehensive]: Tom Riddle discovered his identity as the Heir of Slytherin by researching the Gaunt family, meeting his uncle Morfin Gaunt, and confirming it with his Parseltongue ability.",
+      "[Semantic Core]: Riddle researched the Gaunts, met Morfin, and used Parseltongue.",
+      "[Key-Term Expansion]: Tom Riddle, Gaunts, Morfin Gaunt, Parseltongue, Heir of Slytherin"
+    ]
+  },
+  {
+    "question_id": 1425,
+    "question_type": "EX",
+    "question": "How did Ginny Weasley come into possession of Tom Riddle\u2019s diary in Harry Potter and the Chamber of Secrets?",
+    "answer": "Lucius Malfoy secretly slipped the diary into her cauldron at Flourish and Blotts, hiding it among her school supplies.",
+    "hint_1": "The diary was planted by a prominent Death Eater with a long-standing grudge against the Weasley family.",
+    "hint_2": "This happened during a trip to a famous wizarding bookstore to buy school supplies.",
+    "hint_3": "The malicious act was designed to cause chaos and discredit Arthur Weasley, rather than directly harm Ginny.",
+    "explanation": "Ginny Weasley came into possession of Tom Riddle's diary due to Lucius Malfoy's deliberate actions. He secretly slipped the dark object into her cauldron while at Flourish and Blotts, amidst her other school supplies. Malfoy's intention was to frame Arthur Weasley by having a dark artifact discovered at Hogwarts, rather than specifically targeting Ginny.",
+    "answer_variations": [
+      "[Comprehensive]: Ginny Weasley received Tom Riddle's diary when Lucius Malfoy secretly placed it in her cauldron at Flourish and Blotts among her school supplies.",
+      "[Semantic Core]: Lucius Malfoy slipped the diary into Ginny's cauldron.",
+      "[Key-Term Expansion]: Lucius Malfoy, Ginny Weasley, Tom Riddle's diary, Flourish and Blotts, cauldron"
+    ]
+  },
+  {
+    "question_id": 1206,
+    "question_type": "EX",
+    "question": "How did Fred and George get the money to open their shop?",
+    "answer": "Harry gave Fred and George his triwizard tournament prize money of a 1000 galleeons",
+    "hint_1": "The funding came from a generous donation from a close friend.",
+    "hint_2": "This money was recently won in a dangerous magical competition.",
+    "hint_3": "The unexpected windfall was shared by a selfless individual who believed in their entrepreneurial dreams.",
+    "explanation": "Fred and George Weasley received the startup capital for their joke shop, Weasleys' Wizard Wheezes, from Harry Potter. Harry generously gave them his entire winnings of one thousand Galleons from the Triwizard Tournament. He wanted them to pursue their dreams, knowing he didn't need the money.",
+    "answer_variations": [
+      "[Comprehensive]: Fred and George received the 1000 Galleons to open their shop from Harry Potter, who gave them his Triwizard Tournament prize money.",
+      "[Semantic Core]: Harry gave Fred and George his Triwizard Tournament prize money.",
+      "[Key-Term Expansion]: Harry Potter, Fred and George, Triwizard Tournament, prize money, 1000 Galleons"
+    ]
+  },
+  {
+    "question_id": 171,
+    "question_type": "EX",
+    "question": "How do you greet a Hippogriff?",
+    "answer": "With a bow",
+    "hint_1": "The correct way to approach these proud creatures involves a specific gesture of respect.",
+    "hint_2": "This gesture shows deference and allows the creature to assess your intentions.",
+    "hint_3": "Hagrid teaches his students to perform this polite action before getting close to them.",
+    "explanation": "To properly greet a Hippogriff, one must approach with respect and perform a deep bow. This gesture demonstrates that you are not a threat and are acknowledging the creature's proud nature. If the Hippogriff bows back, it means you have gained its trust and it is safe to approach further.",
+    "answer_variations": [
+      "[Comprehensive]: You should greet a Hippogriff by performing a respectful bow and waiting for it to bow back, signaling trust.",
+      "[Semantic Core]: Greet a Hippogriff respectfully with a bow.",
+      "[Key-Term Expansion]: Bow, respectful, greet, Hippogriff, gesture"
+    ]
+  },
+  {
+    "question_id": 1415,
+    "question_type": "EX",
+    "question": "In Half-Blood Prince, why did Professor Slughorn invite Ginny Weasley to join his exclusive 'Slug Club' despite her family's lesser fame?",
+    "answer": "Because he was impressed by her exceptional magical talent, particularly her powerful Bat-Bogey Hex",
+    "hint_1": "Slughorn values unique abilities and potential, not just family connections.",
+    "hint_2": "Ginny displayed a memorable and visually striking offensive charm.",
+    "hint_3": "Her magical prowess, demonstrated through a specific spell, caught the professor's discerning eye.",
+    "explanation": "Professor Slughorn invited Ginny Weasley to his 'Slug Club' because he was genuinely impressed by her extraordinary magical talent. Despite the Weasleys' more modest standing, Ginny's remarkable ability, particularly her powerful and well-executed Bat-Bogey Hex, convinced Slughorn of her potential and unique gifts. He sought out talent, not just established fame.",
+    "answer_variations": [
+      "[Comprehensive]: Professor Slughorn invited Ginny to the Slug Club because he was greatly impressed by her exceptional magical talent, specifically her powerful Bat-Bogey Hex.",
+      "[Semantic Core]: Slughorn was impressed by Ginny's powerful Bat-Bogey Hex.",
+      "[Key-Term Expansion]: Ginny Weasley, Slughorn, Bat-Bogey Hex, magical talent, Slug Club, impressed"
+    ]
+  },
+  {
+    "question_id": 1350,
+    "question_type": "EX",
+    "question": "In Harry Potter and the Deathly Hallows, during the Battle of Hogwarts, Narcissa Malfoy lies to Voldemort about Harry\u2019s death. What was her desperate motivation for this lie?",
+    "answer": "Her desperate need to know if her son, Draco, was alive (or to find Draco / to ensure Draco's safety).",
+    "hint_1": "Her actions were entirely driven by deep maternal concern for her child.",
+    "hint_2": "She took a risk because she desperately needed information about her son's well-being.",
+    "hint_3": "In that chaotic moment, her primary focus was the safety and whereabouts of her only child.",
+    "explanation": "Narcissa Malfoy lied to Voldemort about Harry's death during the Battle of Hogwarts because her overwhelming motivation was her desperate need to know if her son, Draco, was still alive. Before confirming Harry's 'death,' she subtly asked him if Draco was in the castle. Upon learning he was, she chose to falsely report Harry's demise, prioritizing her son's safety and reunification over allegiance to the Dark Lord.",
+    "answer_variations": [
+      "[Comprehensive]: Narcissa Malfoy lied to Voldemort because her desperate motivation was to ascertain if her son, Draco, was alive and safe within Hogwarts castle.",
+      "[Semantic Core]: Narcissa lied to find out if Draco, her son, was alive.",
+      "[Key-Term Expansion]: Narcissa Malfoy, Draco, son, alive, safety, mother's love, motivation, lie, Voldemort"
+    ]
+  }
+]

@@ -1,0 +1,227 @@
+[
+  {
+    "question_id": 1256,
+    "question_type": "EX",
+    "question": "What does Harry do to impress Professor McGonagall enough that she gets him on the Gryffindor Quidditch team?",
+    "answer": "Catches Neville Longbottom’s Remembrall",
+    "hint_1": "This event happens during the very first flying lesson at Hogwarts.",
+    "hint_2": "The flying lesson involves a classmate who struggles with basic control, leading to a magical item getting away.",
+    "hint_3": "Harry demonstrates exceptional natural talent and a disregard for rules when chasing a runaway object.",
+    "explanation": "During their first flying lesson, Neville Longbottom loses control of his broom, and his Remembrall falls to the ground. Harry courageously flies after it, catching it just before it hits the ground, despite being forbidden to fly without supervision. This act demonstrates his extraordinary flying skills to Professor McGonagall.",
+    "answer_variations": [
+      "[Comprehensive]: Harry catches Neville Longbottom's runaway Remembrall in mid-air during their first flying lesson, showcasing remarkable flying talent.",
+      "[Semantic Core]: Harry catches a flying Remembrall for Neville, showing great broom skill.",
+      "[Key-Term Expansion]: Harry, catches, Remembrall, flying, skill"
+    ]
+  },
+  {
+    "question_id": 1369,
+    "question_type": "EX",
+    "question": "Why did Voldemort seek out the imprisoned Gellert Grindelwald in Nurmengard?",
+    "answer": "Voldemort wanted to force Grindelwald to reveal the location of the Elder Wand, believing he could extract the information through fear or torture—unaware that Grindelwald would refuse to help and that the wand’s allegiance already belonged to Dumbledore",
+    "hint_1": "The Dark Lord was on a quest for ultimate power, seeking control over a legendary artifact.",
+    "hint_2": "He believed his predecessor in dark magic held vital information about one of the Deathly Hallows.",
+    "hint_3": "This search highlights a critical misunderstanding of wand lore and allegiance by the villain.",
+    "explanation": "Voldemort sought out Grindelwald in Nurmengard because he believed Grindelwald knew the current location of the Elder Wand. Voldemort intended to torture the information out of him, thinking that possessing the wand would make him invincible. He was unaware that the wand's allegiance had already passed from Grindelwald to Albus Dumbledore years earlier, and then to Harry Potter.",
+    "answer_variations": [
+      "[Comprehensive]: Voldemort wanted to force Grindelwald to reveal the Elder Wand's location, believing he could gain its allegiance through possession.",
+      "[Semantic Core]: Voldemort sought Grindelwald for the Elder Wand's location to gain its power.",
+      "[Key-Term Expansion]: Voldemort, Grindelwald, Elder Wand, location, power"
+    ]
+  },
+  {
+    "question_id": 1247,
+    "question_type": "EX",
+    "question": "In Harry Potter and the Chamber of Secrets, why does Neville Longbottom faint in Herbology class?",
+    "answer": "His earmuffs were loose, so he heard the cry of the baby mandrake.",
+    "hint_1": "This incident involves a very loud plant that requires special handling.",
+    "hint_2": "The protective equipment meant to block sound failed for him.",
+    "hint_3": "Neville's sensitivity to magical sounds led to a temporary loss of consciousness.",
+    "explanation": "Neville Longbottom fainted in Herbology class because his earmuffs were not properly secured. This allowed him to hear the high-pitched, potent shriek of the baby Mandrake being repotted, which is strong enough to cause unconsciousness in unprotected individuals.",
+    "answer_variations": [
+      "[Comprehensive]: Neville fainted because his earmuffs were loose, allowing him to hear the stunning cry of the baby Mandrake.",
+      "[Semantic Core]: Loose earmuffs caused Neville to hear the Mandrake's cry and faint.",
+      "[Key-Term Expansion]: Neville, earmuffs, loose, Mandrake, cry, faint"
+    ]
+  },
+  {
+    "question_id": 1344,
+    "question_type": "EX",
+    "question": "Why did Regulus Black decide to leave the Death Eaters and betray Voldemort?",
+    "answer": "Because Voldemort mistreated Kreacher and Regulus realized how ruthless and dangerous he truly was.",
+    "hint_1": "A specific event involving a house-elf revealed the true nature of the Dark Lord.",
+    "hint_2": "The villain's treatment of a subservient creature changed Regulus's allegiance.",
+    "hint_3": "This act of cruelty exposed the depths of evil that Regulus could no longer condone or serve.",
+    "explanation": "Regulus Black decided to betray Voldemort after seeing how Voldemort treated his house-elf, Kreacher. Voldemort used Kreacher to test the defenses of a Horcrux and left him to die. Kreacher survived and told Regulus, revealing Voldemort's truly callous and ruthless nature, prompting Regulus to turn against him.",
+    "answer_variations": [
+      "[Comprehensive]: Regulus left the Death Eaters and betrayed Voldemort after realizing his ruthlessness from how he mistreated Kreacher, the house-elf.",
+      "[Semantic Core]: Voldemort's mistreatment of Kreacher revealed his cruelty, prompting Regulus's betrayal.",
+      "[Key-Term Expansion]: Voldemort, Kreacher, mistreatment, cruelty, Regulus, betrayal"
+    ]
+  },
+  {
+    "question_id": 919,
+    "question_type": "EX",
+    "question": "How often do the flowers of the Fluttery Bush Bloom?",
+    "answer": "Once per century",
+    "hint_1": "This plant has a very long blooming cycle.",
+    "hint_2": "Its flowering is an extremely rare event.",
+    "hint_3": "The frequency is measured in a very large span of time.",
+    "explanation": "The flowers of the Fluttery Bush are exceptionally rare. They bloom only once every hundred years, making their flowering a truly infrequent and noteworthy event in the magical world.",
+    "answer_variations": [
+      "[Comprehensive]: The flowers of the Fluttery Bush bloom with extreme rarity, occurring only once every hundred years.",
+      "[Semantic Core]: Fluttery Bush flowers bloom once per century.",
+      "[Key-Term Expansion]: Fluttery Bush, bloom, once, century"
+    ]
+  },
+  {
+    "question_id": 1401,
+    "question_type": "EX",
+    "question": "In Chamber of Secrets, what secret did Harry discover about why Rubeus Hagrid was expelled from Hogwarts?",
+    "answer": "He was falsely accused by Tom Riddle (Lord Voldemort) of opening the Chamber of Secrets and unleashing its monster (the Basilisk), which led to the death of a student.",
+    "hint_1": "The reason for Hagrid's expulsion is linked to a dark incident from Hogwarts' past.",
+    "hint_2": "A future Dark Lord framed Hagrid for a serious magical crime that caused harm.",
+    "hint_3": "This secret highlights a major injustice and the villain's manipulative nature.",
+    "explanation": "Harry discovered that Rubeus Hagrid was falsely accused by Tom Riddle of opening the Chamber of Secrets during his time at Hogwarts. Riddle claimed Hagrid released the Basilisk, leading to the death of a student. This accusation resulted in Hagrid's expulsion, though he was innocent.",
+    "answer_variations": [
+      "[Comprehensive]: Harry discovered Tom Riddle falsely accused Hagrid of opening the Chamber of Secrets and releasing the Basilisk, causing a student's death.",
+      "[Semantic Core]: Tom Riddle falsely accused Hagrid of opening the Chamber, leading to expulsion.",
+      "[Key-Term Expansion]: Tom Riddle, Hagrid, false accusation, Chamber of Secrets, expulsion"
+    ]
+  },
+  {
+    "question_id": 169,
+    "question_type": "EX",
+    "question": "How is the Grey Lady related to Rowena Ravenclaw?",
+    "answer": "She's Rowena's daughter.",
+    "hint_1": "The Grey Lady is a ghost who haunts Ravenclaw Tower.",
+    "hint_2": "Her identity is tied directly to one of the Hogwarts founders.",
+    "hint_3": "This spectral figure shares a family bond with a legendary witch.",
+    "explanation": "The Grey Lady is the ghost of Helena Ravenclaw, who is the daughter of Rowena Ravenclaw, one of the four founders of Hogwarts. She stole her mother's diadem and was later murdered by the Bloody Baron.",
+    "answer_variations": [
+      "[Comprehensive]: The Grey Lady, Helena Ravenclaw, is the biological daughter of Hogwarts founder Rowena Ravenclaw.",
+      "[Semantic Core]: The Grey Lady is Rowena Ravenclaw's daughter.",
+      "[Key-Term Expansion]: Grey Lady, Helena, Rowena Ravenclaw, daughter"
+    ]
+  },
+  {
+    "question_id": 1210,
+    "question_type": "EX",
+    "question": "Harry discovers he’s one of Voldemort’s seven Horcruxes. What are the others?",
+    "answer": "Tom Riddle’s Diary, Nagini, the Gaunt ring, the Hufflepuff cup, Slytherin Locket, and Ravenclaw diadem.",
+    "hint_1": "There are six other objects or living beings that contain fragments of the Dark Lord's soul.",
+    "hint_2": "Some are ancient magical artifacts, while others are more personal items or even creatures.",
+    "hint_3": "Each item represents a piece of magical history or a significant personal connection to the villain.",
+    "explanation": "Besides Harry himself, the other six Horcruxes created by Voldemort were: Tom Riddle’s Diary, Nagini (his snake), Marvolo Gaunt’s Ring, Helga Hufflepuff’s Cup, Salazar Slytherin’s Locket, and Rowena Ravenclaw’s Diadem. These objects held fragments of his soul, making him nearly immortal.",
+    "answer_variations": [
+      "[Comprehensive]: The other Horcruxes are Tom Riddle’s Diary, Nagini, the Gaunt ring, the Hufflepuff cup, Slytherin Locket, and Ravenclaw diadem.",
+      "[Semantic Core]: Diary, Nagini, Gaunt ring, Hufflepuff cup, Slytherin Locket, Ravenclaw diadem.",
+      "[Key-Term Expansion]: Tom Riddle's Diary, Nagini, Gaunt ring, Hufflepuff cup, Slytherin Locket, Ravenclaw diadem"
+    ]
+  },
+  {
+    "question_id": 1358,
+    "question_type": "EX",
+    "question": "Why was Sirius Black sent to Azkaban?",
+    "answer": "He was wrongly accused of betraying the Potters to Voldemort and of killing Peter Pettigrew and twelve Muggles with a single curse.",
+    "hint_1": "His imprisonment was the result of a grave misunderstanding and a villain's deception.",
+    "hint_2": "Everyone believed he was responsible for the deaths of his friends and another wizard.",
+    "hint_3": "He was perceived as the secret-keeper who handed over the location of his best friends to their murderer.",
+    "explanation": "Sirius Black was sent to Azkaban because he was wrongly accused of being the Potters' Secret-Keeper and betraying them to Voldemort. Furthermore, he was believed to have murdered Peter Pettigrew and twelve Muggles with a single curse, a crime actually committed by Pettigrew to fake his own death and frame Sirius.",
+    "answer_variations": [
+      "[Comprehensive]: Sirius Black was wrongly accused of betraying the Potters to Voldemort and of murdering Peter Pettigrew and twelve Muggles.",
+      "[Semantic Core]: Wrongly accused of betraying Potters and murdering Pettigrew and Muggles.",
+      "[Key-Term Expansion]: Sirius Black, wrongly accused, Potters' betrayal, Peter Pettigrew, Muggles, murder"
+    ]
+  },
+  {
+    "question_id": 1086,
+    "question_type": "EX",
+    "question": "How do you tell if a door is Imperturbable?",
+    "answer": "Test if it repels objects and sounds",
+    "hint_1": "This charm makes a barrier impenetrable to certain things.",
+    "hint_2": "You can check by trying to throw something through it or make a noise past it.",
+    "hint_3": "The effect of this charm prevents external interference from crossing the threshold.",
+    "explanation": "An Imperturbable Charm makes a door or surface impenetrable to physical objects, sounds, and certain magical effects. To test if a door is imperturbable, one would try to throw an object at it (which would bounce off) or attempt to pass sound through it (which would be muffled or blocked).",
+    "answer_variations": [
+      "[Comprehensive]: You can tell if a door is Imperturbable by testing if it repels all objects and muffles or blocks all sounds.",
+      "[Semantic Core]: Test if it repels objects and blocks sounds.",
+      "[Key-Term Expansion]: Repels objects, blocks sounds, test"
+    ]
+  },
+  {
+    "question_id": 104,
+    "question_type": "EX",
+    "question": "Why did Liechtenstein not attend the first meeting of the International Confederation of Wizards?",
+    "answer": "Their Stance on Troll Rights",
+    "hint_1": "This country had a strong ethical disagreement with the global magical community.",
+    "hint_2": "The non-attendance was due to a debate about the treatment of large, less intelligent magical beings.",
+    "hint_3": "This particular magical nation held a controversial view on the rights of a certain species, causing their diplomatic absence.",
+    "explanation": "Liechtenstein did not attend the first meeting of the International Confederation of Wizards due to their unique stance on Troll rights. They disagreed with the prevailing views of other magical nations regarding the status and treatment of Trolls, leading to their absence from this foundational diplomatic gathering.",
+    "answer_variations": [
+      "[Comprehensive]: Liechtenstein did not attend the first meeting because of its strong and controversial stance on Troll rights.",
+      "[Semantic Core]: Liechtenstein disagreed on Troll rights, so they didn't attend.",
+      "[Key-Term Expansion]: Liechtenstein, Troll Rights, disagreement, non-attendance"
+    ]
+  },
+  {
+    "question_id": 1345,
+    "question_type": "EX",
+    "question": "What was the second true prophecy made by Professor Trelawney that occurs in Harry Potter and the Prisoner of Azkaban?",
+    "answer": "That the Dark Lord would rise again, and his servant would break free and return to him — referring to Peter Pettigrew escaping to rejoin Voldemort",
+    "hint_1": "This prophecy foretold the re-emergence of the Dark Lord and the escape of a specific individual.",
+    "hint_2": "It was made unexpectedly during an O.W.L. exam and concerned a faithful follower's return.",
+    "hint_3": "The prophecy describes a servant escaping to reunite with their master, leading to the master's eventual return to power.",
+    "explanation": "Professor Trelawney's second true prophecy occurred during an O.W.L. Divination exam in the Prisoner of Azkaban. She declared that the Dark Lord would rise again and that his servant, Peter Pettigrew, would break free and rejoin him. This prophecy foreshadowed Pettigrew's escape and role in Voldemort's return.",
+    "answer_variations": [
+      "[Comprehensive]: The second true prophecy was that the Dark Lord would rise again, and his servant, Peter Pettigrew, would break free and return to him.",
+      "[Semantic Core]: Dark Lord would rise; his servant, Peter Pettigrew, would return.",
+      "[Key-Term Expansion]: Dark Lord rise, servant, Peter Pettigrew, break free, return"
+    ]
+  },
+  {
+    "question_id": 1264,
+    "question_type": "EX",
+    "question": "In Transfiguration, what specific characteristic between the original object and the desired outcome makes a transformation easier to perform?",
+    "answer": "Similarity in appearance",
+    "hint_1": "This characteristic relates to how alike the starting and ending forms are.",
+    "hint_2": "It's much simpler to transform something into another object that looks quite similar.",
+    "hint_3": "The ease of transformation is directly linked to the visual resemblance between the two states.",
+    "explanation": "In Transfiguration, a key characteristic that makes a transformation easier to perform is similarity in appearance between the original object and the desired outcome. The more alike the two objects look, the less magical energy and skill are required to achieve the transformation successfully.",
+    "answer_variations": [
+      "[Comprehensive]: Similarity in appearance between the original object and the desired outcome makes a Transfiguration easier.",
+      "[Semantic Core]: Similarity in appearance makes Transfiguration easier.",
+      "[Key-Term Expansion]: Similarity, appearance, easier, Transfiguration"
+    ]
+  },
+  {
+    "question_id": 47,
+    "question_type": "EX",
+    "question": "How often does a Streeler's shell change colour?",
+    "answer": "Every Hour",
+    "hint_1": "This magical creature's shell has a very frequent color-changing cycle.",
+    "hint_2": "The transformation of its shell hue happens sixty times within a full day.",
+    "hint_3": "The regularity of its color shift is measured in small increments of time.",
+    "explanation": "A Streeler is a giant snail from Africa whose shell changes color every hour. Its venom is useful in potions and can kill plants. The frequent color change is a unique characteristic of this magical creature.",
+    "answer_variations": [
+      "[Comprehensive]: A Streeler's shell changes color with high frequency, specifically once every sixty minutes.",
+      "[Semantic Core]: A Streeler's shell changes color every hour.",
+      "[Key-Term Expansion]: Streeler's shell, changes color, every hour"
+    ]
+  },
+  {
+    "question_id": 1270,
+    "question_type": "EX",
+    "question": "In Harry Potter and the Prisoner of Azkaban, what specific accusation regarding their pets causes Ron Weasley and Hermione Granger to have a major falling out?",
+    "answer": "Ron blames Hermione’s cat, Crookshanks, for the disappearance of his pet rat, Scabbers.",
+    "hint_1": "The conflict arose over the perceived actions of one magical creature against another.",
+    "hint_2": "Ron accused Hermione's fluffy companion of harming his aging, unremarkable rodent.",
+    "hint_3": "This disagreement was about a predatory pet seemingly preying on a smaller, beloved animal.",
+    "explanation": "Ron Weasley and Hermione Granger had a major falling out in Prisoner of Azkaban because Ron blamed Hermione’s cat, Crookshanks, for the disappearance of his pet rat, Scabbers. Ron was convinced that Crookshanks had eaten Scabbers, leading to a prolonged period of anger and tension between the two friends.",
+    "answer_variations": [
+      "[Comprehensive]: Ron blamed Hermione’s cat, Crookshanks, for the disappearance and presumed death of his pet rat, Scabbers.",
+      "[Semantic Core]: Ron blamed Crookshanks for Scabbers' disappearance.",
+      "[Key-Term Expansion]: Ron, Hermione, Crookshanks, Scabbers, disappearance, blame"
+    ]
+  }
+]

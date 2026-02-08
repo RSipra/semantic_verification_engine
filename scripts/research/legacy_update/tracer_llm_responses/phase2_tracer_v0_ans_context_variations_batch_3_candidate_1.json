@@ -1,0 +1,77 @@
+[
+  {
+    "original_question_id": 1179,
+    "semantic_entity_refs": ["Leaky Cauldron", "Harry Potter's room"],
+    "semantic_lore_concepts": ["Wizarding inn", "Temporary refuge", "Diagon Alley access"]
+  },
+  {
+    "original_question_id": 1190,
+    "semantic_entity_refs": ["Professor Snape", "Logic puzzle", "Potion bottles"],
+    "semantic_lore_concepts": ["Philosopher's Stone defense", "Potions challenge", "Magical logic"]
+  },
+  {
+    "original_question_id": 1307,
+    "semantic_entity_refs": ["Death-seer", "Thestral tail hair wand", "Thestral"],
+    "semantic_lore_concepts": ["Wandlore", "Wand allegiance", "Acceptance of death"]
+  },
+  {
+    "original_question_id": 1342,
+    "semantic_entity_refs": ["Ministry of Magic", "Dolores Umbridge", "Salazar Slytherin's Locket", "Locket Horcrux"],
+    "semantic_lore_concepts": ["Horcrux location", "Muggle-born registration", "Ministry corruption"]
+  },
+  {
+    "original_question_id": 1357,
+    "semantic_entity_refs": ["Albus Dumbledore", "Severus Snape", "Lily Potter", "Harry Potter"],
+    "semantic_lore_concepts": ["Unrequited love", "Protecting the son", "Atonement", "Double agent", "Always"]
+  },
+  {
+    "original_question_id": 1359,
+    "semantic_entity_refs": ["Severus Snape", "Lily Potter", "Petunia Dursley"],
+    "semantic_lore_concepts": ["Childhood memories", "Knowledge of magic", "Pre-Hogwarts interactions"]
+  },
+  {
+    "original_question_id": 1381,
+    "semantic_entity_refs": ["Albus Dumbledore", "Aunt Petunia", "Harry Potter", "Howler"],
+    "semantic_lore_concepts": ["Blood pact", "Protective enchantment", "Dementor attack aftermath"]
+  },
+  {
+    "original_question_id": 453,
+    "semantic_entity_refs": ["Scintillation Solution"],
+    "semantic_lore_concepts": ["Potion characteristic", "Magical solution appearance"]
+  },
+  {
+    "original_question_id": 1280,
+    "semantic_entity_refs": ["Whomping Willow", "Shrieking Shack", "Secret tunnel"],
+    "semantic_lore_concepts": ["Secret passage", "Werewolf hideout", "Hogwarts grounds secrets"]
+  },
+  {
+    "original_question_id": 1402,
+    "semantic_entity_refs": ["Tom Riddle", "Lord Voldemort", "Salazar Slytherin", "Gaunt family", "Morfin Gaunt"],
+    "semantic_lore_concepts": ["Heir of Slytherin", "Parseltongue", "Bloodline discovery"]
+  },
+  {
+    "original_question_id": 1425,
+    "semantic_entity_refs": ["Lucius Malfoy", "Ginny Weasley", "Tom Riddle's Diary", "Flourish and Blotts"],
+    "semantic_lore_concepts": ["Horcrux concealment", "Chamber of Secrets plot", "Malfoy's manipulation"]
+  },
+  {
+    "original_question_id": 1206,
+    "semantic_entity_refs": ["Harry Potter", "Fred Weasley", "George Weasley", "Triwizard Tournament prize", "Galleons"],
+    "semantic_lore_concepts": ["Wizarding currency", "Business funding", "Tournament winnings"]
+  },
+  {
+    "original_question_id": 171,
+    "semantic_entity_refs": ["Hippogriff", "Bow"],
+    "semantic_lore_concepts": ["Magical creature etiquette", "Animal respect"]
+  },
+  {
+    "original_question_id": 1415,
+    "semantic_entity_refs": ["Ginny Weasley", "Horace Slughorn", "Bat-Bogey Hex", "Slug Club"],
+    "semantic_lore_concepts": ["Magical talent", "Slughorn's collecting", "Exceptional spellwork"]
+  },
+  {
+    "original_question_id": 1350,
+    "semantic_entity_refs": ["Narcissa Malfoy", "Draco Malfoy", "Lord Voldemort", "Harry Potter"],
+    "semantic_lore_concepts": ["Maternal love", "Family loyalty", "Battle of Hogwarts survival"]
+  }
+]

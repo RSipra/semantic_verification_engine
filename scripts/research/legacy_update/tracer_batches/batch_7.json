@@ -1,0 +1,163 @@
+[
+  {
+    "original_question_id": 18,
+    "question_source": "legacy",
+    "question_type": "FR",
+    "question": "Who destroyed the Horcrux in Helga Hufflepuff's Cup?",
+    "mcq_options": null,
+    "answer": "Hermione Granger",
+    "answer_type": "text",
+    "main_keyword": "who"
+  },
+  {
+    "original_question_id": 1220,
+    "question_source": "legacy",
+    "question_type": "FR",
+    "question": "How many years did Lord Voldemort's first reign of terror last, before his initial downfall in Godric's Hollow?",
+    "mcq_options": null,
+    "answer": "11 Years",
+    "answer_type": "text",
+    "main_keyword": "how"
+  },
+  {
+    "original_question_id": 1374,
+    "question_source": "legacy",
+    "question_type": "FR",
+    "question": "How old was dumbledore when he died?",
+    "mcq_options": null,
+    "answer": " 115 years old",
+    "answer_type": "text",
+    "main_keyword": "how"
+  },
+  {
+    "original_question_id": 1033,
+    "question_source": "legacy",
+    "question_type": "FR",
+    "question": "Voldemort stole Helga Hufflepuff's cup from an old woman named Hepzibah Smith. What was the name of her house-elf?",
+    "mcq_options": null,
+    "answer": "Hokey",
+    "answer_type": "text",
+    "main_keyword": "name"
+  },
+  {
+    "original_question_id": 582,
+    "question_source": "legacy",
+    "question_type": "FR",
+    "question": "Name the three different types of balls used in Quidditch.",
+    "mcq_options": null,
+    "answer": "Quaffle, Bludger, Snitch.",
+    "answer_type": "text",
+    "main_keyword": "name"
+  },
+  {
+    "original_question_id": 848,
+    "question_source": "legacy",
+    "question_type": "FR",
+    "question": "When Hermione Granger is found Petrified, she is not alone. Who is with her?",
+    "mcq_options": null,
+    "answer": "Penelope Clearwater",
+    "answer_type": "text",
+    "main_keyword": "when"
+  },
+  {
+    "original_question_id": 798,
+    "question_source": "legacy",
+    "question_type": "FR",
+    "question": "When Neville Longbottom dresses his Boggart (Professor Snape) up in his grandmother\u2019s clothes, what stuffed bird is on top of the hat?",
+    "mcq_options": null,
+    "answer": "A vulture",
+    "answer_type": "text",
+    "main_keyword": "when"
+  },
+  {
+    "original_question_id": 106,
+    "question_source": "legacy",
+    "question_type": "FR",
+    "question": "Where are Kappas most commonly found?",
+    "mcq_options": null,
+    "answer": "Japan",
+    "answer_type": "text",
+    "main_keyword": "where"
+  },
+  {
+    "original_question_id": 366,
+    "question_source": "legacy",
+    "question_type": "FR",
+    "question": "Where are the vaults kept in Gringotts Bank?",
+    "mcq_options": null,
+    "answer": "Deep underground.",
+    "answer_type": "text",
+    "main_keyword": "where"
+  },
+  {
+    "original_question_id": 1268,
+    "question_source": "legacy",
+    "question_type": "FR",
+    "question": "Where is the entrance to St. Mungos located?",
+    "mcq_options": null,
+    "answer": "Behind the seemingly abandoned department store called Purge & Dowse Ltd., in Muggle London",
+    "answer_type": "text",
+    "main_keyword": "where"
+  },
+  {
+    "original_question_id": 1149,
+    "question_source": "legacy",
+    "question_type": "MCQ",
+    "question": "In which of these scenarios would you use the spell Cistem Aperio:",
+    "mcq_options": [
+      "mending a broken object",
+      "summoning an object",
+      "blasting open a locked trunk",
+      "unlocking a door"
+    ],
+    "answer": "blasting open a locked trunk",
+    "answer_type": "text",
+    "main_keyword": "which"
+  },
+  {
+    "original_question_id": 1152,
+    "question_source": "legacy",
+    "question_type": "MCQ",
+    "question": "Which of these is not a species of dragon:",
+    "mcq_options": [
+      "hungarian horntail",
+      "chinese fireball",
+      "finnish flamethrower",
+      "swedish short-snout"
+    ],
+    "answer": "finnish flamethrower",
+    "answer_type": "text",
+    "main_keyword": "which"
+  },
+  {
+    "original_question_id": 1163,
+    "question_source": "legacy",
+    "question_type": "MCQ",
+    "question": "Which of these is not a type of concealment charm:",
+    "mcq_options": [
+      "disillusionment charm",
+      "fidelius charm",
+      "confundus charm",
+      "muffliato charm"
+    ],
+    "answer": "confundus charm",
+    "answer_type": "text",
+    "main_keyword": "which"
+  },
+  {
+    "original_question_id": 1361,
+    "question_source": "legacy",
+    "question_type": "MCQ",
+    "question": "When did Lily Evans first meet Severus Snape:",
+    "mcq_options": [
+      "on the hogwarts express during their first journey to school",
+      "as children in a park near their homes before they attended hogwarts",
+      "during the sorting ceremony of their first year",
+      "in their first potions class",
+      "taught by professor slughorn"
+    ],
+    "answer": "as children in a park near their homes before they attended hogwarts",
+    "answer_type": "text",
+    "main_keyword": "when"
+  }
+]

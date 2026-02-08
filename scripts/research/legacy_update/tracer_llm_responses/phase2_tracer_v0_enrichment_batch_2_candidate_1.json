@@ -1,0 +1,295 @@
+[
+  {
+    "question_id": "1209",
+    "question_type": "MCQ",
+    "question": "According to the description from Professor Slughorn's classroom, what color is the Draught of Dreamless Sleep:",
+    "answer": "purple",
+    "mcq_options": [
+      "gold",
+      "pearly white",
+      "purple",
+      "emerald green"
+    ],
+    "hint_1": "Think about the soothing quality associated with a peaceful night's rest.",
+    "hint_2": "This potion is designed to bring deep, undisturbed sleep, often associated with a rich, calming hue.",
+    "hint_3": "Its appearance is described as a deep, rich color, often linked to royalty or magic.",
+    "explanation": "The Draught of Dreamless Sleep is known for its ability to induce a deep, dream-free slumber. Professor Slughorn's description specifies its color as a deep, calming hue. This distinct shade helps witches and wizards identify the correct potion for their needs.",
+    "answer_variations": [
+      "purple"
+    ]
+  },
+  {
+    "question_id": "1241",
+    "question_type": "MCQ",
+    "question": "What are the final, advanced-level exams that Hogwarts students take in their seventh year to qualify for specific careers:",
+    "answer": "the n.e.w.t.s",
+    "mcq_options": [
+      "o.w.l.s",
+      "w.o.m.b.a.t.s",
+      "the apparition test",
+      "n.e.w.t.s"
+    ],
+    "hint_1": "These exams determine if a student can pursue higher-level magical careers.",
+    "hint_2": "They are taken after the O.W.L.s and are considered much more difficult.",
+    "hint_3": "The name of these exams sounds like a small, amphibious creature often found in ponds.",
+    "explanation": "N.E.W.T.s, or Nastily Exhausting Wizarding Tests, are the highest-level examinations taken by Hogwarts students in their seventh year. Success in these exams is crucial for qualifying for advanced magical professions and further study. They represent the culmination of a student's academic career at Hogwarts.",
+    "answer_variations": [
+      "N.E.W.T.s",
+      "NEWTs",
+      "the NEWTs"
+    ]
+  },
+  {
+    "question_id": "1123",
+    "question_type": "MCQ",
+    "question": "Which of these plants bloom instantly:",
+    "answer": "puffapod",
+    "mcq_options": [
+      "mandrake",
+      "devil\u2019s snare",
+      "puffapod",
+      "bubotuber"
+    ],
+    "hint_1": "This plant produces bright pink flowers and then pods that burst with seeds.",
+    "hint_2": "It's known for its rapid life cycle, especially its sudden flowering.",
+    "hint_3": "Its name suggests a quick, light action, almost like a small explosion of growth.",
+    "explanation": "The Puffapod is a magical plant known for its distinctive rapid blooming process. It instantly produces large, bright pink flowers before developing pods that burst open, releasing seeds with an audible 'pop'. This characteristic makes it stand out among other magical flora.",
+    "answer_variations": [
+      "puffapod"
+    ]
+  },
+  {
+    "question_id": "1097",
+    "question_type": "MCQ",
+    "question": "Which of these spells is most similar to Flipendo, the Knockback Jinx?",
+    "answer": "depulso",
+    "mcq_options": [
+      "depulso",
+      "accio",
+      "incendio",
+      "stupefy"
+    ],
+    "hint_1": "Think about spells that cause objects or people to be pushed away.",
+    "hint_2": "This spell is explicitly designed for repelling or pushing targets.",
+    "hint_3": "Its name sounds like the opposite of a well-known summoning charm.",
+    "explanation": "`Depulso` is known as the Banishing Charm, which is used to push or repel objects away from the caster. This makes it very similar in function to the Knockback Jinx, `Flipendo`, which also serves to push targets backward. Both spells are used for physical displacement.",
+    "answer_variations": [
+      "depulso"
+    ]
+  },
+  {
+    "question_id": "1196",
+    "question_type": "MCQ",
+    "question": "Which of the following is NOT a plausible side effect of a miscast Silencing Charm:",
+    "answer": "insatiable hunger",
+    "mcq_options": [
+      "uncontrollable buzzing noise",
+      "temporary deafness",
+      "insatiable hunger",
+      "involuntary tongue-tying"
+    ],
+    "hint_1": "Consider what the Silencing Charm is meant to do, and what humorous or ironic failures might occur.",
+    "hint_2": "The plausible side effects would likely relate to sound, speech, or the mouth area.",
+    "hint_3": "This option describes a physical craving, rather than an auditory or vocal malfunction.",
+    "explanation": "The Silencing Charm (Silencio) is intended to render a target speechless or soundless. Therefore, miscast versions would likely result in malfunctions related to sound, hearing, or speech, such as uncontrollable noise, temporary deafness, or issues with the tongue. Insatiable hunger is a physiological effect unrelated to the primary function of a silencing spell.",
+    "answer_variations": [
+      "insatiable hunger"
+    ]
+  },
+  {
+    "question_id": "1147",
+    "question_type": "MCQ",
+    "question": "Which of these is a Wiggenweld potion ingredient from the sea:",
+    "answer": "lionfish spine",
+    "mcq_options": [
+      "gillyweed",
+      "kelp",
+      "lionfish spine",
+      "mandrake root"
+    ],
+    "hint_1": "The Wiggenweld Potion is a powerful healing potion.",
+    "hint_2": "Think about sea creatures that might have a sharp or defensive part used in potions.",
+    "hint_3": "This ingredient implies a specific, potentially dangerous marine animal, not just a general plant from the ocean.",
+    "explanation": "The Wiggenweld Potion is a complex healing potion that requires various ingredients, some of which come from the sea. Among the options provided, the spine of a lionfish is a specific magical ingredient derived from a sea creature, aligning with the requirement for an aquatic component in the potion. Gillyweed and kelp are plants, not animal parts.",
+    "answer_variations": [
+      "lionfish spine"
+    ]
+  },
+  {
+    "question_id": "1085",
+    "question_type": "MCQ",
+    "question": "Which of the following is NOT a form of Transfiguration:",
+    "answer": "enchantment",
+    "mcq_options": [
+      "switching",
+      "vanishing",
+      "enchantment",
+      "conjuration"
+    ],
+    "hint_1": "Transfiguration involves changing the form or appearance of something.",
+    "hint_2": "Consider which option describes adding a magical effect rather than altering physical form.",
+    "hint_3": "This term refers to applying charms or spells to imbue an object with magical properties, rather than changing what it physically is.",
+    "explanation": "Transfiguration is a branch of magic focused on changing the form or appearance of an object or living thing. Switching, vanishing, and conjuration are all recognized categories within Transfiguration, dealing with exchanging, disappearing, or creating things. Enchantment, however, refers to the act of placing a charm or spell upon an object to give it new magical properties, which is distinct from changing its fundamental nature.",
+    "answer_variations": [
+      "enchantment"
+    ]
+  },
+  {
+    "question_id": "749",
+    "question_type": "MCQ",
+    "question": "Who is NOT in Slytherin:",
+    "answer": "lavender brown",
+    "mcq_options": [
+      "lavender brown",
+      "pansy parkinson",
+      "blaise zabini",
+      "gregory goyle"
+    ],
+    "hint_1": "This student is a well-known member of Harry Potter's year.",
+    "hint_2": "Consider which house is most associated with bravery and loyalty.",
+    "hint_3": "This person was a good friend of Parvati Patil and had a notable romantic relationship in later years at Hogwarts.",
+    "explanation": "Lavender Brown was sorted into Gryffindor House, known for bravery, daring, nerve, and chivalry. Pansy Parkinson, Blaise Zabini, and Gregory Goyle were all prominent members of Slytherin House, typically associated with ambition, cunning, leadership, and resourcefulness.",
+    "answer_variations": [
+      "Lavender Brown",
+      "Lavender"
+    ]
+  },
+  {
+    "question_id": "1095",
+    "question_type": "MCQ",
+    "question": "Which of the following spells is not used in Transfiguration Class:",
+    "answer": "confundo",
+    "mcq_options": [
+      "vera verto",
+      "evanesco",
+      "confundo",
+      "avis"
+    ],
+    "hint_1": "Transfiguration involves changing things.",
+    "hint_2": "This spell is used to confuse or bewilder a target.",
+    "hint_3": "Its purpose is psychological manipulation, not physical alteration.",
+    "explanation": "`Confundo` is the Confundus Charm, used to bewilder or confuse a target, affecting their mind rather than their physical form. `Vera Verto` (transforming an animal into a water goblet), `Evanesco` (vanishing objects), and `Avis` (conjuring birds) are all examples of spells directly related to altering or creating physical objects, which are core elements of Transfiguration.",
+    "answer_variations": [
+      "confundo"
+    ]
+  },
+  {
+    "question_id": "1135",
+    "question_type": "MCQ",
+    "question": "Which of these spells is not a cleaning spell:",
+    "answer": "confrigo",
+    "mcq_options": [
+      "scourgify",
+      "tergeo",
+      "confrigo",
+      "reparo"
+    ],
+    "hint_1": "Cleaning spells usually remove dirt or stains.",
+    "hint_2": "This spell is known for causing explosions or inflicting damage.",
+    "hint_3": "Its effect is destructive, rather than restorative or cleansing.",
+    "explanation": "`Confrigo` is the Blasting Curse, designed to cause explosions and inflict damage upon a target. `Scourgify` is used for scrubbing and cleaning, `Tergeo` siphons off liquids and dirt, and `Reparo` mends broken objects. Therefore, `Confrigo` is the only spell listed that does not perform a cleaning or restorative function.",
+    "answer_variations": [
+      "confrigo"
+    ]
+  },
+  {
+    "question_id": "1170",
+    "question_type": "MCQ",
+    "question": "What was the number of the high-security Gringotts vault where the Philosopher's Stone was kept:",
+    "answer": "713",
+    "mcq_options": [
+      "687",
+      "711",
+      "713",
+      "717"
+    ],
+    "hint_1": "This vault was unusually small and guarded by a dragon, among other things.",
+    "hint_2": "Think about the number that Harry and Hagrid visited to retrieve the Stone.",
+    "hint_3": "The digits in the number are 7, 1, and 3.",
+    "explanation": "The Philosopher's Stone was stored in a highly secure vault at Gringotts Wizarding Bank. This particular vault, number 713, was distinct from other vaults and had exceptional security measures, which included an armed guard by a dragon and the requirement for a Goblin to escort authorized visitors.",
+    "answer_variations": [
+      "713",
+      "seven hundred thirteen"
+    ]
+  },
+  {
+    "question_id": "1169",
+    "question_type": "MCQ",
+    "question": "Albus Dumbledore is famous for discovering how many uses of dragon's blood:",
+    "answer": "12",
+    "mcq_options": [
+      "7",
+      "10",
+      "12",
+      "15"
+    ],
+    "hint_1": "Dumbledore's accomplishments as a young wizard were numerous and impressive.",
+    "hint_2": "This particular discovery is a well-known feat of his magical prowess.",
+    "hint_3": "The number is a multiple of three and four, commonly found in a \"baker's dozen\" plus one.",
+    "explanation": "Albus Dumbledore achieved fame early in his career for his groundbreaking magical discoveries. One of his most notable accomplishments, mentioned in various magical texts, was his identification of 12 distinct uses for dragon's blood, a complex and versatile magical ingredient. This discovery solidified his reputation as an exceptionally brilliant wizard.",
+    "answer_variations": [
+      "12",
+      "twelve"
+    ]
+  },
+  {
+    "question_id": "1168",
+    "question_type": "MCQ",
+    "question": "In wizarding currency, how many Knuts are there in one Sickle:",
+    "answer": "29",
+    "mcq_options": [
+      "17",
+      "25",
+      "29",
+      "31"
+    ],
+    "hint_1": "The wizarding currency system involves Galleons, Sickles, and Knuts.",
+    "hint_2": "This conversion rate is essential for understanding the value of money in the magical world.",
+    "hint_3": "The number is slightly less than 30.",
+    "explanation": "The wizarding currency system is structured with Galleons as the largest denomination, followed by Sickles, and then Knuts. Specifically, there are 29 Knuts in one Sickle, and 17 Sickles in one Galleon. Understanding these conversion rates is fundamental to financial transactions in the magical world.",
+    "answer_variations": [
+      "29",
+      "twenty-nine"
+    ]
+  },
+  {
+    "question_id": "1167",
+    "question_type": "MCQ",
+    "question": "In Harry Potter and the Philosopher's Stone, how many challenges or obstacles protected the Philosopher's Stone:",
+    "answer": "7",
+    "mcq_options": [
+      "3",
+      "5",
+      "7",
+      "10"
+    ],
+    "hint_1": "Each Hogwarts professor contributed a different magical challenge.",
+    "hint_2": "Harry, Ron, and Hermione had to overcome each one to reach the Stone.",
+    "hint_3": "It's the same number as the books in the main series and a common \"lucky\" number.",
+    "explanation": "To protect the Philosopher's Stone from being stolen, various Hogwarts professors, including Dumbledore, McGonagall, Snape, Quirrell, Flitwick, Sprout, and a mystery contributor (representing the Mirror of Erised), placed a total of seven distinct magical challenges in the path leading to it. Harry, Ron, and Hermione had to navigate each of these to reach their goal.",
+    "answer_variations": [
+      "7",
+      "seven"
+    ]
+  },
+  {
+    "question_id": "1166",
+    "question_type": "MCQ",
+    "question": "According to Quidditch Through the Ages, how many possible fouls are there in the game of Quidditch:",
+    "answer": "700",
+    "mcq_options": [
+      "150",
+      "325",
+      "700",
+      "950"
+    ],
+    "hint_1": "Quidditch is known for being a very complex and sometimes violent sport.",
+    "hint_2": "The official rulebook, written by Kennilworthy Whisp, details the sport's extensive history and rules.",
+    "hint_3": "This number is quite large, reflecting the many ways players could illegally interfere in a game.",
+    "explanation": "According to the authoritative text \"Quidditch Through the Ages\" by Kennilworthy Whisp, the game of Quidditch has accumulated a staggering number of potential fouls throughout its history. While many are no longer relevant, the sheer volume of 700 recorded fouls highlights the sport's long and often unruly past, and the necessity for strict regulations.",
+    "answer_variations": [
+      "700",
+      "seven hundred"
+    ]
+  }
+]

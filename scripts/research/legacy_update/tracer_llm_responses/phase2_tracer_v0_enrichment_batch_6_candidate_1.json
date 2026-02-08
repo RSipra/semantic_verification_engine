@@ -1,0 +1,167 @@
+[
+  {
+    "question_id": 136,
+    "question_type": "FR",
+    "question": "What is the antidote to Swelling Solution?",
+    "answer": "Deflating Draught",
+    "hint_1": "This potion is designed to reverse the effects of another common, often mischievous, concoction.",
+    "hint_2": "If something has been made to grow unnaturally large, this potion can return it to its normal size.",
+    "hint_3": "It's the perfect counter for an enchantment that causes objects or body parts to expand.",
+    "explanation": "The Deflating Draught is a potent antidote specifically formulated to counteract the effects of the Swelling Solution, which causes rapid and often grotesque enlargement of objects or body parts.",
+    "answer_variations": ["Deflating Draught", "Draught of Deflation"]
+  },
+  {
+    "question_id": 168,
+    "question_type": "FR",
+    "question": "In Book 5, Snape is assigned to teach Harry what type of magic?",
+    "answer": "Occlumency.",
+    "hint_1": "This branch of magic deals with the mind, specifically protecting thoughts and memories.",
+    "hint_2": "It's the mental art of closing one's mind against outside penetration, especially from a Legilimens.",
+    "hint_3": "Harry struggled greatly with these lessons, which were meant to shield his mind from an invading dark presence.",
+    "explanation": "In 'Harry Potter and the Order of the Phoenix,' Professor Snape was instructed by Dumbledore to teach Harry Occlumency. This skill was crucial for Harry to shield his mind from the Dark Lord, who was attempting to invade and manipulate his thoughts and emotions.",
+    "answer_variations": ["Occlumency", "Occlumency magic"]
+  },
+  {
+    "question_id": 185,
+    "question_type": "FR",
+    "question": "The Blast-Ended Skrewt is a hybrid of a Fire Crab and what?",
+    "answer": "Manticore",
+    "hint_1": "This creature is known for its immense danger and ferocity.",
+    "hint_2": "It is a mythical beast with the body of a lion, the wings of a bat, and a human head.",
+    "hint_3": "Its tail is often depicted as scorpionesque, capable of delivering a deadly venomous sting.",
+    "explanation": "The Blast-Ended Skrewt, a dangerous creature first encountered in 'Harry Potter and the Goblet of Fire,' is a magical hybrid. It was bred by combining the characteristics of a Fire Crab and a Manticore, resulting in its explosive and aggressive nature.",
+    "answer_variations": ["Manticore", "a Manticore"]
+  },
+  {
+    "question_id": 1084,
+    "question_type": "FR",
+    "question": "What does Professor Kettleburn wish to do after retiring from Hogwarts?",
+    "answer": "Enjoy more time with his remaining limbs",
+    "hint_1": "This Care of Magical Creatures professor had a very dangerous job.",
+    "hint_2": "His profession often led to him losing body parts.",
+    "hint_3": "He desired a calmer life where he could appreciate the physical capabilities he still possessed, away from hazardous magical creatures.",
+    "explanation": "Silvanus Kettleburn, the former Care of Magical Creatures professor, had sustained numerous injuries throughout his career due to working with dangerous beasts. Upon his retirement, he expressed a desire to enjoy his remaining limbs, suggesting a longing for a safer, less limb-threatening existence.",
+    "answer_variations": ["Enjoy more time with his remaining limbs", "Spend more time with his remaining limbs", "Appreciate his remaining limbs"]
+  },
+  {
+    "question_id": 659,
+    "question_type": "FR",
+    "question": "What does Harry name his children?",
+    "answer": "James Sirius, Albus Severus, and Lily Luna",
+    "hint_1": "Each of his children is named in honor of important figures in his life.",
+    "hint_2": "Their names pay tribute to both beloved family members and brave, complex mentors.",
+    "hint_3": "Think of his father, a revered headmaster, and his mother, as well as a loyal godfather and a unique friend.",
+    "explanation": "Harry Potter named his children in memory of significant people who impacted his life. His eldest son, James Sirius, honors his father and godfather. His second son, Albus Severus, pays tribute to two Hogwarts headmasters, and his daughter, Lily Luna, is named after his mother and a close friend.",
+    "answer_variations": ["James Sirius, Albus Severus, and Lily Luna", "James, Albus, and Lily", "James Sirius Potter, Albus Severus Potter, and Lily Luna Potter"]
+  },
+  {
+    "question_id": 1346,
+    "question_type": "FR",
+    "question": "What gift did Ron bring back for Harry from his family’s trip to Egypt?",
+    "answer": "A Pocket Sneakoscope",
+    "hint_1": "This small magical device is designed to detect dishonesty or danger.",
+    "hint_2": "It looks like a spinning glass top and whistles if someone untrustworthy is nearby.",
+    "hint_3": "Harry often relied on this particular gadget, especially during his time at Hogwarts, to warn him of betrayal.",
+    "explanation": "During the Weasley family's trip to Egypt, Ron purchased a Pocket Sneakoscope for Harry as a gift. This handy device emits a high-pitched whistle and spins when it detects deceit or untrustworthy intentions, making it a useful tool against dark forces.",
+    "answer_variations": ["A Pocket Sneakoscope", "Pocket Sneakoscope", "Sneakoscope"]
+  },
+  {
+    "question_id": 394,
+    "question_type": "FR",
+    "question": "The Diricawl is actually thought to be which extinct Muggle bird?",
+    "answer": "The Dodo.",
+    "hint_1": "This non-magical bird is famously flightless and known for its tragic disappearance.",
+    "hint_2": "It originates from the island of Mauritius and is often used as an example of species extinction.",
+    "hint_3": "It makes a notable appearance in a classic tale about a girl falling into a fantastical rabbit hole.",
+    "explanation": "In the wizarding world, the Diricawl is a magical bird capable of vanishing and reappearing to escape danger. Muggles, however, mistakenly believed these birds to be extinct, referring to them as Dodos, unaware of their magical ability to simply disappear from view.",
+    "answer_variations": ["The Dodo", "Dodo"]
+  },
+  {
+    "question_id": 108,
+    "question_type": "FR",
+    "question": "The Deflating Drought is an antidote to which potion?",
+    "answer": "Swelling Solution",
+    "hint_1": "This potion causes objects or body parts to grow abnormally large.",
+    "hint_2": "It often results in comedic or troublesome inflation when used, sometimes as a prank.",
+    "hint_3": "If someone's tongue or nose has suddenly ballooned in size, this is likely the potion responsible.",
+    "explanation": "The Deflating Draught serves as a direct antidote to the Swelling Solution. The Swelling Solution is a potion that causes rapid and often dramatic enlargement, making the Deflating Draught essential for reversing its effects.",
+    "answer_variations": ["Swelling Solution", "the Swelling Solution"]
+  },
+  {
+    "question_id": 192,
+    "question_type": "FR",
+    "question": "Which Alchemist was active during the Medieval age?",
+    "answer": "Nicholas Flamel",
+    "hint_1": "This individual is famously associated with the creation of the Philosopher's Stone.",
+    "hint_2": "He was a very old and trusted friend of Albus Dumbledore.",
+    "hint_3": "His groundbreaking work in alchemy granted him an extraordinarily long lifespan, making him over six hundred years old.",
+    "explanation": "Nicholas Flamel was a renowned alchemist active during the Medieval Age, specifically known for being the only known creator of the Philosopher's Stone. This legendary artifact granted him and his wife, Perenelle, immortality through the Elixir of Life.",
+    "answer_variations": ["Nicholas Flamel", "Flamel", "Nicolas Flamel"]
+  },
+  {
+    "question_id": 1257,
+    "question_type": "FR",
+    "question": "Which potion might a studious witch like Hermione use to fight off sleep and power through a long night of homework?",
+    "answer": "Wideye Potion (also known as the Awakening Potion)",
+    "hint_1": "The name of this potion directly suggests its primary effect on the drinker's alertness.",
+    "hint_2": "It's commonly used to keep individuals awake and focused, particularly useful for late-night study sessions.",
+    "hint_3": "If you needed to stay conscious and vigilant for an extended period, perhaps to finish a difficult essay, this would be your potion of choice.",
+    "explanation": "The Wideye Potion, also known as the Awakening Potion, is specifically designed to ward off sleep and keep the drinker alert and awake. This makes it an ideal choice for a studious witch like Hermione seeking to extend her study hours and complete homework.",
+    "answer_variations": ["Wideye Potion", "Awakening Potion", "Wide-eye Potion", "The Wideye Potion"]
+  },
+  {
+    "question_id": 1330,
+    "question_type": "FR",
+    "question": "Which famously eccentric historical wizard, whose Chocolate Frog card features him trying to communicate with trolls using Morse code?",
+    "answer": "Uric the Oddball",
+    "hint_1": "His well-known moniker perfectly describes his peculiar and unpredictable nature.",
+    "hint_2": "He was known for a variety of bizarre magical experiments and often strange behavior.",
+    "hint_3": "Among his many eccentricities, he once attempted to declare a full month consisting entirely of Wednesdays.",
+    "explanation": "Uric the Oddball was a famously eccentric historical wizard whose peculiar antics earned him his distinctive name. His Chocolate Frog card indeed features one of his more unusual experiments, attempting to communicate with trolls through the unconventional method of Morse code.",
+    "answer_variations": ["Uric the Oddball", "Uric"]
+  },
+  {
+    "question_id": 691,
+    "question_type": "FR",
+    "question": "Who wrote the Dream Oracle?",
+    "answer": "Inigo Imago",
+    "hint_1": "This author is a well-known name in the field of Divination studies.",
+    "hint_2": "The text is a primary resource for interpreting visions and prophecies received during slumber.",
+    "hint_3": "Students at Hogwarts, particularly in Divination class, frequently consult this book for guidance on understanding their nocturnal visions.",
+    "explanation": "The authoritative text 'The Dream Oracle' was written by Inigo Imago. This book is a fundamental resource in the study of Divination, focusing specifically on the interpretation and understanding of dreams and their potential prophetic meanings.",
+    "answer_variations": ["Inigo Imago", "Imago"]
+  },
+  {
+    "question_id": 938,
+    "question_type": "FR",
+    "question": "Who invented Sleakeazy's Hair Potion?",
+    "answer": "Fleamont Potter",
+    "hint_1": "This inventor shares a very famous wizarding surname with the main hero of the series.",
+    "hint_2": "He is the grandfather of Harry Potter.",
+    "hint_3": "His commercially successful invention greatly boosted his family's wealth, allowing them to live comfortably.",
+    "explanation": "Fleamont Potter, Harry Potter's paternal grandfather, was the inventive genius behind Sleakeazy's Hair Potion. His creation of this popular hair care product brought significant wealth to the Potter family, setting them up financially for generations.",
+    "answer_variations": ["Fleamont Potter", "Fleamont"]
+  },
+  {
+    "question_id": 175,
+    "question_type": "FR",
+    "question": "Who are the members of the 'Golden Trio'?",
+    "answer": "Harry Potter, Ron Weasley, Hermione Granger",
+    "hint_1": "These three individuals are the central protagonists of the entire book series.",
+    "hint_2": "They are inseparable best friends who form the core of the fight against dark magic.",
+    "hint_3": "Think of the three Gryffindor students who always stand together through every adventure and challenge at Hogwarts.",
+    "explanation": "The 'Golden Trio' refers to the three main protagonists of the Harry Potter series: Harry Potter, Ron Weasley, and Hermione Granger. Their strong friendship, courage, and combined skills were central to defeating the Dark Lord and saving the wizarding world.",
+    "answer_variations": ["Harry Potter, Ron Weasley, Hermione Granger", "Harry, Ron, and Hermione", "Potter, Weasley, Granger"]
+  },
+  {
+    "question_id": 77,
+    "question_type": "FR",
+    "question": "Who does Harry live with before going to Hogwarts?",
+    "answer": "His aunt and uncle, Petunia and Vernon Dursley, and cousin Dudley.",
+    "hint_1": "They are his only living relatives on his mother's side of the family.",
+    "hint_2": "They reside at number four, Privet Drive, a very ordinary Muggle household.",
+    "hint_3": "This family famously despises magic and treated Harry rather poorly during his upbringing.",
+    "explanation": "Before attending Hogwarts, Harry Potter lived with his only remaining relatives, the Dursley family. This included his aunt Petunia, his uncle Vernon, and his cousin Dudley, who all resented Harry and anything connected to the magical world.",
+    "answer_variations": ["The Dursleys", "Petunia, Vernon, and Dudley Dursley", "Aunt Petunia, Uncle Vernon, and Dudley", "His aunt and uncle and cousin"]
+  }
+]

@@ -1,0 +1,167 @@
+[
+  {
+    "question_id": "1130",
+    "question_type": "MCQ",
+    "question": "Which of these titles or identities has NOT been held by Harry Potter:",
+    "answer": "spew treasurer",
+    "hint_1": "Consider the various clubs and organizations at Hogwarts. Was Harry a leader or member of all of them?",
+    "hint_2": "Think about Hermione Granger's passion for house-elf rights and the group she founded.",
+    "hint_3": "This particular role was specific to an organization dedicated to improving the lives of house-elves, a cause championed primarily by Hermione.",
+    "explanation": "Harry Potter was a Seeker for Gryffindor, a Triwizard Champion, but he was never a Prefect. The role of 'S.P.E.W. treasurer' was held by Hermione Granger, who founded the Society for the Promotion of Elfish Welfare, not Harry.",
+    "answer_variations": ["spew treasurer", "spew", "treasurer"]
+  },
+  {
+    "question_id": "1279",
+    "question_type": "MCQ",
+    "question": "Which of the following spells is considered one of the three Unforgivable Curses, punishable by a life sentence in Azkaban if cast on a human:",
+    "answer": "crucio",
+    "hint_1": "Recall the darkest and most feared spells that are strictly forbidden in the wizarding world.",
+    "hint_2": "One of these spells causes intense, agonizing pain without physical injury.",
+    "hint_3": "This curse is often used by followers of the Dark Lord to torture their victims.",
+    "explanation": "The Cruciatus Curse, 'Crucio', is one of the three Unforgivable Curses. It inflicts unbearable pain upon the victim and its use on another human is punishable by a life sentence in Azkaban.",
+    "answer_variations": ["crucio", "cruciatus"]
+  },
+  {
+    "question_id": "1165",
+    "question_type": "MCQ",
+    "question": "In which of these scenarios would you use the Muffliato Charm:",
+    "answer": "whispering in the library without being overheard",
+    "hint_1": "Think about spells that affect sound or privacy.",
+    "hint_2": "This charm fills the ears of anyone nearby with an unidentifiable buzzing sound.",
+    "hint_3": "It's perfect for having a secret conversation when you don't want others to hear what you're saying.",
+    "explanation": "The Muffliato Charm is used to fill the ears of anyone in the vicinity with an unidentifiable buzzing noise, making it impossible for them to overhear a conversation. This makes it ideal for private conversations in public places.",
+    "answer_variations": ["whispering", "not being overheard", "whispering in the library"]
+  },
+  {
+    "question_id": "1140",
+    "question_type": "MCQ",
+    "question": "Which one of the following is not a founder of Hogwarts:",
+    "answer": "helena ravenclaw",
+    "hint_1": "Consider the four names associated with the Houses of Hogwarts.",
+    "hint_2": "One of these individuals is the daughter of a founder, not a founder herself.",
+    "hint_3": "This person is also known as the Grey Lady, the resident ghost of Ravenclaw House.",
+    "explanation": "The four founders of Hogwarts are Godric Gryffindor, Salazar Slytherin, Helga Hufflepuff, and Rowena Ravenclaw. Helena Ravenclaw is Rowena's daughter, not a founder herself.",
+    "answer_variations": ["helena ravenclaw", "ravenclaw"]
+  },
+  {
+    "question_id": "1155",
+    "question_type": "MCQ",
+    "question": "Which of these factors does NOT affect Transfiguration:",
+    "answer": "hue",
+    "hint_1": "Think about the essential elements required for successful magic, especially changing one thing into another.",
+    "hint_2": "Transfiguration spells primarily depend on the caster's willpower, precision, and understanding of the transformation.",
+    "hint_3": "While the final product might have a specific color, the color itself doesn't determine the success or failure of the magical change.",
+    "explanation": "Factors like concentration, wand power, and the viciousness of intent (for certain dark transfigurations) are known to affect Transfiguration. However, the 'hue' or color of an object is generally a resulting characteristic, not a factor that influences the success or failure of the spell itself.",
+    "answer_variations": ["hue", "color"]
+  },
+  {
+    "question_id": "1128",
+    "question_type": "MCQ",
+    "question": "Which of the following is another dive commonly used by Seekers:",
+    "answer": "spiral dive",
+    "hint_1": "Think about different aerial maneuvers a Quidditch Seeker might use to catch the Golden Snitch.",
+    "hint_2": "This particular dive involves a twisting or corkscrew motion downwards.",
+    "hint_3": "It's a rapid descent that allows a Seeker to drop quickly while still maintaining some degree of control and agility.",
+    "explanation": "The 'spiral dive' is a well-known maneuver in Quidditch, particularly used by Seekers. It involves diving rapidly in a spiral motion to quickly pursue the Golden Snitch or evade opponents.",
+    "answer_variations": ["spiral dive", "spiral"]
+  },
+  {
+    "question_id": "795",
+    "question_type": "MCQ",
+    "question": "Who is NOT in Gryffindor:",
+    "answer": "draco malfoy",
+    "hint_1": "Consider the main characters and their respective Hogwarts Houses.",
+    "hint_2": "This character is a prominent rival of Harry Potter throughout his time at Hogwarts.",
+    "hint_3": "This individual belongs to the house known for ambition, cunning, and resourcefulness, often associated with a serpent emblem.",
+    "explanation": "Harry Potter, Ron Weasley, and Ginny Weasley are all members of Gryffindor House. Draco Malfoy is famously a member of Slytherin House, known for his rivalry with Harry.",
+    "answer_variations": ["draco malfoy", "malfoy"]
+  },
+  {
+    "question_id": "1087",
+    "question_type": "MCQ",
+    "question": "Which of the following plants is known for its tendency to slap people:",
+    "answer": "bouncing bulbs",
+    "hint_1": "Think about magical plants that are known for their lively and aggressive behavior.",
+    "hint_2": "The name of this plant gives a clear clue about its movement and interaction with its surroundings.",
+    "hint_3": "These plants are quite unruly and are known to strike out at anyone who gets too close.",
+    "explanation": "Bouncing Bulbs are aggressive magical plants known for their erratic movements and tendency to slap people. They require careful handling, as seen in Herbology classes.",
+    "answer_variations": ["bouncing bulbs", "bulbs"]
+  },
+  {
+    "question_id": "1158",
+    "question_type": "MCQ",
+    "question": "which of these plants has healing properties?",
+    "answer": "dittany",
+    "hint_1": "Consider plants that are often used in potions or directly applied to treat injuries.",
+    "hint_2": "This plant's essence is renowned for its ability to staunch bleeding and cause wounds to heal without scarring.",
+    "hint_3": "Hermione Granger used this plant's extract to rapidly heal Ron Weasley's serious Splinching injury.",
+    "explanation": "Dittany is a powerful magical plant with significant healing properties. Its essence is a common ingredient in healing potions and can be used directly to heal cuts and prevent scarring.",
+    "answer_variations": ["dittany", "essence of dittany"]
+  },
+  {
+    "question_id": "1093",
+    "question_type": "MCQ",
+    "question": "Which of these words best describes Slytherin House:",
+    "answer": "resourceful",
+    "hint_1": "Recall the defining characteristics and ambitions of students typically sorted into Slytherin.",
+    "hint_2": "While often associated with ambition, this house is also known for its members' ability to find clever ways to achieve their goals.",
+    "hint_3": "They are particularly skilled at finding quick and imaginative solutions to difficulties.",
+    "explanation": "Slytherin House values ambition, cunning, leadership, and resourcefulness. Its members are known for their determination to achieve their ends, often by finding ingenious or unconventional means.",
+    "answer_variations": ["resourceful", "resourcefulness"]
+  },
+  {
+    "question_id": "1137",
+    "question_type": "MCQ",
+    "question": "Which of these spells keeps a charm stable:",
+    "answer": "fianto duri",
+    "hint_1": "Think about spells that reinforce or strengthen existing magical protections.",
+    "hint_2": "This charm is often used in combination with other defensive spells to make them more durable and lasting.",
+    "hint_3": "It was notably used during the Battle of Hogwarts to strengthen the protective enchantments around the castle.",
+    "explanation": "The Fianto Duri spell is used to strengthen and stabilize protective enchantments, making them more resilient against attacks. It was employed by professors like Flitwick during the Battle of Hogwarts to reinforce the castle's defenses.",
+    "answer_variations": ["fianto duri", "duri"]
+  },
+  {
+    "question_id": "1145",
+    "question_type": "MCQ",
+    "question": "What is the primary effect of Wiggenweld Potion:",
+    "answer": "healing injuries",
+    "hint_1": "Consider potions that are commonly found in the hospital wing or used for restorative purposes.",
+    "hint_2": "This potion is a general-purpose antidote and health restorative, often used for minor ailments and wounds.",
+    "hint_3": "It can awaken a sleeping person and is effective in reversing the effects of common poisons and mending various hurts.",
+    "explanation": "The Wiggenweld Potion is a powerful healing potion. It is known for its ability to mend injuries, restore health, and even awaken those who are magically slumbering.",
+    "answer_variations": ["healing injuries", "healing", "heal"]
+  },
+  {
+    "question_id": "1143",
+    "question_type": "MCQ",
+    "question": "Which of these tasks can NOT be aided by a Vanishing Spell:",
+    "answer": "dancing",
+    "hint_1": "Think about the fundamental effect of a Vanishing Spell.",
+    "hint_2": "This spell's purpose is to make objects disappear, rather than to facilitate an action or activity.",
+    "hint_3": "One of these options is a physical movement or expressive art, not something that can be made to cease existing.",
+    "explanation": "A Vanishing Spell causes an object to disappear from existence. While it can be used to clean a room by vanishing messes, hide evidence by making items vanish, or empty a cauldron by vanishing its contents, it has no application for a physical activity like dancing.",
+    "answer_variations": ["dancing", "dance"]
+  },
+  {
+    "question_id": "1229",
+    "question_type": "MCQ",
+    "question": "When Hagrid attempts to turn Dudley Dursley into a pig, what is the only part of the transformation that succeeds:",
+    "answer": "a curly tail",
+    "hint_1": "Recall the famous scene in the Dursleys' hut on the rock.",
+    "hint_2": "Hagrid's magic was powerful but not precise enough to fully transfigure a human, resulting in only a partial change.",
+    "hint_3": "The part that transformed was a specific appendage associated with pigs, growing out from the posterior.",
+    "explanation": "When Hagrid attempted to turn Dudley Dursley into a pig, due to the difficulty of human Transfiguration, only a small part of the spell succeeded. Dudley ended up with a pig's curly tail.",
+    "answer_variations": ["a curly tail", "curly tail", "tail"]
+  },
+  {
+    "question_id": "1153",
+    "question_type": "MCQ",
+    "question": "Which of the following creatures eat fairy eggs:",
+    "answer": "bowtruckles",
+    "hint_1": "Think about small, tree-dwelling creatures found in the magical world.",
+    "hint_2": "These creatures are known for being guardians of wand-wood trees and have a very specific diet.",
+    "hint_3": "Their diet consists of woodlice and the eggs of various flying insects, including those of small winged beings.",
+    "explanation": "Bowtruckles are small, stick-like creatures that guard wand-wood trees. Their diet includes woodlice and fairy eggs, making them a threat to the fairy population.",
+    "answer_variations": ["bowtruckles", "bowtruckle"]
+  }
+]

@@ -72,3 +72,6 @@ scripts/system_memory_v1.md
 scripts/research/data_lifecycle_contract.json
 docs/designdoc_interview_questions.md
 docs/designdoc_interview_reference_answers.md
+
+notebooks/02_research/0X-NER_implementation.ipynb
+notebooks/02_research/v0

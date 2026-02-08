@@ -1,0 +1,152 @@
+[
+  {
+    "original_question_id": 136,
+    "question_source": "legacy",
+    "question_type": "FR",
+    "question": "What is the antidote to Swelling Solution?",
+    "mcq_options": null,
+    "answer": "Deflating Draught",
+    "answer_type": "text",
+    "main_keyword": "what"
+  },
+  {
+    "original_question_id": 168,
+    "question_source": "legacy",
+    "question_type": "FR",
+    "question": "In Book 5, Snape is assigned to teach Harry what type of magic?",
+    "mcq_options": null,
+    "answer": "Occlumency.",
+    "answer_type": "text",
+    "main_keyword": "what"
+  },
+  {
+    "original_question_id": 185,
+    "question_source": "legacy",
+    "question_type": "FR",
+    "question": "The Blast-Ended Skrewt is a hybrid of a Fire Crab and what?",
+    "mcq_options": null,
+    "answer": "Manticore",
+    "answer_type": "text",
+    "main_keyword": "what"
+  },
+  {
+    "original_question_id": 1084,
+    "question_source": "legacy",
+    "question_type": "FR",
+    "question": "What does Professor Kettleburn wish to do after retiring from Hogwarts?",
+    "mcq_options": null,
+    "answer": "Enjoy more time with his remaining limbs",
+    "answer_type": "text",
+    "main_keyword": "what"
+  },
+  {
+    "original_question_id": 659,
+    "question_source": "legacy",
+    "question_type": "FR",
+    "question": "What does Harry name his children?",
+    "mcq_options": null,
+    "answer": "James Sirius, Albus Severus, and Lily Luna",
+    "answer_type": "text",
+    "main_keyword": "what"
+  },
+  {
+    "original_question_id": 1346,
+    "question_source": "legacy",
+    "question_type": "FR",
+    "question": "What gift did Ron bring back for Harry from his family\u2019s trip to Egypt?",
+    "mcq_options": null,
+    "answer": "A Pocket Sneakoscope",
+    "answer_type": "text",
+    "main_keyword": "what"
+  },
+  {
+    "original_question_id": 394,
+    "question_source": "legacy",
+    "question_type": "FR",
+    "question": "The Diricawl is actually thought to be which extinct Muggle bird?",
+    "mcq_options": null,
+    "answer": "The Dodo.",
+    "answer_type": "text",
+    "main_keyword": "which"
+  },
+  {
+    "original_question_id": 108,
+    "question_source": "legacy",
+    "question_type": "FR",
+    "question": "The Deflating Drought is an antidote to which potion?",
+    "mcq_options": null,
+    "answer": "Swelling Solution",
+    "answer_type": "text",
+    "main_keyword": "which"
+  },
+  {
+    "original_question_id": 192,
+    "question_source": "legacy",
+    "question_type": "FR",
+    "question": "Which Alchemist was active during the Medieval age?",
+    "mcq_options": null,
+    "answer": "Nicholas Flamel",
+    "answer_type": "text",
+    "main_keyword": "which"
+  },
+  {
+    "original_question_id": 1257,
+    "question_source": "legacy",
+    "question_type": "FR",
+    "question": "Which potion might a studious witch like Hermione use to fight off sleep and power through a long night of homework?",
+    "mcq_options": null,
+    "answer": "Wideye Potion (also known as the Awakening Potion)",
+    "answer_type": "text",
+    "main_keyword": "which"
+  },
+  {
+    "original_question_id": 1330,
+    "question_source": "legacy",
+    "question_type": "FR",
+    "question": "Which famously eccentric historical wizard, whose Chocolate Frog card features him trying to communicate with trolls using Morse code?",
+    "mcq_options": null,
+    "answer": "Uric the Oddball",
+    "answer_type": "text",
+    "main_keyword": "which"
+  },
+  {
+    "original_question_id": 691,
+    "question_source": "legacy",
+    "question_type": "FR",
+    "question": "Who wrote the Dream Oracle?",
+    "mcq_options": null,
+    "answer": "Inigo Imago",
+    "answer_type": "text",
+    "main_keyword": "who"
+  },
+  {
+    "original_question_id": 938,
+    "question_source": "legacy",
+    "question_type": "FR",
+    "question": "Who invented Sleakeazy's Hair Potion?",
+    "mcq_options": null,
+    "answer": "Fleamont Potter",
+    "answer_type": "text",
+    "main_keyword": "who"
+  },
+  {
+    "original_question_id": 175,
+    "question_source": "legacy",
+    "question_type": "FR",
+    "question": "Who are the members of the 'Golden Trio'?",
+    "mcq_options": null,
+    "answer": "Harry Potter, Ron Weasley, Hermione Granger",
+    "answer_type": "text",
+    "main_keyword": "who"
+  },
+  {
+    "original_question_id": 77,
+    "question_source": "legacy",
+    "question_type": "FR",
+    "question": "Who does Harry live with before going to Hogwarts?",
+    "mcq_options": null,
+    "answer": "His aunt and uncle, Petunia and Vernon Dursley, and cousin Dudley.",
+    "answer_type": "text",
+    "main_keyword": "who"
+  }
+]

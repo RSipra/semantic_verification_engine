@@ -1,0 +1,181 @@
+[
+  {
+    "question_id": 18,
+    "question_type": "FR",
+    "question": "Who destroyed the Horcrux in Helga Hufflepuff's Cup?",
+    "answer": "Hermione Granger",
+    "hint_1": "This character is known for her intelligence and magical prowess.",
+    "hint_2": "The destruction happened during the Battle of Hogwarts, in the Chamber of Secrets.",
+    "hint_3": "She used a specific fanged object from a defeated magical creature to destroy this dark item.",
+    "explanation": "Hermione Granger used a basilisk fang to destroy the Horcrux within Helga Hufflepuff's Cup. She did this in the Chamber of Secrets during the Battle of Hogwarts, demonstrating her bravery and strategic thinking.",
+    "answer_variations": ["Hermione Granger", "Hermione", "Miss Granger"]
+  },
+  {
+    "question_id": 1220,
+    "question_type": "FR",
+    "question": "How many years did Lord Voldemort's first reign of terror last, before his initial downfall in Godric's Hollow?",
+    "answer": "11 Years",
+    "hint_1": "His first period of control ended on Halloween night.",
+    "hint_2": "Think about the duration between his emergence as a prominent dark wizard and the fateful night in Godric's Hollow.",
+    "hint_3": "This period encompassed the rise of the original Order of the Phoenix.",
+    "explanation": "Lord Voldemort's first reign of terror began around 1970 and concluded on October 31, 1981, when he attempted to kill Harry Potter in Godric's Hollow. This period lasted approximately eleven years, a time marked by widespread fear and conflict in the wizarding world.",
+    "answer_variations": ["11", "eleven years", "eleven"]
+  },
+  {
+    "question_id": 1374,
+    "question_type": "FR",
+    "question": "How old was dumbledore when he died?",
+    "answer": " 115 years old",
+    "hint_1": "He was a very old and powerful wizard.",
+    "hint_2": "His death occurred in his final year as Headmaster of the school.",
+    "hint_3": "He lived through many significant events in wizarding history, accumulating vast knowledge and experience over more than a century.",
+    "explanation": "Albus Dumbledore was born in 1881 and died in 1997, making him 115 years old at the time of his death. His long life was filled with significant magical achievements and leadership roles within the wizarding community.",
+    "answer_variations": ["115", "115 years", "one hundred fifteen", "one hundred fifteen years old"]
+  },
+  {
+    "question_id": 1033,
+    "question_type": "FR",
+    "question": "Voldemort stole Helga Hufflepuff's cup from an old woman named Hepzibah Smith. What was the name of her house-elf?",
+    "answer": "Hokey",
+    "hint_1": "This house-elf inadvertently played a role in a dark wizard's scheme.",
+    "hint_2": "Her memories were crucial in understanding how the dark lord acquired a specific item.",
+    "hint_3": "This loyal servant of Hepzibah Smith was very old and often underestimated by others.",
+    "explanation": "Hepzibah Smith's house-elf was named Hokey. She was a key witness, albeit an unwitting one, to Tom Riddle's theft of Helga Hufflepuff's Cup and Salazar Slytherin's locket, which he later turned into Horcruxes.",
+    "answer_variations": ["Hokey"]
+  },
+  {
+    "question_id": 582,
+    "question_type": "FR",
+    "question": "Name the three different types of balls used in Quidditch.",
+    "answer": "Quaffle, Bludger, Snitch.",
+    "hint_1": "One ball is used for scoring by the Chasers.",
+    "hint_2": "Another type of ball tries to knock players off their brooms.",
+    "hint_3": "The third, smallest, and most elusive ball, ends the game when caught.",
+    "explanation": "Quidditch uses three types of balls: the Quaffle, which Chasers use to score points; two Bludgers, which attempt to unseat players and must be defended against by Beaters; and the Golden Snitch, which Seeker's must catch to end the game and earn points.",
+    "answer_variations": ["Quaffle, Bludger, Snitch", "Snitch, Bludger, Quaffle", "Bludger, Snitch, Quaffle"]
+  },
+  {
+    "question_id": 848,
+    "question_type": "FR",
+    "question": "When Hermione Granger is found Petrified, she is not alone. Who is with her?",
+    "answer": "Penelope Clearwater",
+    "hint_1": "This person was a Ravenclaw student.",
+    "hint_2": "She was a prefect in her house.",
+    "hint_3": "She was dating Percy Weasley at the time of the attacks.",
+    "explanation": "When Hermione Granger was found Petrified, she was with Penelope Clearwater, a Ravenclaw prefect. Both were victims of the Basilisk's gaze during the attacks that plagued Hogwarts in Harry's second year.",
+    "answer_variations": ["Penelope Clearwater", "Clearwater", "Miss Clearwater"]
+  },
+  {
+    "question_id": 798,
+    "question_type": "FR",
+    "question": "When Neville Longbottom dresses his Boggart (Professor Snape) up in his grandmother’s clothes, what stuffed bird is on top of the hat?",
+    "answer": "A vulture",
+    "hint_1": "It's a type of bird often associated with scavenging or bleak landscapes.",
+    "hint_2": "The bird is typically bald-headed.",
+    "hint_3": "It sits atop a green hat, completing the amusing transformation of the scary boggart.",
+    "explanation": "When Neville Longbottom faced his Boggart, which took the form of Professor Snape, he imagined Snape in his grandmother's clothes, topped with a stuffed vulture on her hat. This transformation, inspired by Professor Lupin's lesson, made the boggart appear comical rather than terrifying.",
+    "answer_variations": ["vulture", "a vulture"]
+  },
+  {
+    "question_id": 106,
+    "question_type": "FR",
+    "question": "Where are Kappas most commonly found?",
+    "answer": "Japan",
+    "hint_1": "This country is an archipelago in East Asia.",
+    "hint_2": "It is known for its rich folklore and traditional myths, where these creatures originate.",
+    "hint_3": "The famous explorer Newt Scamander would have likely encountered these water-dwelling creatures here.",
+    "explanation": "Kappas are water demons found primarily in Japan. These mischievous creatures are known for residing in ponds and rivers, often luring people into the water.",
+    "answer_variations": ["Japan"]
+  },
+  {
+    "question_id": 366,
+    "question_type": "FR",
+    "question": "Where are the vaults kept in Gringotts Bank?",
+    "answer": "Deep underground.",
+    "hint_1": "The bank uses heavily secured tracks and carts to reach them.",
+    "hint_2": "These chambers are located far below the main banking hall.",
+    "hint_3": "The deeper the location, the higher the security and the more ancient the wizarding families associated with them.",
+    "explanation": "The vaults in Gringotts Bank are kept deep underground, accessed by a network of winding tracks and mine carts. This subterranean location provides maximum security for the treasures stored within, especially for the oldest and most valuable vaults.",
+    "answer_variations": ["deep underground", "underground", "far underground"]
+  },
+  {
+    "question_id": 1268,
+    "question_type": "FR",
+    "question": "Where is the entrance to St. Mungos located?",
+    "answer": "Behind the seemingly abandoned department store called Purge & Dowse Ltd., in Muggle London",
+    "hint_1": "It's cleverly disguised within a busy non-magical city.",
+    "hint_2": "The actual entrance is found by going through a particular window of a specific building.",
+    "hint_3": "This location is a cover for a place dedicated to magical injuries and illnesses.",
+    "explanation": "The entrance to St. Mungo's Hospital for Magical Maladies and Injuries is cleverly hidden in Muggle London, behind a seemingly abandoned department store called Purge & Dowse Ltd. Witches and wizards gain entry by speaking to a mannequin in a dirty window.",
+    "answer_variations": ["Purge & Dowse Ltd.", "behind Purge & Dowse Ltd.", "in Muggle London", "Purge and Dowse"]
+  },
+  {
+    "question_id": 1149,
+    "question_type": "MCQ",
+    "question": "In which of these scenarios would you use the spell Cistem Aperio:",
+    "mcq_options": [
+      "mending a broken object",
+      "summoning an object",
+      "blasting open a locked trunk",
+      "unlocking a door"
+    ],
+    "answer": "blasting open a locked trunk",
+    "hint_1": "This spell is used to forcibly open something that is closed.",
+    "hint_2": "It's not a subtle unlocking charm, but rather a more forceful approach.",
+    "hint_3": "Think about a scene where a certain boy wizard uses this spell in a tight space to reveal hidden contents.",
+    "explanation": "The spell Cistem Aperio is used to blast open a locked trunk or similar container. This charm was notably used by Tom Riddle in the Chamber of Secrets to reveal Hagrid's pet Acromantula, Aragog, from a box.",
+    "answer_variations": ["blasting open", "locked trunk", "blasting open a locked trunk"]
+  },
+  {
+    "question_id": 1152,
+    "question_type": "MCQ",
+    "question": "Which of these is not a species of dragon:",
+    "mcq_options": [
+      "hungarian horntail",
+      "chinese fireball",
+      "finnish flamethrower",
+      "swedish short-snout"
+    ],
+    "answer": "finnish flamethrower",
+    "hint_1": "Consider the known dragon types mentioned throughout the series, especially during the Triwizard Tournament.",
+    "hint_2": "Some of the options are real, formidable magical creatures from different parts of the world.",
+    "hint_3": "One of these names sounds plausible but does not appear in official magical creature classifications.",
+    "explanation": "The 'Finnish Flamethrower' is not a recognized species of dragon in the wizarding world. The Hungarian Horntail, Chinese Fireball, and Swedish Short-Snout are all established and dangerous dragon breeds.",
+    "answer_variations": ["finnish flamethrower", "finnish", "flamethrower"]
+  },
+  {
+    "question_id": 1163,
+    "question_type": "MCQ",
+    "question": "Which of these is not a type of concealment charm:",
+    "mcq_options": [
+      "disillusionment charm",
+      "fidelius charm",
+      "confundus charm",
+      "muffliato charm"
+    ],
+    "answer": "confundus charm",
+    "hint_1": "Most of the listed charms are designed to hide or make something undetectable.",
+    "hint_2": "One of the charms listed has a primary purpose of confusing or disorienting.",
+    "hint_3": "Consider the spells that make a location or person hidden from view or knowledge, versus those that simply bewilder.",
+    "explanation": "The Confundus Charm is not a concealment charm; its purpose is to bewilder or confuse its target. The Disillusionment Charm makes someone appear as though they are camouflaged, the Fidelius Charm conceals a secret within a Secret Keeper, and the Muffliato Charm fills the ears of anyone nearby with an unidentifiable buzzing sound, effectively concealing conversations.",
+    "answer_variations": ["confundus charm", "confundus"]
+  },
+  {
+    "question_id": 1361,
+    "question_type": "MCQ",
+    "question": "When did Lily Evans first meet Severus Snape:",
+    "mcq_options": [
+      "on the hogwarts express during their first journey to school",
+      "as children in a park near their homes before they attended hogwarts",
+      "during the sorting ceremony of their first year",
+      "in their first potions class",
+      "taught by professor slughorn"
+    ],
+    "answer": "as children in a park near their homes before they attended hogwarts",
+    "hint_1": "Their relationship began long before they received their Hogwarts letters.",
+    "hint_2": "The setting of their first meeting was a mundane, non-magical place.",
+    "hint_3": "This early encounter established a significant, complex bond that would shape both their lives.",
+    "explanation": "Lily Evans and Severus Snape first met as children in a park near their homes, before either of them had attended Hogwarts. Snape, living near Lily, observed her emerging magical abilities and introduced himself, beginning their complicated friendship.",
+    "answer_variations": ["as children", "in a park", "before they attended hogwarts", "children in a park"]
+  }
+]

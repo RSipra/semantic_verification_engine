@@ -1,0 +1,167 @@
+[
+  {
+    "question_id": 1115,
+    "question_type": "FR",
+    "question": "Switching spells simultaneously transfigure how many objects?",
+    "answer": "2",
+    "hint_1": "Think about the core concept of 'switching' between things.",
+    "hint_2": "The spell is designed to exchange the characteristics or positions of a specific number of items.",
+    "hint_3": "It involves a direct exchange or swap, meaning it requires an equal number of participants on both sides of the magical interaction.",
+    "explanation": "Switching spells, as their name implies, are used to swap the physical properties or positions of objects. This magical exchange inherently involves two distinct entities.",
+    "answer_variations": ["2", "two", "a pair", "a couple"]
+  },
+  {
+    "question_id": 1202,
+    "question_type": "FR",
+    "question": "How many points is the Golden Snitch worth?",
+    "answer": "150",
+    "hint_1": "Catching this object immediately ends the game.",
+    "hint_2": "Its value is often enough to decide the winner of a match, even if the team is far behind.",
+    "hint_3": "This amount is a multiple of 50, and represents a significant advantage in the overall score.",
+    "explanation": "The Golden Snitch is worth a massive 150 points in Quidditch. This high value means that catching it is usually the decisive factor in winning a game, often overshadowing the points scored by Chasers.",
+    "answer_variations": ["150", "one hundred fifty"]
+  },
+  {
+    "question_id": 1203,
+    "question_type": "FR",
+    "question": "As the wizarding world's high court and parliament, the Wizengamot wields significant power. How many wizards serve on this esteemed body?",
+    "answer": "50",
+    "hint_1": "This number reflects a substantial, but not overwhelming, assembly.",
+    "hint_2": "Think of a round number, often associated with a 'half-century' count.",
+    "hint_3": "The body is large enough to represent a significant portion of the wizarding community's elders and legal minds, but small enough to deliberate effectively.",
+    "explanation": "The Wizengamot is composed of 50 members. This legislative and judicial body is responsible for overseeing magical law and acting as the highest court in the British wizarding world.",
+    "answer_variations": ["50", "fifty"]
+  },
+  {
+    "question_id": 1222,
+    "question_type": "FR",
+    "question": "How many players are on a Quidditch team?",
+    "answer": "7",
+    "hint_1": "Each team has three Chasers, two Beaters, one Keeper, and one Seeker.",
+    "hint_2": "Consider the total count of the different positions on the pitch.",
+    "hint_3": "This number is considered fortunate by some and is often seen in magical contexts.",
+    "explanation": "A standard Quidditch team consists of seven players: three Chasers, two Beaters, one Keeper, and one Seeker. Each player has a distinct role essential to the game.",
+    "answer_variations": ["7", "seven"]
+  },
+  {
+    "question_id": 1173,
+    "question_type": "FR",
+    "question": "At what age can you earn your Apparition license?",
+    "answer": "17",
+    "hint_1": "This is often considered the age of magical maturity in the wizarding world.",
+    "hint_2": "It's the age at which young witches and wizards are typically considered adults and can use certain advanced magic.",
+    "hint_3": "It's one year before the Muggle equivalent for obtaining a driving license in many places, signaling a similar rite of passage.",
+    "explanation": "Witches and wizards must be 17 years old to earn their Apparition license. This age signifies coming of age in the wizarding world, allowing access to adult magic and responsibilities.",
+    "answer_variations": ["17", "seventeen"]
+  },
+  {
+    "question_id": 1194,
+    "question_type": "FR",
+    "question": "When was Azkaban Prison established?",
+    "answer": "1718",
+    "hint_1": "The prison has been in operation for several centuries.",
+    "hint_2": "Think of a year in the early 18th century.",
+    "hint_3": "It was established long after the main wizarding institutions, but still has a very extensive and grim history.",
+    "explanation": "Azkaban Prison was established in 1718. Before that, it was a fortress used by the dark wizard Ekrizdis, which later fell under the control of the Ministry of Magic to serve as a high-security correctional facility.",
+    "answer_variations": ["1718", "seventeen eighteen"]
+  },
+  {
+    "question_id": 1309,
+    "question_type": "FR",
+    "question": "When was the first full description of the game of Quidditch written?",
+    "answer": "1398",
+    "hint_1": "The sport itself is older, but its rules were formally documented much later.",
+    "hint_2": "This was towards the end of the 14th century.",
+    "hint_3": "The detailed account appeared in a historical text, formalizing the game's structure for future generations.",
+    "explanation": "The first full description of Quidditch was written in 1398 by an author named Goodwin Kneen. This account detailed the various aspects of the game, including rules and common fouls.",
+    "answer_variations": ["1398", "thirteen ninety-eight"]
+  },
+  {
+    "question_id": 1197,
+    "question_type": "FR",
+    "question": "When did Gringotts Wizarding Bank open?",
+    "answer": "1474",
+    "hint_1": "This goblin-run institution has been safeguarding wizarding wealth for a very long time.",
+    "hint_2": "The bank opened in the latter half of the 15th century.",
+    "hint_3": "It is the only wizarding bank in Britain and has centuries of history protecting vast amounts of treasure and magical artifacts.",
+    "explanation": "Gringotts Wizarding Bank, the only bank for witches and wizards in Great Britain, first opened its doors in 1474. It has been managed by goblins ever since its establishment.",
+    "answer_variations": ["1474", "fourteen seventy-four"]
+  },
+  {
+    "question_id": 736,
+    "question_type": "FR",
+    "question": "When was Quidditch invented?",
+    "answer": "1050 AD",
+    "hint_1": "The sport has very ancient origins, going back over a millennium.",
+    "hint_2": "Think of a year in the middle of the 11th century.",
+    "hint_3": "This popular magical sport began nearly a thousand years ago, far before it was formally documented.",
+    "explanation": "Quidditch is believed to have been invented around 1050 AD in Queerditch Marsh. It evolved from a primitive broomstick sport into the complex game known today.",
+    "answer_variations": ["1050", "one thousand fifty", "1050 AD"]
+  },
+  {
+    "question_id": 152,
+    "question_type": "FR",
+    "question": "When did the wildcat gargoyle strike the place?",
+    "answer": "1911",
+    "hint_1": "This event is a specific historical detail from the early 20th century.",
+    "hint_2": "The year is related to a relatively recent magical incident, not ancient history.",
+    "hint_3": "It's an event mentioned in passing, highlighting a bizarre occurrence involving magical creatures or enchanted objects.",
+    "explanation": "The wildcat gargoyle incident occurred in 1911. This event is a minor detail from the extensive history of the wizarding world, often appearing in historical records or newspapers.",
+    "answer_variations": ["1911", "nineteen eleven"]
+  },
+  {
+    "question_id": 1244,
+    "question_type": "FR",
+    "question": "On what chilling date did baby Harry Potter miraculously survive the Killing Curse resulting in the first downfall of Lord Voldemort",
+    "answer": "Halloween (or October 31st), 1981",
+    "hint_1": "This fateful night is associated with a specific autumn holiday.",
+    "hint_2": "Think of the date when the Potters were tragically attacked in Godric's Hollow.",
+    "hint_3": "It was during the early 1980s, marking a pivotal moment in the first wizarding war.",
+    "explanation": "Baby Harry Potter survived the Killing Curse on Halloween, October 31st, 1981. This night marked the first downfall of Lord Voldemort and the tragic death of James and Lily Potter.",
+    "answer_variations": ["October 31, 1981", "October 31st, 1981", "Halloween 1981", "31 October 1981"]
+  },
+  {
+    "question_id": 1298,
+    "question_type": "FR",
+    "question": "What day did James and Lily Potter die?",
+    "answer": "October 31",
+    "hint_1": "Their deaths occurred on a well-known autumn holiday.",
+    "hint_2": "It's the same date as the attack that gave Harry his scar.",
+    "hint_3": "This day is often associated with spirits and spooky themes, fitting for such a dark event.",
+    "explanation": "James and Lily Potter were murdered by Lord Voldemort on October 31st, 1981. This tragic event led to Harry Potter being orphaned and sent to live with the Dursleys.",
+    "answer_variations": ["October 31", "October 31st", "Halloween"]
+  },
+  {
+    "question_id": 1278,
+    "question_type": "FR",
+    "question": "What is Snape's birthday?",
+    "answer": "January 9, 1960",
+    "hint_1": "He was born in the first month of the year.",
+    "hint_2": "Think of a specific date early in the 1960s.",
+    "hint_3": "This character's birthdate falls shortly after the start of a new calendar year, making him a Capricorn.",
+    "explanation": "Severus Snape was born on January 9, 1960. His birth year places him as a contemporary of James Potter, Lily Evans, and the other Marauders.",
+    "answer_variations": ["January 9, 1960", "Jan 9, 1960", "9 January 1960", "January ninth 1960"]
+  },
+  {
+    "question_id": 978,
+    "question_type": "FR",
+    "question": "When is Harry's birthday?",
+    "answer": "July 31, 1980.",
+    "hint_1": "His birthday is in the summer, just before a new school year.",
+    "hint_2": "He shares this birth date with the author of the books.",
+    "hint_3": "This date is significant because it is often when he receives his first letter from Hogwarts or begins planning for the upcoming term.",
+    "explanation": "Harry Potter's birthday is on July 31, 1980. This date is famous for being the same as J.K. Rowling's birthday, and it often marks the start of new adventures for Harry each year.",
+    "answer_variations": ["July 31, 1980", "July 31st, 1980", "31 July 1980", "Jul 31, 1980"]
+  },
+  {
+    "question_id": 921,
+    "question_type": "FR",
+    "question": "On what date did the Battle of Hogwarts end with Voldemort\u2019s death?",
+    "answer": "May 2, 1998",
+    "hint_1": "The final confrontation occurred in the spring.",
+    "hint_2": "Think of the specific date in the late 1990s when the wizarding war finally concluded.",
+    "hint_3": "This day marks the official end of the Second Wizarding War and the triumph of good over evil.",
+    "explanation": "The Battle of Hogwarts, and with it Lord Voldemort's death, occurred on May 2, 1998. This date marked the definitive end of the Second Wizarding War and brought peace to the wizarding world.",
+    "answer_variations": ["May 2, 1998", "May 2nd, 1998", "2 May 1998"]
+  }
+]

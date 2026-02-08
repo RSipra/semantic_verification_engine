@@ -1,0 +1,77 @@
+[
+  {
+    "original_question_id": 136,
+    "semantic_entity_refs": ["Deflating Draught"],
+    "semantic_lore_concepts": ["Antidote potion", "Swelling Solution counter"]
+  },
+  {
+    "original_question_id": 168,
+    "semantic_entity_refs": ["Occlumency"],
+    "semantic_lore_concepts": ["Mind-closing magic", "Mental shielding", "Defence against Legilimency"]
+  },
+  {
+    "original_question_id": 185,
+    "semantic_entity_refs": ["Manticore"],
+    "semantic_lore_concepts": ["Magical creature hybrid parent", "Dangerous beast"]
+  },
+  {
+    "original_question_id": 1084,
+    "semantic_entity_refs": [],
+    "semantic_lore_concepts": ["Hogwarts staff retirement", "Injured magical creatures professor"]
+  },
+  {
+    "original_question_id": 659,
+    "semantic_entity_refs": ["James Sirius Potter", "Albus Severus Potter", "Lily Luna Potter"],
+    "semantic_lore_concepts": ["Harry Potter's children's names", "Memorial naming tradition", "Tribute to loved ones"]
+  },
+  {
+    "original_question_id": 1346,
+    "semantic_entity_refs": ["Pocket Sneakoscope", "Sneakoscope"],
+    "semantic_lore_concepts": ["Dark detection device", "Loyalty warning artifact", "Magical truth detector"]
+  },
+  {
+    "original_question_id": 394,
+    "semantic_entity_refs": ["Dodo"],
+    "semantic_lore_concepts": ["Muggle extinct bird equivalent", "Diricawl's true identity", "Concealment of magical creatures"]
+  },
+  {
+    "original_question_id": 108,
+    "semantic_entity_refs": ["Swelling Solution"],
+    "semantic_lore_concepts": ["Puffing potion", "Deflating Draught target"]
+  },
+  {
+    "original_question_id": 192,
+    "semantic_entity_refs": ["Nicholas Flamel", "Flamel"],
+    "semantic_lore_concepts": ["Alchemist", "Philosopher's Stone co-creator", "Immortal wizard"]
+  },
+  {
+    "original_question_id": 1257,
+    "semantic_entity_refs": ["Wideye Potion", "Awakening Potion"],
+    "semantic_lore_concepts": ["Anti-sleep potion", "Concentration aid", "Alertness draught"]
+  },
+  {
+    "original_question_id": 1330,
+    "semantic_entity_refs": ["Uric the Oddball", "Uric"],
+    "semantic_lore_concepts": ["Eccentric historical wizard", "Chocolate Frog Card personality", "Troll communicator"]
+  },
+  {
+    "original_question_id": 691,
+    "semantic_entity_refs": ["Inigo Imago"],
+    "semantic_lore_concepts": ["Dream Oracle author", "Divination scholar"]
+  },
+  {
+    "original_question_id": 938,
+    "semantic_entity_refs": ["Fleamont Potter", "Harry Potter's paternal grandfather"],
+    "semantic_lore_concepts": ["Sleakeazy's Hair Potion inventor", "Potter family wealth origin"]
+  },
+  {
+    "original_question_id": 175,
+    "semantic_entity_refs": ["Harry Potter", "Ron Weasley", "Hermione Granger", "Golden Trio"],
+    "semantic_lore_concepts": ["Gryffindor heroes", "Main protagonists", "Hogwarts student friends"]
+  },
+  {
+    "original_question_id": 77,
+    "semantic_entity_refs": ["Petunia Dursley", "Vernon Dursley", "Dudley Dursley"],
+    "semantic_lore_concepts": ["Harry's Muggle relatives", "Blood protection guardians", "Abusive caregivers"]
+  }
+]

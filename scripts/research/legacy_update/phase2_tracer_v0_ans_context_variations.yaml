@@ -1,0 +1,154 @@
+metadata:
+  project: 'Semantic Verification Engine (Ref. Implementation: Harry Potter Trivia)'
+  owner: reema sipra
+  description: Phase  2 Tracer build, Legacy dataset enrichment with LLM to match standard schema
+  question_types:
+  - MCQ
+  - FR
+  - EX
+  version: 0
+experiments:
+- id: phase2_tracer_v0_ans_context_variations
+  model: models/gemini-2.5-flash
+  question_types:
+  - MCQ
+  - FR
+  - EX
+  common_parameters:
+    max_output_tokens: 30000
+    top_p: 0.95
+    candidate_count: 1
+  runs:
+  - version: batch_1
+    prompt_file: scripts/research/legacy_update/legacy_context_variations_v0.txt
+    data_file: scripts/research/legacy_update/tracer_batches/batch_1.json
+    output_files:
+    - /Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/scripts/research/legacy_update/tracer_llm_responses/phase2_tracer_v0_ans_context_variations_batch_1_candidate_1.json
+    metrics:
+      response_time_seconds: 47.44
+      finish_reason: STOP
+      prompt_feedback: ''
+      tokens:
+        input_cached: 586
+        input_uncached: 1997
+        output: 1086
+        total: 13455
+    status: completed
+    notes: Automated run for batch_1.json
+    status_history:
+    - status: completed
+      timestamp: '2026-02-05T14:44:33.334171+00:00'
+  - version: batch_2
+    prompt_file: scripts/research/legacy_update/legacy_context_variations_v0.txt
+    data_file: scripts/research/legacy_update/tracer_batches/batch_2.json
+    output_files:
+    - /Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/scripts/research/legacy_update/tracer_llm_responses/phase2_tracer_v0_ans_context_variations_batch_2_candidate_1.json
+    metrics:
+      response_time_seconds: 29.56
+      finish_reason: STOP
+      prompt_feedback: ''
+      tokens:
+        input_cached: 586
+        input_uncached: 2019
+        output: 1122
+        total: 9631
+    status: completed
+    notes: Automated run for batch_2.json
+    status_history:
+    - status: completed
+      timestamp: '2026-02-05T14:45:17.977549+00:00'
+  - version: batch_3
+    prompt_file: scripts/research/legacy_update/legacy_context_variations_v0.txt
+    data_file: scripts/research/legacy_update/tracer_batches/batch_3.json
+    output_files:
+    - /Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/scripts/research/legacy_update/tracer_llm_responses/phase2_tracer_v0_ans_context_variations_batch_3_candidate_1.json
+    metrics:
+      response_time_seconds: 31.75
+      finish_reason: STOP
+      prompt_feedback: ''
+      tokens:
+        input_cached: 586
+        input_uncached: 1894
+        output: 1228
+        total: 9512
+    status: completed
+    notes: Automated run for batch_3.json
+    status_history:
+    - status: completed
+      timestamp: '2026-02-05T14:46:04.816084+00:00'
+  - version: batch_4
+    prompt_file: scripts/research/legacy_update/legacy_context_variations_v0.txt
+    data_file: scripts/research/legacy_update/tracer_batches/batch_4.json
+    output_files:
+    - /Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/scripts/research/legacy_update/tracer_llm_responses/phase2_tracer_v0_ans_context_variations_batch_4_candidate_1.json
+    metrics:
+      response_time_seconds: 27.99
+      finish_reason: STOP
+      prompt_feedback: ''
+      tokens:
+        input_cached: 586
+        input_uncached: 1844
+        output: 1563
+        total: 8627
+    status: completed
+    notes: Automated run for batch_4.json
+    status_history:
+    - status: completed
+      timestamp: '2026-02-05T14:46:47.887267+00:00'
+  - version: batch_5
+    prompt_file: scripts/research/legacy_update/legacy_context_variations_v0.txt
+    data_file: scripts/research/legacy_update/tracer_batches/batch_5.json
+    output_files:
+    - /Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/scripts/research/legacy_update/tracer_llm_responses/phase2_tracer_v0_ans_context_variations_batch_5_candidate_1.json
+    metrics:
+      response_time_seconds: 29.36
+      finish_reason: STOP
+      prompt_feedback: ''
+      tokens:
+        input_cached: 586
+        input_uncached: 1523
+        output: 1120
+        total: 9073
+    status: completed
+    notes: Automated run for batch_5.json
+    status_history:
+    - status: completed
+      timestamp: '2026-02-05T14:47:32.440378+00:00'
+  - version: batch_6
+    prompt_file: scripts/research/legacy_update/legacy_context_variations_v0.txt
+    data_file: scripts/research/legacy_update/tracer_batches/batch_6.json
+    output_files:
+    - /Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/scripts/research/legacy_update/tracer_llm_responses/phase2_tracer_v0_ans_context_variations_batch_6_candidate_1.json
+    metrics:
+      response_time_seconds: 22.28
+      finish_reason: STOP
+      prompt_feedback: ''
+      tokens:
+        input_cached: 586
+        input_uncached: 1546
+        output: 1082
+        total: 6937
+    status: completed
+    notes: Automated run for batch_6.json
+    status_history:
+    - status: completed
+      timestamp: '2026-02-05T14:48:09.807399+00:00'
+  - version: batch_7
+    prompt_file: scripts/research/legacy_update/legacy_context_variations_v0.txt
+    data_file: scripts/research/legacy_update/tracer_batches/batch_7.json
+    output_files:
+    - /Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/scripts/research/legacy_update/tracer_llm_responses/phase2_tracer_v0_ans_context_variations_batch_7_candidate_1.json
+    metrics:
+      response_time_seconds: 18.1
+      finish_reason: STOP
+      prompt_feedback: ''
+      tokens:
+        input_cached: 586
+        input_uncached: 1654
+        output: 991
+        total: 6411
+    status: completed
+    notes: Automated run for batch_7.json
+    status_history:
+    - status: completed
+      timestamp: '2026-02-05T14:48:42.991226+00:00'

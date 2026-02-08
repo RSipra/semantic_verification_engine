@@ -1,0 +1,229 @@
+You are generating learning scaffolding for a Harry Potter trivia ---QUESTIONS DICTIONARY--- provided.
+You must follow the instructions and format precisely. Use the ---EXAMPLES--- provided to understand the desired quality and structure.
+
+You are given:
+- question_id: dictionary key that identifies each question
+- question_type: one of {FR, EX, MCQ}
+- question: the trivia question
+- answer: the canonical correct answer (string)
+- (for MCQ only) mcq_options: list of answer choices
+- answer_form: one of {entity, numeric, action, explanatory, date}
+- (optional, for date answers) date_precision_required: one of {year, month, day}
+
+Your task is to return a JSON object with:
+- question_id: the exact question id for the question
+- question_type: the exact question type for the given question
+- question: exact question text provided.
+- answer: exact answer text provided.
+- hint_1: a very subtle nudge
+- hint_2: a medium-strength hint
+- hint_3: a strong hint (nearly gives it away, but does NOT state the answer verbatim)
+- explanation: a short, clear explanation (2–4 sentences)
+- answer_variations: a list of valid alternative phrasings of the answer
+
+### General rules (apply to all question types)
+
+- Do NOT invent facts.
+- Keep language age-appropriate.
+- Hints must not reveal the answer verbatim. 
+- Hints must not include any word, phrase, or identifier that would be accepted as a correct answer if typed by the learner. This includes canonical answers, aliases, titles, identities, exact terms, or uniquely identifying phrases.
+- Hint 3 may describe attributes, roles, effects, or context, but must avoid uniquely identifying the answer on its own.
+- The explanation must justify why the answer is correct. 
+- Answer variations must be semantically equivalent to the canonical answer.
+- Answer variations should represent the answer itself, not its justification.
+
+### Question-type–specific guidance
+
+#### FR (Factual Recall)
+- Answer variations should capture reasonable ways a learner might express the correct answer.
+- Answer variations should represent the full answer as it would be stated in isolation. Partial names or fragments that rely on external context should be avoided.
+- Avoid drifting into full explanations or new facts.
+
+#### EX (Explanatory)
+- Preserve the same core meaning without adding new information.
+- Hint 3 should surface the conceptual lens (theme, motive, character insight) without stating the resolved conclusion or outcome.
+- Constraint: Answer Variations for EX Questions For all Explanatory questions, provide exactly three answer_variations with the following characteristics:
+  1. [Comprehensive]: A full, grammatically perfect sentence (Max 25 words).
+  2. [Semantic Core]: A stripped-down version containing only the essential entity and causal logic (Max 12 words).
+  3. [Key-Term Expansion]: A version that prioritizes the specific proper nouns and verbs required for a 'correct' mark, removing all narrative fluff.
+
+
+#### MCQ (Multiple Choice)
+- Generate hints and explanation as if the learner does NOT see the correct option highlighted.
+- Hint 1 should activate relevant recall or reasoning (rules, context, constraints), not restate the question setup.
+- Hints should guide reasoning toward the correct option, not eliminate options mechanically.
+- Answer variations may include:
+  - key terms
+  - short phrases
+  - partial answer keywords
+  that a learner might reasonably type instead of the full option text.
+- Variations must still uniquely identify the correct option among the given choices.
+- Do NOT include distractor options or ambiguous fragments.
+- The explanation must not reference option labels, ordering, or eliminate options explicitly.
+
+### Answer-variation guidelines by answer_form
+
+1. entity
+   - Variations may include name ordering, aliases, or commonly accepted equivalents.
+   - Do NOT introduce titles, roles, or honorifics unless they are part of the canonical answer
+     or required by the question.
+
+2. numeric
+   - Variations should focus on the numeric value itself (digits or number words).
+   - Do NOT invent formatting variants (e.g., leading zeros).
+   - Generate fewer variations if no additional valid surface forms exist.
+
+3. action
+   - Variations may describe the same action or use-case concisely.
+   - Avoid full cause–effect explanations.
+
+4. explanatory
+   - Variations may paraphrase the explanation briefly.
+   - Avoid expanding scope or introducing additional facts.
+
+5. date
+   - Variations should represent the same date at the allowed precision.
+   - Prefer standard, commonly used date formats.
+   - Do NOT include unrelated temporal context.
+
+
+### Output rules
+- Return ONLY a single valid JSON object keyed by question_id, where each value is the generated scaffold.
+- Do NOT include commentary, markdown, or extra text.
+
+---EXAMPLES---
+[   
+  {{
+    "question_id": 801,
+    "question_type": "FR",
+    "question": "Who is the 'Half-Blood Prince' mentioned in the title of the sixth book?",
+    "answer": "Severus Snape",
+    "hint_1": "The title refers to a nickname written inside an old Potions textbook.",
+    "hint_2": "The person behind this name eventually becomes the Headmaster of Hogwarts.",
+    "hint_3": "This individual was a master of the Dark Arts and the long-time rival of James Potter during their school years.",
+    "explanation": "Severus Snape gave himself the title 'Half-Blood Prince' to honor his mother, Eileen Prince, and to acknowledge his status as the son of a Muggle father. Harry unknowingly follows the Prince's expert notes in his Advanced Potion-Making class.",
+    "answer_variations": [
+    "Severus Snape",
+    "Snape",
+    "Professor Snape",
+    "Professor Severus Snape"
+    ]
+  }},
+  {{
+    "question_id": 802,
+    "question_type": "MCQ",
+    "question": "Which of these magical creatures can only be seen by individuals who have witnessed death?",
+    "answer": "Thestral",
+    "mcq_options": ["Hippogriff", "Phoenix", "Thestral", "Basilisk"],
+    "hint_1": "Recall the unseen force that pulls the carriages into the school gates.",
+    "hint_2": "Most students think the carriages move by themselves, but Harry sees them as skeletal, winged horses.",
+    "hint_3": "These beings only become visible once a person has emotionally processed the loss of a life.",
+    "explanation": "Visible only to those who have seen death, these creatures are often misunderstood. Harry begins seeing them in his fifth year after witnessing Cedric's death.",
+    "answer_variations": ["Thestrals"]
+  }},
+  {{
+    "question_id": 803,
+    "question_type": "EX",
+    "question": "Why did Harry survive the Killing Curse in the Forbidden Forest?",
+    "answer": "Voldemort used Harry's blood to regenerate his body, unknowingly anchoring Lily's protection to himself.",
+    "hint_1": "The reason lies in the dark ritual performed in the graveyard three years prior.",
+    "hint_2": "Think about the shared connection between the hero and his nemesis that goes beyond a scar.",
+    "hint_3": "Consider the irony: in his quest for invincibility, the villain accidentally turned himself into a living safeguard for the hero's life.",    "explanation": "By taking Harry's blood, the Dark Lord unwittingly preserved the protection of Lily's sacrifice within his own body, acting as a tether for Harry's life.",
+    "answer_variations": [
+      "[Comprehensive]: Harry survived because Voldemort took Harry's blood into his own body, which tethered Lily's sacrificial protection to life.",
+      "[Semantic Core]: Voldemort's body acted as a tether for Lily's protection via Harry's blood.",
+      "[Key-Term Expansion]: Sacrificial protection, Lily Potter, blood connection, tether, mortal anchor."
+    ]
+  }}
+]
+
+---END EXAMPLES---
+
+---QUESTIONS DICTIONARY---
+question_dict =
+{
+597: {'question_type': 'EX',
+'question': 'What does the Philosopher’s Stone do?',
+'answer': 'It produces the Elixir of Life, granting immortality, and can turn any metal into pure gold.'},
+677: {'question_type': 'FR',
+'question': 'During the Second Task of the Triwizard Tournament, what fiercely protective and intelligent magical species presented a formidable obstacle to champions attempting to retrieve their hostages',
+'answer': 'Merpeople '},
+347: {'question_type': 'FR',
+'question': 'What animal is Dolores Umbridge obsessed with?',
+'answer': 'Cats (specifically, kittens)'},
+682: {'question_type': 'FR',
+'question': 'What is the effect of the Stupefy spell?',
+'answer': 'Stuns the target'},
+428: {'question_type': 'FR',
+'question': 'Who killed Sirius Black?',
+'answer': 'Bellatrix Lestrange'},
+184: {'question_type': 'FR',
+'question': "What kind of wood is Harry's first wand made out of?",
+'answer': 'Holly'},
+261: {'question_type': 'FR',
+'question': 'What effect does diluted Swooping Evil venom have?',
+'answer': 'Erases bad memories'},
+310: {'question_type': 'FR',
+'question': 'Harry was raised by his mother’s sister. What was his aunt named?',
+'answer': 'Petunia'},
+31: {'question_type': 'FR',
+'question': 'Where is Hogwarts located?',
+'answer': 'Scotland'},
+741: {'question_type': 'EX',
+'question': 'What was the deeper significance of Dumbledore bequeathing the Deluminator to Ron Weasley?',
+'answer': "Beyond putting out lights, its true purpose was one of guidance. Dumbledore enchanted it so that when Ron was lost, it would reveal a path of light to lead him back to his friends, showing Dumbledore's faith in Ron's loyalty"},
+665: {'question_type': 'MCQ',
+'question': 'Who betrays Lily and James Potter:',
+'answer': 'Wormtail',
+'mcq_options': ['Moony', 'Professor Snape', 'Padfoot', 'Wormtail']},
+622: {
+'question_type': 'MCQ',
+'question': 'Which of the following transformations would be considered the easiest due to the similarity in form between the two objects:',
+'answer': 'Porcupine to Pincushion',
+'mcq_options': ['Human to Ferret',
+'Teapot to Tortoise',
+'Desk to Pig',
+'Porcupine to Pincushion']},
+633: {'question_type': 'MCQ',
+'question': "Which of these plants doesn't bite:",
+'answer': 'Whomping Willow',
+'mcq_options': ['Fanged Geranium',
+'Venomous Tentacula',
+'Whomping Willow',
+'Mandrake']},
+605: {'question_type': 'MCQ',
+'question': 'Which of the following was NOT a breed of dragon faced by the Triwizard Tournament champions:',
+'answer': 'Norwegian Ridgeback',
+'mcq_options': ['Hungarian Horntail',
+'Chinese Fireball',
+'Swedish Short-Snout',
+'Norwegian Ridgeback']},
+561: {'question_type': 'MCQ',
+'question': 'Which of the following plants is known for its tendency to slap people:',
+'answer': 'Bouncing Bulbs',
+'mcq_options': ['Fanged Geranium',
+'Bubotuber',
+'Bouncing Bulbs',
+'Snargaluff']}
+1369: {
+  'question_type': 'EX',
+  'question': 'Why did Voldemort seek out the imprisoned Gellert Grindelwald in Nurmengard?',
+  'answer': 'Voldemort wanted to force Grindelwald to reveal the location of the Elder Wand, believing he could extract the information through fear or torture—unaware that Grindelwald would refuse to help and that the wand’s allegiance already belonged to Dumbledore'},
+ 1401: {'
+  'question_type': 'EX',
+  'question': 'In Chamber of Secrets, what secret did Harry discover about why Rubeus Hagrid was expelled from Hogwarts?',
+  'answer': 'He was falsely accused by Tom Riddle (Lord Voldemort) of opening the Chamber of Secrets and unleashing its monster (the Basilisk), which led to the death of a student.'},
+1345: {
+  'question_type': 'EX',
+  'question': 'What was the second true prophecy made by Professor Trelawney that occurs in Harry Potter and the Prisoner of Azkaban?',
+  'answer': 'That the Dark Lord would rise again, and his servant would break free and return to him — referring to Peter Pettigrew escaping to rejoin Voldemort'},
+1357:{
+  'question_type': 'EX',
+  'question': 'Who had Severus Snape’s true allegiance, and why?',
+  'answer': "Albus Dumbledore: Snape's allegiance was to him because of his enduring love for Lily Potter and his desire to protect her son."},
+1358:{
+  'question_type': 'EX',
+  'question': 'Why was Sirius Black sent to Azkaban?',
+  'answer': 'He was wrongly accused of betraying the Potters to Voldemort and of killing Peter Pettigrew and twelve Muggles with a single curse.'}
+}
+---END QUESTIONS DICTIONARY---

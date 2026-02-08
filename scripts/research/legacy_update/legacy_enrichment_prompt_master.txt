@@ -1,0 +1,86 @@
+You are generating learning scaffolding for a Harry Potter trivia system.
+You must follow the instructions and format precisely. Use the ---EXAMPLES--- provided to understand the desired quality and structure.
+
+You are given:
+- question_id: dictionary key that identifies each question
+- question_type: one of {FR, EX, MCQ}
+- question: the trivia question
+- answer: the canonical correct answer (string)
+- (for MCQ only) mcq_options: list of answer choices
+
+### General rules (apply to all question types)
+
+- Do NOT invent facts.
+- Keep language age-appropriate.
+- Hints must not reveal the answer verbatim. 
+- Hints must not include any word, phrase, or identifier that would be accepted as a correct answer if typed by the learner. This includes canonical answers, aliases, titles, identities, exact terms, or uniquely identifying phrases.
+- Hint 3 may describe attributes, roles, effects, or context, but must avoid uniquely identifying the answer on its own.
+- The explanation must justify why the answer is correct (2–4 sentences). 
+- Answer variations must be semantically equivalent to the canonical answer.
+- Answer variations should represent the answer itself, not its justification.
+
+### Question-type–specific guidance
+
+#### FR (Free Response)
+- Answer variations should capture reasonable ways a learner might express the correct answer.
+- Capture full names, common surnames, and established titles (e.g., "Professor Snape").
+- Avoid drifting into full explanations or new facts.
+
+#### EX (Explanatory) 
+- You must provide exactly THREE answer_variations following this "Multi-Resolution" structure:
+  1. [Comprehensive]: A full, direct explanation (Max 25 words).
+  2. [Semantic Core]: A stripped-down version containing only the essential entity and causal logic (Max 12 words).
+  3. [Key-Term Expansion]: A comma-separated list of the essential proper nouns and verbs required for a 'correct' mark.
+- Hint 3 should surface the conceptual lens (theme, motive, character insight) without stating the resolved conclusion.
+
+#### MCQ (Multiple Choice)
+- Generate hints/explanation as if the learner does NOT see the correct option highlighted.
+- Hints should guide reasoning toward the correct option, not eliminate options mechanically.
+- Answer variations may include partial keywords from the correct option that uniquely identify it among the choices.
+- Do NOT include distractor options in variations.
+
+### Answer-variation logic by Implicit Form
+Identify the "form" of the answer before generating variations:
+1. Entity: Focus on name ordering, aliases, and titles (e.g., "Lord Voldemort", "You-Know-Who").
+2. Numeric: Focus on digits and number words.
+3. Action: Describe the physical or magical act concisely.
+4. Date: Represent the date at the precision requested in the question.
+
+### Output rules
+- Return ONLY a single valid JSON object keyed by question_id.
+- Do NOT include commentary, markdown, or extra text.
+
+---EXAMPLES---
+[   
+  {
+    "question_id": 801,
+    "question_type": "FR",
+    "question": "Who is the 'Half-Blood Prince' mentioned in the title of the sixth book?",
+    "answer": "Severus Snape",
+    "hint_1": "The title refers to a nickname written inside an old Potions textbook.",
+    "hint_2": "The person behind this name eventually becomes the Headmaster of Hogwarts.",
+    "hint_3": "This individual was a master of the Dark Arts and a long-time rival of the Marauders.",
+    "explanation": "Severus Snape gave himself the title 'Half-Blood Prince' to honor his mother, Eileen Prince, and to acknowledge his status as the son of a Muggle father.",
+    "answer_variations": ["Severus Snape", "Snape", "Professor Snape", "The Half-Blood Prince"]
+  },
+  {
+    "question_id": 803,
+    "question_type": "EX",
+    "question": "Why did Harry survive the Killing Curse in the Forbidden Forest?",
+    "answer": "Voldemort used Harry's blood to regenerate his body, anchoring Lily's protection to himself.",
+    "hint_1": "The reason lies in the dark ritual performed in the Little Hangleton graveyard.",
+    "hint_2": "Think about the shared connection between the hero and his nemesis that goes beyond a scar.",
+    "hint_3": "The villain accidentally turned his own body into a living safeguard for the hero's life.",
+    "explanation": "By taking Harry's blood, the Dark Lord unwittingly preserved the protection of Lily's sacrifice within his own body, acting as a tether for Harry's life.",
+    "answer_variations": [
+      "[Comprehensive]: Harry survived because Voldemort took Harry's blood into his own body, which tethered Lily's sacrificial protection to life.",
+      "[Semantic Core]: Voldemort's body acted as a tether for Lily's protection via Harry's blood.",
+      "[Key-Term Expansion]: Lily's protection, blood connection, tether, mortal anchor, Voldemort's body"
+    ]
+  }
+]
+---END EXAMPLES---
+
+---QUESTIONS DICTIONARY---
+{question_batch}
+---END QUESTIONS DICTIONARY---

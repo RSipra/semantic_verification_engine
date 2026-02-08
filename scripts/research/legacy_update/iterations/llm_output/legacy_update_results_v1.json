@@ -1,0 +1,324 @@
+[
+  {
+    "question_id": 597,
+    "question_type": "EX",
+    "question": "What does the Philosopher’s Stone do?",
+    "answer": "It produces the Elixir of Life, granting immortality, and can turn any metal into pure gold.",
+    "hint_1": "Think about its legendary creator, Nicolas Flamel, and his long life.",
+    "hint_2": "This rare artifact has two major, transformative properties: one for extending life and one for wealth.",
+    "hint_3": "Consider its two most famous capabilities: one for living forever, and another for making precious metals.",
+    "explanation": "The Philosopher's Stone is a mythical alchemical substance capable of producing the Elixir of Life, which grants the drinker immortality. Additionally, it possesses the power to transmute any metal into pure gold, making it a source of endless wealth.",
+    "answer_variations": [
+      "[Comprehensive]: It produces the Elixir of Life, granting immortality, and can turn any metal into pure gold.",
+      "[Semantic Core]: Produces Elixir of Life for immortality, turns metal into gold.",
+      "[Key-Term Expansion]: Elixir of Life, immortality, turn metal, pure gold"
+    ]
+  },
+  {
+    "question_id": 677,
+    "question_type": "FR",
+    "question": "During the Second Task of the Triwizard Tournament, what fiercely protective and intelligent magical species presented a formidable obstacle to champions attempting to retrieve their hostages",
+    "answer": "Merpeople ",
+    "hint_1": "They are the non-human inhabitants of the Great Lake at Hogwarts.",
+    "hint_2": "Harry encountered them when he had to breathe underwater to rescue his friend.",
+    "hint_3": "These aquatic beings are known for their villages at the bottom of the lake.",
+    "explanation": "During the Second Task of the Triwizard Tournament, the champions had to retrieve their hostages from the merpeople's village at the bottom of the Great Lake. The merpeople, being fiercely territorial, posed a significant magical and physical challenge to anyone attempting to trespass.",
+    "answer_variations": [
+      "Merpeople",
+      "Mermaids and Mermen",
+      "Selkies"
+    ]
+  },
+  {
+    "question_id": 347,
+    "question_type": "FR",
+    "question": "What animal is Dolores Umbridge obsessed with?",
+    "answer": "Cats (specifically, kittens)",
+    "hint_1": "Her office decorations at both the Ministry and Hogwarts give a strong clue.",
+    "hint_2": "Think about the creature depicted on the numerous plates hanging in her office.",
+    "hint_3": "The form of her Patronus is also this animal, often depicted as young.",
+    "explanation": "Dolores Umbridge had a distinct obsession with cats, particularly kittens. Her offices were notoriously adorned with decorative plates featuring moving images of kittens, and her Patronus Charm also took the form of a fluffy cat.",
+    "answer_variations": [
+      "Cats",
+      "Kittens",
+      "Felines"
+    ]
+  },
+  {
+    "question_id": 682,
+    "question_type": "FR",
+    "question": "What is the effect of the Stupefy spell?",
+    "answer": "Stuns the target",
+    "hint_1": "This spell is a common defensive and offensive charm in duels.",
+    "hint_2": "When hit, the target usually falls unconscious, often with a jet of red light.",
+    "hint_3": "Think about what happens to a person who is hit by a 'Stunning Spell'.",
+    "explanation": "The Stupefy spell, or Stunning Spell, is a powerful charm that renders the target unconscious or immobile. It is a widely used spell in wizarding duels and can effectively neutralize an opponent without causing permanent harm.",
+    "answer_variations": [
+      "Stuns the target",
+      "Renders the target unconscious",
+      "Knocks out the target"
+    ]
+  },
+  {
+    "question_id": 428,
+    "question_type": "FR",
+    "question": "Who killed Sirius Black?",
+    "answer": "Bellatrix Lestrange",
+    "hint_1": "She was a fanatical Death Eater and a member of the Black family herself.",
+    "hint_2": "This witch fought against Sirius in the Department of Mysteries.",
+    "hint_3": "She struck Sirius with a curse, causing him to fall through the Veil.",
+    "explanation": "Bellatrix Lestrange, a loyal and dangerous Death Eater, killed Sirius Black during the Battle of the Department of Mysteries. She hit him with a curse that sent him through the archway Veil in the Death Chamber, instantly ending his life.",
+    "answer_variations": [
+      "Bellatrix Lestrange",
+      "Lestrange"
+    ]
+  },
+  {
+    "question_id": 184,
+    "question_type": "FR",
+    "question": "What kind of wood is Harry's first wand made out of?",
+    "answer": "Holly",
+    "hint_1": "This wand shared a core with Lord Voldemort's.",
+    "hint_2": "It is traditionally associated with protection and overcoming aggression.",
+    "hint_3": "It comes from a tree often decorated during winter holidays, known for its red berries.",
+    "explanation": "Harry Potter's first wand was eleven inches long, made of holly wood, and contained a phoenix feather core. Holly wood is considered unusual, as it rarely chooses a wizard; it is said to choose those destined to be protected.",
+    "answer_variations": [
+      "Holly",
+      "Holly wood"
+    ]
+  },
+  {
+    "question_id": 261,
+    "question_type": "FR",
+    "question": "What effect does diluted Swooping Evil venom have?",
+    "answer": "Erases bad memories",
+    "hint_1": "Newt Scamander notably used this substance to help Muggles forget. ",
+    "hint_2": "It acts as a selective Obliviator, targeting unpleasant recollections.",
+    "hint_3": "Think about its use to ensure the secrecy of the wizarding world in New York after the incident.",
+    "explanation": "Diluted Swooping Evil venom has the unique property of erasing bad memories. Newt Scamander used it effectively to help the No-Maj population of New York forget the magical events they had witnessed, thereby preserving the Statute of Secrecy.",
+    "answer_variations": [
+      "Erases bad memories",
+      "Wipes bad memories",
+      "Makes bad memories disappear"
+    ]
+  },
+  {
+    "question_id": 310,
+    "question_type": "FR",
+    "question": "Harry was raised by his mother’s sister. What was his aunt named?",
+    "answer": "Petunia",
+    "hint_1": "She lived at Number Four, Privet Drive.",
+    "hint_2": "Her husband was Vernon and her son was Dudley.",
+    "hint_3": "She was Lily Potter's older, non-magical sister.",
+    "explanation": "Harry Potter was raised by his mother's sister, Petunia Dursley, after the death of his parents. Petunia, a Muggle, begrudgingly took Harry in and raised him along with her own son, Dudley, often treating Harry with disdain.",
+    "answer_variations": [
+      "Petunia",
+      "Petunia Dursley",
+      "Aunt Petunia"
+    ]
+  },
+  {
+    "question_id": 31,
+    "question_type": "FR",
+    "question": "Where is Hogwarts located?",
+    "answer": "Scotland",
+    "hint_1": "The Hogwarts Express travels north from London to reach the school.",
+    "hint_2": "It's a country known for its rugged mountains, lochs, and ancient castles.",
+    "hint_3": "This country is located in the northern part of Great Britain.",
+    "explanation": "Hogwarts School of Witchcraft and Wizardry is nestled in the remote Highlands of Scotland. The castle is unplottable and concealed from the Muggle world by powerful charms and a confusing array of ruins.",
+    "answer_variations": [
+      "Scotland",
+      "Scottish Highlands"
+    ]
+  },
+  {
+    "question_id": 741,
+    "question_type": "EX",
+    "question": "What was the deeper significance of Dumbledore bequeathing the Deluminator to Ron Weasley?",
+    "answer": "Beyond putting out lights, its true purpose was one of guidance. Dumbledore enchanted it so that when Ron was lost, it would reveal a path of light to lead him back to his friends, showing Dumbledore's faith in Ron's loyalty",
+    "hint_1": "It relates to Ron's journey and his moments of doubt when separated from his companions.",
+    "hint_2": "The device offered more than just the practical function of dousing streetlights; it was a magical compass for something more profound.",
+    "hint_3": "Dumbledore foresaw Ron's struggle and provided a way for him to literally find his way back to his chosen family when he was lost.",
+    "explanation": "Dumbledore, understanding Ron's vulnerabilities, enchanted the Deluminator to serve as a symbolic and literal guide. It would activate when Ron was truly lost or in need, revealing a path of light that would lead him back to Harry and Hermione, signifying Dumbledore's profound faith in Ron's loyalty and his importance to the trio.",
+    "answer_variations": [
+      "[Comprehensive]: The Deluminator was enchanted to guide Ron back to his friends by revealing a path of light when he was lost, symbolizing Dumbledore's faith in his loyalty.",
+      "[Semantic Core]: Dumbledore's enchantment guided Ron back to friends, showing faith in loyalty.",
+      "[Key-Term Expansion]: Deluminator, Dumbledore, Ron Weasley, guidance, path of light, loyalty"
+    ]
+  },
+  {
+    "question_id": 665,
+    "question_type": "MCQ",
+    "question": "Who betrays Lily and James Potter:",
+    "answer": "Wormtail",
+    "mcq_options": [
+      "Moony",
+      "Professor Snape",
+      "Padfoot",
+      "Wormtail"
+    ],
+    "hint_1": "This person was one of James Potter's childhood friends, a fellow Marauder.",
+    "hint_2": "The true Secret-Keeper for the Potters was not the person everyone suspected.",
+    "hint_3": "He later lived for many years in his Animagus form as a rat, hiding with the Weasley family.",
+    "explanation": "Peter Pettigrew, known by his Marauder nickname 'Wormtail', was the Secret-Keeper for Lily and James Potter. He betrayed them to Lord Voldemort, leading to their deaths and Voldemort's temporary downfall.",
+    "answer_variations": [
+      "Wormtail",
+      "Peter Pettigrew"
+    ]
+  },
+  {
+    "question_id": 622,
+    "question_type": "MCQ",
+    "question": "Which of the following transformations would be considered the easiest due to the similarity in form between the two objects:",
+    "answer": "Porcupine to Pincushion",
+    "mcq_options": [
+      "Human to Ferret",
+      "Teapot to Tortoise",
+      "Desk to Pig",
+      "Porcupine to Pincushion"
+    ],
+    "hint_1": "Consider which option involves changing an object into something that already shares a high degree of visual and structural characteristics.",
+    "hint_2": "Think about a Transfiguration lesson where students learned that less change is easier.",
+    "hint_3": "The less the caster has to alter the basic shape and key features, the simpler the magical effort required.",
+    "explanation": "Transfiguration spells are significantly easier when the original object and the desired object share physical similarities. A porcupine and a pincushion both possess a prickly, somewhat rounded form, making this transformation much simpler than turning a human into a ferret or a desk into a pig.",
+    "answer_variations": [
+      "Porcupine to Pincushion",
+      "Pincushion"
+    ]
+  },
+  {
+    "question_id": 633,
+    "question_type": "MCQ",
+    "question": "Which of these plants doesn't bite:",
+    "answer": "Whomping Willow",
+    "mcq_options": [
+      "Fanged Geranium",
+      "Venomous Tentacula",
+      "Whomping Willow",
+      "Mandrake"
+    ],
+    "hint_1": "One of these options is a large, aggressive tree found on the Hogwarts grounds.",
+    "hint_2": "This plant attacks with its heavy, thrashing branches rather than with teeth or venom.",
+    "hint_3": "It famously guards a secret passage to a screaming location in Hogsmeade.",
+    "explanation": "The Whomping Willow is a very aggressive magical tree known for violently thrashing its branches at anything that approaches. While extremely dangerous, its method of attack is bludgeoning rather than biting, unlike the Fanged Geranium or Venomous Tentacula, both of which possess fangs or venomous capabilities.",
+    "answer_variations": [
+      "Whomping Willow",
+      "Willow"
+    ]
+  },
+  {
+    "question_id": 605,
+    "question_type": "MCQ",
+    "question": "Which of the following was NOT a breed of dragon faced by the Triwizard Tournament champions:",
+    "answer": "Norwegian Ridgeback",
+    "mcq_options": [
+      "Hungarian Horntail",
+      "Chinese Fireball",
+      "Swedish Short-Snout",
+      "Norwegian Ridgeback"
+    ],
+    "hint_1": "Think about the dragon Hagrid famously, and illegally, hatched in his hut.",
+    "hint_2": "This specific dragon breed was known for its black ridges and was nicknamed 'Norbert'.",
+    "hint_3": "The four dragons used in the First Task were the Hungarian Horntail, Chinese Fireball, Welsh Green, and Swedish Short-Snout.",
+    "explanation": "The four dragon breeds selected for the First Task of the Triwizard Tournament were the Hungarian Horntail, Chinese Fireball, Swedish Short-Snout, and Welsh Green. The Norwegian Ridgeback, famously bred by Hagrid, was not among these four.",
+    "answer_variations": [
+      "Norwegian Ridgeback",
+      "Norwegian"
+    ]
+  },
+  {
+    "question_id": 561,
+    "question_type": "MCQ",
+    "question": "Which of the following plants is known for its tendency to slap people:",
+    "answer": "Bouncing Bulbs",
+    "mcq_options": [
+      "Fanged Geranium",
+      "Bubotuber",
+      "Bouncing Bulbs",
+      "Snargaluff"
+    ],
+    "hint_1": "Consider the plants that require significant physical restraint and can move on their own in Herbology class.",
+    "hint_2": "These aggressive, purple plants were notoriously difficult to repot due to their lively nature.",
+    "hint_3": "Harry and his classmates had to wrestle these animated plants into their containers.",
+    "explanation": "Bouncing Bulbs are aggressive magical plants known for their lively movement and tendency to slap or strike people. They are notoriously difficult to handle in Herbology class, requiring students to physically restrain them to prevent injury.",
+    "answer_variations": [
+      "Bouncing Bulbs",
+      "Bulbs"
+    ]
+  },
+  {
+    "question_id": 1369,
+    "question_type": "EX",
+    "question": "Why did Voldemort seek out the imprisoned Gellert Grindelwald in Nurmengard?",
+    "answer": "Voldemort wanted to force Grindelwald to reveal the location of the Elder Wand, believing he could extract the information through fear or torture—unaware that Grindelwald would refuse to help and that the wand’s allegiance already belonged to Dumbledore",
+    "hint_1": "This visit was part of Voldemort's relentless pursuit of powerful magical artifacts, specifically one of the Deathly Hallows.",
+    "hint_2": "He was searching for a legendary wand and believed its former owner held the key to its whereabouts.",
+    "hint_3": "The Dark Lord sought a specific item from the Hallows, thinking Grindelwald would be forced to disclose its hiding place.",
+    "explanation": "Voldemort visited Gellert Grindelwald in Nurmengard to force him to reveal the location of the Elder Wand. Voldemort believed Grindelwald still knew where it was hidden and could be coerced. However, Grindelwald refused to cooperate, and Voldemort was unaware that the wand's allegiance had already passed to Albus Dumbledore years earlier.",
+    "answer_variations": [
+      "[Comprehensive]: Voldemort sought Grindelwald to force him to reveal the Elder Wand's location, unaware its allegiance had passed to Dumbledore.",
+      "[Semantic Core]: Voldemort wanted Elder Wand's location; Grindelwald refused.",
+      "[Key-Term Expansion]: Voldemort, Grindelwald, Elder Wand, location, allegiance, Dumbledore"
+    ]
+  },
+  {
+    "question_id": 1401,
+    "question_type": "EX",
+    "question": "In Chamber of Secrets, what secret did Harry discover about why Rubeus Hagrid was expelled from Hogwarts?",
+    "answer": "He was falsely accused by Tom Riddle (Lord Voldemort) of opening the Chamber of Secrets and unleashing its monster (the Basilisk), which led to the death of a student.",
+    "hint_1": "The accusation was made by a future Dark Lord during his own school days.",
+    "hint_2": "It involved a dangerous magical creature and a tragic event in the girls' bathroom fifty years prior.",
+    "hint_3": "Hagrid was blamed for a series of attacks and the death of a student, leading to his removal from school.",
+    "explanation": "Harry discovered that Rubeus Hagrid was falsely accused by Tom Riddle (who later became Lord Voldemort) of opening the Chamber of Secrets. Riddle framed Hagrid for unleashing the Basilisk, which resulted in the death of a student, Myrtle Warren. This led to Hagrid's expulsion from Hogwarts.",
+    "answer_variations": [
+      "[Comprehensive]: Hagrid was falsely accused by Tom Riddle of opening the Chamber of Secrets and unleashing the Basilisk, causing a student's death.",
+      "[Semantic Core]: Tom Riddle falsely accused Hagrid of opening Chamber and unleashing Basilisk.",
+      "[Key-Term Expansion]: Hagrid, Tom Riddle, Chamber of Secrets, Basilisk, falsely accused, student death"
+    ]
+  },
+  {
+    "question_id": 1345,
+    "question_type": "EX",
+    "question": "What was the second true prophecy made by Professor Trelawney that occurs in Harry Potter and the Prisoner of Azkaban?",
+    "answer": "That the Dark Lord would rise again, and his servant would break free and return to him — referring to Peter Pettigrew escaping to rejoin Voldemort",
+    "hint_1": "This prophecy was uttered in Dumbledore's office, though Trelawney had no memory of it afterwards.",
+    "hint_2": "It foretold the escape of a specific individual who was crucial to the Dark Lord's return.",
+    "hint_3": "The prophecy spoke of a loyal follower rejoining his master, setting the stage for future events.",
+    "explanation": "Professor Trelawney's second true prophecy, delivered while in a trance state, declared that the Dark Lord would rise again, and his servant would break free and return to him. This referred to Peter Pettigrew escaping from Hogwarts at the end of Harry's third year and subsequently rejoining Lord Voldemort, facilitating his eventual resurrection.",
+    "answer_variations": [
+      "[Comprehensive]: The Dark Lord would rise again, and his servant, Peter Pettigrew, would break free and return to him.",
+      "[Semantic Core]: Dark Lord rise, servant Peter Pettigrew return.",
+      "[Key-Term Expansion]: Dark Lord, Peter Pettigrew, rise again, servant, return"
+    ]
+  },
+  {
+    "question_id": 1357,
+    "question_type": "EX",
+    "question": "Who had Severus Snape’s true allegiance, and why?",
+    "answer": "Albus Dumbledore: Snape's allegiance was to him because of his enduring love for Lily Potter and his desire to protect her son.",
+    "hint_1": "His deepest loyalty was driven by a powerful, unrequited emotion for someone from his past.",
+    "hint_2": "The Headmaster knew the true depth of Snape's feelings for a specific witch, which motivated his actions.",
+    "hint_3": "His choices were always guided by a vow to protect the child of the woman he loved, a vow made to a particular Headmaster.",
+    "explanation": "Severus Snape's true allegiance was to Albus Dumbledore, a loyalty born from his profound and enduring love for Lily Potter. After her death, Snape dedicated his life to protecting her son, Harry, as a means of atonement, fulfilling a promise to Dumbledore.",
+    "answer_variations": [
+      "[Comprehensive]: Snape's true allegiance was to Albus Dumbledore because of his enduring love for Lily Potter and his desire to protect her son.",
+      "[Semantic Core]: Dumbledore, due to love for Lily Potter and protecting Harry.",
+      "[Key-Term Expansion]: Albus Dumbledore, Lily Potter, love, protect her son"
+    ]
+  },
+  {
+    "question_id": 1358,
+    "question_type": "EX",
+    "question": "Why was Sirius Black sent to Azkaban?",
+    "answer": "He was wrongly accused of betraying the Potters to Voldemort and of killing Peter Pettigrew and twelve Muggles with a single curse.",
+    "hint_1": "The wizarding world believed he was the Secret-Keeper who turned against his best friends.",
+    "hint_2": "He was framed for the deaths of his supposed betrayer and a number of innocent bystanders.",
+    "hint_3": "He was imprisoned for terrible crimes actually committed by another former friend.",
+    "explanation": "Sirius Black was sent to Azkaban without trial because he was wrongly accused of betraying Lily and James Potter to Lord Voldemort. Additionally, he was falsely blamed for the murder of Peter Pettigrew and twelve Muggles, a crime that Pettigrew himself committed to frame Sirius and escape.",
+    "answer_variations": [
+      "[Comprehensive]: Sirius Black was wrongly accused of betraying the Potters to Voldemort and of killing Peter Pettigrew and twelve Muggles.",
+      "[Semantic Core]: Wrongly accused of betraying Potters and killing Pettigrew and Muggles.",
+      "[Key-Term Expansion]: Wrongly accused, betraying Potters, killing Peter Pettigrew, twelve Muggles"
+    ]
+  }
+]

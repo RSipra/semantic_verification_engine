@@ -1,0 +1,152 @@
+[
+  {
+    "original_question_id": 1256,
+    "question_source": "legacy",
+    "question_type": "EX",
+    "question": "What does Harry do to impress Professor McGonagall enough that she gets him on the Gryffindor Quidditch team?",
+    "mcq_options": null,
+    "answer": "Catches Neville Longbottom\u2019s Remembrall",
+    "answer_type": "text",
+    "main_keyword": "what"
+  },
+  {
+    "original_question_id": 1369,
+    "question_source": "legacy",
+    "question_type": "EX",
+    "question": "Why did Voldemort seek out the imprisoned Gellert Grindelwald in Nurmengard?",
+    "mcq_options": null,
+    "answer": "Voldemort wanted to force Grindelwald to reveal the location of the Elder Wand, believing he could extract the information through fear or torture\u2014unaware that Grindelwald would refuse to help and that the wand\u2019s allegiance already belonged to Dumbledore",
+    "answer_type": "text",
+    "main_keyword": "why"
+  },
+  {
+    "original_question_id": 1247,
+    "question_source": "legacy",
+    "question_type": "EX",
+    "question": "In Harry Potter and the Chamber of Secrets, why does Neville Longbottom faint in Herbology class?",
+    "mcq_options": null,
+    "answer": "His earmuffs were loose, so he heard the cry of the baby mandrake.",
+    "answer_type": "text",
+    "main_keyword": "why"
+  },
+  {
+    "original_question_id": 1344,
+    "question_source": "legacy",
+    "question_type": "EX",
+    "question": "Why did Regulus Black decide to leave the Death Eaters and betray Voldemort?",
+    "mcq_options": null,
+    "answer": "Because Voldemort mistreated Kreacher and Regulus realized how ruthless and dangerous he truly was.",
+    "answer_type": "text",
+    "main_keyword": "why"
+  },
+  {
+    "original_question_id": 919,
+    "question_source": "legacy",
+    "question_type": "EX",
+    "question": "How often do the flowers of the Fluttery Bush Bloom?",
+    "mcq_options": null,
+    "answer": "Once per century",
+    "answer_type": "text",
+    "main_keyword": "how"
+  },
+  {
+    "original_question_id": 1401,
+    "question_source": "legacy",
+    "question_type": "EX",
+    "question": "In Chamber of Secrets, what secret did Harry discover about why Rubeus Hagrid was expelled from Hogwarts?",
+    "mcq_options": null,
+    "answer": "He was falsely accused by Tom Riddle (Lord Voldemort) of opening the Chamber of Secrets and unleashing its monster (the Basilisk), which led to the death of a student.",
+    "answer_type": "text",
+    "main_keyword": "what"
+  },
+  {
+    "original_question_id": 169,
+    "question_source": "legacy",
+    "question_type": "EX",
+    "question": "How is the Grey Lady related to Rowena Ravenclaw?",
+    "mcq_options": null,
+    "answer": "She's Rowena's daughter.",
+    "answer_type": "text",
+    "main_keyword": "how"
+  },
+  {
+    "original_question_id": 1210,
+    "question_source": "legacy",
+    "question_type": "EX",
+    "question": "Harry discovers he\u2019s one of Voldemort\u2019s seven Horcruxes. What are the others?",
+    "mcq_options": null,
+    "answer": "Tom Riddle\u2019s Diary, Nagini, the Gaunt ring, the Hufflepuff cup, Slytherin Locket, and Ravenclaw diadem.",
+    "answer_type": "text",
+    "main_keyword": "what"
+  },
+  {
+    "original_question_id": 1358,
+    "question_source": "legacy",
+    "question_type": "EX",
+    "question": "Why was Sirius Black sent to Azkaban?",
+    "mcq_options": null,
+    "answer": "He was wrongly accused of betraying the Potters to Voldemort and of killing Peter Pettigrew and twelve Muggles with a single curse.",
+    "answer_type": "text",
+    "main_keyword": "why"
+  },
+  {
+    "original_question_id": 1086,
+    "question_source": "legacy",
+    "question_type": "EX",
+    "question": "How do you tell if a door is Imperturbable?",
+    "mcq_options": null,
+    "answer": "Test if it repels objects and sounds",
+    "answer_type": "text",
+    "main_keyword": "how"
+  },
+  {
+    "original_question_id": 104,
+    "question_source": "legacy",
+    "question_type": "EX",
+    "question": "Why did Liechtenstein not attend the first meeting of the International Confederation of Wizards?",
+    "mcq_options": null,
+    "answer": "Their Stance on Troll Rights",
+    "answer_type": "text",
+    "main_keyword": "why"
+  },
+  {
+    "original_question_id": 1345,
+    "question_source": "legacy",
+    "question_type": "EX",
+    "question": "What was the second true prophecy made by Professor Trelawney that occurs in Harry Potter and the Prisoner of Azkaban?",
+    "mcq_options": null,
+    "answer": "That the Dark Lord would rise again, and his servant would break free and return to him \u2014 referring to Peter Pettigrew escaping to rejoin Voldemort",
+    "answer_type": "text",
+    "main_keyword": "what"
+  },
+  {
+    "original_question_id": 1264,
+    "question_source": "legacy",
+    "question_type": "EX",
+    "question": "In Transfiguration, what specific characteristic between the original object and the desired outcome makes a transformation easier to perform?",
+    "mcq_options": null,
+    "answer": "Similarity in appearance",
+    "answer_type": "text",
+    "main_keyword": "what"
+  },
+  {
+    "original_question_id": 47,
+    "question_source": "legacy",
+    "question_type": "EX",
+    "question": "How often does a Streeler's shell change colour?",
+    "mcq_options": null,
+    "answer": "Every Hour",
+    "answer_type": "text",
+    "main_keyword": "how"
+  },
+  {
+    "original_question_id": 1270,
+    "question_source": "legacy",
+    "question_type": "EX",
+    "question": "In Harry Potter and the Prisoner of Azkaban, what specific accusation regarding their pets causes Ron Weasley and Hermione Granger to have a major falling out?",
+    "mcq_options": null,
+    "answer": "Ron blames Hermione\u2019s cat, Crookshanks, for the disappearance of his pet rat, Scabbers.",
+    "answer_type": "text",
+    "main_keyword": "what"
+  }
+]

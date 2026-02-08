@@ -1,0 +1,152 @@
+[
+  {
+    "original_question_id": 1115,
+    "question_source": "legacy",
+    "question_type": "FR",
+    "question": "Switching spells simultaneously transfigure how many objects?",
+    "mcq_options": null,
+    "answer": "2",
+    "answer_type": "numeric",
+    "main_keyword": "how"
+  },
+  {
+    "original_question_id": 1202,
+    "question_source": "legacy",
+    "question_type": "FR",
+    "question": "How many points is the Golden Snitch worth?",
+    "mcq_options": null,
+    "answer": "150",
+    "answer_type": "numeric",
+    "main_keyword": "how"
+  },
+  {
+    "original_question_id": 1203,
+    "question_source": "legacy",
+    "question_type": "FR",
+    "question": "As the wizarding world's high court and parliament, the Wizengamot wields significant power. How many wizards serve on this esteemed body?",
+    "mcq_options": null,
+    "answer": "50",
+    "answer_type": "numeric",
+    "main_keyword": "how"
+  },
+  {
+    "original_question_id": 1222,
+    "question_source": "legacy",
+    "question_type": "FR",
+    "question": "How many players are on a Quidditch team?",
+    "mcq_options": null,
+    "answer": "7",
+    "answer_type": "numeric",
+    "main_keyword": "how"
+  },
+  {
+    "original_question_id": 1173,
+    "question_source": "legacy",
+    "question_type": "FR",
+    "question": "At what age can you earn your Apparition license?",
+    "mcq_options": null,
+    "answer": "17",
+    "answer_type": "numeric",
+    "main_keyword": "what"
+  },
+  {
+    "original_question_id": 1194,
+    "question_source": "legacy",
+    "question_type": "FR",
+    "question": "When was Azkaban Prison established?",
+    "mcq_options": null,
+    "answer": "1718",
+    "answer_type": "year",
+    "main_keyword": "when"
+  },
+  {
+    "original_question_id": 1309,
+    "question_source": "legacy",
+    "question_type": "FR",
+    "question": "When was the first full description of the game of Quidditch written?",
+    "mcq_options": null,
+    "answer": "1398",
+    "answer_type": "year",
+    "main_keyword": "when"
+  },
+  {
+    "original_question_id": 1197,
+    "question_source": "legacy",
+    "question_type": "FR",
+    "question": "When did Gringotts Wizarding Bank open?",
+    "mcq_options": null,
+    "answer": "1474",
+    "answer_type": "year",
+    "main_keyword": "when"
+  },
+  {
+    "original_question_id": 736,
+    "question_source": "legacy",
+    "question_type": "FR",
+    "question": "When was Quidditch invented?",
+    "mcq_options": null,
+    "answer": "1050 AD",
+    "answer_type": "year",
+    "main_keyword": "when"
+  },
+  {
+    "original_question_id": 152,
+    "question_source": "legacy",
+    "question_type": "FR",
+    "question": "When did the wildcat gargoyle strike the place?",
+    "mcq_options": null,
+    "answer": "1911",
+    "answer_type": "year",
+    "main_keyword": "when"
+  },
+  {
+    "original_question_id": 1244,
+    "question_source": "legacy",
+    "question_type": "FR",
+    "question": "On what chilling date did baby Harry Potter miraculously survive the Killing Curse resulting in the first downfall of Lord Voldemort",
+    "mcq_options": null,
+    "answer": "Halloween (or October 31st), 1981",
+    "answer_type": "date",
+    "main_keyword": "what"
+  },
+  {
+    "original_question_id": 1298,
+    "question_source": "legacy",
+    "question_type": "FR",
+    "question": "What day did James and Lily Potter die?",
+    "mcq_options": null,
+    "answer": "October 31",
+    "answer_type": "date",
+    "main_keyword": "what"
+  },
+  {
+    "original_question_id": 1278,
+    "question_source": "legacy",
+    "question_type": "FR",
+    "question": "What is Snape's birthday?",
+    "mcq_options": null,
+    "answer": "January 9, 1960",
+    "answer_type": "date",
+    "main_keyword": "what"
+  },
+  {
+    "original_question_id": 978,
+    "question_source": "legacy",
+    "question_type": "FR",
+    "question": "When is Harry's birthday?",
+    "mcq_options": null,
+    "answer": "July 31, 1980.",
+    "answer_type": "date",
+    "main_keyword": "when"
+  },
+  {
+    "original_question_id": 921,
+    "question_source": "legacy",
+    "question_type": "FR",
+    "question": "On what date did the Battle of Hogwarts end with Voldemort\u2019s death?",
+    "mcq_options": null,
+    "answer": "May 2, 1998",
+    "answer_type": "date",
+    "main_keyword": "what"
+  }
+]

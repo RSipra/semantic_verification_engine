@@ -1,0 +1,77 @@
+[
+  {
+    "original_question_id": 1256,
+    "semantic_entity_refs": ["Remembrall", "Harry Potter","Neville Longbottom"],
+    "semantic_lore_concepts": ["Broomstick flying", "Remembrall's purpose"]
+  },
+  {
+    "original_question_id": 1369,
+    "semantic_entity_refs": ["Elder Wand", "Voldemort", "Lord Voldemort", "Gellert Grindelwald", "Albus Dumbledore"],
+    "semantic_lore_concepts": ["Deathly Hallows", "Wand allegiance", "Master of Death"]
+  },
+  {
+    "original_question_id": 1247,
+    "semantic_entity_refs": ["Mandrake","Neville Longbottom","Earmuffs"],
+    "semantic_lore_concepts": ["Mandrake cry","Mandrake restorative properties"]
+  },
+  {
+    "original_question_id": 1344,
+    "semantic_entity_refs": ["Regulus Black","R.A.B.","Voldemort","Lord Voldemort", "Kreacher"],
+    "semantic_lore_concepts": ["House-elf bond","Death Eaters","Horcrux"]
+  },
+  {
+    "original_question_id": 919,
+    "semantic_entity_refs": ["Fluttery Bush"],
+    "semantic_lore_concepts": ["Centennial blooming cycle", "Rare plant blooming"]
+  },
+  {
+    "original_question_id": 1401,
+    "semantic_entity_refs": ["Rubeus Hagrid","Tom Riddle", "Lord Voldemort","Basilisk", "Chamber of Secrets", "Moaning Myrtle"],
+    "semantic_lore_concepts": ["False accusation", "Heir of Slytherin", "Monster of Slytherin"]
+  },
+  {
+    "original_question_id": 169,
+    "semantic_entity_refs": ["Grey Lady","Helena Ravenclaw", "Rowena Ravenclaw"],
+    "semantic_lore_concepts": ["Hogwarts house ghost", "Founder's daughter"]
+  },
+  {
+    "original_question_id": 1210,
+    "semantic_entity_refs": ["Tom Riddle's Diary", "Nagini", "Marvolo Gaunt's Ring", "Helga Hufflepuff's Cup","Salazar Slytherin's Locket","Rowena Ravenclaw's Diadem","Harry Potter","Voldemort","Lord Voldemort"],
+    "semantic_lore_concepts": ["Horcruxes", "Soul fragments", "Immortality magic", "Founders' objects"]
+  },
+  {
+    "original_question_id": 1358,
+    "semantic_entity_refs": ["Sirius Black", "Padfoot", "Peter Pettigrew", "Wormtail", "Voldemort", "Lord Voldemort", "James Potter", "Lily Potter"],
+    "semantic_lore_concepts": ["Fidelius Charm", "Secret-Keeper", "Wrongful imprisonment"]
+  },
+  {
+    "original_question_id": 1086,
+    "semantic_entity_refs": ["Imperturbable Charm"],
+    "semantic_lore_concepts": ["Protective enchantments", "Repelling spells", "Anti-eavesdropping"]
+  },
+  {
+    "original_question_id": 104,
+    "semantic_entity_refs": ["Liechtenstein", "Trolls", "International Confederation of Wizards"],
+    "semantic_lore_concepts": ["Troll rights", "Wizarding politics", "Magical creature advocacy"]
+  },
+  {
+    "original_question_id": 1345,
+    "semantic_entity_refs": ["Peter Pettigrew", "Wormtail", "Voldemort", "Lord Voldemort"],
+    "semantic_lore_concepts": ["Prophecy", "Voldemort's resurrection", "Servant's return"]
+  },
+  {
+    "original_question_id": 1264,
+    "semantic_entity_refs": ["Transfiguration"],
+    "semantic_lore_concepts": ["Transfiguration principles", "Gamp's Law of Elemental Transfiguration", "Morphological transfiguration"]
+  },
+  {
+    "original_question_id": 47,
+    "semantic_entity_refs": ["Streeler"],
+    "semantic_lore_concepts": ["Magical creature characteristics", "Color-changing shell"]
+  },
+  {
+    "original_question_id": 1270,
+    "semantic_entity_refs": ["Crookshanks", "Scabbers", "Peter Pettigrew", "Ron Weasley", "Hermione Granger"],
+    "semantic_lore_concepts": ["Animagus form", "Pet rivalry", "Marauders"]
+  }
+]

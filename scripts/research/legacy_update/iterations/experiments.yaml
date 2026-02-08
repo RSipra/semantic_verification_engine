@@ -1,0 +1,132 @@
+metadata:
+  project: harry_potter_trivia
+  owner: reemasipra
+  created_date: 2025-10-17
+  description: Prompt engineering experiments for generating trivia questions using Gemini models.
+  question_types:
+  - explanatory (EX)
+  - factual recall (FR)
+  - multiple choice (MCQ)
+  version: 0
+experiments:
+- id: legacy_baseline_enrichment
+  experiment_type: phase 2 tracer_validation
+  question_type:
+  - FR
+  - EX
+  - MCQ
+  description: "Legacy baseline enrichment \u2013 model selection"
+  model: gemini-2.5-flash
+  common_parameters:
+    max_output_tokens: 12000
+    top_p: 0.95
+    candidate_count: 1
+  runs:
+  - version: v.1.0
+    goal: Model selection - legacy baseline dataset v.0.1 enrichment (update schema to match synthetic questions)
+    prompt_file: scripts/research/question_generation/iterations/legacy_enrichment_v0.txt
+    output_files:
+    - scripts/research/question_generation/llm_outputs/legacy_baseline_enrichment_v.1.0_candidate_1.json
+    model_parameters:
+      temperature: 0.7
+    metrics:
+      response_time_seconds: 31.91
+      finish_reason: STOP
+      prompt_feedback: ''
+      tokens:
+        input_cached: 1645
+        input_uncached: 1
+        output: 3513
+        total: 9483
+    quality:
+      factual_accuracy: null
+      readability: null
+      formatting: null
+    notes: null
+    status: completed
+    status_history:
+    - status: draft
+      timestamp: 2026-01-25 14:26:17.451499+00:00
+    - status: completed
+      timestamp: '2026-01-25T21:58:35.681186+00:00'
+- id: legacy_baseline_enrichment
+  experiment_type: phase 2 tracer_validation
+  question_type:
+  - FR
+  - EX
+  - MCQ
+  description: "Legacy baseline enrichment \u2013 model selection"
+  model: gemini-2.5-pro
+  common_parameters:
+    max_output_tokens: 12000
+    top_p: 0.95
+    candidate_count: 1
+  runs:
+  - version: v.1.1
+    goal: Model selection - legacy baseline dataset v.0.1 enrichment (update schema to match synthetic questions) with Gemini 2.5 Pro
+    prompt_file: scripts/research/question_generation/iterations/legacy_enrichment_v0.txt
+    output_files: null
+    model_parameters:
+      temperature: 0.7
+    metrics:
+      response_time_seconds: null
+      finish_reason: null
+      prompt_feedback: null
+      tokens:
+        input_cached: null
+        input_uncached: null
+        output: null
+        total: null
+    quality:
+      factual_accuracy: null
+      readability: null
+      formatting: null
+    notes: "Gemini 2.5 Pro no longer available in free-tier. Run failed with error: 429 You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_input_token_count, limit: 0, model: gemini-2.5-pro\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_input_token_count, limit: 0, model: gemini-2.5-pro\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 0, model: gemini-2.5-pro\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 0, model: gemini-2.5-pro\nPlease retry in 20.801987975s. [links {\n  description: \"Learn more about Gemini API quotas\"\n  url: \"https://ai.google.dev/gemini-api/docs/rate-limits\"\
+      \n}\n, violations {\n  quota_metric: \"generativelanguage.googleapis.com/generate_content_free_tier_input_token_count\"\n  quota_id: \"GenerateContentInputTokensPerModelPerDay-FreeTier\"\n  quota_dimensions {\n    key: \"model\"\n    value: \"gemini-2.5-pro\"\n  }\n  quota_dimensions {\n    key: \"location\"\n    value: \"global\"\n  }\n}\nviolations {\n  quota_metric: \"generativelanguage.googleapis.com/generate_content_free_tier_input_token_count\"\n  quota_id: \"GenerateContentInputTokensPerModelPerMinute-FreeTier\"\n  quota_dimensions {\n    key: \"model\"\n    value: \"gemini-2.5-pro\"\n  }\n  quota_dimensions {\n    key: \"location\"\n    value: \"global\"\n  }\n}\nviolations {\n  quota_metric: \"generativelanguage.googleapis.com/generate_content_free_tier_requests\"\n  quota_id: \"GenerateRequestsPerMinutePerProjectPerModel-FreeTier\"\n  quota_dimensions {\n    key: \"model\"\n    value: \"gemini-2.5-pro\"\n  }\n  quota_dimensions {\n    key: \"location\"\n    value: \"global\"\
+      \n  }\n}\nviolations {\n  quota_metric: \"generativelanguage.googleapis.com/generate_content_free_tier_requests\"\n  quota_id: \"GenerateRequestsPerDayPerProjectPerModel-FreeTier\"\n  quota_dimensions {\n    key: \"model\"\n    value: \"gemini-2.5-pro\"\n  }\n  quota_dimensions {\n    key: \"location\"\n    value: \"global\"\n  }\n}\n, retry_delay {\n  seconds: 20\n}\n]"
+    status: failed
+    status_history:
+    - status: draft
+      timestamp: 2026-01-25 14:26:17.451499+00:00
+    - status: failed
+      timestamp: '2026-01-25T22:11:39.196936+00:00'
+- id: legacy_baseline_enrichment
+  experiment_type: phase 2 tracer_validation
+  question_type:
+  - FR
+  - EX
+  - MCQ
+  description: "Legacy baseline enrichment \u2013 model selection, improved prompt"
+  model: gemini-2.5-flash
+  common_parameters:
+    max_output_tokens: 12000
+    top_p: 0.95
+    candidate_count: 1
+  runs:
+  - version: v.1.2
+    goal: Model selection - legacy baseline dataset v.0.1 enrichment (update schema to match synthetic questions)
+    prompt_file: scripts/research/question_generation/iterations/legacy_enrichment_v0.txt
+    output_files:
+    - scripts/research/question_generation/llm_outputs/legacy_baseline_enrichment_v.1.2_candidate_1.json
+    model_parameters:
+      temperature: 0.7
+    metrics:
+      response_time_seconds: 28.77
+      finish_reason: STOP
+      prompt_feedback: ''
+      tokens:
+        input_cached: 2570
+        input_uncached: 1
+        output: 3607
+        total: 9190
+    quality:
+      factual_accuracy: null
+      readability: null
+      formatting: null
+    notes: null
+    status: completed
+    status_history:
+    - status: draft
+      timestamp: 2026-01-25 19:12:22.732562+00:00
+    - status: completed
+      timestamp: '2026-01-26T01:05:40.446547+00:00'

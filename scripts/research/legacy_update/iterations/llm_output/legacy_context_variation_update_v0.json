@@ -1,0 +1,320 @@
+[
+  {
+    "question_id": 597,
+    "semantic_variants": {
+      "entity_refs": [
+        "Philosopher's Stone",
+        "Sorcerer's Stone",
+        "Elixir of Life"
+      ],
+      "lore_concepts": [
+        "Immortality granting",
+        "Transmutation of metals",
+        "Alchemy mastery",
+        "Life-extending properties"
+      ]
+    }
+  },
+  {
+    "question_id": 677,
+    "semantic_variants": {
+      "entity_refs": [
+        "Merpeople",
+        "Merfolk"
+      ],
+      "lore_concepts": [
+        "Second Task species",
+        "Triwizard Tournament obstacle",
+        "Aquatic sentient race",
+        "Hostage guardians"
+      ]
+    }
+  },
+  {
+    "question_id": 347,
+    "semantic_variants": {
+      "entity_refs": [
+        "Cats",
+        "Kittens"
+      ],
+      "lore_concepts": [
+        "Umbridge's obsession",
+        "Character preference (Umbridge)"
+      ]
+    }
+  },
+  {
+    "question_id": 682,
+    "semantic_variants": {
+      "entity_refs": [
+        "Stupefy",
+        "Stunning Spell"
+      ],
+      "lore_concepts": [
+        "Stunning Charm effect",
+        "Incapacitation magic",
+        "Dueling spell outcome",
+        "Unconsciousness-inducing charm"
+      ]
+    }
+  },
+  {
+    "question_id": 428,
+    "semantic_variants": {
+      "entity_refs": [
+        "Bellatrix Lestrange",
+        "Death Eater Bellatrix"
+      ],
+      "lore_concepts": [
+        "Killing Curse caster",
+        "Sirius Black's killer",
+        "Battle of the Department of Mysteries participant"
+      ]
+    }
+  },
+  {
+    "question_id": 184,
+    "semantic_variants": {
+      "entity_refs": [
+        "Holly wood",
+        "Holly"
+      ],
+      "lore_concepts": [
+        "Harry Potter's wand wood",
+        "Wandlore suitability (Holly)",
+        "Phoenix feather core pairing"
+      ]
+    }
+  },
+  {
+    "question_id": 261,
+    "semantic_variants": {
+      "entity_refs": [
+        "Swooping Evil venom",
+        "Diluted Swooping Evil venom"
+      ],
+      "lore_concepts": [
+        "Memory modification (venom)",
+        "Obliviation-like properties",
+        "Bad memory erasure",
+        "Mind-altering substance"
+      ]
+    }
+  },
+  {
+    "question_id": 310,
+    "semantic_variants": {
+      "entity_refs": [
+        "Petunia Dursley",
+        "Aunt Petunia"
+      ],
+      "lore_concepts": [
+        "Lily Potter's sister",
+        "Harry's Muggle guardian",
+        "Blood protection maintainer"
+      ]
+    }
+  },
+  {
+    "question_id": 31,
+    "semantic_variants": {
+      "entity_refs": [
+        "Scotland"
+      ],
+      "lore_concepts": [
+        "Hogwarts geographical location",
+        "Wizarding school setting",
+        "British magical landmark"
+      ]
+    }
+  },
+  {
+    "question_id": 741,
+    "semantic_variants": {
+      "entity_refs": [
+        "Deluminator",
+        "Put-Outer",
+        "Albus Dumbledore",
+        "Ron Weasley"
+      ],
+      "lore_concepts": [
+        "Dumbledore's posthumous guidance",
+        "Enchanted artifact (for direction)",
+        "Test of loyalty (Ron's)",
+        "Path-revealing charm",
+        "Symbol of friendship"
+      ]
+    }
+  },
+  {
+    "question_id": 665,
+    "semantic_variants": {
+      "entity_refs": [
+        "Wormtail",
+        "Peter Pettigrew",
+        "Scabbers"
+      ],
+      "lore_concepts": [
+        "Secret-Keeper betrayal",
+        "Fidelius Charm breach",
+        "Animagus identity",
+        "Potter's betrayer"
+      ]
+    }
+  },
+  {
+    "question_id": 622,
+    "semantic_variants": {
+      "entity_refs": [
+        "Porcupine to Pincushion transformation"
+      ],
+      "lore_concepts": [
+        "Transfiguration principle (similarity of form)",
+        "Easiest transformation example",
+        "Beginner Transfiguration"
+      ]
+    }
+  },
+  {
+    "question_id": 633,
+    "semantic_variants": {
+      "entity_refs": [
+        "Whomping Willow"
+      ],
+      "lore_concepts": [
+        "Violent magical plant",
+        "Shrieking Shack guardian",
+        "Non-biting characteristic (among options)",
+        "Dangerous sentient flora"
+      ]
+    }
+  },
+  {
+    "question_id": 605,
+    "semantic_variants": {
+      "entity_refs": [
+        "Norwegian Ridgeback"
+      ],
+      "lore_concepts": [
+        "Dragon breed (non-Triwizard)",
+        "Hagrid's dragon (Norbert/Norberta)",
+        "Triwizard First Task exclusion"
+      ]
+    }
+  },
+  {
+    "question_id": 561,
+    "semantic_variants": {
+      "entity_refs": [
+        "Bouncing Bulbs"
+      ],
+      "lore_concepts": [
+        "Slapping plant behavior",
+        "Aggressive magical plant",
+        "Herbology class plant"
+      ]
+    }
+  },
+  {
+    "question_id": 1369,
+    "semantic_variants": {
+      "entity_refs": [
+        "Voldemort",
+        "Lord Voldemort",
+        "Gellert Grindelwald",
+        "Grindelwald",
+        "Elder Wand",
+        "Deathstick",
+        "Albus Dumbledore"
+      ],
+      "lore_concepts": [
+        "Elder Wand allegiance",
+        "Deathly Hallows quest",
+        "Wandlore (allegiance)",
+        "Nurmengard imprisonment (Grindelwald's)",
+        "Refusal to reveal (Elder Wand location)"
+      ]
+    }
+  },
+  {
+    "question_id": 1401,
+    "semantic_variants": {
+      "entity_refs": [
+        "Rubeus Hagrid",
+        "Hagrid",
+        "Tom Riddle",
+        "Lord Voldemort",
+        "Chamber of Secrets",
+        "Basilisk",
+        "Salazar Slytherin's monster"
+      ],
+      "lore_concepts": [
+        "False accusation (Hagrid's)",
+        "Chamber of Secrets opening",
+        "Monster unleashing",
+        "Hogwarts expulsion (Hagrid's)",
+        "Heir of Slytherin's deception",
+        "Student death (Basilisk's victim)"
+      ]
+    }
+  },
+  {
+    "question_id": 1345,
+    "semantic_variants": {
+      "entity_refs": [
+        "Voldemort",
+        "Dark Lord",
+        "Peter Pettigrew",
+        "Wormtail"
+      ],
+      "lore_concepts": [
+        "Second true prophecy (Trelawney's)",
+        "Servant's escape",
+        "Dark Lord's resurgence",
+        "Rejoining master"
+      ]
+    }
+  },
+  {
+    "question_id": 1357,
+    "semantic_variants": {
+      "entity_refs": [
+        "Albus Dumbledore",
+        "Severus Snape",
+        "Lily Potter",
+        "Harry Potter"
+      ],
+      "lore_concepts": [
+        "Unrequited love (Snape for Lily)",
+        "Protecting the son (Harry)",
+        "Atonement (Snape's)",
+        "Double agent (Snape's role)",
+        "Always (Snape's dedication)"
+      ]
+    }
+  },
+  {
+    "question_id": 1358,
+    "semantic_variants": {
+      "entity_refs": [
+        "Sirius Black",
+        "Padfoot",
+        "Potters",
+        "Lily Potter",
+        "James Potter",
+        "Voldemort",
+        "Peter Pettigrew",
+        "Wormtail",
+        "Muggles"
+      ],
+      "lore_concepts": [
+        "Wrongful accusation (Sirius Black)",
+        "Potter's betrayal (false accusation)",
+        "Fidelius Charm (misunderstanding)",
+        "Azkaban imprisonment (Sirius's)",
+        "Mass murder (false accusation)",
+        "Secret-Keeper (false belief)"
+      ]
+    }
+  }
+]
