@@ -92,3 +92,11 @@ class QuestionType(str, Enum):
     MCQ = "Multiple Choice (MCQ)"
     FR = "Factual Recall (FR)"
     YN = "Yes/No or True/False"
+
+class QuestionSource(str, Enum):
+    """
+    Enum class to distinguish between legacy and synthetic questions source.
+    """
+    LEGACY = "legacy"
+    SYNTHETIC = "synthetic"
+    
