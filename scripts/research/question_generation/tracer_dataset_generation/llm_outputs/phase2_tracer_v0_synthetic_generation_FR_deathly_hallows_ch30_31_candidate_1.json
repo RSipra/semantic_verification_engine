@@ -1,0 +1,77 @@
+[
+  {
+    "question_type": "Factual Recall (FR)",
+    "category": "Spell/Charm",
+    "difficulty": "Easy",
+    "question": "In Ravenclaw Tower, what was the effect of the spell Luna Lovegood used on Alecto Carrow?",
+    "answer": "Stunned",
+    "answer_variations": [
+      "She was stunned",
+      "Alecto was stunned",
+      "Carrow was stunned",
+      "It stunned her"
+    ],
+    "source_reference": "deathly_hallows Chapter 30",
+    "source_quote": "\"I've never Stunned anyone except in our D.A. lessons,\" said Luna, sounding mildly interested. \"That was noisier than I though it would be.\""
+  },
+  {
+    "question_type": "Factual Recall (FR)",
+    "category": "Object/Potion",
+    "difficulty": "Medium",
+    "question": "What was Professor McGonagall's answer to the Ravenclaw common room door knocker's riddle, \"Where do Vanished objects go?\"",
+    "answer": "Into non being",
+    "answer_variations": [
+      "They go into non being",
+      "Non being",
+      "Into non being, which is to say, everything",
+      "To non being"
+    ],
+    "source_reference": "deathly_hallows Chapter 30",
+    "source_quote": "\"Where do Vanished objects go?\" \"Into non being, which is to say, everything,\" replied Professor McGonagall."
+  },
+  {
+    "question_type": "Factual Recall (FR)",
+    "category": "Character Detail",
+    "difficulty": "Easy",
+    "question": "Who was the ghost of Ravenclaw Tower, also known as the Gray Lady?",
+    "answer": "Helena Ravenclaw",
+    "answer_variations": [
+      "Ravenclaw's daughter, Helena",
+      "The daughter of Rowena Ravenclaw, Helena",
+      "Helena",
+      "Rowena Ravenclaw's daughter, Helena Ravenclaw"
+    ],
+    "source_reference": "deathly_hallows Chapter 31",
+    "source_quote": "\"When I lived,\" she said stiffly, \"I was Helena Ravenclaw.\""
+  },
+  {
+    "question_type": "Factual Recall (FR)",
+    "category": "Location/Setting",
+    "difficulty": "Medium",
+    "question": "In what country did Helena Ravenclaw hide her mother's diadem inside a hollow tree?",
+    "answer": "Albania",
+    "answer_variations": [
+      "In Albania",
+      "The country of Albania",
+      "A forest in Albania",
+      "Albania, in a hollow tree"
+    ],
+    "source_reference": "deathly_hallows Chapter 31",
+    "source_quote": "\"A forest in Albania. A lonely place I thought was far beyond my mother's reach.\""
+  },
+  {
+    "question_type": "Factual Recall (FR)",
+    "category": "Character Detail",
+    "difficulty": "Easy",
+    "question": "Which Weasley family member died during the Battle of Hogwarts, with the ghost of his last laugh still etched upon his face?",
+    "answer": "Fred",
+    "answer_variations": [
+      "Fred Weasley",
+      "Fred Weasley, the twin",
+      "One of the Weasley twins, Fred",
+      "George's twin, Fred"
+    ],
+    "source_reference": "deathly_hallows Chapter 31",
+    "source_quote": "And Percy was shaking his brother, and Ron was kneeling beside them, and Fred's eyes stared without seeing, the ghost of his last laugh still etched upon his face."
+  }
+]

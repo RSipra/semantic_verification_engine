@@ -1,0 +1,92 @@
+[
+  {
+    "question_type": "multiple choice (MCQ)",
+    "category": "Character Detail",
+    "question": "Who carried Colin Creevey's body from the grounds after the battle?",
+    "options": [
+      "Neville Longbottom",
+      "Rubeus Hagrid",
+      "Oliver Wood",
+      "Seamus Finnigan"
+    ],
+    "answer": "Oliver Wood",
+    "difficulty": "Easy",
+    "source_reference": "deathly_hallows Chapter 34",
+    "source_quote": "\"You know what? I can manage him alone, Neville,\" said Oliver Wood, and he heaved Colin over his shoulder in a fireman's lift and carried him into the Great Hall."
+  },
+  {
+    "question_type": "multiple choice (MCQ)",
+    "category": "Creature/Beast",
+    "question": "What creature did Harry instruct Neville Longbottom to kill if he got the chance?",
+    "options": [
+      "A Dementor",
+      "The Acromantulas",
+      "Nagini",
+      "A Basilisk"
+    ],
+    "answer": "Nagini",
+    "difficulty": "Easy",
+    "source_reference": "deathly_hallows Chapter 34",
+    "source_quote": "\"You know Voldemort's snake. Neville? He's got a huge snake... Calls it Nagini...\"\"I've heard, yeah... What about it?\"\"It's got to be killed.\""
+  },
+  {
+    "question_type": "multiple choice (MCQ)",
+    "category": "Character Detail",
+    "question": "How did Sirius Black describe the experience of dying to Harry in the forest?",
+    "options": [
+      "A long, peaceful transition",
+      "A terrifying void",
+      "A sudden, sharp pain",
+      "Quicker and easier than falling asleep"
+    ],
+    "answer": "Quicker and easier than falling asleep",
+    "difficulty": "Medium",
+    "source_reference": "deathly_hallows Chapter 34",
+    "source_quote": "\"Dying? Not at all,\" said Sirius. \"Quicker and easier than falling asleep.\""
+  },
+  {
+    "question_type": "multiple choice (MCQ)",
+    "category": "Location/Setting",
+    "question": "What familiar location did Harry believe he and Dumbledore were in during their conversation in the bright, misty place?",
+    "options": [
+      "The Room of Requirement",
+      "King's Cross station",
+      "The Hog's Head Inn",
+      "Godric's Hollow"
+    ],
+    "answer": "King's Cross station",
+    "difficulty": "Easy",
+    "source_reference": "deathly_hallows Chapter 35",
+    "source_quote": "\"It looks,\" he said slowly, \"like King's Cross station. Except a lo cleaner and empty, and there are no trains as far as I can see.\""
+  },
+  {
+    "question_type": "multiple choice (MCQ)",
+    "category": "Character Detail",
+    "question": "According to Dumbledore, what was the primary reason Harry remained alive after Voldemort's Killing Curse in the forest?",
+    "options": [
+      "He was the true master of Death",
+      "His mother's protection was within Voldemort's blood",
+      "The Elder Wand protected him",
+      "The Horcrux in him absorbed the curse"
+    ],
+    "answer": "His mother's protection was within Voldemort's blood",
+    "difficulty": "Medium",
+    "source_reference": "deathly_hallows Chapter 35",
+    "source_quote": "\"He took your blood,\" said Harry.\"Precisely!\" said Dumbledore. \"He took your blood and rebuilt his living body with it! Your blood in his veins, Harry, Lily's protection inside both of you! He tethered you to life while he lives!\""
+  },
+  {
+    "question_type": "multiple choice (MCQ)",
+    "category": "Character Detail",
+    "question": "What reason did Dumbledore give for repeatedly refusing the post of Minister of Magic?",
+    "options": [
+      "He believed he was not to be trusted with power",
+      "He preferred to focus on teaching at Hogwarts",
+      "He was too consumed by his search for the Hallows",
+      "He felt the position would limit his magical research"
+    ],
+    "answer": "He believed he was not to be trusted with power",
+    "difficulty": "Medium",
+    "source_reference": "deathly_hallows Chapter 35",
+    "source_quote": "I was offered the post of Minister of Magic, not once, but several times. Naturally, I refused. I had learned that I was not to be trusted with power."
+  }
+]

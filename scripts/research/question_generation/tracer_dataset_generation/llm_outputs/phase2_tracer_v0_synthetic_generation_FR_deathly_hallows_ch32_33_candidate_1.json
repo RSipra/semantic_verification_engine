@@ -1,0 +1,77 @@
+[
+  {
+    "question_type": "Factual Recall (FR)",
+    "category": "Spell/Charm",
+    "difficulty": "Medium",
+    "question": "As Harry, Ron, and Hermione approached the Whomping Willow, what spell did Ron use on a twig to paralyze the tree's branches?",
+    "answer": "Wingardium Leviosa",
+    "answer_variations": [
+      "He cast Wingardium Leviosa.",
+      "The spell was Wingardium Leviosa.",
+      "Ron used Wingardium Leviosa.",
+      "Wingardium Leviosa was the spell."
+    ],
+    "source_reference": "deathly_hallows Chapter 32",
+    "source_quote": "Ron looked around, then directed his wand at a twig on the ground and said \"Winguardium Leviosa!\" The twig flew up from the ground, spun through the air as if caught by a gust of wind, then zoomed directly at the trunk through the Willow's ominously swaying branches. It jabbed at a place near the roots, and at once, the writhing tree became still."
+  },
+  {
+    "question_type": "Factual Recall (FR)",
+    "category": "Character Detail",
+    "difficulty": "Easy",
+    "question": "While in the Shrieking Shack, which Death Eater did Voldemort send to fetch Severus Snape?",
+    "answer": "Lucius Malfoy",
+    "answer_variations": [
+      "He sent Lucius Malfoy.",
+      "Malfoy was sent.",
+      "Voldemort dispatched Lucius Malfoy.",
+      "Lucius Malfoy was ordered."
+    ],
+    "source_reference": "deathly_hallows Chapter 32",
+    "source_quote": "'Go and fetch Snape.' ... Frightened, stumbling a little through the gloom, Lucius left the room."
+  },
+  {
+    "question_type": "Factual Recall (FR)",
+    "category": "Character Detail",
+    "difficulty": "Medium",
+    "question": "After Dumbledore questioned if Severus Snape had grown to care for Harry Potter, what form did Snape's Patronus take?",
+    "answer": "A silver doe",
+    "answer_variations": [
+      "His Patronus was a silver doe.",
+      "A doe.",
+      "The Patronus was a silver doe.",
+      "It was a silver doe."
+    ],
+    "source_reference": "deathly_hallows Chapter 33",
+    "source_quote": "'For him?' shouted Snape. 'Expecto Patronum!' From the tip of his wand burst the silver doe."
+  },
+  {
+    "question_type": "Factual Recall (FR)",
+    "category": "Object/Potion",
+    "difficulty": "Hard",
+    "question": "According to Dumbledore's portrait, under what two specific conditions must the Sword of Gryffindor be taken?",
+    "answer": "Need and valor",
+    "answer_variations": [
+      "Under conditions of need and valor.",
+      "Need and valor are required.",
+      "Valor and need.",
+      "Conditions of valor and need."
+    ],
+    "source_reference": "deathly_hallows Chapter 33",
+    "source_quote": "'Now, Severus, the sword! Do not forget that it must be taken under conditions of need and valor ¨C and he must not know that you give it!'"
+  },
+  {
+    "question_type": "Factual Recall (FR)",
+    "category": "Character Detail",
+    "difficulty": "Medium",
+    "question": "During the battle in the Great Hall, which professor hit Fenrir Greyback on the head with a crystal ball, causing him to collapse?",
+    "answer": "Professor Trelawney",
+    "answer_variations": [
+      "Trelawney.",
+      "Professor Sybill Trelawney.",
+      "Sybill Trelawney.",
+      "The Divination professor, Trelawney."
+    ],
+    "source_reference": "deathly_hallows Chapter 32",
+    "source_quote": "Then, with a bright white flash and a crack, a crystal ball fell on top of his head, and he crumpled to the ground and did not move. 'I have more!' shrieked Professor Trelawney from over the banisters."
+  }
+]

@@ -1,0 +1,77 @@
+[
+  {
+    "question_type": "Explanatory (Why/How)",
+    "category": "Magical Theory/Lore",
+    "difficulty": "Hard",
+    "question": "Why did Lord Voldemort order Nagini to kill Severus Snape in the Shrieking Shack during the Battle of Hogwarts?",
+    "answer": "Voldemort mistakenly believed that because Snape had killed Albus Dumbledore, Snape was the true master of the Elder Wand. To fully control the wand's power, Voldemort thought he needed to defeat Snape.",
+    "answer_variations": [
+      "Voldemort incorrectly concluded that Snape's murder of Albus Dumbledore made him the Elder Wand's rightful owner, necessitating Snape's death for the wand to serve him.",
+      "The Dark Lord had Nagini slay Snape because he falsely assumed that eliminating Dumbledore's killer would transfer the Elder Wand's allegiance to him.",
+      "He ordered Snape's demise due to the erroneous belief that the Elder Wand would only perform optimally for him if its supposed current owner, Snape, was no longer alive.",
+      "Voldemort ordered the snake to kill Snape, thinking that Snape's slaying of Dumbledore made him the Elder Wand's master, and thus Snape's death would grant him full power over it."
+    ],
+    "source_reference": "deathly_hallows Chapter 32",
+    "source_quote": "The Elder Wand cannot serve me properly, Severus, because I am not its true master. The Elder Wand belongs to the wizard who killed its last owner. You killed Albus Dumbledore. While you live, Severus, the Elder Wand cannot truly be mine."
+  },
+  {
+    "question_type": "Explanatory (Why/How)",
+    "category": "Character Arc/Motive",
+    "difficulty": "Hard",
+    "question": "Why did Albus Dumbledore explicitly ask Severus Snape to kill him, rather than allowing Draco Malfoy to complete Voldemort's assignment?",
+    "answer": "Dumbledore wanted to protect Draco Malfoy's soul from the irreparable damage of committing murder. He believed Snape's soul was already complex and could better bear the burden, while also ensuring a swift and dignified end for himself.",
+    "answer_variations": [
+      "To prevent Draco Malfoy from irrevocably harming his spirit by becoming a killer, Dumbledore requested Snape to perform the act, ensuring a less painful death for himself.",
+      "Dumbledore sought to preserve Draco's moral integrity, instructing Snape to end his life instead, which also allowed Dumbledore to control the timing and manner of his demise.",
+      "His aim was to spare the young Malfoy from the soul-destroying consequences of taking a life, so he convinced Snape to be his executioner, securing a more peaceful passing.",
+      "Dumbledore orchestrated his death by Snape's hand to save Draco's soul from the corruption of murder and to ensure his own death was quick and not at the hands of someone like Greyback or Bellatrix."
+    ],
+    "source_reference": "deathly_hallows Chapter 32",
+    "source_quote": "That boy's soul is not yet so damaged,\" said Dumbledore. \"I would not have it ripped apart on my account.\"\"And my soul, Dumbledore? Mine?\"\"You alone know whether it will harm your soul to help an old man avoid pain and humiliation,\" said Dumbledore. \"I ask this one great favor of you, Severus, because death is coming for me as surely as the Chudley Cannons will finish bottom of this year's league. I confess I should prefer a quick, painless exit to the protracted and messy affair it will be if, for instance, Greyback is involved ¨C I hear Voldemort has recruited him? Or dear Bellatrix, who likes to play with her food before she eats it."
+  },
+  {
+    "question_type": "Explanatory (Why/How)",
+    "category": "Character Arc/Motive",
+    "difficulty": "Medium",
+    "question": "During the Battle of Hogwarts, why did Hermione insist that Harry and Ron must prioritize hunting Nagini, despite Ron's desire to fight Death Eaters for revenge?",
+    "answer": "Hermione understood that Nagini was Lord Voldemort's last remaining Horcrux. She believed that destroying Nagini was the ultimate goal and the only way to finally defeat Voldemort and end the war.",
+    "answer_variations": [
+      "Hermione recognized Nagini as the final Horcrux and was convinced that its elimination was paramount to vanquishing the Dark Lord and concluding the conflict.",
+      "Her rationale was that Nagini represented Voldemort's last tether to immortality; therefore, its destruction was the sole path to ending the hostilities.",
+      "She emphasized that since Nagini was the last Horcrux, their mission to destroy it was the most critical step to ensure Voldemort's ultimate downfall.",
+      "Hermione maintained that the only way to secure victory was by eliminating Nagini, Voldemort's final Horcrux, making it their immediate and most vital objective."
+    ],
+    "source_reference": "deathly_hallows Chapter 32",
+    "source_quote": "Ron, we're the only ones who can end it! Please ¨C Ron ¨C we need the snake, we've got to kill the snake!\" said Hermione. \"We're the only ones who can end it!\""
+  },
+  {
+    "question_type": "Explanatory (Why/How)",
+    "category": "Magical Theory/Lore",
+    "difficulty": "Medium",
+    "question": "How did Harry, Ron, and Hermione manage to safely enter the secret passage beneath the Whomping Willow during the Battle of Hogwarts?",
+    "answer": "Ron used the \"Wingardium Leviosa\" spell to levitate a twig and jab it into a specific knot on the Whomping Willow's trunk, which instantly paralyzed its thrashing branches.",
+    "answer_variations": [
+      "To stop the aggressive tree, Ron employed a levitation charm on a small branch, directing it to strike the crucial knot at the Willow's base, rendering it still.",
+      "They accessed the passage by having Ron cast \"Wingardium Leviosa\" on a twig, causing it to hit the precise magical spot on the tree that deactivated its violent movements.",
+      "Ron utilized a levitation spell to guide a twig into the paralyzing knot on the Whomping Willow, allowing them safe entry into the hidden tunnel.",
+      "By casting \"Wingardium Leviosa\" on a piece of wood and striking the secret knot on the Whomping Willow, Ron effectively immobilized its dangerous branches, clearing their path."
+    ],
+    "source_reference": "deathly_hallows Chapter 32",
+    "source_quote": "Ron looked around, then directed his wand at a twig on the ground and said \"Winguardium Leviosa!\" The twig flew up from the ground, spun through the air as if caught by a gust of wind, then zoomed directly at the trunk through the Willow's ominously swaying branches. It jabbed at a place near the roots, and at once, the writhing tree became still."
+  },
+  {
+    "question_type": "Explanatory (Why/How)",
+    "category": "Character Arc/Motive",
+    "difficulty": "Medium",
+    "question": "Why was Lord Voldemort certain that Harry Potter would seek him out in the Shrieking Shack, rather than needing to be found by Death Eaters?",
+    "answer": "Voldemort believed that Harry's \"one great flaw\" was his refusal to let others die for him. He was confident Harry would come to him to stop the battle and prevent more deaths among his friends.",
+    "answer_variations": [
+      "The Dark Lord was convinced that Harry's inherent selflessness and desire to protect his allies would compel him to surrender himself.",
+      "Voldemort counted on Harry's moral weakness – his inability to watch his loved ones perish – to draw him directly to the Shack.",
+      "He anticipated Harry's arrival because he understood that Potter would sacrifice himself to halt the bloodshed and save those fighting for him.",
+      "Voldemort's certainty stemmed from his perception of Harry's primary weakness: his deep-seated need to prevent others from suffering or dying on his behalf."
+    ],
+    "source_reference": "deathly_hallows Chapter 32",
+    "source_quote": "Neither of you understands Potter as I do. He does not need finding. Potter will come to me. I knew his weakness you see, his one great flaw. He will hate watching the others struck down around him, knowing that it is for him that it happens. He will want to stop it at any cost. He will come."
+  }
+]

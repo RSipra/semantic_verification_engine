@@ -1,0 +1,92 @@
+[
+  {
+    "question_type": "multiple choice (MCQ)",
+    "category": "Character Detail",
+    "question": "What form did Severus Snape's Patronus take when he showed it to Albus Dumbledore?",
+    "options": [
+      "A silver stag",
+      "A silver otter",
+      "A silver doe",
+      "A silver dog"
+    ],
+    "answer": "A silver doe",
+    "difficulty": "Medium",
+    "source_reference": "deathly_hallows Chapter 33",
+    "source_quote": "\"For him?\" shouted Snape. \"Expecto Patronum!\" From the tip of his wand burst the silver doe. She landed on the office floor, bounded once across the office, and soared out of the window."
+  },
+  {
+    "question_type": "multiple choice (MCQ)",
+    "category": "Object/Potion",
+    "question": "According to Voldemort, why did the Elder Wand refuse to serve him properly?",
+    "options": [
+      "Because its true master, Severus Snape, was still alive",
+      "Because it had been won through murder, not conquest",
+      "Because Dumbledore had willingly given up its mastery",
+      "Because a fragment of Voldemort's soul was inside Harry Potter"
+    ],
+    "answer": "Because its true master, Severus Snape, was still alive",
+    "difficulty": "Medium",
+    "source_reference": "deathly_hallows Chapter 32",
+    "source_quote": "The Elder Wand cannot serve me properly, Severus, because I am not its true master. The Elder Wand belongs to the wizard who killed its last owner. You killed Albus Dumbledore. While you live, Severus, the Elder Wand cannot truly be mine."
+  },
+  {
+    "question_type": "multiple choice (MCQ)",
+    "category": "Character Detail",
+    "question": "What shocking request did Albus Dumbledore make of Severus Snape regarding his own death?",
+    "options": [
+      "To ensure he was buried next to his sister Ariana",
+      "To protect Harry Potter at all costs after his death",
+      "To perform the Killing Curse on him",
+      "To find a way to break the curse on his hand"
+    ],
+    "answer": "To perform the Killing Curse on him",
+    "difficulty": "Hard",
+    "source_reference": "deathly_hallows Chapter 33",
+    "source_quote": "\"Are you intending to let him kill you?\" \"Certainly not. You must kill me.\""
+  },
+  {
+    "question_type": "multiple choice (MCQ)",
+    "category": "Character Detail",
+    "question": "What crucial secret did Dumbledore reveal to Snape about Harry Potter's connection to Lord Voldemort?",
+    "options": [
+      "That Harry was destined to become an Animagus",
+      "That a fragment of Voldemort's soul resided within Harry",
+      "That Harry possessed a previously unknown magical ability",
+      "That Harry was immune to the Killing Curse"
+    ],
+    "answer": "That a fragment of Voldemort's soul resided within Harry",
+    "difficulty": "Medium",
+    "source_reference": "deathly_hallows Chapter 33",
+    "source_quote": "Tell him that on the night Lord Voldemort tried to kill him, when Lily cast her own life between them as a shield, the Killing Curse rebounded upon Lord Voldemort, and a fragment of Voldemort's soul was blasted apart from the whole, and latched itself onto the only living soul left in that collapsed building. Part of Lord Voldemort lives inside Harry, and it is that which gives him the power of speech with snakes, and a connection with Lord Voldemort's mind that he has never understood. And while that fragment of soul, unmissed by Voldemort, remains attached to and protected by Harry, Lord Voldemort cannot die."
+  },
+  {
+    "question_type": "multiple choice (MCQ)",
+    "category": "Character Detail",
+    "question": "Where did Lily Evans and Severus Snape first encounter each other as children?",
+    "options": [
+      "In the Forbidden Forest near Hogwarts",
+      "On the Hogwarts Express before their first year",
+      "In a park playground near their homes",
+      "At a magical fair in Diagon Alley"
+    ],
+    "answer": "In a park playground near their homes",
+    "difficulty": "Easy",
+    "source_reference": "deathly_hallows Chapter 33",
+    "source_quote": "He fell headlong into sunlight, and his feet found warm ground. When he straightened up, he saw that he was in a nearly deserted playground."
+  },
+  {
+    "question_type": "multiple choice (MCQ)",
+    "category": "Creature/Beast",
+    "question": "What kind of magical protection did Lord Voldemort place around Nagini in the Shrieking Shack?",
+    "options": [
+      "An unbreakable diamond shell",
+      "A shimmering, invisible force field",
+      "An enchanted, starry, transparent sphere",
+      "A shield charm that reflected all spells"
+    ],
+    "answer": "An enchanted, starry, transparent sphere",
+    "difficulty": "Medium",
+    "source_reference": "deathly_hallows Chapter 32",
+    "source_quote": "and there was the great thick snake, now suspended in midair, twisting gracefully within the enchanted, protected space he had made for her, a starry, transparent sphere somewhere between a glittering cage and a tank."
+  }
+]

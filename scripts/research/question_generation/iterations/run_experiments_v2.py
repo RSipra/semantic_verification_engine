@@ -20,15 +20,15 @@ import google.generativeai as genai
 def setup_file_paths()-> dict:
     """Defines and returns the project root and key config file paths"""
     script_path = Path(__file__).resolve()
-    # Go up 3 levels: llm_utils.py -> scripts -> root
-    project_root = script_path.parents[3]
-    output_dir = project_root / 'scripts/prompts/llm_outputs'
+    # Go up 4 levels: iterations (source) -> question_generation -> research -> scripts -> Harry_Potter_Trivia (project root)
+    project_root = script_path.parents[4]
+    output_dir = project_root / 'scripts/research/question_generation/tracer_dataset_generation/llm_outputs'
     # future-proofing to ensure the directory exists
     output_dir.mkdir(parents=True, exist_ok=True)
     return {
     'project_root' : project_root, 
     'config' : project_root / 'config.env',
-    'yaml' : project_root / 'scripts/prompts/experiments.yaml',
+    'yaml' : project_root / 'scripts/research/question_generation/tracer_dataset_generation/phase2_tracer_v0_synthetic_generation.yaml',
     'output_dir': output_dir
     }
 

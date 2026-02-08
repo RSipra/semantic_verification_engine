@@ -1,0 +1,92 @@
+[
+  {
+    "question_type": "Factual Recall (FR)",
+    "category": "Character Detail",
+    "difficulty": "Medium",
+    "question": "Before confronting Voldemort in the Forbidden Forest, who did Harry instruct to kill Nagini, the snake Horcrux, if Ron and Hermione were busy?",
+    "answer": "Neville Longbottom",
+    "answer_variations": [
+      "Neville",
+      "Longbottom",
+      "Mr. Longbottom",
+      "Harry told Neville Longbottom"
+    ],
+    "source_reference": "deathly_hallows Chapter 34",
+    "source_quote": "You know Voldemort's snake. Neville? He's got a huge snake... Calls it Nagini...\"\"I've heard, yeah... What about it?\"\"It's got to be killed. Ron and Hermione know that, but just in case they ¨C\"The awfulness of that possibility smothered him for a moment, made it impossible to keep talking. But he pulled himself together again: This was crucial, he must be like Dumbledore, keep a cool head, make sure there were backups, others to carry on. Dumbledore had died knowing that three people still knew about the Horcruxes; now Neville would take Harry's place: There would still be three in the secret."
+  },
+  {
+    "question_type": "Factual Recall (FR)",
+    "category": "Object/Potion",
+    "difficulty": "Easy",
+    "question": "What object did Harry press to his lips and whisper \"I am about to die\" to, causing it to break open and reveal the Resurrection Stone?",
+    "answer": "Golden Snitch",
+    "answer_variations": [
+      "The Snitch",
+      "His Golden Snitch",
+      "The Snitch Harry caught",
+      "Harry's Snitch"
+    ],
+    "source_reference": "deathly_hallows Chapter 34",
+    "source_quote": "The Snitch. His nerveless fingers fumbled for a moment with the pouch at his neck and he pulled it out. I open at the close. Breathing fast and hard, he stared down at it. Now that he wanted time to move as slowly as possible, he seemed to have sped up, and understanding was coming so fast it seemed to have bypassed though. This was the close. This was the moment. He pressed the golden metal to his lips and whispered, \"I am about to die.\" The metal shell broke open. He lowered his shaking hand, raised Draco's wand beneath the Cloak, and murmured, \"Lumos.\" The black stone with is jagged crack running down the center sat in the two halves of the Snitch. The Resurrection Stone had cracked down the vertical line representing the Elder Wand."
+  },
+  {
+    "question_type": "Factual Recall (FR)",
+    "category": "Character Detail",
+    "difficulty": "Medium",
+    "question": "In the clearing in the Forbidden Forest, who silenced Hagrid with a flick of a wand after Harry revealed himself to Voldemort?",
+    "answer": "Rowle",
+    "answer_variations": [
+      "Rowle the Death Eater",
+      "The Death Eater Rowle",
+      "The great blond Rowle",
+      "Rowle, the Death Eater"
+    ],
+    "source_reference": "deathly_hallows Chapter 34",
+    "source_quote": "He turned: Hagrid was bound and trussed, tied to a tree nearby. His massive body shook the branches overhead as he struggled, desperate.\"NO! NO! HARRY, WHAT'RE YEH ¨C?\"\"QUIET!\" shouted Rowle, and with a flick of his wand, Hagrid was silenced."
+  },
+  {
+    "question_type": "Factual Recall (FR)",
+    "category": "Object/Potion",
+    "difficulty": "Hard",
+    "question": "When Harry met Dumbledore in the mysterious white place, what specific color were Dumbledore's sweeping robes?",
+    "answer": "Midnight blue",
+    "answer_variations": [
+      "Dark blue",
+      "Blue, like midnight",
+      "A midnight blue color",
+      "Sweeping robes of midnight blue"
+    ],
+    "source_reference": "deathly_hallows Chapter 35",
+    "source_quote": "Albus Dumbledore was walking toward him, sprightly and upright, wearing sweeping robes of midnight blue."
+  },
+  {
+    "question_type": "Factual Recall (FR)",
+    "category": "Location/Setting",
+    "difficulty": "Medium",
+    "question": "When Harry asked Dumbledore where they were, what specific London station did Harry say the mysterious white, empty place resembled?",
+    "answer": "King's Cross station",
+    "answer_variations": [
+      "King's Cross",
+      "The King's Cross station",
+      "A station like King's Cross",
+      "London's King's Cross"
+    ],
+    "source_reference": "deathly_hallows Chapter 35",
+    "source_quote": "It looks,\" he said slowly, \"like King's Cross station. Except a lo cleaner and empty, and there are no trains as far as I can see.\"\"King's Cross station!\" Dumbledore was chuckling immoderately. \"Good gracious, really?\""
+  },
+  {
+    "question_type": "Factual Recall (FR)",
+    "category": "Number/Year",
+    "difficulty": "Hard",
+    "question": "According to Dumbledore's confession to Harry, how many times was he offered the post of Minister of Magic, which he refused?",
+    "answer": "Several times",
+    "answer_variations": [
+      "Many times",
+      "More than once",
+      "Multiple times",
+      "Numerous times"
+    ],
+    "source_reference": "deathly_hallows Chapter 35",
+    "source_quote": "Years passed. There were rumors about him. They said he had procured a wand of immense power. I, meanwhile, was offered the post of Minister of Magic, not once, but several times. Naturally, I refused. I had learned that I was not to be trusted with power."
+  }
+]

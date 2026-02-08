@@ -1,0 +1,261 @@
+metadata:
+  project: Semantic Verification Engine
+  owner: reema sipra
+  version: 0
+experiments:
+- id: phase2_tracer_v0_synthetic_generation
+  model: models/gemini-2.5-flash
+  common_parameters:
+    max_output_tokens: 30000
+    top_p: 0.95
+    candidate_count: 1
+  runs:
+  - version: FR_deathly_hallows_ch30_31
+    question_type: FR
+    prompt_file: scripts/pipelines/generate_questions/prompts/fr_master_prompt._v0.txt
+    source_text_files:
+    - - data/06_books/deathly_hallows_chapter_30.txt
+      - data/06_books/deathly_hallows_chapter_31.txt
+    source_info:
+    - deathly_hallows Chapter 30
+    - deathly_hallows Chapter 31
+    output_files:
+    - /Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/scripts/research/question_generation/tracer_dataset_generation/llm_outputs/phase2_tracer_v0_synthetic_generation_FR_deathly_hallows_ch30_31_candidate_1.json
+    model_parameters:
+      temperature: 0.7
+    metrics:
+      response_time_seconds: 22.72
+      finish_reason: STOP
+      prompt_feedback: ''
+      tokens:
+        input_cached: 1539
+        input_uncached: 17555
+        output: 894
+        total: 24087
+    status: completed
+    notes: Automated run for FR, deathly_hallows, chapters 30-31
+    status_history:
+    - status: completed
+      timestamp: '2026-02-06T21:33:45.724093+00:00'
+  - version: FR_deathly_hallows_ch32_33
+    question_type: FR
+    prompt_file: scripts/pipelines/generate_questions/prompts/fr_master_prompt._v0.txt
+    source_text_files:
+    - - data/06_books/deathly_hallows_chapter_32.txt
+      - data/06_books/deathly_hallows_chapter_33.txt
+    source_info:
+    - deathly_hallows Chapter 32
+    - deathly_hallows Chapter 33
+    output_files:
+    - /Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/scripts/research/question_generation/tracer_dataset_generation/llm_outputs/phase2_tracer_v0_synthetic_generation_FR_deathly_hallows_ch32_33_candidate_1.json
+    model_parameters:
+      temperature: 0.7
+    metrics:
+      response_time_seconds: 17.0
+      finish_reason: STOP
+      prompt_feedback: ''
+      tokens:
+        input_cached: 1539
+        input_uncached: 18432
+        output: 1017
+        total: 23560
+    status: completed
+    notes: Automated run for FR, deathly_hallows, chapters 32-33
+    status_history:
+    - status: completed
+      timestamp: '2026-02-06T21:35:07.817605+00:00'
+  - version: FR_deathly_hallows_ch34_35
+    question_type: FR
+    prompt_file: scripts/pipelines/generate_questions/prompts/fr_master_prompt._v0.txt
+    source_text_files:
+    - - data/06_books/deathly_hallows_chapter_34.txt
+      - data/06_books/deathly_hallows_chapter_35.txt
+    source_info:
+    - deathly_hallows Chapter 34
+    - deathly_hallows Chapter 35
+    output_files:
+    - /Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/scripts/research/question_generation/tracer_dataset_generation/llm_outputs/phase2_tracer_v0_synthetic_generation_FR_deathly_hallows_ch34_35_candidate_1.json
+    model_parameters:
+      temperature: 0.7
+    metrics:
+      response_time_seconds: 22.63
+      finish_reason: STOP
+      prompt_feedback: ''
+      tokens:
+        input_cached: 1539
+        input_uncached: 11445
+        output: 1437
+        total: 18238
+    status: completed
+    notes: Automated run for FR, deathly_hallows, chapters 34-35
+    status_history:
+    - status: completed
+      timestamp: '2026-02-06T21:36:35.548632+00:00'
+  - version: EX_deathly_hallows_ch30_31
+    question_type: EX
+    prompt_file: scripts/pipelines/generate_questions/prompts/ex_master_prompt_v0.txt
+    source_text_files:
+    - - data/06_books/deathly_hallows_chapter_30.txt
+      - data/06_books/deathly_hallows_chapter_31.txt
+    source_info:
+    - deathly_hallows Chapter 30
+    - deathly_hallows Chapter 31
+    output_files:
+    - /Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/scripts/research/question_generation/tracer_dataset_generation/llm_outputs/phase2_tracer_v0_synthetic_generation_EX_deathly_hallows_ch30_31_candidate_1.json
+    model_parameters:
+      temperature: 0.7
+    metrics:
+      response_time_seconds: 56.57
+      finish_reason: STOP
+      prompt_feedback: ''
+      tokens:
+        input_cached: 1684
+        input_uncached: 17555
+        output: 2498
+        total: 32402
+    status: completed
+    notes: Automated run for EX, deathly_hallows, chapters 30-31
+    status_history:
+    - status: completed
+      timestamp: '2026-02-06T21:38:37.213628+00:00'
+  - version: EX_deathly_hallows_ch32_33
+    question_type: EX
+    prompt_file: scripts/pipelines/generate_questions/prompts/ex_master_prompt_v0.txt
+    source_text_files:
+    - - data/06_books/deathly_hallows_chapter_32.txt
+      - data/06_books/deathly_hallows_chapter_33.txt
+    source_info:
+    - deathly_hallows Chapter 32
+    - deathly_hallows Chapter 33
+    output_files:
+    - /Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/scripts/research/question_generation/tracer_dataset_generation/llm_outputs/phase2_tracer_v0_synthetic_generation_EX_deathly_hallows_ch32_33_candidate_1.json
+    model_parameters:
+      temperature: 0.7
+    metrics:
+      response_time_seconds: 27.15
+      finish_reason: STOP
+      prompt_feedback: ''
+      tokens:
+        input_cached: 1684
+        input_uncached: 18432
+        output: 1979
+        total: 26102
+    status: completed
+    notes: Automated run for EX, deathly_hallows, chapters 32-33
+    status_history:
+    - status: completed
+      timestamp: '2026-02-06T21:40:09.477981+00:00'
+  - version: EX_deathly_hallows_ch34_35
+    question_type: EX
+    prompt_file: scripts/pipelines/generate_questions/prompts/ex_master_prompt_v0.txt
+    source_text_files:
+    - - data/06_books/deathly_hallows_chapter_34.txt
+      - data/06_books/deathly_hallows_chapter_35.txt
+    source_info:
+    - deathly_hallows Chapter 34
+    - deathly_hallows Chapter 35
+    output_files:
+    - /Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/scripts/research/question_generation/tracer_dataset_generation/llm_outputs/phase2_tracer_v0_synthetic_generation_EX_deathly_hallows_ch34_35_candidate_1.json
+    model_parameters:
+      temperature: 0.7
+    metrics:
+      response_time_seconds: 26.97
+      finish_reason: STOP
+      prompt_feedback: ''
+      tokens:
+        input_cached: 1684
+        input_uncached: 11445
+        output: 1888
+        total: 19224
+    status: completed
+    notes: Automated run for EX, deathly_hallows, chapters 34-35
+    status_history:
+    - status: completed
+      timestamp: '2026-02-06T21:41:41.535390+00:00'
+  - version: MCQ_deathly_hallows_ch30_31
+    question_type: MCQ
+    prompt_file: scripts/pipelines/generate_questions/prompts/mcq_master_prompt_v1.txt
+    source_text_files:
+    - - data/06_books/deathly_hallows_chapter_30.txt
+      - data/06_books/deathly_hallows_chapter_31.txt
+    source_info:
+    - deathly_hallows Chapter 30
+    - deathly_hallows Chapter 31
+    output_files:
+    - /Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/scripts/research/question_generation/tracer_dataset_generation/llm_outputs/phase2_tracer_v0_synthetic_generation_MCQ_deathly_hallows_ch30_31_candidate_1.json
+    model_parameters:
+      temperature: 0.7
+    metrics:
+      response_time_seconds: 21.73
+      finish_reason: STOP
+      prompt_feedback: ''
+      tokens:
+        input_cached: 1178
+        input_uncached: 17555
+        output: 1311
+        total: 23694
+    status: completed
+    notes: 'Automated run for MCQ, deathly_hallows, chapters 30-31, using mcq prompt version v1.'
+    status_history:
+    - status: completed
+      timestamp: '2026-02-06T21:43:05.870593+00:00'
+    - status: completed
+      timestamp: '2026-02-06T22:44:42.207825+00:00'
+  - version: MCQ_deathly_hallows_ch32_33
+    question_type: MCQ
+    prompt_file: scripts/pipelines/generate_questions/prompts/mcq_master_prompt_v1.txt
+    source_text_files:
+    - - data/06_books/deathly_hallows_chapter_32.txt
+      - data/06_books/deathly_hallows_chapter_33.txt
+    source_info:
+    - deathly_hallows Chapter 32
+    - deathly_hallows Chapter 33
+    output_files:
+    - /Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/scripts/research/question_generation/tracer_dataset_generation/llm_outputs/phase2_tracer_v0_synthetic_generation_MCQ_deathly_hallows_ch32_33_candidate_1.json
+    model_parameters:
+      temperature: 0.7
+    metrics:
+      response_time_seconds: 26.26
+      finish_reason: STOP
+      prompt_feedback: ''
+      tokens:
+        input_cached: 1178
+        input_uncached: 18432
+        output: 1302
+        total: 25224
+    status: completed
+    notes: 'Automated run for MCQ, deathly_hallows, chapters 32-33, using mcq prompt version v1.'
+    status_history:
+    - status: completed
+      timestamp: '2026-02-06T21:44:41.762626+00:00'
+    - status: completed
+      timestamp: '2026-02-06T22:46:13.551962+00:00'
+  - version: MCQ_deathly_hallows_ch34_35
+    question_type: MCQ
+    prompt_file: scripts/pipelines/generate_questions/prompts/mcq_master_prompt_v1.txt
+    source_text_files:
+    - - data/06_books/deathly_hallows_chapter_34.txt
+      - data/06_books/deathly_hallows_chapter_35.txt
+    source_info:
+    - deathly_hallows Chapter 34
+    - deathly_hallows Chapter 35
+    output_files:
+    - /Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/scripts/research/question_generation/tracer_dataset_generation/llm_outputs/phase2_tracer_v0_synthetic_generation_MCQ_deathly_hallows_ch34_35_candidate_1.json
+    model_parameters:
+      temperature: 0.7
+    metrics:
+      response_time_seconds: 22.19
+      finish_reason: STOP
+      prompt_feedback: ''
+      tokens:
+        input_cached: 1178
+        input_uncached: 11445
+        output: 1148
+        total: 17596
+    status: completed
+    notes: Automated run for MCQ, deathly_hallows, chapters 34-35, using mcq prompt version v1.
+    status_history:
+    - status: completed
+      timestamp: '2026-02-06T21:46:06.524660+00:00'
+    - status: completed
+      timestamp: '2026-02-06T22:47:40.834926+00:00'

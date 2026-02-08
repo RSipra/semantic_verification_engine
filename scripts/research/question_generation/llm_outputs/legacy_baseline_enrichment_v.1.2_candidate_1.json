@@ -1,0 +1,252 @@
+{
+  "597": {
+    "question_id": 597,
+    "question_type": "EX",
+    "question": "What does the Philosopher’s Stone do?",
+    "answer": "It produces the Elixir of Life, granting immortality, and can turn any metal into pure gold.",
+    "hint_1": "This legendary artifact is sought for its two extraordinary magical properties.",
+    "hint_2": "One of its powers relates to extending life, while the other involves a transformative metallic ability.",
+    "hint_3": "It can endlessly create a potion that prevents death and also transmute base elements into a precious noble one.",
+    "explanation": "The Philosopher's Stone is a mythical alchemical substance with two primary powers. It can be used to create the Elixir of Life, which grants the drinker immortality. Additionally, it has the ability to transmute any metal into pure gold.",
+    "answer_variations": [
+      "Produces Elixir of Life and turns metal to gold",
+      "Grants immortality and creates gold",
+      "Makes Elixir of Life and transmutes metals"
+    ]
+  },
+  "677": {
+    "question_id": 677,
+    "question_type": "FR",
+    "question": "During the Second Task of the Triwizard Tournament, what fiercely protective and intelligent magical species presented a formidable obstacle to champions attempting to retrieve their hostages",
+    "answer": "Merpeople",
+    "hint_1": "This task took place in the Black Lake.",
+    "hint_2": "These beings live underwater and have fish-like features.",
+    "hint_3": "They are the ancient, aquatic inhabitants of the Hogwarts lake, known for their haunting songs.",
+    "explanation": "During the Second Task, the champions had to retrieve their hostages from the depths of the Black Lake. The Merpeople, native inhabitants of the lake, fiercely guarded the hostages and tested the champions' magical abilities underwater.",
+    "answer_variations": [
+      "Merpeople",
+      "Merfolk",
+      "The Merpeople"
+    ]
+  },
+  "347": {
+    "question_id": 347,
+    "question_type": "FR",
+    "question": "What animal is Dolores Umbridge obsessed with?",
+    "answer": "Cats (specifically, kittens)",
+    "hint_1": "Her office is filled with decorative plates featuring this creature.",
+    "hint_2": "She has a particular fondness for the young of this common household pet.",
+    "hint_3": "Images of these small, furry felines adorn almost every surface in her personal space.",
+    "explanation": "Dolores Umbridge's office and personal items are famously decorated with images of cats, particularly kittens. This obsession contrasts sharply with her cruel and prejudiced personality, creating a facade of sweetness.",
+    "answer_variations": [
+      "Cats",
+      "Kittens",
+      "Felines"
+    ]
+  },
+  "682": {
+    "question_id": 682,
+    "question_type": "FR",
+    "question": "What is the effect of the Stupefy spell?",
+    "answer": "Stuns the target",
+    "hint_1": "It's a common spell used in duels to incapacitate an opponent.",
+    "hint_2": "When hit by this spell, a person usually becomes immobile and unconscious.",
+    "hint_3": "The spell's main purpose is to render its target temporarily senseless and unable to move.",
+    "explanation": "The Stupefy spell, also known as the Stunning Spell, is a widely used jinx. Its effect is to stun the target, rendering them unconscious and immobile, making it a valuable spell for subduing opponents in magical combat.",
+    "answer_variations": [
+      "Stuns target",
+      "To stun",
+      "Renders unconscious",
+      "Knocks out the target"
+    ]
+  },
+  "428": {
+    "question_id": 428,
+    "question_type": "FR",
+    "question": "Who killed Sirius Black?",
+    "answer": "Bellatrix Lestrange",
+    "hint_1": "This individual is a fanatical Death Eater and a close follower of the Dark Lord.",
+    "hint_2": "She is a notoriously cruel witch and a member of the Black family, making her a cousin of the victim.",
+    "hint_3": "During a fierce battle in the Department of Mysteries, she sent him through the Veil.",
+    "explanation": "Sirius Black was killed by his cousin, Bellatrix Lestrange, during the Battle of the Department of Mysteries. She hit him with a Killing Curse, sending him through the Veil in the Death Chamber, which resulted in his death.",
+    "answer_variations": [
+      "Bellatrix",
+      "Lestrange",
+      "Ms. Lestrange"
+    ]
+  },
+  "184": {
+    "question_id": 184,
+    "question_type": "FR",
+    "question": "What kind of wood is Harry's first wand made out of?",
+    "answer": "Holly",
+    "hint_1": "This wood is traditionally associated with protection and good fortune.",
+    "hint_2": "It's a common plant, especially seen during winter holidays.",
+    "hint_3": "Known for its distinctive red berries and spiky green leaves.",
+    "explanation": "Harry Potter's first wand was made of holly wood with a phoenix feather core. Holly wood is said to choose owners who are destined for a dangerous quest, and it's considered protective.",
+    "answer_variations": [
+      "Holly wood",
+      "A holly tree"
+    ]
+  },
+  "261": {
+    "question_id": 261,
+    "question_type": "FR",
+    "question": "What effect does diluted Swooping Evil venom have?",
+    "answer": "Erases bad memories",
+    "hint_1": "Newt Scamander uses this substance to alter people's recollections.",
+    "hint_2": "It's a powerful agent used to remove specific unpleasant experiences from someone's mind.",
+    "hint_3": "Its magical property is to selectively wipe away distressing past events from a person's consciousness.",
+    "explanation": "Diluted Swooping Evil venom has the unique magical property of erasing bad memories. Newt Scamander famously uses it to help Muggles forget traumatic events they witnessed, particularly those involving magical creatures and incidents.",
+    "answer_variations": [
+      "Erases memories",
+      "Removes bad memories",
+      "Memory erasure",
+      "Wipes bad memories"
+    ]
+  },
+  "310": {
+    "question_id": 310,
+    "question_type": "FR",
+    "question": "Harry was raised by his mother’s sister. What was his aunt named?",
+    "answer": "Petunia",
+    "hint_1": "She is married to Vernon Dursley.",
+    "hint_2": "This aunt harbored a deep resentment for her magical sister.",
+    "hint_3": "She is known for her disdain for anything out of the ordinary and her exceptionally long neck.",
+    "explanation": "Harry Potter was famously raised by his maternal aunt, Petunia Dursley, his mother Lily's sister. Despite her animosity towards magic and her sister, she reluctantly took Harry in after his parents' deaths, fulfilling Dumbledore's protection charm.",
+    "answer_variations": [
+      "Petunia Dursley",
+      "Aunt Petunia"
+    ]
+  },
+  "31": {
+    "question_id": 31,
+    "question_type": "FR",
+    "question": "Where is Hogwarts located?",
+    "answer": "Scotland",
+    "hint_1": "The school is in a mountainous region of the United Kingdom.",
+    "hint_2": "It's famously hidden in the highlands of a country known for its lochs.",
+    "hint_3": "This country is renowned for its ancient castles, bagpipes, and vast, wild landscapes.",
+    "explanation": "Hogwarts School of Witchcraft and Wizardry is located in the Highlands of Scotland. Its remote, mountainous setting helps keep the magical school hidden from Muggles and contributes to its mystical atmosphere.",
+    "answer_variations": [
+      "In Scotland",
+      "Scottish Highlands"
+    ]
+  },
+  "741": {
+    "question_id": 741,
+    "question_type": "EX",
+    "question": "What was the deeper significance of Dumbledore bequeathing the Deluminator to Ron Weasley?",
+    "answer": "Beyond putting out lights, its true purpose was one of guidance. Dumbledore enchanted it so that when Ron was lost, it would reveal a path of light to lead him back to his friends, showing Dumbledore's faith in Ron's loyalty",
+    "hint_1": "Consider Ron's emotional struggles and eventual departure from his friends during their quest.",
+    "hint_2": "Dumbledore understood Ron's insecurities and his tendency to feel overlooked.",
+    "hint_3": "The device was designed to literally and symbolically bring him back to where he truly belonged, highlighting the importance of his presence.",
+    "explanation": "Dumbledore knew Ron would struggle with feelings of inadequacy and potentially abandon Harry and Hermione. The Deluminator was enchanted to guide Ron back to his friends when he was lost, symbolizing Dumbledore's profound faith in Ron's loyalty and his crucial role within the trio.",
+    "answer_variations": [
+      "It guided Ron back to his friends",
+      "Dumbledore's faith in Ron's loyalty and guidance",
+      "To show Ron the way back when he was lost",
+      "A tool of guidance for Ron's return"
+    ]
+  },
+  "665": {
+    "question_id": 665,
+    "question_type": "MCQ",
+    "question": "Who betrays Lily and James Potter:",
+    "answer": "Wormtail",
+    "mcq_options": [
+      "Moony",
+      "Professor Snape",
+      "Padfoot",
+      "Wormtail"
+    ],
+    "hint_1": "Think about the Secret-Keeper for the Fidelius Charm.",
+    "hint_2": "One of the Marauders secretly switched allegiance to the Dark Lord.",
+    "hint_3": "He was thought to be dead for many years and lived disguised as a common pet.",
+    "explanation": "Wormtail, whose real name is Peter Pettigrew, was the Secret-Keeper for the Potters. He betrayed them to Voldemort, leading to their deaths. He then faked his own death, framing Sirius Black for the crime.",
+    "answer_variations": [
+      "Peter Pettigrew",
+      "Pettigrew"
+    ]
+  },
+  "622": {
+    "question_id": 622,
+    "question_type": "MCQ",
+    "question": "Which of the following transformations would be considered the easiest due to the similarity in form between the two objects:",
+    "answer": "Porcupine to Pincushion",
+    "mcq_options": [
+      "Human to Ferret",
+      "Teapot to Tortoise",
+      "Desk to Pig",
+      "Porcupine to Pincushion"
+    ],
+    "hint_1": "Consider the fundamental principle in Transfiguration: the degree of change required.",
+    "hint_2": "Transformations are less difficult when the original object and the target object share many characteristics.",
+    "hint_3": "Look for the pair where the final form closely resembles the starting form in terms of shape, texture, or basic function.",
+    "explanation": "In Transfiguration, the closer the resemblance between the original object and the desired transformed object, the easier the spell is to perform. A porcupine already shares many characteristics with a pincushion, such as being spiky and somewhat round, making this the simplest transformation among the choices.",
+    "answer_variations": [
+      "Pincushion",
+      "Porcupine"
+    ]
+  },
+  "633": {
+    "question_id": 633,
+    "question_type": "MCQ",
+    "question": "Which of these plants doesn't bite:",
+    "answer": "Whomping Willow",
+    "mcq_options": [
+      "Fanged Geranium",
+      "Venomous Tentacula",
+      "Whomping Willow",
+      "Mandrake"
+    ],
+    "hint_1": "Consider which plant is known for a different, more general form of aggression than biting.",
+    "hint_2": "This particular plant uses its large branches for physical attacks, not a mouth or teeth.",
+    "hint_3": "It's a notorious, very large tree on the Hogwarts grounds that violently attacks anything within its reach.",
+    "explanation": "The Whomping Willow is known for its violent thrashing branches, which physically strike anything that comes too close. Unlike the Fanged Geranium or Venomous Tentacula, it doesn't have fangs or mouths to bite. Mandrakes, while dangerous, scream rather than bite.",
+    "answer_variations": [
+      "Willow",
+      "The Whomping Willow"
+    ]
+  },
+  "605": {
+    "question_id": 605,
+    "question_type": "MCQ",
+    "question": "Which of the following was NOT a breed of dragon faced by the Triwizard Tournament champions:",
+    "answer": "Norwegian Ridgeback",
+    "mcq_options": [
+      "Hungarian Horntail",
+      "Chinese Fireball",
+      "Swedish Short-Snout",
+      "Norwegian Ridgeback"
+    ],
+    "hint_1": "Recall the four specific dragon breeds that were used in the First Task of the Triwizard Tournament.",
+    "hint_2": "Think about which dragon Harry Potter himself faced in the challenge.",
+    "hint_3": "One of these dragons is famously known from a different storyline involving Hagrid's attempt to raise a baby dragon.",
+    "explanation": "The four dragon breeds faced by the Triwizard champions were the Hungarian Horntail, Chinese Fireball, Swedish Short-Snout, and Welsh Green. The Norwegian Ridgeback, while a known breed, was not part of the tournament challenge; it was the breed of Hagrid's baby dragon, Norbert.",
+    "answer_variations": [
+      "Ridgeback",
+      "Norwegian"
+    ]
+  },
+  "561": {
+    "question_id": 561,
+    "question_type": "MCQ",
+    "question": "Which of the following plants is known for its tendency to slap people:",
+    "answer": "Bouncing Bulbs",
+    "mcq_options": [
+      "Fanged Geranium",
+      "Bubotuber",
+      "Bouncing Bulbs",
+      "Snargaluff"
+    ],
+    "hint_1": "Consider which plant is characterized by erratic, aggressive physical movements.",
+    "hint_2": "This plant is often difficult to handle in Herbology class because of its unpredictable strikes.",
+    "hint_3": "Its name directly describes its primary physical characteristic and aggressive action.",
+    "explanation": "Bouncing Bulbs are known for their lively and aggressive nature, often attempting to strike or 'slap' anyone who approaches them. They require careful handling, as demonstrated in various Herbology lessons.",
+    "answer_variations": [
+      "Bulbs",
+      "Bouncing"
+    ]
+  }
+}

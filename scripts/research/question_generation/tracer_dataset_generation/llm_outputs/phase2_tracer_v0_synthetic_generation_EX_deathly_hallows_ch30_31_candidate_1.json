@@ -1,0 +1,92 @@
+[
+  {
+    "question_type": "Explanatory (Why/How)",
+    "category": "Character Arc/Motive",
+    "difficulty": "Hard",
+    "question": "Why did Helena Ravenclaw, the Gray Lady, reveal the location of her mother's lost diadem to Tom Riddle, but not to Dumbledore or Flitwick?",
+    "answer": "She confessed to Riddle because he was flattering, seemed to understand her, and sympathized with her story, unlike Dumbledore or Flitwick who likely asked for practical reasons.",
+    "answer_variations": [
+      "Helena disclosed the diadem's location to Tom Riddle because he exhibited charm and appeared to comprehend and empathize with her tale.",
+      "Riddle's ability to flatter and feign understanding of her personal history led the Gray Lady to confide in him, a vulnerability Dumbledore and Flitwick did not exploit.",
+      "The Gray Lady was swayed by Tom Riddle's deceptive sympathy and flattering demeanor, which enabled him to extract the secret of the lost diadem.",
+      "She revealed the secret to him because he was charismatic and seemed to grasp her motivations, a quality she did not perceive in other inquirers like Dumbledore."
+    ],
+    "source_reference": "deathly_hallows Chapter 30",
+    "source_quote": "You've already told someone this story, haven't you? Another student?She closed her eyes and nodded.I had... no idea... He was flattering. He seemed to... understand... to sympathize..."
+  },
+  {
+    "question_type": "Explanatory (Why/How)",
+    "category": "Plot Event",
+    "difficulty": "Easy",
+    "question": "How did Ron and Hermione manage to destroy Hufflepuff's cup Horcrux?",
+    "answer": "Ron had the idea to go to the Chamber of Secrets, where he opened it using Parseltongue (mimicking Harry's sound from the locket), and Hermione stabbed the cup with a basilisk fang.",
+    "answer_variations": [
+      "The Hufflepuff cup was destroyed when Ron, using Parseltongue to open the Chamber of Secrets, allowed Hermione to stab it with a basilisk fang.",
+      "Hermione pierced the Horcrux cup with a basilisk's fang inside the Chamber of Secrets, which Ron accessed by imitating Harry's Parseltongue.",
+      "Ron conceived the plan to use a basilisk fang from the Chamber of Secrets; he opened the chamber entrance with a Parseltongue imitation, and Hermione carried out the destruction.",
+      "After Ron successfully mimicked Parseltongue to enter the Chamber of Secrets, Hermione used a fang from the deceased basilisk to puncture and eliminate the cup."
+    ],
+    "source_reference": "deathly_hallows Chapter 31",
+    "source_quote": "It was Ron, all Ron's idea! said Hermione breathlessly. Wasnt it absolutely brilliant? There we were, after we left, and I said to Ron, even if we find the other one, how are we going to get rid of it? We still hadnt got rid of the cup! And then he thought of it! The basilisk!Something to get rid of Horcruxes, said Ron simply.Harry's eyes dropped to the objects clutched in Ron and Hermiones arms: great curved fangs; torn, he now realized, from the skull of a dead basilisk.But how did you get in there? he asked, staring from the fangs to Ron. You need to speak Parseltongue!He did! whispered Hermione. Show him, Ron!Ron made a horrible strangled hissing noise.Its what you did to open the locket, he told Harry apologetically. I had to have a few goes to get it right, but, he shrugged modestly, we got there in the end.He was amazing! said Hermione. Amazing!So we're another Horcrux down, said Ron, and from under his jacket he pulled the mangled remains of Hufflepuff's cup. Hermione stabbed it. Thought she should. She hasn't had the pleasure yet."
+  },
+  {
+    "question_type": "Explanatory (Why/How)",
+    "category": "Character Arc/Motive",
+    "difficulty": "Medium",
+    "question": "Why did Ron Weasley insist they should tell the house-elves to evacuate from Hogwarts during the battle?",
+    "answer": "Ron believed they shouldn't order the house-elves to die for them, expressing a desire to avoid another tragedy like Dobby's death.",
+    "answer_variations": [
+      "He felt it was wrong to command the house-elves to sacrifice their lives, wanting to prevent a repeat of Dobby's fate.",
+      "Ron wanted the house-elves to be safe, stating that they shouldn't compel them to perish in the conflict.",
+      "His motivation was to protect the house-elves from harm, asserting that they should not be forced into a deadly battle.",
+      "To prevent any house-elves from dying in the war, like Dobby, Ron insisted they be told to evacuate."
+    ],
+    "source_reference": "deathly_hallows Chapter 31",
+    "source_quote": "The house-elves, they'll all be down in the kitchen, won't they?You mean we ought to get them fighting? asked Harry.No, said Ron seriously, I mean we should tell them to get out. We don't want anymore Dobbies, do we? We can't order them to die for us ¨C"
+  },
+  {
+    "question_type": "Explanatory (Why/How)",
+    "category": "Character Arc/Motive",
+    "difficulty": "Medium",
+    "question": "Why did Crabbe ignore Draco Malfoy's warning and use the Fiendfyre curse inside the Room of Requirement?",
+    "answer": "Crabbe was furious with Malfoy and asserted his independence, stating he no longer took orders from Draco and that he cared more about getting Potter dead for the Dark Lord than preserving the diadem or the room.",
+    "answer_variations": [
+      "Crabbe, enraged by Malfoy, declared he was no longer bound by Draco's commands and prioritized killing Harry Potter for Voldemort over saving the diadem.",
+      "He defied Malfoy's instruction, driven by a desire to prove his loyalty to the Dark Lord by eliminating Harry, regardless of the consequences to the diadem or the Room.",
+      "His actions stemmed from a rebellious anger towards Malfoy, as he felt he was no longer subservient and was solely focused on pleasing Voldemort by killing Harry.",
+      "Crabbe refused Malfoy's command, motivated by a fierce loyalty to Voldemort and the belief that Potter's death was more important than anything else."
+    ],
+    "source_reference": "deathly_hallows Chapter 31",
+    "source_quote": "What's that matter? said Crabbe, tugging himself free. It's Potter the Dark Lord wants, who cares about a die-dum?Potter came in here to get it, said Malfoy with ill-disguised impatience at the slow-wittedness of his colleagues. so that must mean ¨C 'Must mean'? Crabbe turned on Malfoy with undisguised ferocity. Who cares what you think? I don't take your orders no more, Draco. You an' your dad are finished."
+  },
+  {
+    "question_type": "Explanatory (Why/How)",
+    "category": "Plot Event",
+    "difficulty": "Medium",
+    "question": "How did Harry suddenly realize the exact hiding place of the diadem Horcrux within Hogwarts Castle?",
+    "answer": "He recalled seeing a marble bust of Rowena Ravenclaw with a headdress at Xenophilius's, a statue in Ravenclaw Tower with a diadem, and then remembered a third stone effigy of an ugly old warlock where he had once hidden his old Potions book.",
+    "answer_variations": [
+      "Harry connected the memory of Rowena Ravenclaw's bust at Xenophilius's, a Ravenclaw Tower statue, and an old warlock effigy in the Room of Requirement where he previously hid his Potions book.",
+      "The realization came from remembering three specific stone figures: Rowena Ravenclaw's bust, the Ravenclaw Tower statue, and the warlock statue in the Room of Hidden Things where he'd hidden his book.",
+      "He pieced together the clue by recalling the marble bust at Xenophilius Lovegood's, the Ravenclaw Tower statue, and the warlock's effigy in the Room of Requirement, where he'd hidden his schoolbook.",
+      "Harry's mind connected three visual cues: a bust of Ravenclaw at Xenophilius's, a statue in Ravenclaw Tower, and the familiar warlock statue in the Room of Requirement, which he knew as a hiding spot."
+    ],
+    "source_reference": "deathly_hallows Chapter 30",
+    "source_quote": "Its ugly stone face made Harry think suddenly of the marble bust of Rowena Ravenclaw at Xenophilius's house, wearing that mad headdress ¨C and then of the statue in Ravenclaw Tower, with the stone diadem upon her white curls....And as he reached the end of the passage, the memory of a third stone effigy came back to him: that of an ugly old warlock, onto whose head Harry himself had placed a wig and a battered old hat. The shock shot through Harry with the heat of firewhisky, and he nearly stumbled.He knew, at least, where the Horcrux sat waiting for him...."
+  },
+  {
+    "question_type": "Explanatory (Why/How)",
+    "category": "Plot Event",
+    "difficulty": "Medium",
+    "question": "Why did Professor McGonagall instruct Filch to find Peeves during the preparations for battle at Hogwarts?",
+    "answer": "She ordered Filch to find Peeves so the poltergeist could be enlisted to help defend the school, despite Filch's bewilderment at the request.",
+    "answer_variations": [
+      "Professor McGonagall commanded Filch to locate Peeves, intending to utilize the poltergeist's disruptive abilities in the school's defense.",
+      "Her instruction to Filch was to fetch Peeves, recognizing that the poltergeist could contribute to the castle's protection during the impending attack.",
+      "Despite Filch's surprise, McGonagall tasked him with finding Peeves to recruit the poltergeist for a constructive role in defending Hogwarts.",
+      "McGonagall wanted Peeves to assist in securing the school, directing Filch to bring the poltergeist for active duty against the invaders."
+    ],
+    "source_reference": "deathly_hallows Chapter 30",
+    "source_quote": "Now go and do something constructive! Find Peeves!P-Peeves? stammered Filch as though he had never heard the name before.Yes, Peeves, you fool, Peeves! Haven't you been complaining about him for a quarter of a century? Go and fetch him, at once."
+  }
+]

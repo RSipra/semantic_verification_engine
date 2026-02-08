@@ -1,0 +1,92 @@
+[
+  {
+    "question_type": "multiple choice (MCQ)",
+    "category": "Spell/Charm",
+    "question": "What was Luna Lovegood's initial reaction to successfully stunning Alecto Carrow?",
+    "options": [
+      "She was surprised by the spell's effectiveness on a Death Eater.",
+      "She noted it was noisier than expected, having only used the spell in D.A. lessons.",
+      "She worried about waking other Ravenclaws with the noise.",
+      "She expressed mild disappointment that Alecto didn't stay conscious."
+    ],
+    "answer": "She noted it was noisier than expected, having only used the spell in D.A. lessons.",
+    "difficulty": "Medium",
+    "source_reference": "deathly_hallows Chapter 30",
+    "source_quote": "I've never Stunned anyone except in our D.A. lessons,\" said Luna, sounding mildly interested. \"That was noisier than I though it would be."
+  },
+  {
+    "question_type": "multiple choice (MCQ)",
+    "category": "Location/Setting",
+    "question": "What was Professor McGonagall's correct answer to the Ravenclaw common room door knocker's riddle, \"Where do Vanished objects go?\"",
+    "options": [
+      "They return to their original components.",
+      "Into non being, which is to say, everything.",
+      "To a state of magical limbo, awaiting recall.",
+      "Nowhere, they cease to exist."
+    ],
+    "answer": "Into non being, which is to say, everything.",
+    "difficulty": "Easy",
+    "source_reference": "deathly_hallows Chapter 30",
+    "source_quote": "\"Where do Vanished objects go?\"\"Into non being, which is to say, everything,\" replied Professor McGonagall."
+  },
+  {
+    "question_type": "multiple choice (MCQ)",
+    "category": "Creature/Beast",
+    "question": "What form did Professor McGonagall's Patronus take when she sent it to alert the other Heads of House?",
+    "options": [
+      "A single, powerful lynx.",
+      "A shimmering silver griffin.",
+      "Three silver cats with spectacle markings around their eyes.",
+      "A majestic tiger, her Animagus form."
+    ],
+    "answer": "Three silver cats with spectacle markings around their eyes.",
+    "difficulty": "Medium",
+    "source_reference": "deathly_hallows Chapter 30",
+    "source_quote": "From the tip burst three silver cats with spectacle markings around their eyes. the Patronuses ran sleekly ahead, filling the spiral staircase with silvery light, as Professor McGonagall, Harry, and Luna hurried back down."
+  },
+  {
+    "question_type": "multiple choice (MCQ)",
+    "category": "Object/Potion",
+    "question": "What specific object did Ron and Hermione retrieve from the Chamber of Secrets to destroy Horcruxes?",
+    "options": [
+      "Basilisk fangs",
+      "A vial of potent venom",
+      "Gryffindor's sword",
+      "A cursed dagger"
+    ],
+    "answer": "Basilisk fangs",
+    "difficulty": "Easy",
+    "source_reference": "deathly_hallows Chapter 31",
+    "source_quote": "Harry's eyes dropped to the objects clutched in Ron and Hermione's arms: great curved fangs; torn, he now realized, from the skull of a dead basilisk."
+  },
+  {
+    "question_type": "multiple choice (MCQ)",
+    "category": "Spell/Charm",
+    "question": "What extremely dangerous cursed fire spell did Crabbe unleash in the Room of Requirement?",
+    "options": [
+      "Incendio Maxima",
+      "Confringo Inferno",
+      "Fiendfyre",
+      "Ignis Maleficus"
+    ],
+    "answer": "Fiendfyre",
+    "difficulty": "Medium",
+    "source_reference": "deathly_hallows Chapter 31",
+    "source_quote": "It was not normal fire; Crabbe had used a curse of which Harry had no knowledge. ... \"It must have been Fiendfyre!\" whimpered Hermione, her eyes on the broken piece. \"Sorry?\" \"Fiendfyre ¨C cursed fire ¨C it's one of the substances that destroy Horcruxes, but I would never, ever have dared use it, it's so dangerous ¨C how did Crabbe know how to ¨C?\""
+  },
+  {
+    "question_type": "multiple choice (MCQ)",
+    "category": "Object/Potion",
+    "question": "What inscription was etched upon the lost Diadem of Ravenclaw?",
+    "options": [
+      "KNOWLEDGE IS POWER.",
+      "CREATIVITY AND WISDOM ABOVE ALL.",
+      "WIT BEYOND MEASURE IS MAN'S GREATEST TREASURE.",
+      "THE MIND IS THE GREATEST WEAPON."
+    ],
+    "answer": "WIT BEYOND MEASURE IS MAN'S GREATEST TREASURE.",
+    "difficulty": "Hard",
+    "source_reference": "deathly_hallows Chapter 31",
+    "source_quote": "He pulled the diadem from his wrist and held it up. It was still hot, blackened with soot, but as he looked at it closely he was just able to make out the tiny words etched upon it; WIT BEYOND MEASURE IS MAN'S GREATEST TREASURE."
+  }
+]
