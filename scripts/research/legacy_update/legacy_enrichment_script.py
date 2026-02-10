@@ -22,13 +22,13 @@ def setup_file_paths()-> dict:
     script_path = Path(__file__).resolve()
     # Go up 3 levels:    legacy_update -> research -> scripts -> root
     project_root = script_path.parents[3]
-    output_dir = project_root / 'scripts/research/legacy_update/tracer_llm_responses'
+    output_dir = project_root / 'scripts/research/question_generation/tracer_dataset_generation/llm_outputs/03_enriched _context_var'
     # future-proofing to ensure the directory exists
     output_dir.mkdir(parents=True, exist_ok=True)
     return {
     'project_root' : project_root, 
     'config' : project_root / 'config.env',
-    'yaml' : project_root / 'scripts/research/legacy_update/phase2_tracer_v0_ans_context_variations.yaml',
+    'yaml' : project_root / 'scripts/research/question_generation/tracer_dataset_generation/phase2_tracer_v0_synthetic_enrichment_context.yaml',
     'output_dir': output_dir,
     }
 
@@ -50,39 +50,61 @@ def configure_api(config_path:str) -> None:
 #4. prepare the prompt
 def prepare_prompt(run_config: dict, paths: dict) -> tuple[str, str]:
     """
-    Assembles the prompt by injecting batch data into a master template.
-    Expects 'prompt_file' and 'data_file' to be full relative paths in YAML.
-    Args:
-        run_config (dict): The configuration dictionary for the specific run,
-            loaded from the YAML file. Expected to contain 'prompt_file' and
-            'source_text_files' keys.
-        paths (dict): A dictionary containing key file paths, including the
-            'project_root'.
-    Returns:
-        final_prompt: The fully formatted prompt string.
-        prompt_template: The prompt template string (without source text filled in) for 
-            token counting (cached input).
+    ssembles the final LLM prompt by injecting batch data into a master template.
 
+    This method supports both single-file (Legacy) and multi-file (Synthetic chunking) 
+    workflows. It normalizes the 'data_file' input, reads the contents from the 
+    filesystem, and joins multiple batches with double newlines to maintain 
+    structural clarity for the model's tokenizer.
+
+    Args:
+        run_config (dict): Configuration for the specific experiment run. 
+            Expects:
+                - 'prompt_file' (str): Relative path to the .txt template.
+                - 'data_file' (str | list): A single relative path string or a 
+                  list of relative path strings to JSON batch files.
+        paths (dict): Environment path mapping. 
+            Expects:
+                - 'project_root' (Path): The base directory for resolving relative paths.
+    Returns:
+        tuple[str, str]: 
+            - final_prompt: The template with '{question_batch}' replaced by data.
+            - prompt_template: The raw template string used for cached token counting.
+    Raises:
+        ValueError: If the prompt template or any of the data files are missing or empty.
     """
     # Get the project root from the 'paths' dictionary
     project_root = paths['project_root']
-    # get the prompt template location for the specific experiment run and read it
+    # 1. Load Prompt Template
     prompt_template_path = project_root / run_config['prompt_file']
     prompt_template = prompt_template_path.read_text(encoding="utf-8")
-    # Integrity checks for the prompt template from unit testing
-    #1. incase the prompt template is empty
+    
     if not prompt_template or prompt_template.isspace():
         raise ValueError(f"Prompt template file is empty: {run_config['prompt_file']}")
-    
-    # get the legacy data batch file and read it
-    batch_data = (project_root / run_config['data_file']).read_text(encoding="utf-8")
-    #2, incase the batch data is empty
-    if not batch_data or batch_data.isspace():
-        raise ValueError(f"Batch data file is empty: {run_config['data_file']}")
 
-    # Inject data into Master
-    final_prompt = prompt_template.replace("{question_batch}", batch_data)
-    
+    # 2. Normalize and Load Data File(s)
+    data_entries = run_config['data_file']
+    # If it's a string (Legacy/Batch Size 1), wrap it in a list
+    if isinstance(data_entries, str):
+        data_entries = [data_entries]
+
+    all_batch_content = []
+
+    for entry in data_entries:
+        file_path = project_root / entry
+        content = file_path.read_text(encoding="utf-8")
+
+        if not content or content.isspace():
+            raise ValueError(f"Batch data file is empty: {entry}")
+   
+        all_batch_content.append(content)
+
+    # 3. Join contents (using a newline to keep JSON blocks distinct)
+    combined_batch_data = "\n\n".join(all_batch_content)
+
+    # 4. Inject data into Master
+    final_prompt = prompt_template.replace("{question_batch}", combined_batch_data)
+
     return final_prompt, prompt_template
 
 #5. Get an estimate of the template's token count BEFORE the call

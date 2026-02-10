@@ -1,7 +1,7 @@
 metadata:
   project: 'Semantic Verification Engine (Ref. Implementation: Harry Potter Trivia)'
   owner: reema sipra
-  description: Phase  2 Tracer build, Legacy dataset enrichment with LLM to match standard schema
+  description: Phase  2 Tracer build, Legacy dataset enrichment with LLM to match standard schema - additional prompt for answer context / semantic variations
   question_types:
   - MCQ
   - FR

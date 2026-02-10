@@ -1,0 +1,242 @@
+[
+  {
+    "question_id": "SYN_000",
+    "question_type": "EX",
+    "question": "Why did Helena Ravenclaw, the Gray Lady, reveal the location of her mother's lost diadem to Tom Riddle, but not to Dumbledore or Flitwick?",
+    "answer": "She confessed to Riddle because he was flattering, seemed to understand her, and sympathized with her story, unlike Dumbledore or Flitwick who likely asked for practical reasons.",
+    "hint_1": "Consider how Tom Riddle typically manipulated others to gain information about powerful artifacts.",
+    "hint_2": "The difference lay in Riddle's emotional approach, which contrasted with the more practical inquiries of the Hogwarts professors.",
+    "hint_3": "The ghost was susceptible to appeals that validated her past choices and feelings, rather than purely rational inquiries about an object.",
+    "explanation": "Helena confessed to Riddle because he flattered her, seemed to understand her, and sympathized with her tragic story of theft and regret. This emotional manipulation differed significantly from how Dumbledore or Flitwick would likely have approached her, seeking information for practical reasons.",
+    "answer_variations": [
+      "[Comprehensive]: Helena confessed to Riddle because he flattered her, seemed to understand her, and sympathized with her tragic story, unlike others who sought practical information.",
+      "[Semantic Core]: Riddle's flattery and sympathy contrasted practical questions, earning Helena's trust.",
+      "[Key-Term Expansion]: Helena Ravenclaw, Tom Riddle, flattery, understanding, sympathy, reveal, diadem"
+    ]
+  },
+  {  
+  "question_id": "SYN_001",
+    "question_type": "EX",
+    "question": "How did Harry suddenly realize the exact hiding place of the diadem Horcrux within Hogwarts Castle?",
+    "answer": "He recalled seeing a marble bust of Rowena Ravenclaw with a headdress at Xenophilius's, a statue in Ravenclaw Tower with a diadem, and then remembered a third stone effigy of an ugly old warlock where he had once hidden his old Potions book.",
+    "hint_1": "Harry's memory of a seemingly insignificant past action was the key to his sudden realization.",
+    "hint_2": "He remembered hiding a specific school book in a particular place within Hogwarts.",
+    "hint_3": "Sometimes, the most important answers are found by revisiting small, forgotten moments or places of refuge.",
+    "explanation": "Harry realized the diadem's location by connecting various images of Ravenclaw's headdress with a specific ugly warlock effigy. He then remembered that he had once hidden his old Potions book on this very effigy in the Room of Requirement, pinpointing the Horcrux.",
+    "answer_variations": [
+      "[Comprehensive]: Harry recognized the diadem's location by remembering hiding his Potions book on a warlock effigy, linking it to Ravenclaw diadem imagery.",
+      "[Semantic Core]: Harry linked old Potions book hiding spot to diadem imagery.",
+      "[Key-Term Expansion]: Harry, diadem, Horcrux, Potions book, warlock effigy, Room of Requirement, Ravenclaw"
+    ]
+  },
+  {
+    "question_id": "SYN_002",
+    "question_type": "EX",
+    "question": "Why did Professor McGonagall instruct Filch to find Peeves during the preparations for battle at Hogwarts?",
+    "answer": "She ordered Filch to find Peeves so the poltergeist could be enlisted to help defend the school, despite Filch's bewilderment at the request.",
+    "hint_1": "Professor McGonagall was preparing Hogwarts for an unprecedented, full-scale confrontation.",
+    "hint_2": "Consider Peeves's usual behavior and his capacity for causing widespread disruption.",
+    "hint_3": "In dire circumstances, even the most troublesome elements can be directed towards a shared protective purpose.",
+    "explanation": "McGonagall, recognizing the dire situation, saw the potential in Peeves's disruptive nature. She wanted to enlist the poltergeist to cause chaos among the Death Eaters, effectively using his usual nuisance behavior to help defend the school during the battle.",
+    "answer_variations": [
+      "[Comprehensive]: McGonagall instructed Filch to find Peeves, enlisting the poltergeist's chaotic nature to help defend Hogwarts during the battle.",
+      "[Semantic Core]: McGonagall enlisted Peeves's chaos to defend Hogwarts.",
+      "[Key-Term Expansion]: McGonagall, Filch, Peeves, defend, Hogwarts, battle, poltergeist"
+    ]
+  },
+  {
+    "question_id": "SYN_003",
+    "question_type": "EX",
+    "question": "How did Ron and Hermione manage to destroy Hufflepuff's cup Horcrux?",
+    "answer": "Ron had the idea to go to the Chamber of Secrets, where he opened it using Parseltongue (mimicking Harry's sound from the locket), and Hermione stabbed the cup with a basilisk fang.",
+    "hint_1": "What unique, extremely potent magical item was found in the Chamber of Secrets, known for destroying Horcruxes?",
+    "hint_2": "Ron demonstrated an unexpected skill, mimicking a sound he'd heard before to open a hidden chamber.",
+    "hint_3": "Sometimes, the key to solving new problems lies in remembering lessons or capabilities from previous adventures.",
+    "explanation": "Ron cleverly realized they could use a basilisk fang, a known Horcrux-destroyer, from the Chamber of Secrets. He then demonstrated his ability to mimic Parseltongue to open the Chamber, allowing Hermione to use a fang to stab and destroy Hufflepuff's cup.",
+    "answer_variations": [
+      "[Comprehensive]: Ron suggested the Chamber of Secrets, opened it with Parseltongue, and Hermione used a basilisk fang to destroy Hufflepuff's cup Horcrux.",
+      "[Semantic Core]: Ron opened Chamber with Parseltongue; Hermione used basilisk fang.",
+      "[Key-Term Expansion]: Ron, Hermione, Chamber of Secrets, Parseltongue, basilisk fang, Hufflepuff's cup, Horcrux"
+    ]
+  },
+  {
+    "question_id": "SYN_004",
+    "question_type": "EX",
+    "question": "Why did Ron Weasley insist they should tell the house-elves to evacuate from Hogwarts during the battle?",
+    "answer": "Ron believed they shouldn't order the house-elves to die for them, expressing a desire to avoid another tragedy like Dobby's death.",
+    "hint_1": "Ron had a significant personal experience involving a house-elf's heroic sacrifice.",
+    "hint_2": "Recall a recent tragic event that deeply affected Ron, involving the loss of a dear friend.",
+    "hint_3": "The value of all lives, regardless of status, becomes paramount when facing grave danger and potential sacrifice.",
+    "explanation": "Ron's insistence stemmed from his newfound compassion and maturity, particularly after Dobby's death. He felt it was morally wrong to command the house-elves to fight and potentially die for them, expressing a strong desire to prevent further unnecessary casualties.",
+    "answer_variations": [
+      "[Comprehensive]: Ron believed house-elves shouldn't be ordered to die for them, wanting to prevent another tragedy like Dobby's death out of compassion.",
+      "[Semantic Core]: Ron protected house-elves, avoiding another Dobby-like tragedy.",
+      "[Key-Term Expansion]: Ron Weasley, house-elves, Dobby's death, evacuate, protect, compassion"
+    ]
+  },
+  {
+    "question_id": "SYN_005",
+    "question_type": "EX",
+    "question": "Why did Crabbe ignore Draco Malfoy's warning and use the Fiendfyre curse inside the Room of Requirement?",
+    "answer": "Crabbe was furious with Malfoy and asserted his independence, stating he no longer took orders from Draco and that he cared more about getting Potter dead for the Dark Lord than preserving the diadem or the room.",
+    "hint_1": "Crabbe's loyalty had shifted, and he was acting independently of Malfoy's usual command.",
+    "hint_2": "Crabbe prioritized capturing or killing Harry above all other objectives, regardless of the consequences.",
+    "hint_3": "Extreme devotion to a dark cause can lead individuals to disregard prudence and former allegiances.",
+    "explanation": "Crabbe, emboldened by his commitment to the Dark Lord and fed up with Malfoy's leadership, asserted his independence. He cared more about killing Harry Potter for Voldemort than following Malfoy's warnings or preserving the diadem or the Room of Requirement itself.",
+    "answer_variations": [
+      "[Comprehensive]: Crabbe, furious and asserting independence, ignored Malfoy, prioritizing killing Harry for the Dark Lord over preserving the diadem or Room.",
+      "[Semantic Core]: Crabbe defied Malfoy, prioritizing killing Harry for Voldemort.",
+      "[Key-Term Expansion]: Crabbe, Draco Malfoy, Fiendfyre, Room of Requirement, Dark Lord, Harry Potter, independence"
+    ]
+  },
+  {
+    "question_id": "SYN_006",
+    "question_type": "EX",
+    "question": "Why did Lord Voldemort order Nagini to kill Severus Snape in the Shrieking Shack during the Battle of Hogwarts?",
+    "answer": "Voldemort mistakenly believed that because Snape had killed Albus Dumbledore, Snape was the true master of the Elder Wand. To fully control the wand's power, Voldemort thought he needed to defeat Snape.",
+    "hint_1": "Voldemort was obsessed with truly mastering the most powerful wand in existence.",
+    "hint_2": "Voldemort believed the Elder Wand's allegiance transferred upon the death of its previous owner, and knew who had struck the fatal blow.",
+    "hint_3": "A literal-minded understanding of power transfers can lead to fatal miscalculations, especially concerning ancient magical artifacts.",
+    "explanation": "Voldemort mistakenly believed that the Elder Wand's allegiance transferred to Severus Snape when Snape killed Albus Dumbledore. To fully command the wand's power, Voldemort concluded he needed to defeat its perceived current master, leading him to order Snape's death.",
+    "answer_variations": [
+      "[Comprehensive]: Voldemort believed Snape was the Elder Wand's master after killing Dumbledore, thus needing Snape's defeat to control its full power.",
+      "[Semantic Core]: Voldemort mistakenly killed Snape, believing him Elder Wand's master.",
+      "[Key-Term Expansion]: Voldemort, Nagini, Snape, Elder Wand, Dumbledore, master, kill"
+    ]
+  },
+  {
+    "question_id": "SYN_007",
+    "question_type": "EX",
+    "question": "Why did Albus Dumbledore explicitly ask Severus Snape to kill him, rather than allowing Draco Malfoy to complete Voldemort's assignment?",
+    "answer": "Dumbledore wanted to protect Draco Malfoy's soul from the irreparable damage of committing murder. He believed Snape's soul was already complex and could better bear the burden, while also ensuring a swift and dignified end for himself.",
+    "hint_1": "Dumbledore often sought to shield young people from the darkest magical fates.",
+    "hint_2": "What are the spiritual consequences of committing murder for a young wizard's soul?",
+    "hint_3": "Dumbledore's plans often extended beyond immediate outcomes, considering the lasting impact on individuals' moral and spiritual well-being.",
+    "explanation": "Dumbledore asked Snape to kill him to protect Draco Malfoy's soul from the profound, irreparable damage of committing murder. He believed Snape's complex soul could better bear the burden, while also ensuring a swift and dignified end for Dumbledore himself before his imminent death.",
+    "answer_variations": [
+      "[Comprehensive]: Dumbledore asked Snape to kill him, protecting Draco Malfoy's soul from murder's irreparable damage, believing Snape could bear the burden.",
+      "[Semantic Core]: Dumbledore protected Draco's soul, asked Snape to kill him.",
+      "[Key-Term Expansion]: Dumbledore, Snape, Draco Malfoy, soul, murder, protect, kill"
+    ]
+  },
+  {
+    "question_id": "SYN_008",
+    "question_type": "EX",
+    "question": "During the Battle of Hogwarts, why did Hermione insist that Harry and Ron must prioritize hunting Nagini, despite Ron's desire to fight Death Eaters for revenge?",
+    "answer": "Hermione understood that Nagini was Lord Voldemort's last remaining Horcrux. She believed that destroying Nagini was the ultimate goal and the only way to finally defeat Voldemort and end the war.",
+    "hint_1": "Hermione always focused on the most critical strategic objectives in their fight against the Dark Lord.",
+    "hint_2": "Nagini was more than just Voldemort's familiar; she held a vital part of his essence.",
+    "hint_3": "True victory requires prioritizing the strategic dismantling of the enemy's core power over immediate retaliatory actions.",
+    "explanation": "Hermione understood that Nagini was Lord Voldemort's last remaining Horcrux. She correctly deduced that destroying Nagini was the absolute priority, as it was the only way to make Voldemort mortal again and ultimately defeat him, thus ending the war.",
+    "answer_variations": [
+      "[Comprehensive]: Hermione prioritized Nagini's destruction because it was Voldemort's last Horcrux, essential for his final defeat and ending the war.",
+      "[Semantic Core]: Hermione prioritized Nagini's destruction, Voldemort's last Horcrux, to end war.",
+      "[Key-Term Expansion]: Hermione, Nagini, Voldemort, Horcrux, destroy, defeat, end war"
+    ]
+  },
+  {
+    "question_id": "SYN_009",
+    "question_type": "EX",
+    "question": "How did Harry, Ron, and Hermione manage to safely enter the secret passage beneath the Whomping Willow during the Battle of Hogwarts?",
+    "answer": "Ron used the \"Wingardium Leviosa\" spell to levitate a twig and jab it into a specific knot on the Whomping Willow's trunk, which instantly paralyzed its thrashing branches.",
+    "hint_1": "The Whomping Willow had a specific weakness that could be exploited to disable it temporarily.",
+    "hint_2": "One of the trio applied an early, common levitation spell in a clever, precise way.",
+    "hint_3": "Sometimes, complex problems can be solved by creatively applying basic magical knowledge and recalling specific details.",
+    "explanation": "Ron, remembering the tree's weakness, cleverly used the 'Wingardium Leviosa' spell to levitate a twig. He then precisely jabbed it into the specific knot on the Whomping Willow's trunk, which instantly froze its violent branches, allowing safe passage.",
+    "answer_variations": [
+      "[Comprehensive]: Ron used 'Wingardium Leviosa' to jab a twig into the Whomping Willow's knot, paralyzing its branches for safe passage.",
+      "[Semantic Core]: Ron jabbed Whomping Willow knot with levitated twig.",
+      "[Key-Term Expansion]: Ron, Wingardium Leviosa, twig, knot, Whomping Willow, secret passage"
+    ]
+  },
+  {
+    "question_id": "SYN_010",
+    "question_type": "EX",
+    "question": "Why was Lord Voldemort certain that Harry Potter would seek him out in the Shrieking Shack, rather than needing to be found by Death Eaters?",
+    "answer": "Voldemort believed that Harry's \"one great flaw\" was his refusal to let others die for him. He was confident Harry would come to him to stop the battle and prevent more deaths among his friends.",
+    "hint_1": "Voldemort thought he understood Harry's core weakness and moral code very well.",
+    "hint_2": "Harry's deepest desire was always to protect his loved ones and prevent their suffering.",
+    "hint_3": "The villain often mistakes the hero's greatest virtues, like love and self-sacrifice, as exploitable vulnerabilities.",
+    "explanation": "Voldemort was certain Harry would come to him because he perceived Harry's refusal to let others die for him as a fatal flaw. He believed Harry's protective nature would drive him to confront Voldemort personally to end the battle and prevent further casualties among his friends.",
+    "answer_variations": [
+      "[Comprehensive]: Voldemort knew Harry's 'flaw' was refusing to let others die, certain Harry would come willingly to stop the battle and save his friends.",
+      "[Semantic Core]: Voldemort exploited Harry's 'flaw' of protecting friends.",
+      "[Key-Term Expansion]: Voldemort, Harry Potter, flaw, protect friends, stop battle, seek out"
+    ]
+  },
+  {
+    "question_id": "SYN_011",
+    "question_type": "EX",
+    "question": "In the ethereal King's Cross, why was Harry still alive after Voldemort hit him with the Killing Curse in the forest, despite Harry not defending himself?",
+    "answer": "Harry survived because Voldemort had used Harry's blood, which contained Lily Potter's protection, to rebuild his own body. This act tethered Harry to life as long as Voldemort himself lived.",
+    "hint_1": "Recall the dark ritual used to resurrect Voldemort in the graveyard, involving a specific blood connection.",
+    "hint_2": "Lily Potter's sacrifice had an unforeseen, extended effect due to Voldemort's unwitting actions.",
+    "hint_3": "The darkest magic can sometimes inadvertently become an anchor for the very protection it seeks to destroy, especially when linked to profound sacrifice.",
+    "explanation": "Harry survived because when Voldemort rebuilt his body, he used Harry's blood, which contained Lily Potter's sacrificial protection. This action inadvertently tethered Harry's life to Voldemort's, meaning Harry could not truly die as long as Voldemort lived.",
+    "answer_variations": [
+      "[Comprehensive]: Voldemort used Harry's blood to rebuild his body, anchoring Lily's protection to himself, which tethered Harry to life.",
+      "[Semantic Core]: Voldemort's use of Harry's blood anchored Lily's protection.",
+      "[Key-Term Expansion]: Harry, Voldemort, Lily Potter, blood, protection, tether, survived"
+    ]
+  },
+  {
+    "question_id": "SYN_012",
+    "question_type": "EX",
+    "question": "According to Albus Dumbledore, how was Harry's wand able to break the borrowed wand (Lucius Malfoy's) that Voldemort used in their encounter after Harry left Privet Drive for the last time?",
+    "answer": "Dumbledore explained that Harry's wand had imbibed some of the power and qualities of Voldemort's wand during a previous encounter, effectively containing a part of Voldemort himself. It then recognized Voldemort as both kin and enemy, regurgitating his own magic against him with immense power.",
+    "hint_1": "Recall the unusual effect that occurred when Harry and Voldemort's wands first clashed.",
+    "hint_2": "Harry's wand had absorbed something from Voldemort's wand in a past duel, creating a deep connection.",
+    "hint_3": "The intricate bonds between wands and their masters can lead to unexpected magical reactions, especially when facing a linked foe.",
+    "explanation": "Dumbledore explained Harry's wand had absorbed some of Voldemort's wand's power during a prior encounter, making it contain a part of Voldemort's essence. When facing Voldemort again, it recognized him as both kin and enemy, consequently unleashing his own magic back at him with amplified power, breaking the borrowed wand.",
+    "answer_variations": [
+      "[Comprehensive]: Harry's wand imbibed Voldemort's power, recognized him as kin/enemy, regurgitating his own magic with immense power, breaking the borrowed wand.",
+      "[Semantic Core]: Harry's wand imbibed Voldemort's power, reflected it back.",
+      "[Key-Term Expansion]: Harry's wand, Voldemort's wand, imbibed power, kin and enemy, regurgitated magic, broke wand"
+    ]
+  },
+  {
+    "question_id": "SYN_013",
+    "question_type": "EX",
+    "question": "Why did Albus Dumbledore refuse the offer to become Minister of Magic multiple times during his lifetime?",
+    "answer": "Dumbledore refused because he had learned that he could not be trusted with power. His experiences as a young man with Grindelwald proved that power was his personal weakness and temptation.",
+    "hint_1": "Dumbledore learned a harsh lesson about himself and his capacity for power in his youth.",
+    "hint_2": "Consider a significant early relationship that profoundly shaped his view on leadership and authority.",
+    "hint_3": "True leadership often requires a deep understanding of one's own weaknesses, leading to a humble rejection of unchecked authority.",
+    "explanation": "Dumbledore refused the position because he had a profound understanding of his own weakness regarding power. His tumultuous youthful experiences with Gellert Grindelwald taught him that he could not be trusted with such immense authority, fearing the temptation would corrupt him.",
+    "answer_variations": [
+      "[Comprehensive]: Dumbledore refused, learning from his Grindelwald experience that power was his weakness, meaning he could not be trusted with it.",
+      "[Semantic Core]: Dumbledore refused power, learning from Grindelwald it was his weakness.",
+      "[Key-Term Expansion]: Albus Dumbledore, Minister of Magic, refused, power, weakness, Grindelwald"
+    ]
+  },
+  {
+    "question_id": "SYN_014",
+    "question_type": "EX",
+    "question": "What was the primary reason Albus Dumbledore delayed confronting Gellert Grindelwald for so many years?",
+    "answer": "Dumbledore feared learning the truth about his sister Ariana's death. He dreaded the knowledge that he might have cast the curse that killed her during the three-way duel with Grindelwald and Aberforth.",
+    "hint_1": "Consider Dumbledore's greatest personal regret and sorrow from his youth.",
+    "hint_2": "He was afraid of uncovering a painful truth about a specific three-way duel that resulted in a tragic loss.",
+    "hint_3": "The weight of unresolved guilt and the potential for self-condemnation can prevent even the bravest individuals from facing difficult truths.",
+    "explanation": "Dumbledore delayed confronting Grindelwald primarily due to his profound fear of learning the truth about his sister Ariana's death. He dreaded discovering that he might have been the one who accidentally cast the curse that killed her during the fateful three-way duel.",
+    "answer_variations": [
+      "[Comprehensive]: Dumbledore delayed confronting Grindelwald, fearing he might have cast the curse that killed his sister Ariana during their three-way duel.",
+      "[Semantic Core]: Dumbledore feared learning he killed Ariana in the duel.",
+      "[Key-Term Expansion]: Albus Dumbledore, Gellert Grindelwald, Ariana's death, delayed, curse, duel"
+    ]
+  },
+  {
+    "question_id": "SYN_015",
+    "question_type": "EX",
+    "question": "Why did Lord Voldemort not recognize the Resurrection Stone as a Deathly Hallow, even after turning it into one of his Horcruxes?",
+    "answer": "Voldemort did not value or comprehend the true nature of the Resurrection Stone because he understands nothing of love or loyalty. He fears the dead and would have no one he would wish to bring back, so he never considered its real purpose.",
+    "hint_1": "Consider Voldemort's fundamental inability to understand certain powerful human emotions.",
+    "hint_2": "The Resurrection Stone's true power revolved around connections to those who had passed on, a concept alien to Voldemort.",
+    "hint_3": "Evil, devoid of empathy and understanding, often misses the profound significance of artifacts whose power derives from virtues it cannot comprehend.",
+    "explanation": "Voldemort did not recognize the Resurrection Stone as a Deathly Hallow because he completely lacked understanding of love and loyalty. Its purpose, to bring back loved ones, was meaningless to him as he feared the dead and had no one he genuinely wished to resurrect, so he saw it only as a vessel for his soul.",
+    "answer_variations": [
+      "[Comprehensive]: Voldemort didn't recognize the Resurrection Stone as a Hallow because of his loveless nature, therefore he never grasped its true purpose.",
+      "[Semantic Core]: Voldemort's loveless nature prevented recognizing the Resurrection Stone's purpose.",
+      "[Key-Term Expansion]: Voldemort, Resurrection Stone, Deathly Hallow, love, loyalty, recognize, purpose"
+    ]
+  }
+]

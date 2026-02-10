@@ -1,0 +1,78 @@
+metadata:
+  project: 'Semantic Verification Engine (Ref. Implementation: Harry Potter Trivia)'
+  owner: reema sipra
+  description: Phase 2 Tracer build, Synthetic generated dataset answer contextual enrichment with LLM to match standard schema (semantic entity reference & lore concepts)
+  question_types:
+  - MCQ
+  - FR
+  - EX
+  version: 0
+experiments:
+- id: phase2_tracer_v0_synthetic_enrichment_context
+  model: models/gemini-2.5-flash
+  question_types:
+  - MCQ
+  - FR
+  - EX
+  common_parameters:
+    max_output_tokens: 30000
+    top_p: 0.95
+    candidate_count: 1
+  runs:
+  - version: EX_batch_01
+    prompt_file: scripts/research/legacy_update/legacy_context_variations_master.txt
+    data_file: scripts/research/question_generation/tracer_dataset_generation/llm_outputs/01_batches_for_enrich/phase2_tracer_v0_synthetic_staging_EX_batch_01.json
+    output_files:
+    - /Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/scripts/research/question_generation/tracer_dataset_generation/llm_outputs/03_enriched _context_var/phase2_tracer_v0_synthetic_enrichment_context_EX_batch_01_candidate_1.json
+    metrics:
+      response_time_seconds: 24.93
+      finish_reason: STOP
+      prompt_feedback: ''
+      tokens:
+        input_cached: 768
+        input_uncached: 4265
+        output: 2095
+        total: 11426
+    status: completed
+    notes: Automated run for phase2_tracer_v0_synthetic_staging_EX_batch_01.json
+    status_history:
+    - status: completed
+      timestamp: '2026-02-10T00:10:46.257003+00:00'
+  - version: FR_batch_02
+    prompt_file: scripts/research/legacy_update/legacy_context_variations_master.txt
+    data_file: scripts/research/question_generation/tracer_dataset_generation/llm_outputs/01_batches_for_enrich/phase2_tracer_v0_synthetic_staging_FR_batch_02.json
+    output_files:
+    - /Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/scripts/research/question_generation/tracer_dataset_generation/llm_outputs/03_enriched _context_var/phase2_tracer_v0_synthetic_enrichment_context_FR_batch_02_candidate_1.json
+    metrics:
+      response_time_seconds: 16.5
+      finish_reason: STOP
+      prompt_feedback: ''
+      tokens:
+        input_cached: 768
+        input_uncached: 2995
+        output: 1095
+        total: 7897
+    status: completed
+    notes: Automated run for phase2_tracer_v0_synthetic_staging_FR_batch_02.json
+    status_history:
+    - status: completed
+      timestamp: '2026-02-10T00:11:17.854300+00:00'
+  - version: MCQ_batch_03
+    prompt_file: scripts/research/legacy_update/legacy_context_variations_master.txt
+    data_file: scripts/research/question_generation/tracer_dataset_generation/llm_outputs/01_batches_for_enrich/phase2_tracer_v0_synthetic_staging_MCQ_batch_03.json
+    output_files:
+    - /Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/scripts/research/question_generation/tracer_dataset_generation/llm_outputs/03_enriched _context_var/phase2_tracer_v0_synthetic_enrichment_context_MCQ_batch_03_candidate_1.json
+    metrics:
+      response_time_seconds: 25.19
+      finish_reason: STOP
+      prompt_feedback: ''
+      tokens:
+        input_cached: 768
+        input_uncached: 4091
+        output: 1304
+        total: 11102
+    status: completed
+    notes: Automated run for phase2_tracer_v0_synthetic_staging_MCQ_batch_03.json
+    status_history:
+    - status: completed
+      timestamp: '2026-02-10T00:11:58.165976+00:00'

@@ -1,0 +1,277 @@
+[
+  {
+    "original_question_id": "SYN_000",
+    "semantic_entity_refs": [
+      "Helena Ravenclaw",
+      "The Gray Lady",
+      "Tom Riddle",
+      "Lord Voldemort",
+      "Lost Diadem of Ravenclaw",
+      "Ravenclaw's Diadem"
+    ],
+    "semantic_lore_concepts": [
+      "Horcrux creation",
+      "Flattery and manipulation",
+      "Ghost's confession",
+      "Ravenclaw family secret"
+    ]
+  },
+  {
+    "original_question_id": "SYN_001",
+    "semantic_entity_refs": [
+      "Harry Potter",
+      "Diadem Horcrux",
+      "Rowena Ravenclaw's Diadem",
+      "Room of Requirement",
+      "Come and Go Room"
+    ],
+    "semantic_lore_concepts": [
+      "Horcrux hunting",
+      "Memory recall",
+      "Hidden objects",
+      "Room's properties"
+    ]
+  },
+  {
+    "original_question_id": "SYN_002",
+    "semantic_entity_refs": [
+      "Minerva McGonagall",
+      "Professor McGonagall",
+      "Peeves",
+      "Hogwarts poltergeist",
+      "Argus Filch",
+      "Hogwarts caretaker"
+    ],
+    "semantic_lore_concepts": [
+      "Battle of Hogwarts",
+      "Enlisting non-traditional help",
+      "Hogwarts defense",
+      "Poltergeist's nature"
+    ]
+  },
+  {
+    "original_question_id": "SYN_003",
+    "semantic_entity_refs": [
+      "Ron Weasley",
+      "Hermione Granger",
+      "Hufflepuff's Cup Horcrux",
+      "Helga Hufflepuff's Cup",
+      "Basilisk fang",
+      "Chamber of Secrets"
+    ],
+    "semantic_lore_concepts": [
+      "Horcrux destruction",
+      "Parseltongue imitation",
+      "Basilisk venom",
+      "Chamber of Secrets entrance"
+    ]
+  },
+  {
+    "original_question_id": "SYN_004",
+    "semantic_entity_refs": [
+      "Ron Weasley",
+      "House-elves",
+      "Dobby",
+      "Free Elf Dobby"
+    ],
+    "semantic_lore_concepts": [
+      "House-elf welfare",
+      "SPEW advocacy",
+      "Compassion for magical creatures",
+      "Battle of Hogwarts"
+    ]
+  },
+  {
+    "original_question_id": "SYN_005",
+    "semantic_entity_refs": [
+      "Vincent Crabbe",
+      "Crabbe",
+      "Draco Malfoy",
+      "Fiendfyre",
+      "Room of Requirement",
+      "Harry Potter",
+      "Lord Voldemort",
+      "The Dark Lord"
+    ],
+    "semantic_lore_concepts": [
+      "Uncontrolled dark magic",
+      "Reckless spellcasting",
+      "Minion's defiance",
+      "Horcrux destruction (accidental)"
+    ]
+  },
+  {
+    "original_question_id": "SYN_006",
+    "semantic_entity_refs": [
+      "Lord Voldemort",
+      "He Who Must Not Be Named",
+      "Nagini",
+      "Severus Snape",
+      "The Potions Master",
+      "Elder Wand",
+      "Albus Dumbledore",
+      "Headmaster Dumbledore"
+    ],
+    "semantic_lore_concepts": [
+      "Mastery of the Elder Wand",
+      "Deathly Hallows theory",
+      "Misunderstanding wand allegiance",
+      "Sacrificial murder"
+    ]
+  },
+  {
+    "original_question_id": "SYN_007",
+    "semantic_entity_refs": [
+      "Albus Dumbledore",
+      "Headmaster Dumbledore",
+      "Severus Snape",
+      "Professor Snape",
+      "Draco Malfoy",
+      "Dark Lord's target"
+    ],
+    "semantic_lore_concepts": [
+      "Unbreakable Vow",
+      "Soul protection",
+      "Mercy killing",
+      "Dumbledore's plan",
+      "Moral burden of murder"
+    ]
+  },
+  {
+    "original_question_id": "SYN_008",
+    "semantic_entity_refs": [
+      "Hermione Granger",
+      "Nagini",
+      "Voldemort's last Horcrux",
+      "Lord Voldemort",
+      "Harry Potter",
+      "Ron Weasley"
+    ],
+    "semantic_lore_concepts": [
+      "Horcrux hunt",
+      "Strategic priority",
+      "Voldemort's defeat",
+      "Battle of Hogwarts strategy"
+    ]
+  },
+  {
+    "original_question_id": "SYN_009",
+    "semantic_entity_refs": [
+      "Ron Weasley",
+      "Whomping Willow",
+      "Wingardium Leviosa",
+      "Levitation Charm"
+    ],
+    "semantic_lore_concepts": [
+      "Secret passage access",
+      "Tree's weak spot",
+      "Paralyzing charm",
+      "Shrieking Shack entrance"
+    ]
+  },
+  {
+    "original_question_id": "SYN_010",
+    "semantic_entity_refs": [
+      "Lord Voldemort",
+      "The Dark Lord",
+      "Harry Potter",
+      "The Boy Who Lived"
+    ],
+    "semantic_lore_concepts": [
+      "Voldemort's miscalculation",
+      "Harry's self-sacrifice",
+      "Protection of friends",
+      "Battle of Hogwarts ultimatum"
+    ]
+  },
+  {
+    "original_question_id": "SYN_011",
+    "semantic_entity_refs": [
+      "Harry Potter",
+      "The Chosen One",
+      "Lord Voldemort",
+      "Killing Curse",
+      "Lily Potter",
+      "Harry's mother"
+    ],
+    "semantic_lore_concepts": [
+      "Blood protection magic",
+      "Resurrection through Harry's blood",
+      "Tether to life",
+      "Sacrificial protection",
+      "Horcrux connection (unintended)"
+    ]
+  },
+  {
+    "original_question_id": "SYN_012",
+    "semantic_entity_refs": [
+      "Harry's wand",
+      "Holly and Phoenix Feather wand",
+      "Lord Voldemort's wand",
+      "Yew and Phoenix Feather wand",
+      "Lucius Malfoy's wand",
+      "Albus Dumbledore",
+      "Harry Potter",
+      "Lord Voldemort"
+    ],
+    "semantic_lore_concepts": [
+      "Wandlore",
+      "Priori Incantatem",
+      "Kin and enemy magic",
+      "Wand allegiance",
+      "Magic regurgitation",
+      "Wand breaking"
+    ]
+  },
+  {
+    "original_question_id": "SYN_013",
+    "semantic_entity_refs": [
+      "Albus Dumbledore",
+      "Professor Dumbledore",
+      "Minister of Magic",
+      "Gellert Grindelwald",
+      "Dark Wizard Grindelwald"
+    ],
+    "semantic_lore_concepts": [
+      "Dumbledore's past",
+      "Temptation of power",
+      "Grindelwald's influence",
+      "Avoiding political office"
+    ]
+  },
+  {
+    "original_question_id": "SYN_014",
+    "semantic_entity_refs": [
+      "Albus Dumbledore",
+      "Gellert Grindelwald",
+      "Aberforth Dumbledore",
+      "Ariana Dumbledore",
+      "Dumbledore's sister"
+    ],
+    "semantic_lore_concepts": [
+      "Dumbledore's trauma",
+      "Fear of truth",
+      "Three-way duel",
+      "Accidental death",
+      "Dumbledore family tragedy"
+    ]
+  },
+  {
+    "original_question_id": "SYN_015",
+    "semantic_entity_refs": [
+      "Lord Voldemort",
+      "Tom Riddle",
+      "Resurrection Stone",
+      "Deathly Hallows",
+      "Horcrux",
+      "Gaunt Family Ring"
+    ],
+    "semantic_lore_concepts": [
+      "Voldemort's lack of love",
+      "Fear of death",
+      "Misunderstanding of magic",
+      "Horcrux creation",
+      "Deathly Hallow properties"
+    ]
+  }
+]

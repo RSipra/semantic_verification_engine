@@ -28,15 +28,17 @@ Contextual variations are NOT lexical rephrasings (synonyms). They are lore-grou
 
 ---EXAMPLES---
 INPUT
-original_question_id: 1357
-question_type: EX
-question: Who had Severus Snape’s true allegiance, and why?
-answer: Albus Dumbledore: Snape's allegiance was to him because of his enduring love for Lily Potter.
+{
+   "original_question_id": 1357,
+   "question_type": "EX",
+   "question": "Who had Severus Snape’s true allegiance, and why?",
+   "answer": "Albus Dumbledore: Snape's allegiance was to him because of his enduring love for Lily Potter."
+}
 
 OUTPUT
 {
   "original_question_id": 1357,
-  "semantic_entity_refs": ["Albus Dumbledore", "Severus Snape", "Lily Potter", "Harry Potter"],
+  "semantic_entity_refs":  ["Albus Dumbledore", "Severus Snape", "Lily Potter", "Harry Potter"],
   "semantic_lore_concepts": ["Unrequited love", "Protecting the son", "Atonement", "Double agent", "Always"]
 }
 

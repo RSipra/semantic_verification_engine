@@ -47,7 +47,8 @@ Identify the "form" of the answer before generating variations:
 4. Date: Represent the date at the precision requested in the question.
 
 ### Output rules
-- Return ONLY a single valid JSON object keyed by question_id.
+- Return ONLY a single valid JSON list of dictionaries.
+- question_id: a unique identifier for each question.
 - Do NOT include commentary, markdown, or extra text.
 
 ---EXAMPLES---

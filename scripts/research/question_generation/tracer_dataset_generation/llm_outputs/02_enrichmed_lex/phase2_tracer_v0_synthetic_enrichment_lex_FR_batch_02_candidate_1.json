@@ -1,0 +1,178 @@
+[
+  {
+    "question_id": "SYN_016",
+    "question_type": "FR",
+    "question": "In Ravenclaw Tower, what was the effect of the spell Luna Lovegood used on Alecto Carrow?",
+    "answer": "Stunned",
+    "hint_1": "The effect of the spell renders the target unconscious and immobile.",
+    "hint_2": "Luna noted the spell was 'noisier than I thought it would be,' suggesting a powerful impact.",
+    "hint_3": "This is a very common defensive spell that temporarily incapacitates an opponent.",
+    "explanation": "Luna Lovegood used a Stunner on Alecto Carrow, which rendered her unconscious and immobile. Luna herself commented on the unexpected noise the spell made, indicating its forceful impact.",
+    "answer_variations": ["Stunned", "Knocked out", "Incacipated", "Made unconscious"]
+  },
+  {
+    "question_id": "SYN_017",
+    "question_type": "FR",
+    "question": "What was Professor McGonagall's answer to the Ravenclaw common room door knocker's riddle, \"Where do Vanished objects go?\"",
+    "answer": "Into non being",
+    "hint_1": "The answer speaks to the philosophical state of objects that cease to exist visibly.",
+    "hint_2": "McGonagall's response suggests they enter a realm of nothingness or emptiness.",
+    "hint_3": "Her full reply includes a secondary clause about this state encompassing 'everything'.",
+    "explanation": "Professor McGonagall answered the Ravenclaw riddle by stating that Vanished objects go 'Into non being.' She further clarified this concept by adding 'which is to say, everything,' implying a paradoxical state of non-existence that is also all-encompassing.",
+    "answer_variations": ["Into non being", "Non being"]
+  },
+  {
+    "question_id": "SYN_018",
+    "question_type": "FR",
+    "question": "Who was the ghost of Ravenclaw Tower, also known as the Gray Lady?",
+    "answer": "Helena Ravenclaw",
+    "hint_1": "This ghost is directly related to one of the four founders of Hogwarts.",
+    "hint_2": "She played a crucial role in the story of a powerful magical artifact that became a Horcrux.",
+    "hint_3": "Her tragic tale involves a historical theft from her mother and her eventual demise at the hands of another.",
+    "explanation": "The ghost of Ravenclaw Tower, known as the Gray Lady, is Helena Ravenclaw. She is the daughter of Rowena Ravenclaw and was tragically involved in the history of Ravenclaw's lost diadem, which she stole from her mother.",
+    "answer_variations": ["Helena Ravenclaw", "Ravenclaw", "The Gray Lady"]
+  },
+  {
+    "question_id": "SYN_019",
+    "question_type": "FR",
+    "question": "In what country did Helena Ravenclaw hide her mother's diadem inside a hollow tree?",
+    "answer": "Albania",
+    "hint_1": "This country is also known as a place where a powerful dark wizard spent time after his initial downfall.",
+    "hint_2": "It is a real-world country located in southeastern Europe.",
+    "hint_3": "The Gray Lady described it as a 'lonely place' she believed was 'far beyond my mother's reach.'",
+    "explanation": "Helena Ravenclaw, after stealing her mother's diadem, hid it within a hollow tree in a remote forest in Albania. This location was chosen because she believed it was far enough away to be safe from her mother's pursuit.",
+    "answer_variations": ["Albania"]
+  },
+  {
+    "question_id": "SYN_020",
+    "question_type": "FR",
+    "question": "Which Weasley family member died during the Battle of Hogwarts, with the ghost of his last laugh still etched upon his face?",
+    "answer": "Fred",
+    "hint_1": "This Weasley brother was known for his love of pranks and humor.",
+    "hint_2": "He was a co-owner of a popular joke shop in Diagon Alley.",
+    "hint_3": "His twin brother was profoundly affected by his loss in the final battle.",
+    "explanation": "Fred Weasley, one of the mischievous Weasley twins and co-owner of Weasleys' Wizard Wheezes, tragically died during the Battle of Hogwarts. His passing was marked by the poignant detail of his last laugh still etched on his face.",
+    "answer_variations": ["Fred", "Fred Weasley"]
+  },
+  {
+    "question_id": "SYN_021",
+    "question_type": "FR",
+    "question": "As Harry, Ron, and Hermione approached the Whomping Willow, what spell did Ron use on a twig to paralyze the tree's branches?",
+    "answer": "Wingardium Leviosa",
+    "hint_1": "This is one of the very first charms taught to first-year students at Hogwarts.",
+    "hint_2": "It is famously used to make objects float or hover in the air.",
+    "hint_3": "Hermione once corrected Ron's pronunciation of this particular spell in their first year.",
+    "explanation": "Ron used the 'Wingardium Leviosa' spell on a twig, causing it to fly and jab the Whomping Willow in a specific spot. This action successfully paralyzed the tree's thrashing branches, allowing Harry, Ron, and Hermione safe passage beneath it.",
+    "answer_variations": ["Wingardium Leviosa"]
+  },
+  {
+    "question_id": "SYN_022",
+    "question_type": "FR",
+    "question": "While in the Shrieking Shack, which Death Eater did Voldemort send to fetch Severus Snape?",
+    "answer": "Lucius Malfoy",
+    "hint_1": "This Death Eater is the father of a prominent Slytherin student.",
+    "hint_2": "He is known for his long, blonde hair and aristocratic demeanor.",
+    "hint_3": "He often carries a distinctive snake-head cane.",
+    "explanation": "Voldemort, while in the Shrieking Shack, commanded Lucius Malfoy to retrieve Severus Snape. Lucius, a prominent Death Eater and father of Draco, obeyed the Dark Lord's order, though he was visibly frightened.",
+    "answer_variations": ["Lucius Malfoy", "Malfoy"]
+  },
+  {
+    "question_id": "SYN_023",
+    "question_type": "FR",
+    "question": "During the battle in the Great Hall, which professor hit Fenrir Greyback on the head with a crystal ball, causing him to collapse?",
+    "answer": "Professor Trelawney",
+    "hint_1": "This professor teaches Divination at Hogwarts.",
+    "hint_2": "She is known for her thick spectacles and dramatic, if often vague, predictions.",
+    "hint_3": "Despite her eccentricities, she showed unexpected courage in a moment of crisis.",
+    "explanation": "During the Battle of Hogwarts, Professor Trelawney bravely intervened by striking the dangerous werewolf Fenrir Greyback on the head with a crystal ball. This unexpected blow caused him to collapse, demonstrating her surprising courage in battle.",
+    "answer_variations": ["Professor Trelawney", "Trelawney", "Sibyll Trelawney"]
+  },
+  {
+    "question_id": "SYN_024",
+    "question_type": "FR",
+    "question": "After Dumbledore questioned if Severus Snape had grown to care for Harry Potter, what form did Snape's Patronus take?",
+    "answer": "A silver doe",
+    "hint_1": "This magical creature represents protection and deep affection.",
+    "hint_2": "It is the exact same form as another very important character's Patronus.",
+    "hint_3": "The choice of this specific animal revealed a profound and enduring love.",
+    "explanation": "When Dumbledore questioned Snape's true loyalties and feelings, Snape conjured his Patronus, which took the form of a silver doe. This form was identical to Lily Potter's Patronus, symbolizing Snape's lifelong, unwavering love for her.",
+    "answer_variations": ["A silver doe", "Silver doe", "Doe"]
+  },
+  {
+    "question_id": "SYN_025",
+    "question_type": "FR",
+    "question": "According to Dumbledore's portrait, under what two specific conditions must the Sword of Gryffindor be taken?",
+    "answer": "Need and valor",
+    "hint_1": "These conditions relate to the circumstances and character required to wield the legendary blade.",
+    "hint_2": "One condition describes a desperate situation, while the other describes a noble quality.",
+    "hint_3": "The sword only presents itself to those who demonstrate these two core Gryffindor qualities.",
+    "explanation": "Dumbledore's portrait instructed Severus Snape that the Sword of Gryffindor must only be taken under conditions of 'need and valor.' This ensures that the true heir of Gryffindor, demonstrating both desperation and courage, can retrieve the sword.",
+    "answer_variations": ["Need and valor", "Valor and need", "Need", "Valor"]
+  },
+  {
+    "question_id": "SYN_026",
+    "question_type": "FR",
+    "question": "Before confronting Voldemort in the Forbidden Forest, who did Harry instruct to kill Nagini, the snake Horcrux, if Ron and Hermione were busy?",
+    "answer": "Neville Longbottom",
+    "hint_1": "This character is known for his late-blooming bravery and loyalty.",
+    "hint_2": "He later becomes a professor at Hogwarts, teaching Herbology.",
+    "hint_3": "He ultimately destroys a Horcrux with the Sword of Gryffindor in the Great Hall.",
+    "explanation": "Before facing Voldemort, Harry entrusted Neville Longbottom with the crucial task of killing Nagini, the snake Horcrux, if Ron and Hermione were otherwise occupied. Neville later fulfilled this role heroically by destroying the snake with the Sword of Gryffindor.",
+    "answer_variations": ["Neville Longbottom", "Neville"]
+  },
+  {
+    "question_id": "SYN_027",
+    "question_type": "FR",
+    "question": "What object did Harry press to his lips and whisper \"I am about to die\" to, causing it to break open and reveal the Resurrection Stone?",
+    "answer": "Golden Snitch",
+    "hint_1": "This Quidditch item was bequeathed to Harry by Albus Dumbledore.",
+    "hint_2": "It bore a hidden message: 'I open at the close.'",
+    "hint_3": "It is small, winged, and highly sought after during a wizarding sport.",
+    "explanation": "Harry pressed the Golden Snitch, which Dumbledore had left him, to his lips and whispered 'I am about to die.' This act, representing 'the close,' caused the Snitch to break open and reveal the Resurrection Stone hidden within it.",
+    "answer_variations": ["Golden Snitch", "The Snitch", "Snitch"]
+  },
+  {
+    "question_id": "SYN_028",
+    "question_type": "FR",
+    "question": "In the clearing in the Forbidden Forest, who silenced Hagrid with a flick of a wand after Harry revealed himself to Voldemort?",
+    "answer": "Rowle",
+    "hint_1": "This individual is one of the Death Eaters present at the scene.",
+    "hint_2": "Their name is less prominent than some other Death Eaters but they are explicitly mentioned in this context.",
+    "hint_3": "They were eager to follow the Dark Lord's command and keep order during this critical moment.",
+    "explanation": "As Harry revealed himself to Voldemort in the Forbidden Forest, Hagrid cried out in despair. Rowle, one of the Death Eaters present, quickly silenced Hagrid with a flick of his wand to prevent any further interruptions during Voldemort's confrontation with Harry.",
+    "answer_variations": ["Rowle"]
+  },
+  {
+    "question_id": "SYN_029",
+    "question_type": "FR",
+    "question": "When Harry met Dumbledore in the mysterious white place, what specific color were Dumbledore's sweeping robes?",
+    "answer": "Midnight blue",
+    "hint_1": "This color is often associated with the darkness of night, but it is distinct from plain black.",
+    "hint_2": "It suggests a deep, rich hue, often seen at the darkest hour before dawn.",
+    "hint_3": "The description added to the ethereal and majestic quality of Dumbledore's appearance in this liminal space.",
+    "explanation": "In the mysterious white, ethereal place Harry found himself in, Dumbledore was observed wearing sweeping robes of a specific color: midnight blue. This detail added to the solemn and significant atmosphere of their final conversation.",
+    "answer_variations": ["Midnight blue", "Blue", "Dark blue"]
+  },
+  {
+    "question_id": "SYN_030",
+    "question_type": "FR",
+    "question": "When Harry asked Dumbledore where they were, what specific London station did Harry say the mysterious white, empty place resembled?",
+    "answer": "King's Cross station",
+    "hint_1": "This is a major railway hub in London, very familiar to Harry.",
+    "hint_2": "It's the departure point for students traveling to Hogwarts on the Hogwarts Express.",
+    "hint_3": "Harry knew this station well from his journeys to and from the wizarding world.",
+    "explanation": "When Harry met Dumbledore in the mysterious, clean, and empty white place, he remarked that it strikingly resembled King's Cross station. This was the familiar London railway station from which Harry and other students departed for Hogwarts each year.",
+    "answer_variations": ["King's Cross station", "King's Cross", "Kings Cross"]
+  },
+  {
+    "question_id": "SYN_031",
+    "question_type": "FR",
+    "question": "According to Dumbledore's confession to Harry, how many times was he offered the post of Minister of Magic, which he refused?",
+    "answer": "Several times",
+    "hint_1": "Dumbledore's answer is not a precise number, but a general indication of frequency.",
+    "hint_2": "He implies it happened more than twice, but avoids an exact count.",
+    "hint_3": "His refusal stemmed from his deep-seated fear of being corrupted by power, due to past experiences.",
+    "explanation": "Dumbledore confessed to Harry that he had been offered the post of Minister of Magic 'several times' but consistently refused. His repeated rejections were due to his past experiences with Grindelwald and his recognition that he was not to be trusted with such immense power.",
+    "answer_variations": ["Several times", "Many times", "Multiple times"]
+  }
+]

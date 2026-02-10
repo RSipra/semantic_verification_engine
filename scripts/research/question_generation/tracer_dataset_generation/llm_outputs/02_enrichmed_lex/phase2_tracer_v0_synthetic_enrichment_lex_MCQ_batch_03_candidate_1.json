@@ -1,0 +1,200 @@
+[
+  {
+    "question_id": "SYN_032",
+    "question_type": "MCQ",
+    "question": "What was Luna Lovegood's initial reaction to successfully stunning Alecto Carrow?",
+    "answer": "She noted it was noisier than expected, having only used the spell in D.A. lessons.",
+    "hint_1": "Consider Luna's perspective on using magic, especially in a real fight versus practice.",
+    "hint_2": "What did she compare the sound of the stunning spell to, based on her past experience?",
+    "hint_3": "Luna often expresses unique and unfiltered observations about events, especially comparing new experiences to her prior expectations.",
+    "explanation": "Upon successfully stunning Alecto Carrow, Luna Lovegood commented that the spell was noisier than she had anticipated. This reaction stemmed from her limited prior experience, having only practiced stunning spells in the relatively controlled environment of Dumbledore's Army lessons.",
+    "answer_variations": ["noisyer than expected", "D.A. lessons"]
+  },
+  {
+    "question_id": "SYN_033",
+    "question_type": "MCQ",
+    "question": "What was Professor McGonagall's correct answer to the Ravenclaw common room door knocker's riddle, \"Where do Vanished objects go?\"",
+    "answer": "Into non being, which is to say, everything.",
+    "hint_1": "Recall the philosophical nature of Ravenclaw riddles and Professor McGonagall's logical mind.",
+    "hint_2": "The answer involves a concept that is both an absence and a totality.",
+    "hint_3": "Vanishing spells don't destroy objects, but rather move them out of existence in a way that implies both nothingness and omnipresence.",
+    "explanation": "Professor McGonagall correctly answered the Ravenclaw knocker's riddle by stating that vanished objects go 'Into non being, which is to say, everything.' This response aligns with complex magical theory where vanishing doesn't annihilate an object but places it beyond conventional existence, making it part of a greater, undefined totality.",
+    "answer_variations": ["non being", "everything"]
+  },
+  {
+    "question_id": "SYN_034",
+    "question_type": "MCQ",
+    "question": "What form did Professor McGonagall's Patronus take when she sent it to alert the other Heads of House?",
+    "answer": "Three silver cats with spectacle markings around their eyes.",
+    "hint_1": "Professor McGonagall is known for her Animagus form.",
+    "hint_2": "Think about the number and specific unique features of her Patronus when it appeared.",
+    "hint_3": "While her Animagus form is a singular animal, her Patronus manifestation on this occasion had a particular quantity and distinguishing detail.",
+    "explanation": "When Professor McGonagall cast her Patronus to alert the other Heads of House, it took the form of three silver cats. These magical guardians were notably described as having spectacle markings around their eyes, a distinct characteristic reflecting her Animagus form.",
+    "answer_variations": ["three silver cats", "spectacle markings"]
+  },
+  {
+    "question_id": "SYN_035",
+    "question_type": "MCQ",
+    "question": "What specific object did Ron and Hermione retrieve from the Chamber of Secrets to destroy Horcruxes?",
+    "answer": "Basilisk fangs",
+    "hint_1": "Recall what kind of creature resided in the Chamber of Secrets.",
+    "hint_2": "What part of that creature is known for its highly destructive, venomous properties, capable of destroying dark magic?",
+    "hint_3": "The object they retrieved was a remnant of the monster Harry himself defeated in his second year.",
+    "explanation": "Ron and Hermione ventured into the Chamber of Secrets specifically to retrieve Basilisk fangs. These fangs, imbued with potent venom, are one of the few substances capable of destroying Horcruxes, making them invaluable in the final battle against Voldemort.",
+    "answer_variations": ["Basilisk fangs", "fangs"]
+  },
+  {
+    "question_id": "SYN_036",
+    "question_type": "MCQ",
+    "question": "What extremely dangerous cursed fire spell did Crabbe unleash in the Room of Requirement?",
+    "answer": "Fiendfyre",
+    "hint_1": "This powerful and destructive spell is known to be one of the few things capable of destroying Horcruxes, but it is incredibly difficult to control.",
+    "hint_2": "Hermione recognized this specific dark magic when she saw it, immediately identifying its perilous nature.",
+    "hint_3": "The fire created by this curse is sentient and seeks to destroy all in its path, often taking the form of monstrous flaming creatures.",
+    "explanation": "Crabbe unleashed Fiendfyre in the Room of Requirement, a dark and incredibly dangerous cursed fire spell. This chaotic magic is one of the few known substances powerful enough to destroy Horcruxes, but its sentient and uncontrollable nature makes it exceptionally perilous to cast.",
+    "answer_variations": ["Fiendfyre"]
+  },
+  {
+    "question_id": "SYN_037",
+    "question_type": "MCQ",
+    "question": "What inscription was etched upon the lost Diadem of Ravenclaw?",
+    "answer": "WIT BEYOND MEASURE IS MAN'S GREATEST TREASURE.",
+    "hint_1": "The inscription reflects the core value of Ravenclaw House.",
+    "hint_2": "Think about the specific quality that Ravenclaws prize most highly, as stated in the Sorting Hat's song.",
+    "hint_3": "The phrase emphasizes a particular intellectual attribute as humanity's most valuable asset, exceeding mere knowledge.",
+    "explanation": "The lost Diadem of Ravenclaw bore the inscription 'WIT BEYOND MEASURE IS MAN'S GREATEST TREASURE.' This phrase perfectly encapsulates the values of Ravenclaw House, which prioritizes intelligence, creativity, and the power of the mind above all else.",
+    "answer_variations": ["WIT BEYOND MEASURE", "MAN'S GREATEST TREASURE"]
+  },
+  {
+    "question_id": "SYN_038",
+    "question_type": "MCQ",
+    "question": "According to Voldemort, why did the Elder Wand refuse to serve him properly?",
+    "answer": "Because its true master, Severus Snape, was still alive",
+    "hint_1": "Voldemort believed the Elder Wand's allegiance was tied to a specific person who had 'defeated' its previous owner.",
+    "hint_2": "Who did Voldemort mistakenly believe had conquered Albus Dumbledore and therefore inherited the Wand's loyalty?",
+    "hint_3": "The Dark Lord's flawed understanding of wand lore led him to believe that mastery was passed through the person who dealt the final blow to its previous wielder, regardless of true conquest.",
+    "explanation": "Voldemort wrongly concluded that the Elder Wand refused to properly serve him because its true master, Severus Snape, was still alive. He believed Snape had defeated Dumbledore, thus making him the Wand's rightful owner, failing to grasp the subtle nuances of wand allegiance.",
+    "answer_variations": ["Severus Snape was still alive", "true master Severus Snape"]
+  },
+  {
+    "question_id": "SYN_039",
+    "question_type": "MCQ",
+    "question": "What kind of magical protection did Lord Voldemort place around Nagini in the Shrieking Shack?",
+    "answer": "An enchanted, starry, transparent sphere",
+    "hint_1": "This protection was visually distinct and allowed Nagini to be seen, but not easily harmed.",
+    "hint_2": "Think about the description of its appearance – it wasn't merely invisible, but had a specific aesthetic.",
+    "hint_3": "The magical enclosure Voldemort created for his final Horcrux was described with celestial qualities, yet also physical confinement.",
+    "explanation": "In the Shrieking Shack, Lord Voldemort placed Nagini inside an enchanted, starry, transparent sphere of magical protection. This shimmering enclosure was designed to keep his final Horcrux safe from harm while still allowing him to keep watch over his serpent.",
+    "answer_variations": ["enchanted, starry, transparent sphere", "starry, transparent sphere"]
+  },
+  {
+    "question_id": "SYN_040",
+    "question_type": "MCQ",
+    "question": "What form did Severus Snape's Patronus take when he showed it to Albus Dumbledore?",
+    "answer": "A silver doe",
+    "hint_1": "Snape's Patronus revealed a profound and enduring aspect of his past.",
+    "hint_2": "The form of his Patronus was a direct reflection of his deepest, unrequited love.",
+    "hint_3": "This Patronus form mirrored that of a very significant person in his life, symbolizing his loyalty and everlasting devotion.",
+    "explanation": "Severus Snape's Patronus took the form of a silver doe when he revealed it to Albus Dumbledore. This form was identical to Lily Potter's Patronus, serving as a powerful and poignant symbol of his enduring love and loyalty to her, which persisted even after her death.",
+    "answer_variations": ["silver doe", "doe"]
+  },
+  {
+    "question_id": "SYN_041",
+    "question_type": "MCQ",
+    "question": "What shocking request did Albus Dumbledore make of Severus Snape regarding his own death?",
+    "answer": "To perform the Killing Curse on him",
+    "hint_1": "Dumbledore knew he was dying and wanted to orchestrate his death for a greater purpose.",
+    "hint_2": "This request was intended to protect Draco Malfoy and ensure the Elder Wand's allegiance remained broken.",
+    "hint_3": "The request involved a highly forbidden spell, demonstrating Dumbledore's willingness to make extreme sacrifices for the war effort and for specific individuals.",
+    "explanation": "Albus Dumbledore made the shocking request that Severus Snape perform the Killing Curse on him. This was part of Dumbledore's elaborate plan to control his own death, spare Draco Malfoy from becoming a killer, and ensure the Elder Wand's true allegiance would not be easily passed to Voldemort.",
+    "answer_variations": ["perform the Killing Curse", "Killing Curse"]
+  },
+  {
+    "question_id": "SYN_042",
+    "question_type": "MCQ",
+    "question": "What crucial secret did Dumbledore reveal to Snape about Harry Potter's connection to Lord Voldemort?",
+    "answer": "That a fragment of Voldemort's soul resided within Harry",
+    "hint_1": "This secret explained Harry's unique abilities and his profound mental link with the Dark Lord.",
+    "hint_2": "It revealed the true nature of Harry as an unwitting container for a piece of the villain's being.",
+    "hint_3": "Dumbledore explained that Harry carried a part of Voldemort's deepest magic within him, which also prevented the Dark Lord from being truly vanquished.",
+    "explanation": "Dumbledore revealed to Snape the crucial secret that a fragment of Voldemort's soul resided within Harry Potter. This revelation explained Harry's Parseltongue abilities and his mental connection to Voldemort, and it was vital for understanding the ultimate path to defeating the Dark Lord.",
+    "answer_variations": ["fragment of Voldemort's soul", "soul resided within Harry"]
+  },
+  {
+    "question_id": "SYN_043",
+    "question_type": "MCQ",
+    "question": "Where did Lily Evans and Severus Snape first encounter each other as children?",
+    "answer": "In a park playground near their homes",
+    "hint_1": "Their first meeting happened before they knew about Hogwarts or the wider wizarding world.",
+    "hint_2": "Think about a common place for children to play in a Muggle neighborhood.",
+    "hint_3": "Their childhood introduction occurred in a mundane, outdoor recreational space close to where they lived.",
+    "explanation": "Lily Evans and Severus Snape first encountered each other as children in a park playground near their homes. This early meeting established their foundational, albeit complicated, friendship before they ever stepped foot into the wizarding world or Hogwarts.",
+    "answer_variations": ["park playground", "playground near their homes"]
+  },
+  {
+    "question_id": "SYN_044",
+    "question_type": "MCQ",
+    "question": "Who carried Colin Creevey's body from the grounds after the battle?",
+    "answer": "Oliver Wood",
+    "hint_1": "This person was a former Gryffindor Quidditch Captain.",
+    "hint_2": "The individual carrying Colin was a Hogwarts alumnus who returned to fight in the Battle of Hogwarts.",
+    "hint_3": "The student who carried Colin's body was known for his leadership and physicality on the Quidditch pitch.",
+    "explanation": "After the Battle of Hogwarts, Oliver Wood, the former Gryffindor Quidditch Captain, carried Colin Creevey's body from the grounds. He offered to manage it alone, demonstrating strength and solemnity in the face of loss.",
+    "answer_variations": ["Oliver Wood"]
+  },
+  {
+    "question_id": "SYN_045",
+    "question_type": "MCQ",
+    "question": "What creature did Harry instruct Neville Longbottom to kill if he got the chance?",
+    "answer": "Nagini",
+    "hint_1": "This creature was Voldemort's last remaining Horcrux, crucial to his survival.",
+    "hint_2": "Harry had a specific conversation with Neville, emphasizing the importance of destroying this particular serpentine creature.",
+    "hint_3": "The creature was a large snake that Voldemort kept close, often within a protective sphere during the battle.",
+    "explanation": "Harry instructed Neville Longbottom to kill Nagini if he had the opportunity. This was because Nagini was Voldemort's last remaining Horcrux, and its destruction was essential to making Voldemort mortal and vulnerable.",
+    "answer_variations": ["Nagini"]
+  },
+  {
+    "question_id": "SYN_046",
+    "question_type": "MCQ",
+    "question": "How did Sirius Black describe the experience of dying to Harry in the forest?",
+    "answer": "Quicker and easier than falling asleep",
+    "hint_1": "Harry was able to communicate with spiritual echoes of his loved ones in the forest.",
+    "hint_2": "Sirius's description offered Harry comfort about what awaited him.",
+    "hint_3": "His description of passing on suggested a sense of ease and swiftness, rather than fear or pain.",
+    "explanation": "When Harry encountered the spiritual echo of Sirius Black in the Forbidden Forest, Sirius described the experience of dying as 'Quicker and easier than falling asleep.' This comforting assurance helped Harry face his own imminent encounter with death.",
+    "answer_variations": ["Quicker and easier than falling asleep", "quicker and easier"]
+  },
+  {
+    "question_id": "SYN_047",
+    "question_type": "MCQ",
+    "question": "What familiar location did Harry believe he and Dumbledore were in during their conversation in the bright, misty place?",
+    "answer": "King's Cross station",
+    "hint_1": "This location is a gateway to the wizarding world for Hogwarts students.",
+    "hint_2": "Harry recognized the general architecture and feel of a busy transportation hub.",
+    "hint_3": "The setting of their ethereal conversation evoked a very specific, mundane but magically significant place related to travel and new beginnings.",
+    "explanation": "During their conversation in the bright, misty limbo, Harry believed he and Dumbledore were in King's Cross station. He noted its similarities, though cleaner and empty, to the place where students departed for Hogwarts, suggesting a transition point between life and what lay beyond.",
+    "answer_variations": ["King's Cross station"]
+  },
+  {
+    "question_id": "SYN_048",
+    "question_type": "MCQ",
+    "question": "According to Dumbledore, what was the primary reason Harry remained alive after Voldemort's Killing Curse in the forest?",
+    "answer": "His mother's protection was within Voldemort's blood",
+    "hint_1": "This reason connects directly back to the night Voldemort first tried to kill Harry as a baby.",
+    "hint_2": "Recall the ritual Voldemort used to regain his body, specifically the ingredient he took from Harry.",
+    "hint_3": "Dumbledore explained that a crucial element of Lily's sacrificial love had been inadvertently incorporated into Voldemort's own being, creating an unbreakable tether.",
+    "explanation": "Dumbledore explained that Harry remained alive after Voldemort's Killing Curse in the forest because his mother's protection was within Voldemort's blood. When Voldemort used Harry's blood to regenerate, he unknowingly tethered Harry to life, as Lily's powerful sacrifice became part of his own existence.",
+    "answer_variations": ["mother's protection", "Voldemort's blood", "Lily's protection"]
+  },
+  {
+    "question_id": "SYN_049",
+    "question_type": "MCQ",
+    "question": "What reason did Dumbledore give for repeatedly refusing the post of Minister of Magic?",
+    "answer": "He believed he was not to be trusted with power",
+    "hint_1": "Dumbledore had a profound understanding of his own past mistakes and weaknesses.",
+    "hint_2": "His refusal stemmed from a personal lesson learned from his youth, particularly concerning a tragic event.",
+    "hint_3": "He recognized a dangerous inclination within himself, a desire that, if unchecked by high office, could lead to terrible consequences.",
+    "explanation": "Dumbledore repeatedly refused the post of Minister of Magic because he believed he was not to be trusted with power. His early experiences, particularly with Gellert Grindelwald and his pursuit of the Deathly Hallows, taught him that his desire for control could lead to disastrous outcomes, making him wary of wielding ultimate authority.",
+    "answer_variations": ["not to be trusted with power", "untrustworthy with power"]
+  }
+]

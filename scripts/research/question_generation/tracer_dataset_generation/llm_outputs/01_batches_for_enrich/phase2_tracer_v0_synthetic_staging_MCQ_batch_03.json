@@ -1,0 +1,308 @@
+[
+  {
+    "temp_qid": "SYN_032",
+    "question_type": "MCQ",
+    "category": "Spell/Charm",
+    "difficulty": "Medium",
+    "question": "What was Luna Lovegood's initial reaction to successfully stunning Alecto Carrow?",
+    "answer": "She noted it was noisier than expected, having only used the spell in D.A. lessons.",
+    "source_reference": "deathly_hallows Chapter 30",
+    "source_quote": "I've never Stunned anyone except in our D.A. lessons,\" said Luna, sounding mildly interested. \"That was noisier than I though it would be.",
+    "options": [
+      "She was surprised by the spell's effectiveness on a Death Eater.",
+      "She noted it was noisier than expected, having only used the spell in D.A. lessons.",
+      "She worried about waking other Ravenclaws with the noise.",
+      "She expressed mild disappointment that Alecto didn't stay conscious."
+    ],
+    "question_source": "synthetic"
+  },
+  {
+    "temp_qid": "SYN_033",
+    "question_type": "MCQ",
+    "category": "Location/Setting",
+    "difficulty": "Easy",
+    "question": "What was Professor McGonagall's correct answer to the Ravenclaw common room door knocker's riddle, \"Where do Vanished objects go?\"",
+    "answer": "Into non being, which is to say, everything.",
+    "source_reference": "deathly_hallows Chapter 30",
+    "source_quote": "\"Where do Vanished objects go?\"\"Into non being, which is to say, everything,\" replied Professor McGonagall.",
+    "options": [
+      "They return to their original components.",
+      "Into non being, which is to say, everything.",
+      "To a state of magical limbo, awaiting recall.",
+      "Nowhere, they cease to exist."
+    ],
+    "question_source": "synthetic"
+  },
+  {
+    "temp_qid": "SYN_034",
+    "question_type": "MCQ",
+    "category": "Creature/Beast",
+    "difficulty": "Medium",
+    "question": "What form did Professor McGonagall's Patronus take when she sent it to alert the other Heads of House?",
+    "answer": "Three silver cats with spectacle markings around their eyes.",
+    "source_reference": "deathly_hallows Chapter 30",
+    "source_quote": "From the tip burst three silver cats with spectacle markings around their eyes. the Patronuses ran sleekly ahead, filling the spiral staircase with silvery light, as Professor McGonagall, Harry, and Luna hurried back down.",
+    "options": [
+      "A single, powerful lynx.",
+      "A shimmering silver griffin.",
+      "Three silver cats with spectacle markings around their eyes.",
+      "A majestic tiger, her Animagus form."
+    ],
+    "question_source": "synthetic"
+  },
+  {
+    "temp_qid": "SYN_035",
+    "question_type": "MCQ",
+    "category": "Object/Potion",
+    "difficulty": "Easy",
+    "question": "What specific object did Ron and Hermione retrieve from the Chamber of Secrets to destroy Horcruxes?",
+    "answer": "Basilisk fangs",
+    "source_reference": "deathly_hallows Chapter 31",
+    "source_quote": "Harry's eyes dropped to the objects clutched in Ron and Hermione's arms: great curved fangs; torn, he now realized, from the skull of a dead basilisk.",
+    "options": [
+      "Basilisk fangs",
+      "A vial of potent venom",
+      "Gryffindor's sword",
+      "A cursed dagger"
+    ],
+    "question_source": "synthetic"
+  },
+  {
+    "temp_qid": "SYN_036",
+    "question_type": "MCQ",
+    "category": "Spell/Charm",
+    "difficulty": "Medium",
+    "question": "What extremely dangerous cursed fire spell did Crabbe unleash in the Room of Requirement?",
+    "answer": "Fiendfyre",
+    "source_reference": "deathly_hallows Chapter 31",
+    "source_quote": "It was not normal fire; Crabbe had used a curse of which Harry had no knowledge. ... \"It must have been Fiendfyre!\" whimpered Hermione, her eyes on the broken piece. \"Sorry?\" \"Fiendfyre ¨C cursed fire ¨C it's one of the substances that destroy Horcruxes, but I would never, ever have dared use it, it's so dangerous ¨C how did Crabbe know how to ¨C?\"",
+    "options": [
+      "Incendio Maxima",
+      "Confringo Inferno",
+      "Fiendfyre",
+      "Ignis Maleficus"
+    ],
+    "question_source": "synthetic"
+  },
+  {
+    "temp_qid": "SYN_037",
+    "question_type": "MCQ",
+    "category": "Object/Potion",
+    "difficulty": "Hard",
+    "question": "What inscription was etched upon the lost Diadem of Ravenclaw?",
+    "answer": "WIT BEYOND MEASURE IS MAN'S GREATEST TREASURE.",
+    "source_reference": "deathly_hallows Chapter 31",
+    "source_quote": "He pulled the diadem from his wrist and held it up. It was still hot, blackened with soot, but as he looked at it closely he was just able to make out the tiny words etched upon it; WIT BEYOND MEASURE IS MAN'S GREATEST TREASURE.",
+    "options": [
+      "KNOWLEDGE IS POWER.",
+      "CREATIVITY AND WISDOM ABOVE ALL.",
+      "WIT BEYOND MEASURE IS MAN'S GREATEST TREASURE.",
+      "THE MIND IS THE GREATEST WEAPON."
+    ],
+    "question_source": "synthetic"
+  },
+  {
+    "temp_qid": "SYN_038",
+    "question_type": "MCQ",
+    "category": "Object/Potion",
+    "difficulty": "Medium",
+    "question": "According to Voldemort, why did the Elder Wand refuse to serve him properly?",
+    "answer": "Because its true master, Severus Snape, was still alive",
+    "source_reference": "deathly_hallows Chapter 32",
+    "source_quote": "The Elder Wand cannot serve me properly, Severus, because I am not its true master. The Elder Wand belongs to the wizard who killed its last owner. You killed Albus Dumbledore. While you live, Severus, the Elder Wand cannot truly be mine.",
+    "options": [
+      "Because its true master, Severus Snape, was still alive",
+      "Because it had been won through murder, not conquest",
+      "Because Dumbledore had willingly given up its mastery",
+      "Because a fragment of Voldemort's soul was inside Harry Potter"
+    ],
+    "question_source": "synthetic"
+  },
+  {
+    "temp_qid": "SYN_039",
+    "question_type": "MCQ",
+    "category": "Creature/Beast",
+    "difficulty": "Medium",
+    "question": "What kind of magical protection did Lord Voldemort place around Nagini in the Shrieking Shack?",
+    "answer": "An enchanted, starry, transparent sphere",
+    "source_reference": "deathly_hallows Chapter 32",
+    "source_quote": "and there was the great thick snake, now suspended in midair, twisting gracefully within the enchanted, protected space he had made for her, a starry, transparent sphere somewhere between a glittering cage and a tank.",
+    "options": [
+      "An unbreakable diamond shell",
+      "A shimmering, invisible force field",
+      "An enchanted, starry, transparent sphere",
+      "A shield charm that reflected all spells"
+    ],
+    "question_source": "synthetic"
+  },
+  {
+    "temp_qid": "SYN_040",
+    "question_type": "MCQ",
+    "category": "Character Detail",
+    "difficulty": "Medium",
+    "question": "What form did Severus Snape's Patronus take when he showed it to Albus Dumbledore?",
+    "answer": "A silver doe",
+    "source_reference": "deathly_hallows Chapter 33",
+    "source_quote": "\"For him?\" shouted Snape. \"Expecto Patronum!\" From the tip of his wand burst the silver doe. She landed on the office floor, bounded once across the office, and soared out of the window.",
+    "options": [
+      "A silver stag",
+      "A silver otter",
+      "A silver doe",
+      "A silver dog"
+    ],
+    "question_source": "synthetic"
+  },
+  {
+    "temp_qid": "SYN_041",
+    "question_type": "MCQ",
+    "category": "Character Detail",
+    "difficulty": "Hard",
+    "question": "What shocking request did Albus Dumbledore make of Severus Snape regarding his own death?",
+    "answer": "To perform the Killing Curse on him",
+    "source_reference": "deathly_hallows Chapter 33",
+    "source_quote": "\"Are you intending to let him kill you?\" \"Certainly not. You must kill me.\"",
+    "options": [
+      "To ensure he was buried next to his sister Ariana",
+      "To protect Harry Potter at all costs after his death",
+      "To perform the Killing Curse on him",
+      "To find a way to break the curse on his hand"
+    ],
+    "question_source": "synthetic"
+  },
+  {
+    "temp_qid": "SYN_042",
+    "question_type": "MCQ",
+    "category": "Character Detail",
+    "difficulty": "Medium",
+    "question": "What crucial secret did Dumbledore reveal to Snape about Harry Potter's connection to Lord Voldemort?",
+    "answer": "That a fragment of Voldemort's soul resided within Harry",
+    "source_reference": "deathly_hallows Chapter 33",
+    "source_quote": "Tell him that on the night Lord Voldemort tried to kill him, when Lily cast her own life between them as a shield, the Killing Curse rebounded upon Lord Voldemort, and a fragment of Voldemort's soul was blasted apart from the whole, and latched itself onto the only living soul left in that collapsed building. Part of Lord Voldemort lives inside Harry, and it is that which gives him the power of speech with snakes, and a connection with Lord Voldemort's mind that he has never understood. And while that fragment of soul, unmissed by Voldemort, remains attached to and protected by Harry, Lord Voldemort cannot die.",
+    "options": [
+      "That Harry was destined to become an Animagus",
+      "That a fragment of Voldemort's soul resided within Harry",
+      "That Harry possessed a previously unknown magical ability",
+      "That Harry was immune to the Killing Curse"
+    ],
+    "question_source": "synthetic"
+  },
+  {
+    "temp_qid": "SYN_043",
+    "question_type": "MCQ",
+    "category": "Character Detail",
+    "difficulty": "Easy",
+    "question": "Where did Lily Evans and Severus Snape first encounter each other as children?",
+    "answer": "In a park playground near their homes",
+    "source_reference": "deathly_hallows Chapter 33",
+    "source_quote": "He fell headlong into sunlight, and his feet found warm ground. When he straightened up, he saw that he was in a nearly deserted playground.",
+    "options": [
+      "In the Forbidden Forest near Hogwarts",
+      "On the Hogwarts Express before their first year",
+      "In a park playground near their homes",
+      "At a magical fair in Diagon Alley"
+    ],
+    "question_source": "synthetic"
+  },
+  {
+    "temp_qid": "SYN_044",
+    "question_type": "MCQ",
+    "category": "Character Detail",
+    "difficulty": "Easy",
+    "question": "Who carried Colin Creevey's body from the grounds after the battle?",
+    "answer": "Oliver Wood",
+    "source_reference": "deathly_hallows Chapter 34",
+    "source_quote": "\"You know what? I can manage him alone, Neville,\" said Oliver Wood, and he heaved Colin over his shoulder in a fireman's lift and carried him into the Great Hall.",
+    "options": [
+      "Neville Longbottom",
+      "Rubeus Hagrid",
+      "Oliver Wood",
+      "Seamus Finnigan"
+    ],
+    "question_source": "synthetic"
+  },
+  {
+    "temp_qid": "SYN_045",
+    "question_type": "MCQ",
+    "category": "Creature/Beast",
+    "difficulty": "Easy",
+    "question": "What creature did Harry instruct Neville Longbottom to kill if he got the chance?",
+    "answer": "Nagini",
+    "source_reference": "deathly_hallows Chapter 34",
+    "source_quote": "\"You know Voldemort's snake. Neville? He's got a huge snake... Calls it Nagini...\"\"I've heard, yeah... What about it?\"\"It's got to be killed.\"",
+    "options": [
+      "A Dementor",
+      "The Acromantulas",
+      "Nagini",
+      "A Basilisk"
+    ],
+    "question_source": "synthetic"
+  },
+  {
+    "temp_qid": "SYN_046",
+    "question_type": "MCQ",
+    "category": "Character Detail",
+    "difficulty": "Medium",
+    "question": "How did Sirius Black describe the experience of dying to Harry in the forest?",
+    "answer": "Quicker and easier than falling asleep",
+    "source_reference": "deathly_hallows Chapter 34",
+    "source_quote": "\"Dying? Not at all,\" said Sirius. \"Quicker and easier than falling asleep.\"",
+    "options": [
+      "A long, peaceful transition",
+      "A terrifying void",
+      "A sudden, sharp pain",
+      "Quicker and easier than falling asleep"
+    ],
+    "question_source": "synthetic"
+  },
+  {
+    "temp_qid": "SYN_047",
+    "question_type": "MCQ",
+    "category": "Location/Setting",
+    "difficulty": "Easy",
+    "question": "What familiar location did Harry believe he and Dumbledore were in during their conversation in the bright, misty place?",
+    "answer": "King's Cross station",
+    "source_reference": "deathly_hallows Chapter 35",
+    "source_quote": "\"It looks,\" he said slowly, \"like King's Cross station. Except a lo cleaner and empty, and there are no trains as far as I can see.\"",
+    "options": [
+      "The Room of Requirement",
+      "King's Cross station",
+      "The Hog's Head Inn",
+      "Godric's Hollow"
+    ],
+    "question_source": "synthetic"
+  },
+  {
+    "temp_qid": "SYN_048",
+    "question_type": "MCQ",
+    "category": "Character Detail",
+    "difficulty": "Medium",
+    "question": "According to Dumbledore, what was the primary reason Harry remained alive after Voldemort's Killing Curse in the forest?",
+    "answer": "His mother's protection was within Voldemort's blood",
+    "source_reference": "deathly_hallows Chapter 35",
+    "source_quote": "\"He took your blood,\" said Harry.\"Precisely!\" said Dumbledore. \"He took your blood and rebuilt his living body with it! Your blood in his veins, Harry, Lily's protection inside both of you! He tethered you to life while he lives!\"",
+    "options": [
+      "He was the true master of Death",
+      "His mother's protection was within Voldemort's blood",
+      "The Elder Wand protected him",
+      "The Horcrux in him absorbed the curse"
+    ],
+    "question_source": "synthetic"
+  },
+  {
+    "temp_qid": "SYN_049",
+    "question_type": "MCQ",
+    "category": "Character Detail",
+    "difficulty": "Medium",
+    "question": "What reason did Dumbledore give for repeatedly refusing the post of Minister of Magic?",
+    "answer": "He believed he was not to be trusted with power",
+    "source_reference": "deathly_hallows Chapter 35",
+    "source_quote": "I was offered the post of Minister of Magic, not once, but several times. Naturally, I refused. I had learned that I was not to be trusted with power.",
+    "options": [
+      "He believed he was not to be trusted with power",
+      "He preferred to focus on teaching at Hogwarts",
+      "He was too consumed by his search for the Hallows",
+      "He felt the position would limit his magical research"
+    ],
+    "question_source": "synthetic"
+  }
+]

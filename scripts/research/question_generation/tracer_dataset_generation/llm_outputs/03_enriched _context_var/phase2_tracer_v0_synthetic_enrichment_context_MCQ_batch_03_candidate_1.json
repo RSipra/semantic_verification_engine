@@ -1,0 +1,92 @@
+[
+  {
+    "original_question_id": "SYN_032",
+    "semantic_entity_refs": ["Luna Lovegood", "Stunning Spell"],
+    "semantic_lore_concepts": ["Dumbledore's Army training", "Spell execution experience", "Spell noise"]
+  },
+  {
+    "original_question_id": "SYN_033",
+    "semantic_entity_refs": ["Vanished objects", "Ravenclaw common room knocker"],
+    "semantic_lore_concepts": ["Vanishing Spell mechanics", "Magical vanishing principle", "Non-being concept", "Ravenclaw riddle"]
+  },
+  {
+    "original_question_id": "SYN_034",
+    "semantic_entity_refs": ["Minerva McGonagall", "McGonagall's Patronus"],
+    "semantic_lore_concepts": ["Patronus Charm", "Animagus form correlation", "Head of House communication"]
+  },
+  {
+    "original_question_id": "SYN_035",
+    "semantic_entity_refs": ["Basilisk fangs"],
+    "semantic_lore_concepts": ["Horcrux destruction method", "Basilisk venom properties", "Chamber of Secrets retrieval"]
+  },
+  {
+    "original_question_id": "SYN_036",
+    "semantic_entity_refs": ["Fiendfyre"],
+    "semantic_lore_concepts": ["Cursed fire", "Dark magic spell", "Horcrux destruction method", "Room of Requirement incident"]
+  },
+  {
+    "original_question_id": "SYN_037",
+    "semantic_entity_refs": ["Lost Diadem of Ravenclaw", "Ravenclaw's Diadem"],
+    "semantic_lore_concepts": ["Ravenclaw motto", "Founder's relic inscription", "Horcrux (Diadem)"]
+  },
+  {
+    "original_question_id": "SYN_038",
+    "semantic_entity_refs": ["Severus Snape", "Elder Wand"],
+    "semantic_lore_concepts": ["Wand allegiance", "Elder Wand mastery", "Dumbledore's death implications"]
+  },
+  {
+    "original_question_id": "SYN_039",
+    "semantic_entity_refs": ["Nagini", "Lord Voldemort"],
+    "semantic_lore_concepts": ["Horcrux protection", "Magical containment", "Enchanted sphere", "Shrieking Shack event"]
+  },
+  {
+    "original_question_id": "SYN_040",
+    "semantic_entity_refs": ["Severus Snape", "Snape's Patronus"],
+    "semantic_lore_concepts": ["Patronus Charm", "Unrequited love symbol", "Always (Snape's devotion)"]
+  },
+  {
+    "original_question_id": "SYN_041",
+    "semantic_entity_refs": ["Albus Dumbledore", "Severus Snape"],
+    "semantic_lore_concepts": ["Planned death", "Killing Curse execution", "Elder Wand mastery manipulation", "Dumbledore's death plan"]
+  },
+  {
+    "original_question_id": "SYN_042",
+    "semantic_entity_refs": ["Harry Potter", "Lord Voldemort", "Voldemort's soul fragment"],
+    "semantic_lore_concepts": ["Accidental Horcrux", "Soul fragment", "Lily's sacrificial protection", "Parseltongue origin"]
+  },
+  {
+    "original_question_id": "SYN_043",
+    "semantic_entity_refs": ["Lily Evans", "Severus Snape"],
+    "semantic_lore_concepts": ["Childhood friendship", "First encounter", "Muggle world setting"]
+  },
+  {
+    "original_question_id": "SYN_044",
+    "semantic_entity_refs": ["Oliver Wood"],
+    "semantic_lore_concepts": ["Battle of Hogwarts casualties", "Body retrieval"]
+  },
+  {
+    "original_question_id": "SYN_045",
+    "semantic_entity_refs": ["Nagini", "Lord Voldemort's snake"],
+    "semantic_lore_concepts": ["Voldemort's last Horcrux", "Horcrux destruction directive", "Battle of Hogwarts objective"]
+  },
+  {
+    "original_question_id": "SYN_046",
+    "semantic_entity_refs": ["Sirius Black"],
+    "semantic_lore_concepts": ["Nature of death", "Resurrection Stone vision", "Beyond the Veil description"]
+  },
+  {
+    "original_question_id": "SYN_047",
+    "semantic_entity_refs": ["King's Cross station"],
+    "semantic_lore_concepts": ["Limbo (magical concept)", "Afterlife encounter", "Dumbledore's spiritual realm", "Horcrux destruction consequence"]
+  },
+  {
+    "original_question_id": "SYN_048",
+    "semantic_entity_refs": ["Harry Potter", "Lily Potter", "Lord Voldemort"],
+    "semantic_lore_concepts": ["Sacrificial protection", "Blood magic", "Tether to life", "Killing Curse survival explanation"]
+  },
+  {
+    "original_question_id": "SYN_049",
+    "semantic_entity_refs": ["Albus Dumbledore", "Professor Dumbledore"],
+    "semantic_lore_concepts": ["Minister of Magic refusal", "Grindelwald's influence", "Dumbledore's ambition", "Trust in power"]
+  }
+]

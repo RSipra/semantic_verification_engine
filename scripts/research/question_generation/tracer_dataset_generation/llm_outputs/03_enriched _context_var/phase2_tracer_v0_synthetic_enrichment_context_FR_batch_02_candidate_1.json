@@ -1,0 +1,82 @@
+[
+  {
+    "original_question_id": "SYN_016",
+    "semantic_entity_refs": [],
+    "semantic_lore_concepts": ["Stunning spell effect", "Stupefy charm", "Magical incapacitation"]
+  },
+  {
+    "original_question_id": "SYN_017",
+    "semantic_entity_refs": [],
+    "semantic_lore_concepts": ["Vanishing spell mechanics", "Ravenclaw riddle answer", "Where vanished objects go"]
+  },
+  {
+    "original_question_id": "SYN_018",
+    "semantic_entity_refs": ["Helena Ravenclaw", "The Gray Lady", "Ravenclaw ghost"],
+    "semantic_lore_concepts": ["Hogwarts ghost", "Founder's daughter"]
+  },
+  {
+    "original_question_id": "SYN_019",
+    "semantic_entity_refs": [],
+    "semantic_lore_concepts": ["Diadem hiding place", "Horcrux hiding location", "Ravenclaw's Diadem location"]
+  },
+  {
+    "original_question_id": "SYN_020",
+    "semantic_entity_refs": ["Fred Weasley", "Weasley twin"],
+    "semantic_lore_concepts": ["Battle of Hogwarts casualty", "Weasley family death", "Last laugh"]
+  },
+  {
+    "original_question_id": "SYN_021",
+    "semantic_entity_refs": ["Wingardium Leviosa"],
+    "semantic_lore_concepts": ["Levitation Charm", "Whomping Willow paralysis", "Tree immobilization spell"]
+  },
+  {
+    "original_question_id": "SYN_022",
+    "semantic_entity_refs": ["Lucius Malfoy", "Draco's father"],
+    "semantic_lore_concepts": ["Snape's summoner", "Death Eater's task"]
+  },
+  {
+    "original_question_id": "SYN_023",
+    "semantic_entity_refs": ["Professor Trelawney", "Sybill Trelawney", "Divination teacher"],
+    "semantic_lore_concepts": ["Crystal ball weapon", "Fenrir Greyback's attacker"]
+  },
+  {
+    "original_question_id": "SYN_024",
+    "semantic_entity_refs": ["A silver doe", "Lily Potter's Patronus"],
+    "semantic_lore_concepts": ["Patronus form", "Snape's true allegiance symbol", "Symbol of love for Lily"]
+  },
+  {
+    "original_question_id": "SYN_025",
+    "semantic_entity_refs": [],
+    "semantic_lore_concepts": ["Sword of Gryffindor conditions", "Goblin-made artifact properties", "True Gryffindor requirements"]
+  },
+  {
+    "original_question_id": "SYN_026",
+    "semantic_entity_refs": ["Neville Longbottom", "Destroyer of Nagini", "Gryffindor sword wielder"],
+    "semantic_lore_concepts": ["Nagini's killer", "Harry's backup plan for Horcrux"]
+  },
+  {
+    "original_question_id": "SYN_027",
+    "semantic_entity_refs": ["Golden Snitch", "Harry's first Snitch", "I open at the close Snitch"],
+    "semantic_lore_concepts": ["Deathly Hallows revelation", "Resurrection Stone container", "Last will and testament object"]
+  },
+  {
+    "original_question_id": "SYN_028",
+    "semantic_entity_refs": ["Rowle"],
+    "semantic_lore_concepts": ["Silencing Charm", "Forbidden Forest confrontation", "Hagrid's silencing"]
+  },
+  {
+    "original_question_id": "SYN_029",
+    "semantic_entity_refs": [],
+    "semantic_lore_concepts": ["Dumbledore's limbo attire", "King's Cross limbo description"]
+  },
+  {
+    "original_question_id": "SYN_030",
+    "semantic_entity_refs": ["King's Cross station", "Platform 9 3/4 station"],
+    "semantic_lore_concepts": ["Limbo location", "Afterlife meeting place", "Harry and Dumbledore's meeting place"]
+  },
+  {
+    "original_question_id": "SYN_031",
+    "semantic_entity_refs": [],
+    "semantic_lore_concepts": ["Dumbledore's refusal of power", "Minister of Magic offer", "Dumbledore's humility"]
+  }
+]
