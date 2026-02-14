@@ -28,9 +28,10 @@ You are given:
 
 #### EX (Explanatory) 
 - You must provide exactly THREE answer_variations following this "Multi-Resolution" structure:
-  1. [Comprehensive]: A full, direct explanation (Max 25 words).
-  2. [Semantic Core]: A stripped-down version containing only the essential entity and causal logic (Max 12 words).
-  3. [Key-Term Expansion]: A comma-separated list of the essential proper nouns and verbs required for a 'correct' mark.
+  1. Index 0 (Full Direct): A full, direct explanation (Max 25 words).
+  2. Index 1 (Core Logic): A stripped-down version containing only the essential entity and causal logic (Max 12 words).
+  3. Index 2 (Key Terms): A comma-separated list of the essential proper nouns and verbs required for a 'correct' mark.
+  4. Strict Rule: Do NOT include labels such as "[Comprehensive]" or "[Semantic Core]" in the strings. Return the plain text only.
 - Hint 3 should surface the conceptual lens (theme, motive, character insight) without stating the resolved conclusion.
 
 #### MCQ (Multiple Choice)
@@ -74,9 +75,9 @@ Identify the "form" of the answer before generating variations:
     "hint_3": "The villain accidentally turned his own body into a living safeguard for the hero's life.",
     "explanation": "By taking Harry's blood, the Dark Lord unwittingly preserved the protection of Lily's sacrifice within his own body, acting as a tether for Harry's life.",
     "answer_variations": [
-      "[Comprehensive]: Harry survived because Voldemort took Harry's blood into his own body, which tethered Lily's sacrificial protection to life.",
-      "[Semantic Core]: Voldemort's body acted as a tether for Lily's protection via Harry's blood.",
-      "[Key-Term Expansion]: Lily's protection, blood connection, tether, mortal anchor, Voldemort's body"
+      "Harry survived because Voldemort took Harry's blood into his own body, which tethered Lily's sacrificial protection to life.",
+      "Voldemort's body acted as a tether for Lily's protection via Harry's blood.",
+      "Lily's protection, blood connection, tether, mortal anchor, Voldemort's body"
     ]
   }
 ]

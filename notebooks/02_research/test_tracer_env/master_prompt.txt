@@ -1,4 +1,0 @@
-SYSTEM: You are a lore master.
-DATA:
-{question_batch}
-OUTPUT: JSON
