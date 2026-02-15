@@ -12,6 +12,7 @@ data/*
 !data/**/*.dvc
 !data/.gitignore
 !data/README.md
+.dvc/cache/
 # 3. Exception: Allow Pipeline Logs folder
 !data/07_pipeline_logs/
 
@@ -48,6 +49,10 @@ hptrivia_game.egg-info
 
 # Ignore python cache files
 __pycache__/
+src/ds_utils/__pycache__
+*.py[cod]
+*.so
+.pytest_cache
 
 # Django stuff:
 *.log
@@ -75,3 +80,4 @@ docs/designdoc_interview_reference_answers.md
 
 notebooks/02_research/0X-NER_implementation.ipynb
 notebooks/02_research/v0
+src/ds_utils/__pycache__
