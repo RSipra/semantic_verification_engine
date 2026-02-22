@@ -80,7 +80,7 @@ class QuestionType(str, Enum):
     including Prompt Templates, JSON Schemas, and API validation logic.
     
     Inheriting from `str` allows members to be serialized directly to JSON
-    and used in string comparisons (e.g., `if q_type == "Explanatory (Why/How)"`).
+    and used in string comparisons (e.g., `if q_type == "EX"`).
 
     Attributes:
         EX: Explanatory questions focusing on reasoning ("Why" or "How").
@@ -88,10 +88,21 @@ class QuestionType(str, Enum):
         FR: Factual Recall questions with direct, short answers.
         YN: Yes/No or True/False question with answers that contain these keywords 
     """
-    EX = "Explanatory (Why/How)"
-    MCQ = "Multiple Choice (MCQ)"
-    FR = "Factual Recall (FR)"
-    YN = "Yes/No or True/False"
+    EX = "EX"
+    MCQ = "MCQ"
+    FR = "FR"
+    YN = "YN"
+    
+    @property
+    def label(self) -> str:
+        """Human readable labels for the question types"""
+        labels = {
+            QuestionType.EX: "Explanatory (Why/How)",
+            QuestionType.MCQ: "Multiple Choice (MCQ)",
+            QuestionType.FR: "Factual Recall (FR)",
+            QuestionType.YN: "Yes/No or True/False",
+        }
+        return labels[self]
 
 class QuestionSource(str, Enum):
     """
@@ -99,4 +110,12 @@ class QuestionSource(str, Enum):
     """
     LEGACY = "legacy"
     SYNTHETIC = "synthetic"
+
+class DataTier(str, Enum):
+    """
+    Enum class to distinguish between legacy and synthetic questions source.
+    """
+    BRONZE = "bronze"
+    SILVER = "silver"
+    GOLD = "gold"
     
