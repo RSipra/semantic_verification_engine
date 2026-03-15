@@ -15,6 +15,10 @@ You are given:
 - Hints must not reveal the answer verbatim. 
 - Hints must not include any word, phrase, or identifier that would be accepted as a correct answer if typed by the learner. This includes canonical answers, aliases, titles, identities, exact terms, or uniquely identifying phrases.
 - Hint 3 may describe attributes, roles, effects, or context, but must avoid uniquely identifying the answer on its own.
+- **For Numeric/Date answers (The Funnel Rule): You must strictly order hints from broad to specific. Do NOT place the most specific mathematical or chronological clue in Hint 1 or 2.**
+  - **Hint 1 (Magnitude/Era): Establish the broad scale or century (e.g., "It is more than 5 but less than 15" or "It happened in the late 1400s").**
+  - **Hint 2 (Contextual Bound): Relate the number to a known lore event or provide a tighter mathematical bound (e.g., "It is a prime number" or "It occurred a few years before the first Triwizard Tournament").**
+  - **Hint 3 (Proximity): Bring the user right to the edge without giving the exact digits (e.g., "It is exactly one less than the number of players on a Quidditch team").**
 - The explanation must justify why the answer is correct (2–4 sentences). 
 - Answer variations must be semantically equivalent to the canonical answer.
 - Answer variations should represent the answer itself, not its justification.
