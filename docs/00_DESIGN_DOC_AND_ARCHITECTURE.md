@@ -30,36 +30,52 @@ This document outlines the architectural evolution of the Semantic Verification 
 
 1. **Product**: Build an intelligent, domain-centric trivia game demo that prioritizes correctness, low latency, and a smooth game experience. The focus is on a constrained knowledge base and efficient delivery, at free or very low cost.
 2. **Personal development**: Deepen hands-on expertise in NLP, software architecture, and MLOps by designing and implementing an end-to-end AI system using professional deployment and operational standards.
-3. **Leverage domain expertise**: Explore how chemical engineering conceptual design practices,such as Front-End Loading (FEL) and systems thinking, translate to modern GenAI systems. As a result, the system design and architectural rigor are intentionally deep.
-    
-    Unlike chemical engineering, which relies on a relatively stable set of well-defined unit operations, software and ML systems operate in a rapidly evolving ecosystem of tools and frameworks, with many viable ways to solve the same problem. The architectural decisions records (ADRs) are written to purposfully to help navigate that landscape, evaluate trade-offs, build familiarity with system design options, and act as references in future.
+3. **Cross-domain exploration:**: Apply chemical engineering practices (Front-End Loading, systems thinking) to software and AI design, exploring how rigorous upfront planning could complement fast, iterative execution.
 
-    The architecture is carried through to implementation to validate design assumptions against actual performance. 
+    Software and ML move fast, with many ways to solve the same problem. The ADRs make design thinking explicit, clarify trade-offs, and document patterns, both to guide current implementation and serve as a reference for future projects.
 
-## 1.2: Problem space:
-The core challenges and requirements were identified and refined during the [discovery stage](#phase-1-discovery--foundation) (Phase 1) of the project. The key challenges the design should address are:
+    The architecture guides implementation, ensuring design decisions are validated against actual performance. 
+
+## 1.2: Design Approach
+This project intentionally applies rigorous system design to a constrained domain. It serves two parallel goals: validating the idea of speed through rigour and accelerating my own learning through practice. As a result the project combines several learning objectives into a single end-to-end system to see how they interact:
+
+1. **Data Science (the core)**: exploratory data analysis (EDA), contextual feature engineering, semantic similarity evaluation, and select fit-for-purpose NLP techniques.
+2. **System Design (the blueprint)**: Translating the data science insights into architectural constraints and viable trade-offs.
+3. **MLOps & Agile (the execution)**: Evolving those constraints into a resilient system iteratively.
+
+The goal is a system design with clearly defined boundaries, roles, and constraints and aligned with **[established architectural patterns 🏛️✨](#4-technical-architecture--pattern-mapping)**. This document focuses on architectural clarity rather than production deployment.
+
+💡 **The Interdisciplinary Lens**.
+This project explores questions that emerged during development:
+- **Front-End Loading (FEL) & Agile**: FEL resembles the *Design Doc / RFC* phase (definition before execution to mitigate risks and costs).  So *where  does early design prevent rework and where does it introduces friction?*
+- **Process design & System thinking** Both aim to define constraints early, reason about flows, and reduce downstream issues. *How do these approaches overlap or differ?*
+
+**Context**:  Coming from a chemical engineering background, I have seen the value of rigorous upfront design in high-risk systems, but I am also aware of its limitations (rigidity, slow feedback). This project deliberately plays with that tension and explores how disciplined systems thinking can support fast, iterative delivery.
+
+## 1.3: Problem space
+Based on the lerarnings from the [discovery stage](#phase-1-discovery--foundation) (Phase 1), the key challenges are:
 
 1. **Data scarcity**: The existing question pool is small with limited quality. Manual curation is time consuming, error prone, and inefficient. 
-2. **Data saturation**: There is a finite, canonical knowledge base (the main Harry Potter books). This puts a hard limit to how many questions can be generated without repetition.
-3. **Closed-domain application**: The system is explicitly not an open-ended chat agent; its scope is bounded to trivia session orchestration and answer judging.
-4. **Sustainable economics**: As a non-revenue project, the demo costs must be minimal. And to be a truly viable design, it must ensure long-term viability at scale (mitigate runaway costs, manage opex).
-5. **Correctness and accuracy** of the questions and answers are critical for maintaining player trust and game credibility.
-6. **Game UX**: The player satisfaction depends entirely on a smooth front-end experience. The game *feel* should match what players expect from a quality game.
-7. **Replayability**: There should be sufficient questions to offer variety within and across multiple game sessions.  For long-term engagement, the experience should remain fresh even when the factual content (the dataset) remains static.
+2. **Data saturation**: Limited source material (Harry Potter books) constrains variety.
+3. **Closed-domain application**: Focused on a trivia / Q&A session orchestration, not open-ended chat.
+4. **Sustainable economics**: Demo must be low-cost and maintainable. Viable paths to scale should be integrated to avoid runaway costs and keep operational expenses manageable.
+5. **Correctness and accuracy** of the questions and answers are critical for player trust and game credibility.
+6. **Game UX**: Smooth front-end experience for player engagement. 
+7. **Replayability**: Adequate variety across sessions to maintain interest.  For long-term engagement, the experience should remain fresh even when the factual content (the dataset) remains static.
 
-## 1.3: Design philosophy (applied systems thinking)
+## 1.4: Design philosophy (applied systems thinking)
 
 The design of the project is grounded from the start by looking at the project lifecycle as an interconnected whole. The core approach has four main aspects:
 
-1. **Agile Front-End Loading (FEL)**: Combining oil & gas project experience and modern software best practices, this project implements a hybrid iterative use of FEL rigor and Agile sprints. The FEL framework (from capital project management) and system thinking analysis allows for holistic, system-level planning to minimize technical debt. The Agile methodology then facilitates quick iteration to maintain momentum. Simultaneously, these sprints allow execution realities to inform the system design. The Design Manifest itself is a result of this hybrid process, informed by Phase 1 execution and Phase 2 prototyping.
-2. **Upstream optimization ("shifting left")**: Look for opportunities to strategically balance design complexities by bringing them to earlier phases (upstream) so later phases (downstream) can be made simpler and robust. By solving problems earlier, we can trade higher initial effort for permanent gains in runtime speed, cost, efficiency, and reliability once the product is live.
-3. **Systematic evolution**: As the project progresses, requirements will inevitably change. Instead of relying on manual, ad-hoc fixes, the architecture should evolve systematically. Components should be reusable, extensible, and self-supporting. Where appropriate, it should also be reinforced with feedback loops and closed-loop enrichment so the system can adapt using its own mechanisms rather than external patching.
-4. **Swiss cheese approach**: Use of a layered defensive strategy (prevention, detection, correction) for data quality assurance.
+1. **Agile Front-End Loading (FEL)**: Combine upfront design with iterative sprints to balance planning and execution..
+2. **Upstream optimization ("shifting left")**: Solve problems early to reduce downstream complexity. By solving problems earlier, we can trade higher initial effort for permanent gains in runtime speed, cost, efficiency, and reliability once the product is live.
+3. **Systematic evolution**: As the project progresses, requirements will inevitably change. Components evolve systematically, with reusable, extensible, and feedback-driven design.
+4. **Swiss cheese approach**: layered defensive strategy (prevention, detection, correction) for data quality assurance.
 
 
-## 1.4: Basis for Design
+## 1.5: Basis for Design
 
-The following conditions provide the design constraints and boundary conditions that the architectural decisions and system design must align to.
+Constraints and target boundaries:
 
 ||**Constraint**|**Requirement**|**Target**|**Safety margin /**<br>**Contingency**|
 |-|-|-|-|-|
@@ -70,15 +86,15 @@ The following conditions provide the design constraints and boundary conditions 
 |5|**Scalability**|**Future-Proof economics**. Design should demonstrate viable path to scale where growth doesn't erode margins (capex vs. opex)|Constant or decreasing unit cost|Prototype & projection. Use "tracer bullet" experiments to empirically validate assumptions before committing to the architectural pattern|
 
 ### Objective
-Build an intelligent, domain-centric trivia game demo that prioritizes correctness, low latency, and a smooth game experience. The focus is on a constrained knowledge base and efficient delivery, enabling free or very low-cost access for players.
+Build a smart, domain-centric trivia game demo that prioritizes correctness, low latency, and a smooth game experience with minimal cost.
 
 ---
 
 # 2: Architectural Schemes & ADRs
 
-The project consists of **three** distinct design stages. The design phases represent a roadmap to the full demo design centered around efficient releases for quick feedback.
+The project has **three** design stages. T
 
-Phase|Link|Architectural function| Risk being Mitigated|ADR Summary|
+Phase|Link|Function| Risk Mitigated|ADR Summary|
 |-|-|-|-|-|
 |1|[Discovery & Foundation](#phase-1-discovery--foundation)|**Logic core & Baseline.** Establishes the MVP game state logic and a manually curated dataset, serving as the functional blueprint for subsequent automation. Kiosk-style, cloud-based containerized demo| **Viability & Quality Risk**. Validates game mechanics and identifies critical data gaps (skew, bias, completeness) in the manual baseline.| [P1 Key Decisions](#p1-key-decisions)|
 |2|[End-to-End System + Semantic intelligence](#phase-2-semantic-intelligence)|**Design Backbone with Semantic Upgrade.** Critical path for synthetic generation, contextual enrichment, and semantic answer checking, with runtime upgrades (logging, automated GitHub interactions).|**Quality, logic, and economic risk.** Mitigates dataset limitations identified in Phase 1, resolves exact-match brittleness, and validates the zero-cost hypothesis under Free Tier constraints.| [P2 Key Decisions](#p2-key-decisions-adrs)|
@@ -87,7 +103,7 @@ Phase|Link|Architectural function| Risk being Mitigated|ADR Summary|
 <br>
 
 📝 **Note on execution strategy**: <br>
-Although the architecture is presented as a linear progression (Phases 1–3), early tracer-bullet experiments are used to validate runtime cost, latency, and viability upfront. These findings will inform the Phase 2 backbone design and confirm Phase 3 as a viable optional enhancement. Implementation then proceeds linearly, with Phase 2 completed before Phase 3. For execution details, see the [execution plan](01_execution_plan).
+The architecture is presented linearly. However, early tracer-bullet experiments are used to validate runtime cost, latency, and viability upfront. For execution details, see the [execution plan](01_execution_plan).
 
 <br>
 
@@ -249,9 +265,15 @@ This section captures the core assumptions the system relies on to remain correc
 |**Data Tier**|**State**|**Purpose**|**Key data added**|
 |-|-|-|-|
 |*Bronze*|*Raw*|Ingestion & Schema Check|`question_source`, `data_tier`|
-|*Silver*|*playable*|Logic, quality, & uniqueness|Cleaned strings, validated MCQ logic, deduplication, ground checks, **SBERT Question & Answer embeddings**|
-|*Gold*|*Invariant SOT*|Immutable system anchor|`gold_id`, **SBERT model metadata**|
+|*Silver*|*playable*|Logic, quality, & uniqueness|Cleaned strings, validated MCQ logic, deduplication, ground checks, **SBERT Question & Answer embeddings and model version**|
+|*Gold*|*Invariant SOT*|Immutable system anchor|`master_id` (Gold id), clean core game data (metadata stripped) **SBERT model metadata**|
 |*Production*|*feature-rich*|Runtime ready dataset|NER tags, Contextual Features, Descriptive Features|
+
+**Architecture Note: The Silver-Gold Separation of Concerns**
+
+To ensure low-latency handoffs to downstream systems while maintaining clear traceability of LLM-generated content, a strict separation of concerns will be enforced between the Silver and Gold tiers:
+- *Silver (audit ledger)*: An append-only historical log. It retains every LLM evaluation trace, pipeline margin score, and model version. If a generated question exhibits a flaw in production, it will be queried in the Silver ledger to trace the exact prompt, grounding source quote, and validation logic that allowed it to pass.
+- *Gold (system contract)*: The pristine, invariant Source of Truth (SOT). All heavy pipeline metadata and trace logs are stripped out. It contains only the strictly-typed, normalized data required to serve the game, ensuring the downstream Context Refinery is not bloated by upstream engineering logs.
 
 ## P2 Key Decisions (ADRs)
 
@@ -387,8 +409,8 @@ Since the question runs are batched and infrequent from a contained source (HP b
 - Schema evolution: Immediate rebuilds for structural changes (new features/columns).
 - Critical patching: Ad-hoc rebuilds are permitted only for severe correctness fixes.
 
-## PHASE 3: Model-Assisted Game Master
-**Objective**: Improve game perceived intelligence and experience by edge serving an SLM model. 
+## PHASE 3: Model-Assisted Game Master (Optional)
+**Objective**: Improve game perceived intelligence and experience by edge serving an SLM model.
 
 ### P3 Overall development
 

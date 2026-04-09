@@ -133,7 +133,7 @@ The analysis revealed the following targets
 5. User feedback signal for correction becomes reliable as a safety-net only at larger scales (~100+ game sessions per day). Provisions for incorporating user feedback should therefore be included in the Phase 2 design, with staged strategies that evolve from demo to full-scale operation.
 
 <details>
-<summary><strong> Expand to see high leve estimate calculations</strong></summary>
+<summary><strong> Expand to see high level estimate calculations</strong></summary>
 
 ## 1. Error accumlation within the Gold dataset
 
@@ -180,7 +180,7 @@ If we repeat the analysis with lower hallucination rates and look at the purity 
 
 |Metric|1% Hallucination<br>(Target)|3% Hallucination<br>(Drift)|10% Hallucination<br>(Extreme)|
 |-|-|-|-|
-|Bad Questions in Pool|20|60|200|
+|Bad Questions in Pool|20|60|200|v
 |Effective Dataset Error Rate (e)|0.69%|2.07%|6.89%|
 |Est. Probability of a flawed session <!--(P=1-(1-e)^n)-->|~16%|~41%|~83%|
 How many games have errors|	1 of 6 games|2.5 of 6 games|	5 of 6 games
