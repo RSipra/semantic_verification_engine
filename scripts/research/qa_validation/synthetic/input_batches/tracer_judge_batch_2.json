@@ -1,0 +1,106 @@
+[
+  {
+    "temp_qid":"SYN_006",
+    "question_type":"EX",
+    "question":"Why did Lord Voldemort order Nagini to kill Severus Snape in the Shrieking Shack during the Battle of Hogwarts?",
+    "answer":"voldemort mistakenly believed that because snape had killed albus dumbledore, snape was the true master of the elder wand. to fully control the wand's power, voldemort thought he needed to defeat snape.",
+    "source_reference":"deathly_hallows Chapter 32",
+    "source_quote":"The Elder Wand cannot serve me properly, Severus, because I am not its true master. The Elder Wand belongs to the wizard who killed its last owner. You killed Albus Dumbledore. While you live, Severus, the Elder Wand cannot truly be mine."
+  },
+  {
+    "temp_qid":"SYN_007",
+    "question_type":"EX",
+    "question":"Why did Albus Dumbledore explicitly ask Severus Snape to kill him, rather than allowing Draco Malfoy to complete Voldemort's assignment?",
+    "answer":"dumbledore wanted to protect draco malfoy's soul from the irreparable damage of committing murder. he believed snape's soul was already complex and could better bear the burden, while also ensuring a swift and dignified end for himself.",
+    "source_reference":"deathly_hallows Chapter 32",
+    "source_quote":"That boy's soul is not yet so damaged,\" said Dumbledore. \"I would not have it ripped apart on my account.\"\"And my soul, Dumbledore? Mine?\"\"You alone know whether it will harm your soul to help an old man avoid pain and humiliation,\" said Dumbledore. \"I ask this one great favor of you, Severus, because death is coming for me as surely as the Chudley Cannons will finish bottom of this year's league. I confess I should prefer a quick, painless exit to the protracted and messy affair it will be if, for instance, Greyback is involved ¨C I hear Voldemort has recruited him? Or dear Bellatrix, who likes to play with her food before she eats it."
+  },
+  {
+    "temp_qid":"SYN_008",
+    "question_type":"EX",
+    "question":"During the Battle of Hogwarts, why did Hermione insist that Harry and Ron must prioritize hunting Nagini, despite Ron's desire to fight Death Eaters for revenge?",
+    "answer":"hermione understood that nagini was lord voldemort's last remaining horcrux. she believed that destroying nagini was the ultimate goal and the only way to finally defeat voldemort and end the war.",
+    "source_reference":"deathly_hallows Chapter 32",
+    "source_quote":"Ron, we're the only ones who can end it! Please ¨C Ron ¨C we need the snake, we've got to kill the snake!\" said Hermione. \"We're the only ones who can end it!\""
+  },
+  {
+    "temp_qid":"SYN_009",
+    "question_type":"EX",
+    "question":"How did Harry, Ron, and Hermione manage to safely enter the secret passage beneath the Whomping Willow during the Battle of Hogwarts?",
+    "answer":"ron used the \"wingardium leviosa\" spell to levitate a twig and jab it into a specific knot on the whomping willow's trunk, which instantly paralyzed its thrashing branches.",
+    "source_reference":"deathly_hallows Chapter 32",
+    "source_quote":"Ron looked around, then directed his wand at a twig on the ground and said \"Winguardium Leviosa!\" The twig flew up from the ground, spun through the air as if caught by a gust of wind, then zoomed directly at the trunk through the Willow's ominously swaying branches. It jabbed at a place near the roots, and at once, the writhing tree became still."
+  },
+  {
+    "temp_qid":"SYN_010",
+    "question_type":"EX",
+    "question":"Why was Lord Voldemort certain that Harry Potter would seek him out in the Shrieking Shack, rather than needing to be found by Death Eaters?",
+    "answer":"voldemort believed that harry's \"one great flaw\" was his refusal to let others die for him. he was confident harry would come to him to stop the battle and prevent more deaths among his friends.",
+    "source_reference":"deathly_hallows Chapter 32",
+    "source_quote":"Neither of you understands Potter as I do. He does not need finding. Potter will come to me. I knew his weakness you see, his one great flaw. He will hate watching the others struck down around him, knowing that it is for him that it happens. He will want to stop it at any cost. He will come."
+  },
+  {
+    "temp_qid":"SYN_022",
+    "question_type":"FR",
+    "question":"While in the Shrieking Shack, which Death Eater did Voldemort send to fetch Severus Snape?",
+    "answer":"lucius malfoy",
+    "source_reference":"deathly_hallows Chapter 32",
+    "source_quote":"'Go and fetch Snape.' ... Frightened, stumbling a little through the gloom, Lucius left the room."
+  },
+  {
+    "temp_qid":"SYN_023",
+    "question_type":"FR",
+    "question":"During the battle in the Great Hall, which professor hit Fenrir Greyback on the head with a crystal ball, causing him to collapse?",
+    "answer":"professor trelawney",
+    "source_reference":"deathly_hallows Chapter 32",
+    "source_quote":"Then, with a bright white flash and a crack, a crystal ball fell on top of his head, and he crumpled to the ground and did not move. 'I have more!' shrieked Professor Trelawney from over the banisters."
+  },
+  {
+    "temp_qid":"SYN_025",
+    "question_type":"FR",
+    "question":"According to Dumbledore's portrait, under what two specific conditions must the Sword of Gryffindor be taken?",
+    "answer":"need and valor",
+    "source_reference":"deathly_hallows Chapter 33",
+    "source_quote":"'Now, Severus, the sword! Do not forget that it must be taken under conditions of need and valor ¨C and he must not know that you give it!'"
+  },
+  {
+    "temp_qid":"SYN_039",
+    "question_type":"MCQ",
+    "question":"What kind of magical protection did Lord Voldemort place around Nagini in the Shrieking Shack?",
+    "answer":"an enchanted, starry, transparent sphere",
+    "source_reference":"deathly_hallows Chapter 32",
+    "source_quote":"and there was the great thick snake, now suspended in midair, twisting gracefully within the enchanted, protected space he had made for her, a starry, transparent sphere somewhere between a glittering cage and a tank."
+  },
+  {
+    "temp_qid":"SYN_040",
+    "question_type":"MCQ",
+    "question":"What form did Severus Snape's Patronus take when he showed it to Albus Dumbledore?",
+    "answer":"a silver doe",
+    "source_reference":"deathly_hallows Chapter 33",
+    "source_quote":"\"For him?\" shouted Snape. \"Expecto Patronum!\" From the tip of his wand burst the silver doe. She landed on the office floor, bounded once across the office, and soared out of the window."
+  },
+  {
+    "temp_qid":"SYN_041",
+    "question_type":"MCQ",
+    "question":"What shocking request did Albus Dumbledore make of Severus Snape regarding his own death?",
+    "answer":"to perform the killing curse on him",
+    "source_reference":"deathly_hallows Chapter 33",
+    "source_quote":"\"Are you intending to let him kill you?\" \"Certainly not. You must kill me.\""
+  },
+  {
+    "temp_qid":"SYN_042",
+    "question_type":"MCQ",
+    "question":"What crucial secret did Dumbledore reveal to Snape about Harry Potter's connection to Lord Voldemort?",
+    "answer":"that a fragment of voldemort's soul resided within harry",
+    "source_reference":"deathly_hallows Chapter 33",
+    "source_quote":"Tell him that on the night Lord Voldemort tried to kill him, when Lily cast her own life between them as a shield, the Killing Curse rebounded upon Lord Voldemort, and a fragment of Voldemort's soul was blasted apart from the whole, and latched itself onto the only living soul left in that collapsed building. Part of Lord Voldemort lives inside Harry, and it is that which gives him the power of speech with snakes, and a connection with Lord Voldemort's mind that he has never understood. And while that fragment of soul, unmissed by Voldemort, remains attached to and protected by Harry, Lord Voldemort cannot die."
+  },
+  {
+    "temp_qid":"SYN_043",
+    "question_type":"MCQ",
+    "question":"Where did Lily Evans and Severus Snape first encounter each other as children?",
+    "answer":"in a park playground near their homes",
+    "source_reference":"deathly_hallows Chapter 33",
+    "source_quote":"He fell headlong into sunlight, and his feet found warm ground. When he straightened up, he saw that he was in a nearly deserted playground."
+  }
+]

@@ -1,0 +1,122 @@
+[
+  {
+    "temp_qid":"SYN_011",
+    "question_type":"EX",
+    "question":"In the ethereal King's Cross, why was Harry still alive after Voldemort hit him with the Killing Curse in the forest, despite Harry not defending himself?",
+    "answer":"harry survived because voldemort had used harry's blood, which contained lily potter's protection, to rebuild his own body. this act tethered harry to life as long as voldemort himself lived.",
+    "source_reference":"deathly_hallows Chapter 35",
+    "source_quote":"He took your blood and rebuilt his living body with it! Your blood in his veins, Harry, Lily's protection inside both of you! He tethered you to life while he lives!"
+  },
+  {
+    "temp_qid":"SYN_012",
+    "question_type":"EX",
+    "question":"According to Albus Dumbledore, how was Harry's wand able to break the borrowed wand (Lucius Malfoy's) that Voldemort used in their encounter after Harry left Privet Drive for the last time?",
+    "answer":"dumbledore explained that harry's wand had imbibed some of the power and qualities of voldemort's wand during a previous encounter, effectively containing a part of voldemort himself. it then recognized voldemort as both kin and enemy, regurgitating his own magic against him with immense power.",
+    "source_reference":"deathly_hallows Chapter 35",
+    "source_quote":"I believe that your wand imbibed some of the power and qualities of Voldemort's wand that night, which is to say that it contained a little of Voldemort himself. So your wand recognized him when he pursued you, recognized a man who was both kin and mortal enemy, and it regurgitated some of his own magic against him, magic much more powerful than anything Lucius's wand had ever performed."
+  },
+  {
+    "temp_qid":"SYN_013",
+    "question_type":"EX",
+    "question":"Why did Albus Dumbledore refuse the offer to become Minister of Magic multiple times during his lifetime?",
+    "answer":"dumbledore refused because he had learned that he could not be trusted with power. his experiences as a young man with grindelwald proved that power was his personal weakness and temptation.",
+    "source_reference":"deathly_hallows Chapter 35",
+    "source_quote":"I, meanwhile, was offered the post of Minister of Magic, not once, but several times. Naturally, I refused. I had learned that I was not to be trusted with power.\" and \"I had proven, as a very young man, that power was my weakness and my temptation."
+  },
+  {
+    "temp_qid":"SYN_014",
+    "question_type":"EX",
+    "question":"What was the primary reason Albus Dumbledore delayed confronting Gellert Grindelwald for so many years?",
+    "answer":"dumbledore feared learning the truth about his sister ariana's death. he dreaded the knowledge that he might have cast the curse that killed her during the three-way duel with grindelwald and aberforth.",
+    "source_reference":"deathly_hallows Chapter 35",
+    "source_quote":"It was the truth I feared. You see, I never knew which of us, in that last, horrific fight, had actually cast the curse that killed my sister. You may call me cowardly: You would be right, Harry. I dreaded beyond all things the knowledge that it had been I who brought about her death, not merely through my arrogance and stupidity, but that I actually struck the blow that snuffed out her life."
+  },
+  {
+    "temp_qid":"SYN_015",
+    "question_type":"EX",
+    "question":"Why did Lord Voldemort not recognize the Resurrection Stone as a Deathly Hallow, even after turning it into one of his Horcruxes?",
+    "answer":"voldemort did not value or comprehend the true nature of the resurrection stone because he understands nothing of love or loyalty. he fears the dead and would have no one he would wish to bring back, so he never considered its real purpose.",
+    "source_reference":"deathly_hallows Chapter 35",
+    "source_quote":"I do not think so, because he did not recognize the Resurrection Stone he turned into a Horcrux. But even if he had known about them, Harry. I doubt that he would have been interested in any except the first. He would not think that he needed the Cloak, and as for the stone, whom would he want to bring back from the dead? He fears the dead. He does not love."
+  },
+  {
+    "temp_qid":"SYN_026",
+    "question_type":"FR",
+    "question":"Before confronting Voldemort in the Forbidden Forest, who did Harry instruct to kill Nagini, the snake Horcrux, if Ron and Hermione were busy?",
+    "answer":"neville longbottom",
+    "source_reference":"deathly_hallows Chapter 34",
+    "source_quote":"You know Voldemort's snake. Neville? He's got a huge snake... Calls it Nagini...\"\"I've heard, yeah... What about it?\"\"It's got to be killed. Ron and Hermione know that, but just in case they ¨C\"The awfulness of that possibility smothered him for a moment, made it impossible to keep talking. But he pulled himself together again: This was crucial, he must be like Dumbledore, keep a cool head, make sure there were backups, others to carry on. Dumbledore had died knowing that three people still knew about the Horcruxes; now Neville would take Harry's place: There would still be three in the secret."
+  },
+  {
+    "temp_qid":"SYN_027",
+    "question_type":"FR",
+    "question":"What object did Harry press to his lips and whisper \"I am about to die\" to, causing it to break open and reveal the Resurrection Stone?",
+    "answer":"golden snitch",
+    "source_reference":"deathly_hallows Chapter 34",
+    "source_quote":"The Snitch. His nerveless fingers fumbled for a moment with the pouch at his neck and he pulled it out. I open at the close. Breathing fast and hard, he stared down at it. Now that he wanted time to move as slowly as possible, he seemed to have sped up, and understanding was coming so fast it seemed to have bypassed though. This was the close. This was the moment. He pressed the golden metal to his lips and whispered, \"I am about to die.\" The metal shell broke open. He lowered his shaking hand, raised Draco's wand beneath the Cloak, and murmured, \"Lumos.\" The black stone with is jagged crack running down the center sat in the two halves of the Snitch. The Resurrection Stone had cracked down the vertical line representing the Elder Wand."
+  },
+  {
+    "temp_qid":"SYN_028",
+    "question_type":"FR",
+    "question":"In the clearing in the Forbidden Forest, who silenced Hagrid with a flick of a wand after Harry revealed himself to Voldemort?",
+    "answer":"rowle",
+    "source_reference":"deathly_hallows Chapter 34",
+    "source_quote":"He turned: Hagrid was bound and trussed, tied to a tree nearby. His massive body shook the branches overhead as he struggled, desperate.\"NO! NO! HARRY, WHAT'RE YEH ¨C?\"\"QUIET!\" shouted Rowle, and with a flick of his wand, Hagrid was silenced."
+  },
+  {
+    "temp_qid":"SYN_029",
+    "question_type":"FR",
+    "question":"When Harry met Dumbledore in the mysterious white place, what specific color were Dumbledore's sweeping robes?",
+    "answer":"midnight blue",
+    "source_reference":"deathly_hallows Chapter 35",
+    "source_quote":"Albus Dumbledore was walking toward him, sprightly and upright, wearing sweeping robes of midnight blue."
+  },
+  {
+    "temp_qid":"SYN_030",
+    "question_type":"FR",
+    "question":"When Harry asked Dumbledore where they were, what specific London station did Harry say the mysterious white, empty place resembled?",
+    "answer":"king's cross station",
+    "source_reference":"deathly_hallows Chapter 35",
+    "source_quote":"It looks,\" he said slowly, \"like King's Cross station. Except a lo cleaner and empty, and there are no trains as far as I can see.\"\"King's Cross station!\" Dumbledore was chuckling immoderately. \"Good gracious, really?\""
+  },
+  {
+    "temp_qid":"SYN_031",
+    "question_type":"FR",
+    "question":"According to Dumbledore's confession to Harry, how many times was he offered the post of Minister of Magic, which he refused?",
+    "answer":"several times",
+    "source_reference":"deathly_hallows Chapter 35",
+    "source_quote":"Years passed. There were rumors about him. They said he had procured a wand of immense power. I, meanwhile, was offered the post of Minister of Magic, not once, but several times. Naturally, I refused. I had learned that I was not to be trusted with power."
+  },
+  {
+    "temp_qid":"SYN_044",
+    "question_type":"MCQ",
+    "question":"Who carried Colin Creevey's body from the grounds after the battle?",
+    "answer":"oliver wood",
+    "source_reference":"deathly_hallows Chapter 34",
+    "source_quote":"\"You know what? I can manage him alone, Neville,\" said Oliver Wood, and he heaved Colin over his shoulder in a fireman's lift and carried him into the Great Hall."
+  },
+  {
+    "temp_qid":"SYN_045",
+    "question_type":"MCQ",
+    "question":"What creature did Harry instruct Neville Longbottom to kill if he got the chance?",
+    "answer":"nagini",
+    "source_reference":"deathly_hallows Chapter 34",
+    "source_quote":"\"You know Voldemort's snake. Neville? He's got a huge snake... Calls it Nagini...\"\"I've heard, yeah... What about it?\"\"It's got to be killed.\""
+  },
+  {
+    "temp_qid":"SYN_046",
+    "question_type":"MCQ",
+    "question":"How did Sirius Black describe the experience of dying to Harry in the forest?",
+    "answer":"quicker and easier than falling asleep",
+    "source_reference":"deathly_hallows Chapter 34",
+    "source_quote":"\"Dying? Not at all,\" said Sirius. \"Quicker and easier than falling asleep.\""
+  },
+  {
+    "temp_qid":"SYN_047",
+    "question_type":"MCQ",
+    "question":"What familiar location did Harry believe he and Dumbledore were in during their conversation in the bright, misty place?",
+    "answer":"king's cross station",
+    "source_reference":"deathly_hallows Chapter 35",
+    "source_quote":"\"It looks,\" he said slowly, \"like King's Cross station. Except a lo cleaner and empty, and there are no trains as far as I can see.\""
+  }
+]

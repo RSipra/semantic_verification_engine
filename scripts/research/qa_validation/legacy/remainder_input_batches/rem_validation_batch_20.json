@@ -1,0 +1,313 @@
+[
+  {
+    "generation_model":"gemini-2.5-flash",
+    "generation_prompt_version":null,
+    "lex_enrich_prompt_version":"legacy_enrichment_prompt_master_v1.txt",
+    "semantic_enrich_prompt_version":"legacy_context_variations_master.txt",
+    "question_type":"EX",
+    "question_source":"legacy",
+    "question":"Who can master a wand with a Thestral tail hair core?",
+    "answer":"one who has faced death",
+    "answer_variations":[
+      "only a wizard or witch who has truly faced and comprehended death can master a wand with a thestral tail hair core.",
+      "a person who has confronted death can master this wand.",
+      "faced death, comprehended mortality, experienced loss, thestral core"
+    ],
+    "hint_1":"The creatures whose hair forms the core are only visible to certain individuals.",
+    "hint_2":"The ability to see these creatures, and thus master such a wand, depends on a specific experience.",
+    "hint_3":"This particular magical ingredient resonates with those who have experienced profound loss or significant existential encounters.",
+    "explanation":"Wands with Thestral tail hair cores are notoriously difficult to master. They bond with wizards who have faced death directly and understood its reality, not just witnessed it. This connection to mortality grants the wielder a unique affinity with the wand's power.",
+    "semantic_entity_refs":[
+      "Death-seer",
+      "Thestral tail hair wand",
+      "Thestral"
+    ],
+    "semantic_lore_concepts":[
+      "Wandlore",
+      "Wand allegiance",
+      "Acceptance of death"
+    ],
+    "original_question_id":1307,
+    "mcq_options":null
+  },
+  {
+    "generation_model":"gemini-2.5-flash",
+    "generation_prompt_version":null,
+    "lex_enrich_prompt_version":"legacy_enrichment_prompt_master_v1.txt",
+    "semantic_enrich_prompt_version":"legacy_context_variations_master.txt",
+    "question_type":"EX",
+    "question_source":"legacy",
+    "question":"In Harry Potter and the Order of the Phoenix, Aunt Petunia refers to \"that boy,\" which Harry assumes means his father. Who is she actually talking about, and what does this reveal?",
+    "answer":"severus snape: petunia reveals she had eavesdropped on snape and lily as children, proving she knew about the wizarding world.",
+    "answer_variations":[
+      "aunt petunia was actually referring to severus snape, which revealed that she had known about the wizarding world since childhood by eavesdropping on him and lily.",
+      "petunia referred to snape, revealing her childhood knowledge of magic.",
+      "severus snape, aunt petunia, lily, childhood, wizarding world, eavesdropped, knew"
+    ],
+    "hint_1":"The 'boy' she mentions was a childhood acquaintance of Lily Potter, her sister.",
+    "hint_2":"This revelation surprised Harry, as it showed his aunt knew more about his mother's past than he realized.",
+    "hint_3":"Petunia's statement unveils her long-held secret awareness of the magical world from a young age.",
+    "explanation":"Aunt Petunia was actually referring to Severus Snape when she spoke of 'that boy.' This surprising revelation occurred when she mentioned hearing Snape and Lily as children. It proved that Petunia had known about the wizarding world for far longer than Harry (or the audience) had previously thought, showing her early jealousy and resentment.",
+    "semantic_entity_refs":[
+      "Severus Snape",
+      "Lily Potter",
+      "Petunia Dursley"
+    ],
+    "semantic_lore_concepts":[
+      "Childhood memories",
+      "Knowledge of magic",
+      "Pre-Hogwarts interactions"
+    ],
+    "original_question_id":1359,
+    "mcq_options":null
+  },
+  {
+    "generation_model":"gemini-2.5-flash",
+    "generation_prompt_version":null,
+    "lex_enrich_prompt_version":"legacy_enrichment_prompt_master_v1.txt",
+    "semantic_enrich_prompt_version":"legacy_context_variations_master.txt",
+    "question_type":"EX",
+    "question_source":"legacy",
+    "question":" In Harry Potter and the Order of the Phoenix, after Harry's Dementor attack, a mysterious Howler arrives for Aunt Petunia, stopping her from throwing Harry out. Who sent this Howler, and what was their crucial reason for doing so?",
+    "answer":"albus dumbledore: he sent the howler ('remember my last, petunia') to remind her of her blood pact to protect harry.",
+    "answer_variations":[
+      "albus dumbledore sent the howler to aunt petunia, reminding her of the blood pact that protected harry while he was at privet drive.",
+      "dumbledore sent a howler reminding petunia of her blood pact to protect harry.",
+      "albus dumbledore, howler, aunt petunia, blood pact, protect harry"
+    ],
+    "hint_1":"The sender was the powerful headmaster of Hogwarts, who always had Harry's best interests at heart.",
+    "hint_2":"The message contained a cryptic but potent reminder about a previous agreement.",
+    "hint_3":"The magic binding Harry to his aunt's home was a vital protection, necessitating a strong intervention.",
+    "explanation":"Albus Dumbledore sent the mysterious Howler to Aunt Petunia. His crucial reason was to remind her of the blood protection she unknowingly provided Harry by allowing him to live under her roof. The Howler, by stating 'Remember my last, Petunia,' referred to his earlier letter explaining this magical pact, ensuring Harry's safety at Privet Drive.",
+    "semantic_entity_refs":[
+      "Albus Dumbledore",
+      "Aunt Petunia",
+      "Harry Potter",
+      "Howler"
+    ],
+    "semantic_lore_concepts":[
+      "Blood pact",
+      "Protective enchantment",
+      "Dementor attack aftermath"
+    ],
+    "original_question_id":1381,
+    "mcq_options":null
+  },
+  {
+    "generation_model":"gemini-2.5-flash",
+    "generation_prompt_version":null,
+    "lex_enrich_prompt_version":"legacy_enrichment_prompt_master_v1.txt",
+    "semantic_enrich_prompt_version":"legacy_context_variations_master.txt",
+    "question_type":"EX",
+    "question_source":"legacy",
+    "question":"How should your completed Scintillation Solution look?",
+    "answer":"sparkling.",
+    "answer_variations":[
+      "a properly completed scintillation solution should appear sparkling, indicating its successful preparation and quality.",
+      "the scintillation solution should be sparkling.",
+      "sparkling, bright, effervescent, luminous, scintillating"
+    ],
+    "hint_1":"Think about the meaning of 'scintillation.'",
+    "hint_2":"The desired appearance suggests a bright, effervescent quality.",
+    "hint_3":"A successful preparation of this potion would involve a visually striking, luminous effect.",
+    "explanation":"The Scintillation Solution is a potion that, when correctly brewed, should exhibit a distinct and vibrant appearance. Its name itself, 'Scintillation,' directly indicates that the final product must be sparkling. This visual cue confirms the potion's successful completion and potency.",
+    "semantic_entity_refs":[
+      "Scintillation Solution"
+    ],
+    "semantic_lore_concepts":[
+      "Potion characteristic",
+      "Magical solution appearance"
+    ],
+    "original_question_id":453,
+    "mcq_options":null
+  },
+  {
+    "generation_model":"gemini-2.5-flash",
+    "generation_prompt_version":null,
+    "lex_enrich_prompt_version":"legacy_enrichment_prompt_master_v1.txt",
+    "semantic_enrich_prompt_version":"legacy_context_variations_master.txt",
+    "question_type":"EX",
+    "question_source":"legacy",
+    "question":"What is at the base of the Whomping Willow?",
+    "answer":"a tunnel that leads to the shrieking shack.",
+    "answer_variations":[
+      "at the base of the whomping willow, there is a hidden tunnel entrance that leads directly to the shrieking shack.",
+      "a tunnel to the shrieking shack is at the base.",
+      "tunnel, shrieking shack, whomping willow, secret passage"
+    ],
+    "hint_1":"This discovery is made by Harry and his friends in their third year.",
+    "hint_2":"It's a secret passage associated with Remus Lupin and his transformation.",
+    "hint_3":"The entrance is a hidden pathway providing access to a famously haunted building outside Hogwarts grounds.",
+    "explanation":"At the base of the Whomping Willow, there is a knot on its trunk that, when pressed, paralyzes the aggressive tree. This action reveals a secret tunnel entrance. The tunnel serves as a passage leading directly to the Shrieking Shack, which Remus Lupin used during his Hogwarts years for his monthly transformations.",
+    "semantic_entity_refs":[
+      "Whomping Willow",
+      "Shrieking Shack",
+      "Secret tunnel"
+    ],
+    "semantic_lore_concepts":[
+      "Secret passage",
+      "Werewolf hideout",
+      "Hogwarts grounds secrets"
+    ],
+    "original_question_id":1280,
+    "mcq_options":null
+  },
+  {
+    "generation_model":"gemini-2.5-flash",
+    "generation_prompt_version":null,
+    "lex_enrich_prompt_version":"legacy_enrichment_prompt_master_v1.txt",
+    "semantic_enrich_prompt_version":"legacy_context_variations_master.txt",
+    "question_type":"EX",
+    "question_source":"legacy",
+    "question":"After growing up as an orphan, how did Tom Riddle definitively discover his identity as the Heir of Salazar Slytherin?",
+    "answer":"by researching his mother's family, the gaunts, encountering his uncle morfin gaunt, and confirming it through his own parseltongue ability.",
+    "answer_variations":[
+      "tom riddle discovered his identity as the heir of slytherin by researching the gaunt family, meeting his uncle morfin gaunt, and confirming it with his parseltongue ability.",
+      "riddle researched the gaunts, met morfin, and used parseltongue.",
+      "tom riddle, gaunts, morfin gaunt, parseltongue, heir of slytherin"
+    ],
+    "hint_1":"His investigation led him to a reclusive, pure-blood family with a strong connection to Slytherin.",
+    "hint_2":"A meeting with a specific, isolated relative provided crucial verbal confirmation.",
+    "hint_3":"His innate ability to speak a snake language served as the ultimate, undeniable proof of his heritage.",
+    "explanation":"Tom Riddle definitively discovered his identity as the Heir of Salazar Slytherin by first researching his mother's lineage, the Gaunts. He then visited their decaying home, where he encountered his uncle, Morfin Gaunt, who confirmed his parentage. Finally, his ability to speak Parseltongue, an inherited trait, cemented his understanding of his unique connection to Slytherin.",
+    "semantic_entity_refs":[
+      "Tom Riddle",
+      "Lord Voldemort",
+      "Salazar Slytherin",
+      "Gaunt family",
+      "Morfin Gaunt"
+    ],
+    "semantic_lore_concepts":[
+      "Heir of Slytherin",
+      "Parseltongue",
+      "Bloodline discovery"
+    ],
+    "original_question_id":1402,
+    "mcq_options":null
+  },
+  {
+    "generation_model":"gemini-2.5-flash",
+    "generation_prompt_version":null,
+    "lex_enrich_prompt_version":"legacy_enrichment_prompt_master_v1.txt",
+    "semantic_enrich_prompt_version":"legacy_context_variations_master.txt",
+    "question_type":"EX",
+    "question_source":"legacy",
+    "question":"How did Ginny Weasley come into possession of Tom Riddle’s diary in Harry Potter and the Chamber of Secrets?",
+    "answer":"lucius malfoy secretly slipped the diary into her cauldron at flourish and blotts, hiding it among her school supplies.",
+    "answer_variations":[
+      "ginny weasley received tom riddle's diary when lucius malfoy secretly placed it in her cauldron at flourish and blotts among her school supplies.",
+      "lucius malfoy slipped the diary into ginny's cauldron.",
+      "lucius malfoy, ginny weasley, tom riddle's diary, flourish and blotts, cauldron"
+    ],
+    "hint_1":"The diary was planted by a prominent Death Eater with a long-standing grudge against the Weasley family.",
+    "hint_2":"This happened during a trip to a famous wizarding bookstore to buy school supplies.",
+    "hint_3":"The malicious act was designed to cause chaos and discredit Arthur Weasley, rather than directly harm Ginny.",
+    "explanation":"Ginny Weasley came into possession of Tom Riddle's diary due to Lucius Malfoy's deliberate actions. He secretly slipped the dark object into her cauldron while at Flourish and Blotts, amidst her other school supplies. Malfoy's intention was to frame Arthur Weasley by having a dark artifact discovered at Hogwarts, rather than specifically targeting Ginny.",
+    "semantic_entity_refs":[
+      "Lucius Malfoy",
+      "Ginny Weasley",
+      "Tom Riddle's Diary",
+      "Flourish and Blotts"
+    ],
+    "semantic_lore_concepts":[
+      "Horcrux concealment",
+      "Chamber of Secrets plot",
+      "Malfoy's manipulation"
+    ],
+    "original_question_id":1425,
+    "mcq_options":null
+  },
+  {
+    "generation_model":"gemini-2.5-flash",
+    "generation_prompt_version":null,
+    "lex_enrich_prompt_version":"legacy_enrichment_prompt_master_v1.txt",
+    "semantic_enrich_prompt_version":"legacy_context_variations_master.txt",
+    "question_type":"EX",
+    "question_source":"legacy",
+    "question":"How do you greet a Hippogriff?",
+    "answer":"with a bow",
+    "answer_variations":[
+      "you should greet a hippogriff by performing a respectful bow and waiting for it to bow back, signaling trust.",
+      "greet a hippogriff respectfully with a bow.",
+      "bow, respectful, greet, hippogriff, gesture"
+    ],
+    "hint_1":"The correct way to approach these proud creatures involves a specific gesture of respect.",
+    "hint_2":"This gesture shows deference and allows the creature to assess your intentions.",
+    "hint_3":"Hagrid teaches his students to perform this polite action before getting close to them.",
+    "explanation":"To properly greet a Hippogriff, one must approach with respect and perform a deep bow. This gesture demonstrates that you are not a threat and are acknowledging the creature's proud nature. If the Hippogriff bows back, it means you have gained its trust and it is safe to approach further.",
+    "semantic_entity_refs":[
+      "Hippogriff",
+      "Bow"
+    ],
+    "semantic_lore_concepts":[
+      "Magical creature etiquette",
+      "Animal respect"
+    ],
+    "original_question_id":171,
+    "mcq_options":null
+  },
+  {
+    "generation_model":"gemini-2.5-flash",
+    "generation_prompt_version":null,
+    "lex_enrich_prompt_version":"legacy_enrichment_prompt_master_v1.txt",
+    "semantic_enrich_prompt_version":"legacy_context_variations_master.txt",
+    "question_type":"EX",
+    "question_source":"legacy",
+    "question":"In Half-Blood Prince, why did Professor Slughorn invite Ginny Weasley to join his exclusive 'Slug Club' despite her family's lesser fame?",
+    "answer":"because he was impressed by her exceptional magical talent, particularly her powerful bat-bogey hex",
+    "answer_variations":[
+      "professor slughorn invited ginny to the slug club because he was greatly impressed by her exceptional magical talent, specifically her powerful bat-bogey hex.",
+      "slughorn was impressed by ginny's powerful bat-bogey hex.",
+      "ginny weasley, slughorn, bat-bogey hex, magical talent, slug club, impressed"
+    ],
+    "hint_1":"Slughorn values unique abilities and potential, not just family connections.",
+    "hint_2":"Ginny displayed a memorable and visually striking offensive charm.",
+    "hint_3":"Her magical prowess, demonstrated through a specific spell, caught the professor's discerning eye.",
+    "explanation":"Professor Slughorn invited Ginny Weasley to his 'Slug Club' because he was genuinely impressed by her extraordinary magical talent. Despite the Weasleys' more modest standing, Ginny's remarkable ability, particularly her powerful and well-executed Bat-Bogey Hex, convinced Slughorn of her potential and unique gifts. He sought out talent, not just established fame.",
+    "semantic_entity_refs":[
+      "Ginny Weasley",
+      "Horace Slughorn",
+      "Bat-Bogey Hex",
+      "Slug Club"
+    ],
+    "semantic_lore_concepts":[
+      "Magical talent",
+      "Slughorn's collecting",
+      "Exceptional spellwork"
+    ],
+    "original_question_id":1415,
+    "mcq_options":null
+  },
+  {
+    "generation_model":"gemini-2.5-flash",
+    "generation_prompt_version":null,
+    "lex_enrich_prompt_version":"legacy_enrichment_prompt_master_v1.txt",
+    "semantic_enrich_prompt_version":"legacy_context_variations_master.txt",
+    "question_type":"EX",
+    "question_source":"legacy",
+    "question":"In Harry Potter and the Deathly Hallows, during the Battle of Hogwarts, Narcissa Malfoy lies to Voldemort about Harry’s death. What was her desperate motivation for this lie?",
+    "answer":"her desperate need to know if her son, draco, was alive (or to find draco \/ to ensure draco's safety).",
+    "answer_variations":[
+      "narcissa malfoy lied to voldemort because her desperate motivation was to ascertain if her son, draco, was alive and safe within hogwarts castle.",
+      "narcissa lied to find out if draco, her son, was alive.",
+      "narcissa malfoy, draco, son, alive, safety, mother's love, motivation, lie, voldemort"
+    ],
+    "hint_1":"Her actions were entirely driven by deep maternal concern for her child.",
+    "hint_2":"She took a risk because she desperately needed information about her son's well-being.",
+    "hint_3":"In that chaotic moment, her primary focus was the safety and whereabouts of her only child.",
+    "explanation":"Narcissa Malfoy lied to Voldemort about Harry's death during the Battle of Hogwarts because her overwhelming motivation was her desperate need to know if her son, Draco, was still alive. Before confirming Harry's 'death,' she subtly asked him if Draco was in the castle. Upon learning he was, she chose to falsely report Harry's demise, prioritizing her son's safety and reunification over allegiance to the Dark Lord.",
+    "semantic_entity_refs":[
+      "Narcissa Malfoy",
+      "Draco Malfoy",
+      "Lord Voldemort",
+      "Harry Potter"
+    ],
+    "semantic_lore_concepts":[
+      "Maternal love",
+      "Family loyalty",
+      "Battle of Hogwarts survival"
+    ],
+    "original_question_id":1350,
+    "mcq_options":null
+  }
+]

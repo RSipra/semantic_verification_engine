@@ -1,0 +1,210 @@
+[
+  {
+    "temp_qid": "SYN_000",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote correctly extracts dialogue from the text but removes quotation marks and spaces, meaning it is spliced.",
+      "step_2_answer_grounding": "The answer claims Dumbledore and Flitwick likely asked 'for practical reasons'. This reasoning is entirely invented and not supported by the grounding text or wider canon facts.",
+      "step_3_question_logic": "The question logic is clear, unambiguous, and does not leak the answer."
+    },
+    "scores": {
+      "source_quote_code": 1,
+      "answer_grounding_code": 2,
+      "question_logic_code": 0
+    }
+  },
+  {
+    "temp_qid": "SYN_001",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote accurately reflects the text but merges separate paragraphs without proper spacing.",
+      "step_2_answer_grounding": "The answer accurately reflects the direct quote and the immediate context surrounding it, summarizing Harry's thought process perfectly.",
+      "step_3_question_logic": "The question is logically sound and clear."
+    },
+    "scores": {
+      "source_quote_code": 1,
+      "answer_grounding_code": 0,
+      "question_logic_code": 0
+    }
+  },
+  {
+    "temp_qid": "SYN_002",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote is spliced, removing quotation marks, narrative interruptions, and paragraph breaks.",
+      "step_2_answer_grounding": "The answer is deducible from the quote and the surrounding scene, as McGonagall tells Filch to find Peeves in order to do something constructive to defend the school.",
+      "step_3_question_logic": "The question successfully establishes a valid scenario without giving away the answer."
+    },
+    "scores": {
+      "source_quote_code": 1,
+      "answer_grounding_code": 0,
+      "question_logic_code": 0
+    }
+  },
+  {
+    "temp_qid": "SYN_003",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote is an accurate extraction but splices together various lines of dialogue by stripping out quotation marks and paragraph breaks.",
+      "step_2_answer_grounding": "The answer is completely faithful to the quote and the immediate surrounding context.",
+      "step_3_question_logic": "The question is structurally sound and directly relates to the provided context."
+    },
+    "scores": {
+      "source_quote_code": 1,
+      "answer_grounding_code": 0,
+      "question_logic_code": 0
+    }
+  },
+  {
+    "temp_qid": "SYN_004",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote splices dialogue lines together, removing paragraph formatting and quotation marks.",
+      "step_2_answer_grounding": "The answer is completely verified by the provided text, which states Ron did not want anymore Dobbies and could not order them to die.",
+      "step_3_question_logic": "The question accurately sets up the premise and points unambiguously to the target answer."
+    },
+    "scores": {
+      "source_quote_code": 1,
+      "answer_grounding_code": 0,
+      "question_logic_code": 0
+    }
+  },
+  {
+    "temp_qid": "SYN_005",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote correctly captures the text but merges sentences, omits paragraph breaks, and removes quotation marks.",
+      "step_2_answer_grounding": "The answer faithfully describes Crabbe's dialogue, accurately linking his stated reasoning for defying Malfoy to the events in the scene.",
+      "step_3_question_logic": "The question introduces 'Fiendfyre' which is a canon fact from the immediate following text, successfully framing the query."
+    },
+    "scores": {
+      "source_quote_code": 1,
+      "answer_grounding_code": 0,
+      "question_logic_code": 0
+    }
+  },
+  {
+    "temp_qid": "SYN_016",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote is a perfect, unbroken extraction from the text.",
+      "step_2_answer_grounding": "The answer is strictly grounded in the quote, directly identifying 'stunned'.",
+      "step_3_question_logic": "The question effectively contextualizes the scenario by explicitly naming Luna and Alecto Carrow, without leaking the answer."
+    },
+    "scores": {
+      "source_quote_code": 0,
+      "answer_grounding_code": 0,
+      "question_logic_code": 0
+    }
+  },
+  {
+    "temp_qid": "SYN_018",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote is a perfect, continuous extraction from the text.",
+      "step_2_answer_grounding": "The answer matches the quote completely.",
+      "step_3_question_logic": "The question adds character context (Gray Lady) which is canon and present in the surrounding text."
+    },
+    "scores": {
+      "source_quote_code": 0,
+      "answer_grounding_code": 0,
+      "question_logic_code": 0
+    }
+  },
+  {
+    "temp_qid": "SYN_019",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote is an exact match from the source text.",
+      "step_2_answer_grounding": "The answer is perfectly grounded in the quote provided.",
+      "step_3_question_logic": "The question frames the scenario well and does not leak the answer."
+    },
+    "scores": {
+      "source_quote_code": 0,
+      "answer_grounding_code": 0,
+      "question_logic_code": 0
+    }
+  },
+  {
+    "temp_qid": "SYN_020",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote is perfectly extracted from the text without any alterations.",
+      "step_2_answer_grounding": "The answer is explicitly stated within the source quote.",
+      "step_3_question_logic": "The question provides logical framing using verifiable canon facts (Battle of Hogwarts) to orient the player."
+    },
+    "scores": {
+      "source_quote_code": 0,
+      "answer_grounding_code": 0,
+      "question_logic_code": 0
+    }
+  },
+  {
+    "temp_qid": "SYN_032",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote is a continuous extraction, merely missing the opening quotation mark, which is an acceptable minor difference.",
+      "step_2_answer_grounding": "The answer matches the source quote directly.",
+      "step_3_question_logic": "The question accurately frames the context using verifiable canon facts."
+    },
+    "scores": {
+      "source_quote_code": 0,
+      "answer_grounding_code": 0,
+      "question_logic_code": 0
+    }
+  },
+  {
+    "temp_qid": "SYN_033",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote removes the paragraph break between the riddle and the response, making it spliced.",
+      "step_2_answer_grounding": "The answer is perfectly grounded in the quote.",
+      "step_3_question_logic": "The question incorporates correct contextual framing about the Ravenclaw door knocker without leaking the answer."
+    },
+    "scores": {
+      "source_quote_code": 1,
+      "answer_grounding_code": 0,
+      "question_logic_code": 0
+    }
+  },
+  {
+    "temp_qid": "SYN_034",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote is an unbroken match from the source text.",
+      "step_2_answer_grounding": "The answer is strictly grounded in the extracted text.",
+      "step_3_question_logic": "The question logic correctly focuses on the shape of the Patronus without giving away the answer."
+    },
+    "scores": {
+      "source_quote_code": 0,
+      "answer_grounding_code": 0,
+      "question_logic_code": 0
+    }
+  },
+  {
+    "temp_qid": "SYN_035",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote is an exact, unbroken extraction from the provided source text.",
+      "step_2_answer_grounding": "The answer is directly sourced from the quote itself.",
+      "step_3_question_logic": "The question includes verifiable framing context (Chamber of Secrets, Horcruxes) to orient the player."
+    },
+    "scores": {
+      "source_quote_code": 0,
+      "answer_grounding_code": 0,
+      "question_logic_code": 0
+    }
+  },
+  {
+    "temp_qid": "SYN_036",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote uses an ellipsis to splice non-adjacent sections of the text together.",
+      "step_2_answer_grounding": "The answer is directly stated within the quoted text.",
+      "step_3_question_logic": "The question establishes an excellent logical premise and clearly points to the intended answer."
+    },
+    "scores": {
+      "source_quote_code": 1,
+      "answer_grounding_code": 0,
+      "question_logic_code": 0
+    }
+  },
+  {
+    "temp_qid": "SYN_037",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote is a perfectly continuous extraction from the text.",
+      "step_2_answer_grounding": "The answer relies entirely on the quote provided.",
+      "step_3_question_logic": "The question is structurally sound, does not contain false premises, and successfully frames the context."
+    },
+    "scores": {
+      "source_quote_code": 0,
+      "answer_grounding_code": 0,
+      "question_logic_code": 0
+    }
+  }
+]

@@ -1,0 +1,165 @@
+[
+  {
+    "temp_qid":"SYN_000",
+    "question_type":"EX",
+    "question":"Why did Helena Ravenclaw, the Gray Lady, reveal the location of her mother's lost diadem to Tom Riddle, but not to Dumbledore or Flitwick?",
+    "answer":"she confessed to riddle because he was flattering, seemed to understand her, and sympathized with her story, unlike dumbledore or flitwick who likely asked for practical reasons.",
+    "source_reference":"deathly_hallows Chapter 30",
+    "source_quote":"You've already told someone this story, haven't you? Another student?She closed her eyes and nodded.I had... no idea... He was flattering. He seemed to... understand... to sympathize..."
+  },
+  {
+    "temp_qid":"SYN_001",
+    "question_type":"EX",
+    "question":"How did Harry suddenly realize the exact hiding place of the diadem Horcrux within Hogwarts Castle?",
+    "answer":"he recalled seeing a marble bust of rowena ravenclaw with a headdress at xenophilius's, a statue in ravenclaw tower with a diadem, and then remembered a third stone effigy of an ugly old warlock where he had once hidden his old potions book.",
+    "source_reference":"deathly_hallows Chapter 30",
+    "source_quote":"Its ugly stone face made Harry think suddenly of the marble bust of Rowena Ravenclaw at Xenophilius's house, wearing that mad headdress ¨C and then of the statue in Ravenclaw Tower, with the stone diadem upon her white curls....And as he reached the end of the passage, the memory of a third stone effigy came back to him: that of an ugly old warlock, onto whose head Harry himself had placed a wig and a battered old hat. The shock shot through Harry with the heat of firewhisky, and he nearly stumbled.He knew, at least, where the Horcrux sat waiting for him...."
+  },
+  {
+    "temp_qid":"SYN_002",
+    "question_type":"EX",
+    "question":"Why did Professor McGonagall instruct Filch to find Peeves during the preparations for battle at Hogwarts?",
+    "answer":"she ordered filch to find peeves so the poltergeist could be enlisted to help defend the school, despite filch's bewilderment at the request.",
+    "source_reference":"deathly_hallows Chapter 30",
+    "source_quote":"Now go and do something constructive! Find Peeves!P-Peeves? stammered Filch as though he had never heard the name before.Yes, Peeves, you fool, Peeves! Haven't you been complaining about him for a quarter of a century? Go and fetch him, at once."
+  },
+  {
+    "temp_qid":"SYN_003",
+    "question_type":"EX",
+    "question":"How did Ron and Hermione manage to destroy Hufflepuff's cup Horcrux?",
+    "answer":"ron had the idea to go to the chamber of secrets, where he opened it using parseltongue (mimicking harry's sound from the locket), and hermione stabbed the cup with a basilisk fang.",
+    "source_reference":"deathly_hallows Chapter 31",
+    "source_quote":"It was Ron, all Ron's idea! said Hermione breathlessly. Wasnt it absolutely brilliant? There we were, after we left, and I said to Ron, even if we find the other one, how are we going to get rid of it? We still hadnt got rid of the cup! And then he thought of it! The basilisk!Something to get rid of Horcruxes, said Ron simply.Harry's eyes dropped to the objects clutched in Ron and Hermiones arms: great curved fangs; torn, he now realized, from the skull of a dead basilisk.But how did you get in there? he asked, staring from the fangs to Ron. You need to speak Parseltongue!He did! whispered Hermione. Show him, Ron!Ron made a horrible strangled hissing noise.Its what you did to open the locket, he told Harry apologetically. I had to have a few goes to get it right, but, he shrugged modestly, we got there in the end.He was amazing! said Hermione. Amazing!So we're another Horcrux down, said Ron, and from under his jacket he pulled the mangled remains of Hufflepuff's cup. Hermione stabbed it. Thought she should. She hasn't had the pleasure yet."
+  },
+  {
+    "temp_qid":"SYN_004",
+    "question_type":"EX",
+    "question":"Why did Ron Weasley insist they should tell the house-elves to evacuate from Hogwarts during the battle?",
+    "answer":"ron believed they shouldn't order the house-elves to die for them, expressing a desire to avoid another tragedy like dobby's death.",
+    "source_reference":"deathly_hallows Chapter 31",
+    "source_quote":"The house-elves, they'll all be down in the kitchen, won't they?You mean we ought to get them fighting? asked Harry.No, said Ron seriously, I mean we should tell them to get out. We don't want anymore Dobbies, do we? We can't order them to die for us ¨C"
+  },
+  {
+    "temp_qid":"SYN_005",
+    "question_type":"EX",
+    "question":"Why did Crabbe ignore Draco Malfoy's warning and use the Fiendfyre curse inside the Room of Requirement?",
+    "answer":"crabbe was furious with malfoy and asserted his independence, stating he no longer took orders from draco and that he cared more about getting potter dead for the dark lord than preserving the diadem or the room.",
+    "source_reference":"deathly_hallows Chapter 31",
+    "source_quote":"What's that matter? said Crabbe, tugging himself free. It's Potter the Dark Lord wants, who cares about a die-dum?Potter came in here to get it, said Malfoy with ill-disguised impatience at the slow-wittedness of his colleagues. so that must mean ¨C 'Must mean'? Crabbe turned on Malfoy with undisguised ferocity. Who cares what you think? I don't take your orders no more, Draco. You an' your dad are finished."
+  },
+  {
+    "temp_qid":"SYN_016",
+    "question_type":"FR",
+    "question":"In Ravenclaw Tower, what was the effect of the spell Luna Lovegood used on Alecto Carrow?",
+    "answer":"stunned",
+    "source_reference":"deathly_hallows Chapter 30",
+    "source_quote":"\"I've never Stunned anyone except in our D.A. lessons,\" said Luna, sounding mildly interested. \"That was noisier than I though it would be.\""
+  },
+  {
+    "temp_qid":"SYN_018",
+    "question_type":"FR",
+    "question":"Who was the ghost of Ravenclaw Tower, also known as the Gray Lady?",
+    "answer":"helena ravenclaw",
+    "source_reference":"deathly_hallows Chapter 31",
+    "source_quote":"\"When I lived,\" she said stiffly, \"I was Helena Ravenclaw.\""
+  },
+  {
+    "temp_qid":"SYN_019",
+    "question_type":"FR",
+    "question":"In what country did Helena Ravenclaw hide her mother's diadem inside a hollow tree?",
+    "answer":"albania",
+    "source_reference":"deathly_hallows Chapter 31",
+    "source_quote":"\"A forest in Albania. A lonely place I thought was far beyond my mother's reach.\""
+  },
+  {
+    "temp_qid":"SYN_020",
+    "question_type":"FR",
+    "question":"Which Weasley family member died during the Battle of Hogwarts, with the ghost of his last laugh still etched upon his face?",
+    "answer":"fred",
+    "source_reference":"deathly_hallows Chapter 31",
+    "source_quote":"And Percy was shaking his brother, and Ron was kneeling beside them, and Fred's eyes stared without seeing, the ghost of his last laugh still etched upon his face."
+  },
+  {
+    "temp_qid":"SYN_032",
+    "question_type":"MCQ",
+    "question":"What was Luna Lovegood's initial reaction to successfully stunning Alecto Carrow?",
+    "answer":"she noted it was noisier than expected, having only used the spell in d.a. lessons.",
+    "source_reference":"deathly_hallows Chapter 30",
+    "source_quote":"I've never Stunned anyone except in our D.A. lessons,\" said Luna, sounding mildly interested. \"That was noisier than I though it would be."
+  },
+  {
+    "temp_qid":"SYN_033",
+    "question_type":"MCQ",
+    "question":"What was Professor McGonagall's correct answer to the Ravenclaw common room door knocker's riddle, \"Where do Vanished objects go?\"",
+    "answer":"into non being, which is to say, everything.",
+    "source_reference":"deathly_hallows Chapter 30",
+    "source_quote":"\"Where do Vanished objects go?\"\"Into non being, which is to say, everything,\" replied Professor McGonagall."
+  },
+  {
+    "temp_qid":"SYN_034",
+    "question_type":"MCQ",
+    "question":"What form did Professor McGonagall's Patronus take when she sent it to alert the other Heads of House?",
+    "answer":"a silver cat with spectacle markings around the eyes",
+    "source_reference":"deathly_hallows Chapter 30",
+    "source_quote":"From the tip burst three silver cats with spectacle markings around their eyes. the Patronuses ran sleekly ahead, filling the spiral staircase with silvery light, as Professor McGonagall, Harry, and Luna hurried back down."
+  },
+  {
+    "temp_qid":"SYN_035",
+    "question_type":"MCQ",
+    "question":"What specific object did Ron and Hermione retrieve from the Chamber of Secrets to destroy Horcruxes?",
+    "answer":"basilisk fangs",
+    "source_reference":"deathly_hallows Chapter 31",
+    "source_quote":"Harry's eyes dropped to the objects clutched in Ron and Hermione's arms: great curved fangs; torn, he now realized, from the skull of a dead basilisk."
+  },
+  {
+    "temp_qid":"SYN_036",
+    "question_type":"MCQ",
+    "question":"What extremely dangerous cursed fire spell did Crabbe unleash in the Room of Requirement?",
+    "answer":"fiendfyre",
+    "source_reference":"deathly_hallows Chapter 31",
+    "source_quote":"It was not normal fire; Crabbe had used a curse of which Harry had no knowledge. ... \"It must have been Fiendfyre!\" whimpered Hermione, her eyes on the broken piece. \"Sorry?\" \"Fiendfyre ¨C cursed fire ¨C it's one of the substances that destroy Horcruxes, but I would never, ever have dared use it, it's so dangerous ¨C how did Crabbe know how to ¨C?\""
+  },
+  {
+    "temp_qid":"SYN_037",
+    "question_type":"MCQ",
+    "question":"What inscription was etched upon the lost Diadem of Ravenclaw?",
+    "answer":"wit beyond measure is man's greatest treasure.",
+    "source_reference":"deathly_hallows Chapter 31",
+    "source_quote":"He pulled the diadem from his wrist and held it up. It was still hot, blackened with soot, but as he looked at it closely he was just able to make out the tiny words etched upon it; WIT BEYOND MEASURE IS MAN'S GREATEST TREASURE."
+  },
+
+
+  
+  {
+    "temp_qid":"SYN_038",
+    "question_type":"FR",
+    "question":"In Ravenclaw Tower, what was the effect of the spell Luna Lovegood used on Alecto Carrow?",
+    "answer":"stunned",
+    "source_reference":"deathly_hallows Chapter 30",
+    "source_quote":"\"I've never used a Stunning spell outside of Dumbledore's Army.\" said Luna, sounding mildly interested. \"That was noisier than I though it would be.\""
+  },
+    {
+    "temp_qid":"SYN_039",
+    "question_type":"FR",
+    "question":"Who was the ghost of Ravenclaw Tower, also known as the Gray Lady?",
+    "answer":"helena ravenclaw",
+    "source_reference":"deathly_hallows Chapter 30",
+    "source_quote":"\"When I lived,\" she said stiffly, \"I was Helena Ravenclaw.\""
+  },
+  {
+    "temp_qid":"SYN_040",
+    "question_type":"MCQ",
+    "question":"What specific object did Ron and Hermione retrieve from the Chamber of Secrets to destroy Horcruxes?",
+    "answer":"basilisk fangs, which they used to destroy the cup.",
+    "source_reference":"deathly_hallows Chapter 31",
+    "source_quote":"Harry's eyes dropped to the objects clutched in Ron and Hermione's arms: great curved fangs; torn, he now realized, from the skull of a dead basilisk."
+  },
+  {
+    "temp_qid":"SYN_041",
+    "question_type":"FR",
+    "question":"Did Helena Ravenclaw hide her mother's diadem in Albania?",
+    "answer":"albania",
+    "source_reference":"deathly_hallows Chapter 31",
+    "source_quote":"\"A forest in Albania. A lonely place I thought was far beyond my mother's reach.\""
+  }
+]

@@ -1,0 +1,322 @@
+[
+  {
+    "temp_qid":"SYN_027",
+    "question_type":"FR",
+    "question_source":"synthetic",
+    "question":"What object did Harry press to his lips and whisper \"I am about to die\" to, causing it to break open and reveal the Resurrection Stone?",
+    "answer":"golden snitch",
+    "answer_variations":[
+      "golden snitch",
+      "the snitch",
+      "snitch"
+    ],
+    "hint_1":"This Quidditch item was bequeathed to Harry by Albus Dumbledore.",
+    "hint_2":"It bore a hidden message: 'I open at the close.'",
+    "hint_3":"It is small, winged, and highly sought after during a wizarding sport.",
+    "explanation":"Harry pressed the Golden Snitch, which Dumbledore had left him, to his lips and whispered 'I am about to die.' This act, representing 'the close,' caused the Snitch to break open and reveal the Resurrection Stone hidden within it.",
+    "semantic_entity_refs":[
+      "Golden Snitch",
+      "Harry's first Snitch",
+      "I open at the close Snitch"
+    ],
+    "semantic_lore_concepts":[
+      "Deathly Hallows revelation",
+      "Resurrection Stone container",
+      "Last will and testament object"
+    ],
+    "llm_predicted_category":"Object\/Potion",
+    "llm_predicted_difficulty":"Easy",
+    "source_reference":"deathly_hallows Chapter 34",
+    "source_quote":"The Snitch. His nerveless fingers fumbled for a moment with the pouch at his neck and he pulled it out. I open at the close. Breathing fast and hard, he stared down at it. Now that he wanted time to move as slowly as possible, he seemed to have sped up, and understanding was coming so fast it seemed to have bypassed though. This was the close. This was the moment. He pressed the golden metal to his lips and whispered, \"I am about to die.\" The metal shell broke open. He lowered his shaking hand, raised Draco's wand beneath the Cloak, and murmured, \"Lumos.\" The black stone with is jagged crack running down the center sat in the two halves of the Snitch. The Resurrection Stone had cracked down the vertical line representing the Elder Wand.",
+    "mcq_options":null
+  },
+  {
+    "temp_qid":"SYN_028",
+    "question_type":"FR",
+    "question_source":"synthetic",
+    "question":"In the clearing in the Forbidden Forest, who silenced Hagrid with a flick of a wand after Harry revealed himself to Voldemort?",
+    "answer":"rowle",
+    "answer_variations":[
+      "rowle"
+    ],
+    "hint_1":"This individual is one of the Death Eaters present at the scene.",
+    "hint_2":"Their name is less prominent than some other Death Eaters but they are explicitly mentioned in this context.",
+    "hint_3":"They were eager to follow the Dark Lord's command and keep order during this critical moment.",
+    "explanation":"As Harry revealed himself to Voldemort in the Forbidden Forest, Hagrid cried out in despair. Rowle, one of the Death Eaters present, quickly silenced Hagrid with a flick of his wand to prevent any further interruptions during Voldemort's confrontation with Harry.",
+    "semantic_entity_refs":[
+      "Rowle"
+    ],
+    "semantic_lore_concepts":[
+      "Silencing Charm",
+      "Forbidden Forest confrontation",
+      "Hagrid's silencing"
+    ],
+    "llm_predicted_category":"Character Detail",
+    "llm_predicted_difficulty":"Medium",
+    "source_reference":"deathly_hallows Chapter 34",
+    "source_quote":"He turned: Hagrid was bound and trussed, tied to a tree nearby. His massive body shook the branches overhead as he struggled, desperate.\"NO! NO! HARRY, WHAT'RE YEH ¨C?\"\"QUIET!\" shouted Rowle, and with a flick of his wand, Hagrid was silenced.",
+    "mcq_options":null
+  },
+  {
+    "temp_qid":"SYN_029",
+    "question_type":"FR",
+    "question_source":"synthetic",
+    "question":"When Harry met Dumbledore in the mysterious white place, what specific color were Dumbledore's sweeping robes?",
+    "answer":"midnight blue",
+    "answer_variations":[
+      "midnight blue",
+      "blue",
+      "dark blue"
+    ],
+    "hint_1":"This color is often associated with the darkness of night, but it is distinct from plain black.",
+    "hint_2":"It suggests a deep, rich hue, often seen at the darkest hour before dawn.",
+    "hint_3":"The description added to the ethereal and majestic quality of Dumbledore's appearance in this liminal space.",
+    "explanation":"In the mysterious white, ethereal place Harry found himself in, Dumbledore was observed wearing sweeping robes of a specific color: midnight blue. This detail added to the solemn and significant atmosphere of their final conversation.",
+    "semantic_entity_refs":[
+
+    ],
+    "semantic_lore_concepts":[
+      "Dumbledore's limbo attire",
+      "King's Cross limbo description"
+    ],
+    "llm_predicted_category":"Object\/Potion",
+    "llm_predicted_difficulty":"Hard",
+    "source_reference":"deathly_hallows Chapter 35",
+    "source_quote":"Albus Dumbledore was walking toward him, sprightly and upright, wearing sweeping robes of midnight blue.",
+    "mcq_options":null
+  },
+  {
+    "temp_qid":"SYN_030",
+    "question_type":"FR",
+    "question_source":"synthetic",
+    "question":"When Harry asked Dumbledore where they were, what specific London station did Harry say the mysterious white, empty place resembled?",
+    "answer":"king's cross station",
+    "answer_variations":[
+      "king's cross station",
+      "king's cross",
+      "kings cross"
+    ],
+    "hint_1":"This is a major railway hub in London, very familiar to Harry.",
+    "hint_2":"It's the departure point for students traveling to Hogwarts on the Hogwarts Express.",
+    "hint_3":"Harry knew this station well from his journeys to and from the wizarding world.",
+    "explanation":"When Harry met Dumbledore in the mysterious, clean, and empty white place, he remarked that it strikingly resembled King's Cross station. This was the familiar London railway station from which Harry and other students departed for Hogwarts each year.",
+    "semantic_entity_refs":[
+      "King's Cross station",
+      "Platform 9 3\/4 station"
+    ],
+    "semantic_lore_concepts":[
+      "Limbo location",
+      "Afterlife meeting place",
+      "Harry and Dumbledore's meeting place"
+    ],
+    "llm_predicted_category":"Location\/Setting",
+    "llm_predicted_difficulty":"Medium",
+    "source_reference":"deathly_hallows Chapter 35",
+    "source_quote":"It looks,\" he said slowly, \"like King's Cross station. Except a lo cleaner and empty, and there are no trains as far as I can see.\"\"King's Cross station!\" Dumbledore was chuckling immoderately. \"Good gracious, really?\"",
+    "mcq_options":null
+  },
+  {
+    "temp_qid":"SYN_033",
+    "question_type":"MCQ",
+    "question_source":"synthetic",
+    "question":"What was Professor McGonagall's correct answer to the Ravenclaw common room door knocker's riddle, \"Where do Vanished objects go?\"",
+    "answer":"into non being, which is to say, everything.",
+    "answer_variations":[
+      "non being",
+      "everything"
+    ],
+    "hint_1":"Recall the philosophical nature of Ravenclaw riddles and Professor McGonagall's logical mind.",
+    "hint_2":"The answer involves a concept that is both an absence and a totality.",
+    "hint_3":"Vanishing spells don't destroy objects, but rather move them out of existence in a way that implies both nothingness and omnipresence.",
+    "explanation":"Professor McGonagall correctly answered the Ravenclaw knocker's riddle by stating that vanished objects go 'Into non being, which is to say, everything.' This response aligns with complex magical theory where vanishing doesn't annihilate an object but places it beyond conventional existence, making it part of a greater, undefined totality.",
+    "semantic_entity_refs":[
+      "Vanished objects",
+      "Ravenclaw common room knocker"
+    ],
+    "semantic_lore_concepts":[
+      "Vanishing Spell mechanics",
+      "Magical vanishing principle",
+      "Non-being concept",
+      "Ravenclaw riddle"
+    ],
+    "llm_predicted_category":"Location\/Setting",
+    "llm_predicted_difficulty":"Easy",
+    "source_reference":"deathly_hallows Chapter 30",
+    "source_quote":"\"Where do Vanished objects go?\"\"Into non being, which is to say, everything,\" replied Professor McGonagall.",
+    "mcq_options":[
+      "they return to their original components.",
+      "into non being, which is to say, everything.",
+      "to a state of magical limbo, awaiting recall.",
+      "nowhere, they cease to exist."
+    ]
+  },
+  {
+    "temp_qid":"SYN_035",
+    "question_type":"MCQ",
+    "question_source":"synthetic",
+    "question":"What specific object did Ron and Hermione retrieve from the Chamber of Secrets to destroy Horcruxes?",
+    "answer":"basilisk fangs",
+    "answer_variations":[
+      "basilisk fangs",
+      "fangs"
+    ],
+    "hint_1":"Recall what kind of creature resided in the Chamber of Secrets.",
+    "hint_2":"What part of that creature is known for its highly destructive, venomous properties, capable of destroying dark magic?",
+    "hint_3":"The object they retrieved was a remnant of the monster Harry himself defeated in his second year.",
+    "explanation":"Ron and Hermione ventured into the Chamber of Secrets specifically to retrieve Basilisk fangs. These fangs, imbued with potent venom, are one of the few substances capable of destroying Horcruxes, making them invaluable in the final battle against Voldemort.",
+    "semantic_entity_refs":[
+      "Basilisk fangs"
+    ],
+    "semantic_lore_concepts":[
+      "Horcrux destruction method",
+      "Basilisk venom properties",
+      "Chamber of Secrets retrieval"
+    ],
+    "llm_predicted_category":"Object\/Potion",
+    "llm_predicted_difficulty":"Easy",
+    "source_reference":"deathly_hallows Chapter 31",
+    "source_quote":"Harry's eyes dropped to the objects clutched in Ron and Hermione's arms: great curved fangs; torn, he now realized, from the skull of a dead basilisk.",
+    "mcq_options":[
+      "basilisk fangs",
+      "a vial of potent venom",
+      "gryffindor's sword",
+      "a cursed dagger"
+    ]
+  },
+  {
+    "temp_qid":"SYN_036",
+    "question_type":"MCQ",
+    "question_source":"synthetic",
+    "question":"What extremely dangerous cursed fire spell did Crabbe unleash in the Room of Requirement?",
+    "answer":"fiendfyre",
+    "answer_variations":[
+      "fiendfyre"
+    ],
+    "hint_1":"This powerful and destructive spell is known to be one of the few things capable of destroying Horcruxes, but it is incredibly difficult to control.",
+    "hint_2":"Hermione recognized this specific dark magic when she saw it, immediately identifying its perilous nature.",
+    "hint_3":"The fire created by this curse is sentient and seeks to destroy all in its path, often taking the form of monstrous flaming creatures.",
+    "explanation":"Crabbe unleashed Fiendfyre in the Room of Requirement, a dark and incredibly dangerous cursed fire spell. This chaotic magic is one of the few known substances powerful enough to destroy Horcruxes, but its sentient and uncontrollable nature makes it exceptionally perilous to cast.",
+    "semantic_entity_refs":[
+      "Fiendfyre"
+    ],
+    "semantic_lore_concepts":[
+      "Cursed fire",
+      "Dark magic spell",
+      "Horcrux destruction method",
+      "Room of Requirement incident"
+    ],
+    "llm_predicted_category":"Spell\/Charm",
+    "llm_predicted_difficulty":"Medium",
+    "source_reference":"deathly_hallows Chapter 31",
+    "source_quote":"It was not normal fire; Crabbe had used a curse of which Harry had no knowledge. ... \"It must have been Fiendfyre!\" whimpered Hermione, her eyes on the broken piece. \"Sorry?\" \"Fiendfyre ¨C cursed fire ¨C it's one of the substances that destroy Horcruxes, but I would never, ever have dared use it, it's so dangerous ¨C how did Crabbe know how to ¨C?\"",
+    "mcq_options":[
+      "incendio maxima",
+      "confringo inferno",
+      "fiendfyre",
+      "ignis maleficus"
+    ]
+  },
+  {
+    "temp_qid":"SYN_037",
+    "question_type":"MCQ",
+    "question_source":"synthetic",
+    "question":"What inscription was etched upon the lost Diadem of Ravenclaw?",
+    "answer":"wit beyond measure is man's greatest treasure.",
+    "answer_variations":[
+      "wit beyond measure",
+      "man's greatest treasure"
+    ],
+    "hint_1":"The inscription reflects the core value of Ravenclaw House.",
+    "hint_2":"Think about the specific quality that Ravenclaws prize most highly, as stated in the Sorting Hat's song.",
+    "hint_3":"The phrase emphasizes a particular intellectual attribute as humanity's most valuable asset, exceeding mere knowledge.",
+    "explanation":"The lost Diadem of Ravenclaw bore the inscription 'WIT BEYOND MEASURE IS MAN'S GREATEST TREASURE.' This phrase perfectly encapsulates the values of Ravenclaw House, which prioritizes intelligence, creativity, and the power of the mind above all else.",
+    "semantic_entity_refs":[
+      "Lost Diadem of Ravenclaw",
+      "Ravenclaw's Diadem"
+    ],
+    "semantic_lore_concepts":[
+      "Ravenclaw motto",
+      "Founder's relic inscription",
+      "Horcrux (Diadem)"
+    ],
+    "llm_predicted_category":"Object\/Potion",
+    "llm_predicted_difficulty":"Hard",
+    "source_reference":"deathly_hallows Chapter 31",
+    "source_quote":"He pulled the diadem from his wrist and held it up. It was still hot, blackened with soot, but as he looked at it closely he was just able to make out the tiny words etched upon it; WIT BEYOND MEASURE IS MAN'S GREATEST TREASURE.",
+    "mcq_options":[
+      "knowledge is power.",
+      "creativity and wisdom above all.",
+      "wit beyond measure is man's greatest treasure.",
+      "the mind is the greatest weapon."
+    ]
+  },
+  {
+    "temp_qid":"SYN_039",
+    "question_type":"MCQ",
+    "question_source":"synthetic",
+    "question":"What kind of magical protection did Lord Voldemort place around Nagini in the Shrieking Shack?",
+    "answer":"an enchanted, starry, transparent sphere",
+    "answer_variations":[
+      "enchanted, starry, transparent sphere",
+      "starry, transparent sphere"
+    ],
+    "hint_1":"This protection was visually distinct and allowed Nagini to be seen, but not easily harmed.",
+    "hint_2":"Think about the description of its appearance – it wasn't merely invisible, but had a specific aesthetic.",
+    "hint_3":"The magical enclosure Voldemort created for his final Horcrux was described with celestial qualities, yet also physical confinement.",
+    "explanation":"In the Shrieking Shack, Lord Voldemort placed Nagini inside an enchanted, starry, transparent sphere of magical protection. This shimmering enclosure was designed to keep his final Horcrux safe from harm while still allowing him to keep watch over his serpent.",
+    "semantic_entity_refs":[
+      "Nagini",
+      "Lord Voldemort"
+    ],
+    "semantic_lore_concepts":[
+      "Horcrux protection",
+      "Magical containment",
+      "Enchanted sphere",
+      "Shrieking Shack event"
+    ],
+    "llm_predicted_category":"Creature\/Beast",
+    "llm_predicted_difficulty":"Medium",
+    "source_reference":"deathly_hallows Chapter 32",
+    "source_quote":"and there was the great thick snake, now suspended in midair, twisting gracefully within the enchanted, protected space he had made for her, a starry, transparent sphere somewhere between a glittering cage and a tank.",
+    "mcq_options":[
+      "an unbreakable diamond shell",
+      "a shimmering, invisible force field",
+      "an enchanted, starry, transparent sphere",
+      "a shield charm that reflected all spells"
+    ]
+  },
+  {
+    "temp_qid":"SYN_040",
+    "question_type":"MCQ",
+    "question_source":"synthetic",
+    "question":"What form did Severus Snape's Patronus take when he showed it to Albus Dumbledore?",
+    "answer":"a silver doe",
+    "answer_variations":[
+      "silver doe",
+      "doe"
+    ],
+    "hint_1":"Snape's Patronus revealed a profound and enduring aspect of his past.",
+    "hint_2":"The form of his Patronus was a direct reflection of his deepest, unrequited love.",
+    "hint_3":"This Patronus form mirrored that of a very significant person in his life, symbolizing his loyalty and everlasting devotion.",
+    "explanation":"Severus Snape's Patronus took the form of a silver doe when he revealed it to Albus Dumbledore. This form was identical to Lily Potter's Patronus, serving as a powerful and poignant symbol of his enduring love and loyalty to her, which persisted even after her death.",
+    "semantic_entity_refs":[
+      "Severus Snape",
+      "Snape's Patronus"
+    ],
+    "semantic_lore_concepts":[
+      "Patronus Charm",
+      "Unrequited love symbol",
+      "Always (Snape's devotion)"
+    ],
+    "llm_predicted_category":"Character Detail",
+    "llm_predicted_difficulty":"Medium",
+    "source_reference":"deathly_hallows Chapter 33",
+    "source_quote":"\"For him?\" shouted Snape. \"Expecto Patronum!\" From the tip of his wand burst the silver doe. She landed on the office floor, bounded once across the office, and soared out of the window.",
+    "mcq_options":[
+      "a silver stag",
+      "a silver otter",
+      "a silver doe",
+      "a silver dog"
+    ]
+  }
+]

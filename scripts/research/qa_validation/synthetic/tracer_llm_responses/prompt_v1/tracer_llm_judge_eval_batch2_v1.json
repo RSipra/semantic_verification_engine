@@ -1,0 +1,171 @@
+[
+  {
+    "temp_qid": "SYN_006",
+    "evaluation_trace": {
+      "step_1_quote_match": "The source quote is a continuous, exact match from the text.",
+      "step_2_answer_grounding": "The answer deduces Voldemort's reasoning from the quote and expands slightly using canon knowledge ('to defeat Snape').",
+      "step_3_question_logic": "The question uses valid contextual framing (Shrieking Shack, Battle of Hogwarts, Nagini) to orient the player."
+    },
+    "scores": {
+      "source_quote_code": 0,
+      "answer_grounding_code": 1,
+      "question_logic_code": 1
+    }
+  },
+  {
+    "temp_qid": "SYN_007",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote accurately reflects the text and is unbroken, omitting only a paragraph break.",
+      "step_2_answer_grounding": "The answer introduces a fabricated psychological motive ('he believed Snape's soul was already complex and could better bear the burden') which contradicts Dumbledore's statement in the quote ('You alone know whether it will harm your soul').",
+      "step_3_question_logic": "The question is logically sound and accurately reflects the text's premise."
+    },
+    "scores": {
+      "source_quote_code": 0,
+      "answer_grounding_code": 2,
+      "question_logic_code": 0
+    }
+  },
+  {
+    "temp_qid": "SYN_008",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote splices together two different lines spoken by Hermione, removing the intervening narrative text and Harry's thoughts.",
+      "step_2_answer_grounding": "The answer relies on the canon fact that Nagini was a Horcrux, which is directly supported by the surrounding text in the chapter.",
+      "step_3_question_logic": "The question includes helpful contextual framing ('Battle of Hogwarts', 'hunting Nagini') without leaking the answer."
+    },
+    "scores": {
+      "source_quote_code": 1,
+      "answer_grounding_code": 1,
+      "question_logic_code": 1
+    }
+  },
+  {
+    "temp_qid": "SYN_009",
+    "evaluation_trace": {
+      "step_1_quote_match": "The source quote is an exact, unbroken match from the text.",
+      "step_2_answer_grounding": "The answer is strictly derived from the provided quote.",
+      "step_3_question_logic": "The question adds appropriate, verifiable contextual framing ('Battle of Hogwarts', 'secret passage')."
+    },
+    "scores": {
+      "source_quote_code": 0,
+      "answer_grounding_code": 0,
+      "question_logic_code": 1
+    }
+  },
+  {
+    "temp_qid": "SYN_010",
+    "evaluation_trace": {
+      "step_1_quote_match": "The source quote is exactly extracted from the grounding text.",
+      "step_2_answer_grounding": "The answer is perfectly grounded in the provided quote.",
+      "step_3_question_logic": "The question adds proper contextual framing ('Shrieking Shack', 'Death Eaters') to set the scene."
+    },
+    "scores": {
+      "source_quote_code": 0,
+      "answer_grounding_code": 0,
+      "question_logic_code": 1
+    }
+  },
+  {
+    "temp_qid": "SYN_022",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote is spliced using an ellipsis to remove an intervening exchange of dialogue.",
+      "step_2_answer_grounding": "The answer expands 'Lucius' to his full canon name 'Lucius Malfoy'.",
+      "step_3_question_logic": "The question provides accurate contextual framing ('Shrieking Shack')."
+    },
+    "scores": {
+      "source_quote_code": 1,
+      "answer_grounding_code": 1,
+      "question_logic_code": 1
+    }
+  },
+  {
+    "temp_qid": "SYN_023",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote is a continuous extraction, though it ignores a paragraph break and changes double quotes to single quotes. It remains factually precise.",
+      "step_2_answer_grounding": "The answer is fully deducible from the quote.",
+      "step_3_question_logic": "The question provides correct context ('Great Hall', 'Battle') to properly orient the player."
+    },
+    "scores": {
+      "source_quote_code": 0,
+      "answer_grounding_code": 0,
+      "question_logic_code": 1
+    }
+  },
+  {
+    "temp_qid": "SYN_025",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote is an exact match to the text.",
+      "step_2_answer_grounding": "The answer is perfectly grounded in the quote.",
+      "step_3_question_logic": "The question is logically sound and clear."
+    },
+    "scores": {
+      "source_quote_code": 0,
+      "answer_grounding_code": 0,
+      "question_logic_code": 0
+    }
+  },
+  {
+    "temp_qid": "SYN_039",
+    "evaluation_trace": {
+      "step_1_quote_match": "The source quote perfectly matches the text.",
+      "step_2_answer_grounding": "The answer is directly stated in the quote.",
+      "step_3_question_logic": "The question adds relevant contextual framing ('Shrieking Shack', 'Lord Voldemort')."
+    },
+    "scores": {
+      "source_quote_code": 0,
+      "answer_grounding_code": 0,
+      "question_logic_code": 1
+    }
+  },
+  {
+    "temp_qid": "SYN_040",
+    "evaluation_trace": {
+      "step_1_quote_match": "The source quote is exact and unbroken.",
+      "step_2_answer_grounding": "The answer is fully supported by the quote.",
+      "step_3_question_logic": "The question effectively frames the scenario and identifies the characters involved without leaking the answer."
+    },
+    "scores": {
+      "source_quote_code": 0,
+      "answer_grounding_code": 0,
+      "question_logic_code": 0
+    }
+  },
+  {
+    "temp_qid": "SYN_041",
+    "evaluation_trace": {
+      "step_1_quote_match": "The source quote perfectly matches the dialogue in the text.",
+      "step_2_answer_grounding": "The quote specifies 'kill me', but the answer introduces pan-series canon knowledge by specifying 'the killing curse', which is not in this immediate quote but is true to the story.",
+      "step_3_question_logic": "The question is straightforward and clearly formulated."
+    },
+    "scores": {
+      "source_quote_code": 0,
+      "answer_grounding_code": 1,
+      "question_logic_code": 0
+    }
+  },
+  {
+    "temp_qid": "SYN_042",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote is an unbroken, exact match from the text.",
+      "step_2_answer_grounding": "The answer is completely grounded in the provided quote.",
+      "step_3_question_logic": "The question utilizes correct contextual framing to query the specific secret revealed."
+    },
+    "scores": {
+      "source_quote_code": 0,
+      "answer_grounding_code": 0,
+      "question_logic_code": 1
+    }
+  },
+  {
+    "temp_qid": "SYN_043",
+    "evaluation_trace": {
+      "step_1_quote_match": "The source quote is an exact, continuous match.",
+      "step_2_answer_grounding": "The answer relies on canon expansion to include the detail 'near their homes', which is implied heavily in the surrounding text but not stated in the quote itself.",
+      "step_3_question_logic": "The question uses appropriate contextual framing ('first encounter each other as children') to describe the memory."
+    },
+    "scores": {
+      "source_quote_code": 0,
+      "answer_grounding_code": 1,
+      "question_logic_code": 1
+    }
+  }
+]

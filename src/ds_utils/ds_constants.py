@@ -58,6 +58,19 @@ MCQ_INDICATOR_PHRASES = {
 # A general regex pattern to find MCQ-like formats (e.g., a list of choices)
 MCQ_FORMAT_PATTERN = r'[:?]\s*.*,\s*.*\s*or\s*.*'
 
+# Allowed answer_types in Gold dataset
+ANSWER_CATEGORIES = ['numeric', 'text', 'date', 'year']
+
+class AnswerType (str, Enum):
+    """
+    Enum definition for answer_type categorical colum in Production 
+    dataset for pydantic checks
+    """
+    TEXT = "text"
+    DATE = "date"
+    NUMERIC = "numeric"
+    YEAR = "year"
+
 # Standardized book names (as prefixe to chapter numbers in file names)
 class Book(str, Enum):
     """ 

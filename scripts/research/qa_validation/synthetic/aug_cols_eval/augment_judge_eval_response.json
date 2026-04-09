@@ -1,0 +1,225 @@
+[
+  {
+    "row_id": "SYN_001",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Variations accurately follow the multi-resolution EX format and hints are progressively structured."
+  },
+  {
+    "row_id": "SYN_002",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Hints properly scaffold the answer without spoiling it; valid semantic compression."
+  },
+  {
+    "row_id": "SYN_003",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Answer variations properly follow constraints and capture the semantic essence of the explanation."
+  },
+  {
+    "row_id": "SYN_004",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Excellent hints and explanation, accurately reflecting character motivations."
+  },
+  {
+    "row_id": "SYN_005",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Explanatory variations maintain the target word counts and semantic keywords correctly."
+  },
+  {
+    "row_id": "SYN_006",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Clear, lore-accurate explanation with correct multi-resolution structure."
+  },
+  {
+    "row_id": "SYN_007",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Accurate concepts; hints guide without direct reveal."
+  },
+  {
+    "row_id": "SYN_008",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Variations capture the core semantic meaning effectively. Perfect score logic."
+  },
+  {
+    "row_id": "SYN_009",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "All augmented fields conform neatly to the prompt instructions."
+  },
+  {
+    "row_id": "SYN_010",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Lore tags and explanation accurately align with the anchor text."
+  },
+  {
+    "row_id": "SYN_011",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Variations strictly follow the multi-resolution EX format, and hints are properly scaffolded."
+  },
+  {
+    "row_id": "SYN_012",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Excellent hints and lore tags; EX answer variations are concise and well-structured."
+  },
+  {
+    "row_id": "SYN_013",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "All augmented fields fit perfectly and capture the semantic intent accurately."
+  },
+  {
+    "row_id": "SYN_014",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Explanation and variations elegantly summarize a complex emotional motive without straying from lore."
+  },
+  {
+    "row_id": "SYN_015",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "The multi-resolution compression successfully preserves Voldemort's loveless nature as the core causal reason."
+  },
+  {
+    "row_id": "SYN_019",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "FR answer variations appropriately capture the single entity requested."
+  },
+  {
+    "row_id": "SYN_020",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Perfect semantic aliases provided for the character entity."
+  },
+  {
+    "row_id": "SYN_022",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Hints and answer variations correctly scaffold and map back to the anchor."
+  },
+  {
+    "row_id": "SYN_025",
+    "overall_status": "fail",
+    "flags": [
+      {
+        "column": "answer_variations",
+        "severity": "error",
+        "reason": "The single words 'need' and 'valor' as standalone variations are incomplete and do not serve as genuine aliases for the required two-part answer 'need and valor'."
+      }
+    ],
+    "notes": "Separating a two-part answer into single-word variations allows factually incorrect partial answers to score as perfect matches."
+  },
+  {
+    "row_id": "SYN_026",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Variations accurately provide the full name and common surname alias for Neville."
+  },
+  {
+    "row_id": "SYN_027",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Excellent hints and semantic aliases for the requested object."
+  },
+  {
+    "row_id": "SYN_028",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "All augmented fields fit perfectly and capture the semantic intent accurately."
+  },
+  {
+    "row_id": "SYN_029",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Variations accurately reflect both the specific and general surface forms of the color."
+  },
+  {
+    "row_id": "SYN_030",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Hints properly scaffold the answer without spoiling it; semantic tags are highly relevant."
+  },
+  {
+    "row_id": "SYN_033",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "MCQ variations uniquely and successfully identify the correct option."
+  },
+  {
+    "row_id": "SYN_035",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Perfect semantic aliases provided for the object entity without any distractor bleed."
+  },
+  {
+    "row_id": "SYN_036",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Hints, explanation, and tags are well-written and correctly aligned with the anchor."
+  },
+  {
+    "row_id": "SYN_037",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "MCQ variations extract the key unique phrases to identify the correct inscription."
+  },
+  {
+    "row_id": "SYN_039",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Variations capture the core semantic meaning effectively. Perfect semantic validation."
+  },
+  {
+    "row_id": "SYN_040",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "No distractor bleed in the answer variations. Hints are progressive and lore-accurate."
+  },
+  {
+    "row_id": "SYN_042",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Variations successfully capture the unique semantic core of the correct option. Hints and explanation are well-aligned."
+  },
+  {
+    "row_id": "SYN_043",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Hints properly scaffold the answer without giving away the exact string. Variations cleanly identify the correct option."
+  },
+  {
+    "row_id": "SYN_044",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Excellent hints that guide the user to the correct character based on lore traits. Answer variations are accurate."
+  },
+  {
+    "row_id": "SYN_045",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Explanation and variations elegantly align with the anchor. Concepts accurately reflect the lore context."
+  },
+  {
+    "row_id": "SYN_046",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Multi-word variations correctly capture the essence of the quote without distractor bleed."
+  },
+  {
+    "row_id": "SYN_047",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "All augmented fields fit perfectly and capture the semantic intent accurately."
+  }
+]
+

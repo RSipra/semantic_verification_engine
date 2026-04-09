@@ -1,0 +1,202 @@
+[
+  {
+    "temp_qid":"SYN_042",
+    "question_type":"MCQ",
+    "question_source":"synthetic",
+    "question":"What crucial secret did Dumbledore reveal to Snape about Harry Potter's connection to Lord Voldemort?",
+    "answer":"that a fragment of voldemort's soul resided within harry",
+    "answer_variations":[
+      "fragment of voldemort's soul",
+      "soul resided within harry"
+    ],
+    "hint_1":"This secret explained Harry's unique abilities and his profound mental link with the Dark Lord.",
+    "hint_2":"It revealed the true nature of Harry as an unwitting container for a piece of the villain's being.",
+    "hint_3":"Dumbledore explained that Harry carried a part of Voldemort's deepest magic within him, which also prevented the Dark Lord from being truly vanquished.",
+    "explanation":"Dumbledore revealed to Snape the crucial secret that a fragment of Voldemort's soul resided within Harry Potter. This revelation explained Harry's Parseltongue abilities and his mental connection to Voldemort, and it was vital for understanding the ultimate path to defeating the Dark Lord.",
+    "semantic_entity_refs":[
+      "Harry Potter",
+      "Lord Voldemort",
+      "Voldemort's soul fragment"
+    ],
+    "semantic_lore_concepts":[
+      "Accidental Horcrux",
+      "Soul fragment",
+      "Lily's sacrificial protection",
+      "Parseltongue origin"
+    ],
+    "llm_predicted_category":"Character Detail",
+    "llm_predicted_difficulty":"Medium",
+    "source_reference":"deathly_hallows Chapter 33",
+    "source_quote":"Tell him that on the night Lord Voldemort tried to kill him, when Lily cast her own life between them as a shield, the Killing Curse rebounded upon Lord Voldemort, and a fragment of Voldemort's soul was blasted apart from the whole, and latched itself onto the only living soul left in that collapsed building. Part of Lord Voldemort lives inside Harry, and it is that which gives him the power of speech with snakes, and a connection with Lord Voldemort's mind that he has never understood. And while that fragment of soul, unmissed by Voldemort, remains attached to and protected by Harry, Lord Voldemort cannot die.",
+    "mcq_options":[
+      "that harry was destined to become an animagus",
+      "that a fragment of voldemort's soul resided within harry",
+      "that harry possessed a previously unknown magical ability",
+      "that harry was immune to the killing curse"
+    ]
+  },
+  {
+    "temp_qid":"SYN_043",
+    "question_type":"MCQ",
+    "question_source":"synthetic",
+    "question":"Where did Lily Evans and Severus Snape first encounter each other as children?",
+    "answer":"in a park playground near their homes",
+    "answer_variations":[
+      "park playground",
+      "playground near their homes"
+    ],
+    "hint_1":"Their first meeting happened before they knew about Hogwarts or the wider wizarding world.",
+    "hint_2":"Think about a common place for children to play in a Muggle neighborhood.",
+    "hint_3":"Their childhood introduction occurred in a mundane, outdoor recreational space close to where they lived.",
+    "explanation":"Lily Evans and Severus Snape first encountered each other as children in a park playground near their homes. This early meeting established their foundational, albeit complicated, friendship before they ever stepped foot into the wizarding world or Hogwarts.",
+    "semantic_entity_refs":[
+      "Lily Evans",
+      "Severus Snape"
+    ],
+    "semantic_lore_concepts":[
+      "Childhood friendship",
+      "First encounter",
+      "Muggle world setting"
+    ],
+    "llm_predicted_category":"Character Detail",
+    "llm_predicted_difficulty":"Easy",
+    "source_reference":"deathly_hallows Chapter 33",
+    "source_quote":"He fell headlong into sunlight, and his feet found warm ground. When he straightened up, he saw that he was in a nearly deserted playground.",
+    "mcq_options":[
+      "in the forbidden forest near hogwarts",
+      "on the hogwarts express before their first year",
+      "in a park playground near their homes",
+      "at a magical fair in diagon alley"
+    ]
+  },
+  {
+    "temp_qid":"SYN_044",
+    "question_type":"MCQ",
+    "question_source":"synthetic",
+    "question":"Who carried Colin Creevey's body from the grounds after the battle?",
+    "answer":"oliver wood",
+    "answer_variations":[
+      "oliver wood"
+    ],
+    "hint_1":"This person was a former Gryffindor Quidditch Captain.",
+    "hint_2":"The individual carrying Colin was a Hogwarts alumnus who returned to fight in the Battle of Hogwarts.",
+    "hint_3":"The student who carried Colin's body was known for his leadership and physicality on the Quidditch pitch.",
+    "explanation":"After the Battle of Hogwarts, Oliver Wood, the former Gryffindor Quidditch Captain, carried Colin Creevey's body from the grounds. He offered to manage it alone, demonstrating strength and solemnity in the face of loss.",
+    "semantic_entity_refs":[
+      "Oliver Wood"
+    ],
+    "semantic_lore_concepts":[
+      "Battle of Hogwarts casualties",
+      "Body retrieval"
+    ],
+    "llm_predicted_category":"Character Detail",
+    "llm_predicted_difficulty":"Easy",
+    "source_reference":"deathly_hallows Chapter 34",
+    "source_quote":"\"You know what? I can manage him alone, Neville,\" said Oliver Wood, and he heaved Colin over his shoulder in a fireman's lift and carried him into the Great Hall.",
+    "mcq_options":[
+      "neville longbottom",
+      "rubeus hagrid",
+      "oliver wood",
+      "seamus finnigan"
+    ]
+  },
+  {
+    "temp_qid":"SYN_045",
+    "question_type":"MCQ",
+    "question_source":"synthetic",
+    "question":"What creature did Harry instruct Neville Longbottom to kill if he got the chance?",
+    "answer":"nagini",
+    "answer_variations":[
+      "nagini"
+    ],
+    "hint_1":"This creature was Voldemort's last remaining Horcrux, crucial to his survival.",
+    "hint_2":"Harry had a specific conversation with Neville, emphasizing the importance of destroying this particular serpentine creature.",
+    "hint_3":"The creature was a large snake that Voldemort kept close, often within a protective sphere during the battle.",
+    "explanation":"Harry instructed Neville Longbottom to kill Nagini if he had the opportunity. This was because Nagini was Voldemort's last remaining Horcrux, and its destruction was essential to making Voldemort mortal and vulnerable.",
+    "semantic_entity_refs":[
+      "Nagini",
+      "Lord Voldemort's snake"
+    ],
+    "semantic_lore_concepts":[
+      "Voldemort's last Horcrux",
+      "Horcrux destruction directive",
+      "Battle of Hogwarts objective"
+    ],
+    "llm_predicted_category":"Creature\/Beast",
+    "llm_predicted_difficulty":"Easy",
+    "source_reference":"deathly_hallows Chapter 34",
+    "source_quote":"\"You know Voldemort's snake. Neville? He's got a huge snake... Calls it Nagini...\"\"I've heard, yeah... What about it?\"\"It's got to be killed.\"",
+    "mcq_options":[
+      "a dementor",
+      "the acromantulas",
+      "nagini",
+      "a basilisk"
+    ]
+  },
+  {
+    "temp_qid":"SYN_046",
+    "question_type":"MCQ",
+    "question_source":"synthetic",
+    "question":"How did Sirius Black describe the experience of dying to Harry in the forest?",
+    "answer":"quicker and easier than falling asleep",
+    "answer_variations":[
+      "quicker and easier than falling asleep",
+      "quicker and easier"
+    ],
+    "hint_1":"Harry was able to communicate with spiritual echoes of his loved ones in the forest.",
+    "hint_2":"Sirius's description offered Harry comfort about what awaited him.",
+    "hint_3":"His description of passing on suggested a sense of ease and swiftness, rather than fear or pain.",
+    "explanation":"When Harry encountered the spiritual echo of Sirius Black in the Forbidden Forest, Sirius described the experience of dying as 'Quicker and easier than falling asleep.' This comforting assurance helped Harry face his own imminent encounter with death.",
+    "semantic_entity_refs":[
+      "Sirius Black"
+    ],
+    "semantic_lore_concepts":[
+      "Nature of death",
+      "Resurrection Stone vision",
+      "Beyond the Veil description"
+    ],
+    "llm_predicted_category":"Character Detail",
+    "llm_predicted_difficulty":"Medium",
+    "source_reference":"deathly_hallows Chapter 34",
+    "source_quote":"\"Dying? Not at all,\" said Sirius. \"Quicker and easier than falling asleep.\"",
+    "mcq_options":[
+      "a long, peaceful transition",
+      "a terrifying void",
+      "a sudden, sharp pain",
+      "quicker and easier than falling asleep"
+    ]
+  },
+  {
+    "temp_qid":"SYN_047",
+    "question_type":"MCQ",
+    "question_source":"synthetic",
+    "question":"What familiar location did Harry believe he and Dumbledore were in during their conversation in the bright, misty place?",
+    "answer":"king's cross station",
+    "answer_variations":[
+      "king's cross station"
+    ],
+    "hint_1":"This location is a gateway to the wizarding world for Hogwarts students.",
+    "hint_2":"Harry recognized the general architecture and feel of a busy transportation hub.",
+    "hint_3":"The setting of their ethereal conversation evoked a very specific, mundane but magically significant place related to travel and new beginnings.",
+    "explanation":"During their conversation in the bright, misty limbo, Harry believed he and Dumbledore were in King's Cross station. He noted its similarities, though cleaner and empty, to the place where students departed for Hogwarts, suggesting a transition point between life and what lay beyond.",
+    "semantic_entity_refs":[
+      "King's Cross station"
+    ],
+    "semantic_lore_concepts":[
+      "Limbo (magical concept)",
+      "Afterlife encounter",
+      "Dumbledore's spiritual realm",
+      "Horcrux destruction consequence"
+    ],
+    "llm_predicted_category":"Location\/Setting",
+    "llm_predicted_difficulty":"Easy",
+    "source_reference":"deathly_hallows Chapter 35",
+    "source_quote":"\"It looks,\" he said slowly, \"like King's Cross station. Except a lo cleaner and empty, and there are no trains as far as I can see.\"",
+    "mcq_options":[
+      "the room of requirement",
+      "king's cross station",
+      "the hog's head inn",
+      "godric's hollow"
+    ]
+  }
+]

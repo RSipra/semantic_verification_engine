@@ -1,0 +1,276 @@
+[
+  {
+    "original_question_id":938,
+    "question_source":"legacy",
+    "question_type":"FR",
+    "question":"Who invented Sleakeazy's Hair Potion?",
+    "mcq_options":null,
+    "answer":"Fleamont Potter",
+    "hint_1":"This inventor shares a very famous wizarding surname with the main hero of the series.",
+    "hint_2":"He is the grandfather of Harry Potter.",
+    "hint_3":"His commercially successful invention greatly boosted his family's wealth, allowing them to live comfortably.",
+    "explanation":"Fleamont Potter, Harry Potter's paternal grandfather, was the inventive genius behind Sleakeazy's Hair Potion. His creation of this popular hair care product brought significant wealth to the Potter family, setting them up financially for generations.",
+    "answer_variations":[
+      "Fleamont Potter",
+      "Fleamont"
+    ],
+    "semantic_entity_refs":[
+      "Fleamont Potter",
+      "Harry Potter's paternal grandfather"
+    ],
+    "semantic_lore_concepts":[
+      "Sleakeazy's Hair Potion inventor",
+      "Potter family wealth origin"
+    ]
+  },
+  {
+    "original_question_id":1169,
+    "question_source":"legacy",
+    "question_type":"MCQ",
+    "question":"Albus Dumbledore is famous for discovering how many uses of dragon's blood:",
+    "mcq_options":[
+      "7",
+      "10",
+      "12",
+      "15"
+    ],
+    "answer":"12",
+    "hint_1":"Dumbledore's accomplishments as a young wizard were numerous and impressive.",
+    "hint_2":"This particular discovery is a well-known feat of his magical prowess.",
+    "hint_3":"The number is a multiple of three and four, commonly found in a \"baker's dozen\" plus one.",
+    "explanation":"Albus Dumbledore achieved fame early in his career for his groundbreaking magical discoveries. One of his most notable accomplishments, mentioned in various magical texts, was his identification of 12 distinct uses for dragon's blood, a complex and versatile magical ingredient. This discovery solidified his reputation as an exceptionally brilliant wizard.",
+    "answer_variations":[
+      "12",
+      "twelve"
+    ],
+    "semantic_entity_refs":[
+      "Twelve uses of dragon's blood"
+    ],
+    "semantic_lore_concepts":[
+      "Dumbledore's magical discovery",
+      "Dragon's blood properties",
+      "Alchemical applications"
+    ]
+  },
+  {
+    "original_question_id":1140,
+    "question_source":"legacy",
+    "question_type":"MCQ",
+    "question":"Which one of the following is not a founder of Hogwarts:",
+    "mcq_options":[
+      "godric gryffindor",
+      "salazar slytherin",
+      "helena ravenclaw",
+      "helga hufflepuff"
+    ],
+    "answer":"helena ravenclaw",
+    "hint_1":"Consider the four names associated with the Houses of Hogwarts.",
+    "hint_2":"One of these individuals is the daughter of a founder, not a founder herself.",
+    "hint_3":"This person is also known as the Grey Lady, the resident ghost of Ravenclaw House.",
+    "explanation":"The four founders of Hogwarts are Godric Gryffindor, Salazar Slytherin, Helga Hufflepuff, and Rowena Ravenclaw. Helena Ravenclaw is Rowena's daughter, not a founder herself.",
+    "answer_variations":[
+      "helena ravenclaw",
+      "ravenclaw"
+    ],
+    "semantic_entity_refs":[
+      "Helena Ravenclaw",
+      "Grey Lady"
+    ],
+    "semantic_lore_concepts":[
+      "Hogwarts Founder's child",
+      "Ravenclaw House ghost",
+      "Diadem of Ravenclaw connection"
+    ]
+  },
+  {
+    "original_question_id":1173,
+    "question_source":"legacy",
+    "question_type":"FR",
+    "question":"At what age can you earn your Apparition license?",
+    "mcq_options":null,
+    "answer":"17",
+    "hint_1":"This is often considered the age of magical maturity in the wizarding world.",
+    "hint_2":"It's the age at which young witches and wizards are typically considered adults and can use certain advanced magic.",
+    "hint_3":"It's one year before the Muggle equivalent for obtaining a driving license in many places, signaling a similar rite of passage.",
+    "explanation":"Witches and wizards must be 17 years old to earn their Apparition license. This age signifies coming of age in the wizarding world, allowing access to adult magic and responsibilities.",
+    "answer_variations":[
+      "17",
+      "seventeen"
+    ],
+    "semantic_entity_refs":[
+      "Apparition license"
+    ],
+    "semantic_lore_concepts":[
+      "Apparition age requirement",
+      "Wizarding legal age",
+      "Magical maturity"
+    ]
+  },
+  {
+    "original_question_id":848,
+    "question_source":"legacy",
+    "question_type":"FR",
+    "question":"When Hermione Granger is found Petrified, she is not alone. Who is with her?",
+    "mcq_options":null,
+    "answer":"Penelope Clearwater",
+    "hint_1":"This person was a Ravenclaw student.",
+    "hint_2":"She was a prefect in her house.",
+    "hint_3":"She was dating Percy Weasley at the time of the attacks.",
+    "explanation":"When Hermione Granger was found Petrified, she was with Penelope Clearwater, a Ravenclaw prefect. Both were victims of the Basilisk's gaze during the attacks that plagued Hogwarts in Harry's second year.",
+    "answer_variations":[
+      "Penelope Clearwater",
+      "Clearwater",
+      "Miss Clearwater"
+    ],
+    "semantic_entity_refs":[
+      "Penelope Clearwater",
+      "Ravenclaw Prefect"
+    ],
+    "semantic_lore_concepts":[
+      "Petrification",
+      "Chamber of Secrets attack",
+      "Basilisk victim"
+    ]
+  },
+  {
+    "original_question_id":47,
+    "question_source":"legacy",
+    "question_type":"EX",
+    "question":"How often does a Streeler's shell change colour?",
+    "mcq_options":null,
+    "answer":"Every Hour",
+    "hint_1":"This magical creature's shell has a very frequent color-changing cycle.",
+    "hint_2":"The transformation of its shell hue happens sixty times within a full day.",
+    "hint_3":"The regularity of its color shift is measured in small increments of time.",
+    "explanation":"A Streeler is a giant snail from Africa whose shell changes color every hour. Its venom is useful in potions and can kill plants. The frequent color change is a unique characteristic of this magical creature.",
+    "answer_variations":[
+      "A Streeler's shell changes color with high frequency, specifically once every sixty minutes.",
+      "A Streeler's shell changes color every hour.",
+      "Streeler's shell, changes color, every hour"
+    ],
+    "semantic_entity_refs":[
+      "Streeler"
+    ],
+    "semantic_lore_concepts":[
+      "Magical creature characteristics",
+      "Color-changing shell"
+    ]
+  },
+  {
+    "original_question_id":1170,
+    "question_source":"legacy",
+    "question_type":"MCQ",
+    "question":"What was the number of the high-security Gringotts vault where the Philosopher's Stone was kept:",
+    "mcq_options":[
+      "687",
+      "711",
+      "713",
+      "717"
+    ],
+    "answer":"713",
+    "hint_1":"This vault was unusually small and guarded by a dragon, among other things.",
+    "hint_2":"Think about the number that Harry and Hagrid visited to retrieve the Stone.",
+    "hint_3":"The digits in the number are 7, 1, and 3.",
+    "explanation":"The Philosopher's Stone was stored in a highly secure vault at Gringotts Wizarding Bank. This particular vault, number 713, was distinct from other vaults and had exceptional security measures, which included an armed guard by a dragon and the requirement for a Goblin to escort authorized visitors.",
+    "answer_variations":[
+      "713",
+      "seven hundred thirteen"
+    ],
+    "semantic_entity_refs":[
+      "Vault 713"
+    ],
+    "semantic_lore_concepts":[
+      "Gringotts high-security storage",
+      "Philosopher's Stone protection",
+      "Wizarding bank vault number"
+    ]
+  },
+  {
+    "original_question_id":1165,
+    "question_source":"legacy",
+    "question_type":"MCQ",
+    "question":"In which of these scenarios would you use the Muffliato Charm:",
+    "mcq_options":[
+      "whispering in the library without being overheard",
+      "disarming an opponent mid-duel",
+      "crossing a magically sealed threshold",
+      "reading hidden text in an enchanted book"
+    ],
+    "answer":"whispering in the library without being overheard",
+    "hint_1":"Think about spells that affect sound or privacy.",
+    "hint_2":"This charm fills the ears of anyone nearby with an unidentifiable buzzing sound.",
+    "hint_3":"It's perfect for having a secret conversation when you don't want others to hear what you're saying.",
+    "explanation":"The Muffliato Charm is used to fill the ears of anyone in the vicinity with an unidentifiable buzzing noise, making it impossible for them to overhear a conversation. This makes it ideal for private conversations in public places.",
+    "answer_variations":[
+      "whispering",
+      "not being overheard",
+      "whispering in the library"
+    ],
+    "semantic_entity_refs":[
+
+    ],
+    "semantic_lore_concepts":[
+      "Muffliato Charm",
+      "Privacy spell",
+      "Eavesdropping prevention"
+    ]
+  },
+  {
+    "original_question_id":1206,
+    "question_source":"legacy",
+    "question_type":"EX",
+    "question":"How did Fred and George get the money to open their shop?",
+    "mcq_options":null,
+    "answer":"Harry gave Fred and George his triwizard tournament prize money of a 1000 galleeons",
+    "hint_1":"The funding came from a generous donation from a close friend.",
+    "hint_2":"This money was recently won in a dangerous magical competition.",
+    "hint_3":"The unexpected windfall was shared by a selfless individual who believed in their entrepreneurial dreams.",
+    "explanation":"Fred and George Weasley received the startup capital for their joke shop, Weasleys' Wizard Wheezes, from Harry Potter. Harry generously gave them his entire winnings of one thousand Galleons from the Triwizard Tournament. He wanted them to pursue their dreams, knowing he didn't need the money.",
+    "answer_variations":[
+      "Fred and George received the 1000 Galleons to open their shop from Harry Potter, who gave them his Triwizard Tournament prize money.",
+      "Harry gave Fred and George his Triwizard Tournament prize money.",
+      "Harry Potter, Fred and George, Triwizard Tournament, prize money, 1000 Galleons"
+    ],
+    "semantic_entity_refs":[
+      "Harry Potter",
+      "Fred Weasley",
+      "George Weasley",
+      "Triwizard Tournament prize",
+      "Galleons"
+    ],
+    "semantic_lore_concepts":[
+      "Wizarding currency",
+      "Business funding",
+      "Tournament winnings"
+    ]
+  },
+  {
+    "original_question_id":1168,
+    "question_source":"legacy",
+    "question_type":"MCQ",
+    "question":"In wizarding currency, how many Knuts are there in one Sickle:",
+    "mcq_options":[
+      "17",
+      "25",
+      "29",
+      "31"
+    ],
+    "answer":"29",
+    "hint_1":"The wizarding currency system involves Galleons, Sickles, and Knuts.",
+    "hint_2":"This conversion rate is essential for understanding the value of money in the magical world.",
+    "hint_3":"The number is slightly less than 30.",
+    "explanation":"The wizarding currency system is structured with Galleons as the largest denomination, followed by Sickles, and then Knuts. Specifically, there are 29 Knuts in one Sickle, and 17 Sickles in one Galleon. Understanding these conversion rates is fundamental to financial transactions in the magical world.",
+    "answer_variations":[
+      "29",
+      "twenty-nine"
+    ],
+    "semantic_entity_refs":[
+      "Twenty-nine Knuts per Sickle"
+    ],
+    "semantic_lore_concepts":[
+      "Wizarding monetary conversion",
+      "Magical currency denominations",
+      "Sickle-Knut value"
+    ]
+  }
+]

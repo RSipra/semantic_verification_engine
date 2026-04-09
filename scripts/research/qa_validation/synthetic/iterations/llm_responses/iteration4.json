@@ -1,0 +1,302 @@
+[
+  {
+    "temp_qid": "SYN_000",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote matches the text exactly.",
+      "step_2_answer_grounding": "The answer fails grounding for two reasons: 1) Chapter bleed (the event occurs in Chapter 31, but the source reference states Chapter 30), and 2) The answer claims Dumbledore and Flitwick asked for 'practical reasons', which is an outside inference not stated in the text.",
+      "step_3_question_logic": "The question is logically sound and does not leak the answer."
+    },
+    "flags": {
+      "source_quote_failed": false,
+      "answer_grounding_failed": true,
+      "question_logic_failed": false
+    },
+    "is_hallucinated": true,
+    "justification": "The record has a chapter reference mismatch (bleed) and includes unstated inferences about Dumbledore and Flitwick."
+  },
+  {
+    "temp_qid": "SYN_001",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote is an exact match to the text.",
+      "step_2_answer_grounding": "The events described (Harry's realization about the diadem and warlock effigy) occur in Chapter 31, but the source_reference incorrectly lists Chapter 30. This is a chapter bleed hallucination.",
+      "step_3_question_logic": "The question is unambiguous and cleanly prompts for the answer."
+    },
+    "flags": {
+      "source_quote_failed": false,
+      "answer_grounding_failed": true,
+      "question_logic_failed": false
+    },
+    "is_hallucinated": true,
+    "justification": "The source reference states Chapter 30, but the events and quote take place in Chapter 31."
+  },
+  {
+    "temp_qid": "SYN_002",
+    "evaluation_trace": {
+      "step_1_quote_match": "The source quote is exactly matched.",
+      "step_2_answer_grounding": "The answer accurately reflects the text (McGonagall enlisting Peeves to help defend the school) within the correct chapter boundaries.",
+      "step_3_question_logic": "The question is straightforward and does not contain the answer."
+    },
+    "flags": {
+      "source_quote_failed": false,
+      "answer_grounding_failed": false,
+      "question_logic_failed": false
+    },
+    "is_hallucinated": false,
+    "justification": "The question correctly interprets the text without bringing in outside lore."
+  },
+  {
+    "temp_qid": "SYN_003",
+    "evaluation_trace": {
+      "step_1_quote_match": "The source quote matches the text exactly.",
+      "step_2_answer_grounding": "The answer is 100% deducible from the quote and its immediate surrounding context, and correctly references Chapter 31.",
+      "step_3_question_logic": "The question clearly prompts for the method of destruction without giving it away."
+    },
+    "flags": {
+      "source_quote_failed": false,
+      "answer_grounding_failed": false,
+      "question_logic_failed": false
+    },
+    "is_hallucinated": false,
+    "justification": "All details are faithfully extracted from the text."
+  },
+  {
+    "temp_qid": "SYN_004",
+    "evaluation_trace": {
+      "step_1_quote_match": "The source quote exactly matches.",
+      "step_2_answer_grounding": "The answer correctly references Ron's stated desire to avoid 'anymore Dobbies' and his refusal to order house-elves to die, exactly matching the text.",
+      "step_3_question_logic": "The question logically asks for Ron's motivation."
+    },
+    "flags": {
+      "source_quote_failed": false,
+      "answer_grounding_failed": false,
+      "question_logic_failed": false
+    },
+    "is_hallucinated": false,
+    "justification": "The record accurately uses the text to form a solid question."
+  },
+  {
+    "temp_qid": "SYN_005",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote matches the text accurately.",
+      "step_2_answer_grounding": "The answer captures Crabbe's stated motives perfectly. The context of the Fiendfyre curse is firmly established in the immediate surrounding text of this scene.",
+      "step_3_question_logic": "The question bridges the quote to the surrounding events without leaking the answer."
+    },
+    "flags": {
+      "source_quote_failed": false,
+      "answer_grounding_failed": false,
+      "question_logic_failed": false
+    },
+    "is_hallucinated": false,
+    "justification": "The question is well-grounded in Crabbe's dialogue and actions from the chapter."
+  },
+  {
+    "temp_qid": "SYN_016",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote matches exactly.",
+      "step_2_answer_grounding": "The answer 'stunned' is explicitly stated in the quote.",
+      "step_3_question_logic": "The question is clear and does not leak the answer."
+    },
+    "flags": {
+      "source_quote_failed": false,
+      "answer_grounding_failed": false,
+      "question_logic_failed": false
+    },
+    "is_hallucinated": false,
+    "justification": "Passes all integrity checks."
+  },
+  {
+    "temp_qid": "SYN_018",
+    "evaluation_trace": {
+      "step_1_quote_match": "The source quote is exact.",
+      "step_2_answer_grounding": "The name Helena Ravenclaw is directly stated in the quote in Chapter 31.",
+      "step_3_question_logic": "The question logically asks for the ghost's identity."
+    },
+    "flags": {
+      "source_quote_failed": false,
+      "answer_grounding_failed": false,
+      "question_logic_failed": false
+    },
+    "is_hallucinated": false,
+    "justification": "The identity of the Gray Lady is strictly sourced from the text."
+  },
+  {
+    "temp_qid": "SYN_019",
+    "evaluation_trace": {
+      "step_1_quote_match": "The source quote is an exact match.",
+      "step_2_answer_grounding": "Albania is explicitly named in the quote.",
+      "step_3_question_logic": "The question is unambiguous and correctly structured."
+    },
+    "flags": {
+      "source_quote_failed": false,
+      "answer_grounding_failed": false,
+      "question_logic_failed": false
+    },
+    "is_hallucinated": false,
+    "justification": "The location is accurately extracted from the text."
+  },
+  {
+    "temp_qid": "SYN_020",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote matches exactly.",
+      "step_2_answer_grounding": "The quote explicitly names Fred alongside his last laugh.",
+      "step_3_question_logic": "The question clearly points to the answer without revealing it."
+    },
+    "flags": {
+      "source_quote_failed": false,
+      "answer_grounding_failed": false,
+      "question_logic_failed": false
+    },
+    "is_hallucinated": false,
+    "justification": "The answer is entirely deducible from the quote."
+  },
+  {
+    "temp_qid": "SYN_032",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote is exact.",
+      "step_2_answer_grounding": "The answer properly reflects Luna's reaction provided in the text.",
+      "step_3_question_logic": "The question asks for her reaction cleanly."
+    },
+    "flags": {
+      "source_quote_failed": false,
+      "answer_grounding_failed": false,
+      "question_logic_failed": false
+    },
+    "is_hallucinated": false,
+    "justification": "Matches the text perfectly and operates as a valid question."
+  },
+  {
+    "temp_qid": "SYN_033",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote matches exactly.",
+      "step_2_answer_grounding": "The answer is verbatim what McGonagall replied.",
+      "step_3_question_logic": "The question directly prompts for the riddle's response."
+    },
+    "flags": {
+      "source_quote_failed": false,
+      "answer_grounding_failed": false,
+      "question_logic_failed": false
+    },
+    "is_hallucinated": false,
+    "justification": "Accurately represents the riddle and its solution."
+  },
+  {
+    "temp_qid": "SYN_034",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote matches exactly.",
+      "step_2_answer_grounding": "The answer correctly identifies the silver cats with spectacle markings.",
+      "step_3_question_logic": "The question correctly queries the form of the Patronus."
+    },
+    "flags": {
+      "source_quote_failed": false,
+      "answer_grounding_failed": false,
+      "question_logic_failed": false
+    },
+    "is_hallucinated": false,
+    "justification": "The information provided is 100% deducible from the quote."
+  },
+  {
+    "temp_qid": "SYN_035",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote matches exactly.",
+      "step_2_answer_grounding": "The answer correctly identifies basilisk fangs as the retrieved objects based on the text.",
+      "step_3_question_logic": "The question prompts for the objects unambiguously."
+    },
+    "flags": {
+      "source_quote_failed": false,
+      "answer_grounding_failed": false,
+      "question_logic_failed": false
+    },
+    "is_hallucinated": false,
+    "justification": "The record accurately tests the reader on details present in the text."
+  },
+  {
+    "temp_qid": "SYN_036",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote matches exactly.",
+      "step_2_answer_grounding": "The name of the spell, Fiendfyre, is explicitly stated by Hermione in the quote.",
+      "step_3_question_logic": "The question logically asks for the name of the cursed fire."
+    },
+    "flags": {
+      "source_quote_failed": false,
+      "answer_grounding_failed": false,
+      "question_logic_failed": false
+    },
+    "is_hallucinated": false,
+    "justification": "All requirements for factual grounding and logic are met."
+  },
+  {
+    "temp_qid": "SYN_037",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote matches exactly.",
+      "step_2_answer_grounding": "The specific inscription is correctly extracted from the quote.",
+      "step_3_question_logic": "The question is clear and does not leak the answer."
+    },
+    "flags": {
+      "source_quote_failed": false,
+      "answer_grounding_failed": false,
+      "question_logic_failed": false
+    },
+    "is_hallucinated": false,
+    "justification": "Passes all verification checks."
+  },
+  {
+    "temp_qid": "SYN_038",
+    "evaluation_trace": {
+      "step_1_quote_match": "The source quote is altered/paraphrased. The actual text says 'except in our D.A. lessons', but the provided quote says 'outside of Dumbledore's Army'.",
+      "step_2_answer_grounding": "The answer is factually correct based on the text narrative, but the quote itself is invalid.",
+      "step_3_question_logic": "The question is clear."
+    },
+    "flags": {
+      "source_quote_failed": true,
+      "answer_grounding_failed": false,
+      "question_logic_failed": false
+    },
+    "is_hallucinated": true,
+    "justification": "The source quote was paraphrased rather than extracted directly from the text."
+  },
+  {
+    "temp_qid": "SYN_039",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote is exact.",
+      "step_2_answer_grounding": "The event happens in Chapter 31, but the source reference states Chapter 30. This is a chapter bleed.",
+      "step_3_question_logic": "The question asks for the ghost's identity properly."
+    },
+    "flags": {
+      "source_quote_failed": false,
+      "answer_grounding_failed": true,
+      "question_logic_failed": false
+    },
+    "is_hallucinated": true,
+    "justification": "The record suffers from a chapter bleed, referencing Chapter 30 for an event that occurs in Chapter 31."
+  },
+  {
+    "temp_qid": "SYN_040",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote is exact.",
+      "step_2_answer_grounding": "The answer injects that the fangs were 'used to destroy the cup', which is an external detail not supported by the specific narrow quote provided.",
+      "step_3_question_logic": "The question is clear."
+    },
+    "flags": {
+      "source_quote_failed": false,
+      "answer_grounding_failed": true,
+      "question_logic_failed": false
+    },
+    "is_hallucinated": true,
+    "justification": "The answer includes details not found within the specific provided source quote."
+  },
+  {
+    "temp_qid": "SYN_041",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote is an exact match.",
+      "step_2_answer_grounding": "The answer is supported by the text.",
+      "step_3_question_logic": "The question ('Did Helena Ravenclaw hide her mother's diadem in Albania?') directly contains the answer it expects ('Albania'), which violates the logic rule."
+    },
+    "flags": {
+      "source_quote_failed": false,
+      "answer_grounding_failed": false,
+      "question_logic_failed": true
+    },
+    "is_hallucinated": true,
+    "justification": "The question is poorly constructed because it directly leaks the answer."
+  }
+]

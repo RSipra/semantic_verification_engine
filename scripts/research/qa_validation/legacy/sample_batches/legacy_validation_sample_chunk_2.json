@@ -1,0 +1,271 @@
+[
+  {
+    "original_question_id":1097,
+    "question_source":"legacy",
+    "question_type":"MCQ",
+    "question":"Which of these spells is most similar to Flipendo, the Knockback Jinx?",
+    "mcq_options":[
+      "depulso",
+      "accio",
+      "incendio",
+      "stupefy"
+    ],
+    "answer":"depulso",
+    "hint_1":"Think about spells that cause objects or people to be pushed away.",
+    "hint_2":"This spell is explicitly designed for repelling or pushing targets.",
+    "hint_3":"Its name sounds like the opposite of a well-known summoning charm.",
+    "explanation":"`Depulso` is known as the Banishing Charm, which is used to push or repel objects away from the caster. This makes it very similar in function to the Knockback Jinx, `Flipendo`, which also serves to push targets backward. Both spells are used for physical displacement.",
+    "answer_variations":[
+      "depulso"
+    ],
+    "semantic_entity_refs":[
+      "Depulso",
+      "Banishing Charm"
+    ],
+    "semantic_lore_concepts":[
+      "Repelling spell effect",
+      "Knockback Jinx equivalent",
+      "Charms Class spell"
+    ]
+  },
+  {
+    "original_question_id":1163,
+    "question_source":"legacy",
+    "question_type":"MCQ",
+    "question":"Which of these is not a type of concealment charm:",
+    "mcq_options":[
+      "disillusionment charm",
+      "fidelius charm",
+      "confundus charm",
+      "muffliato charm"
+    ],
+    "answer":"confundus charm",
+    "hint_1":"Most of the listed charms are designed to hide or make something undetectable.",
+    "hint_2":"One of the charms listed has a primary purpose of confusing or disorienting.",
+    "hint_3":"Consider the spells that make a location or person hidden from view or knowledge, versus those that simply bewilder.",
+    "explanation":"The Confundus Charm is not a concealment charm; its purpose is to bewilder or confuse its target. The Disillusionment Charm makes someone appear as though they are camouflaged, the Fidelius Charm conceals a secret within a Secret Keeper, and the Muffliato Charm fills the ears of anyone nearby with an unidentifiable buzzing sound, effectively concealing conversations.",
+    "answer_variations":[
+      "confundus charm",
+      "confundus"
+    ],
+    "semantic_entity_refs":[
+
+    ],
+    "semantic_lore_concepts":[
+      "Confundus Charm",
+      "Confusion spell",
+      "Disorientation magic",
+      "Mental befuddlement charm"
+    ]
+  },
+  {
+    "original_question_id":152,
+    "question_source":"legacy",
+    "question_type":"FR",
+    "question":"When did the wildcat gargoyle strike the place?",
+    "mcq_options":null,
+    "answer":"1911",
+    "hint_1":"This event is a specific historical detail from the early 20th century.",
+    "hint_2":"The year is related to a relatively recent magical incident, not ancient history.",
+    "hint_3":"It's an event mentioned in passing, highlighting a bizarre occurrence involving magical creatures or enchanted objects.",
+    "explanation":"The wildcat gargoyle incident occurred in 1911. This event is a minor detail from the extensive history of the wizarding world, often appearing in historical records or newspapers.",
+    "answer_variations":[
+      "1911",
+      "nineteen eleven"
+    ],
+    "semantic_entity_refs":[
+      "Wildcat gargoyle"
+    ],
+    "semantic_lore_concepts":[
+      "Gargoyle incident date",
+      "Magical creature event"
+    ]
+  },
+  {
+    "original_question_id":691,
+    "question_source":"legacy",
+    "question_type":"FR",
+    "question":"Who wrote the Dream Oracle?",
+    "mcq_options":null,
+    "answer":"Inigo Imago",
+    "hint_1":"This author is a well-known name in the field of Divination studies.",
+    "hint_2":"The text is a primary resource for interpreting visions and prophecies received during slumber.",
+    "hint_3":"Students at Hogwarts, particularly in Divination class, frequently consult this book for guidance on understanding their nocturnal visions.",
+    "explanation":"The authoritative text 'The Dream Oracle' was written by Inigo Imago. This book is a fundamental resource in the study of Divination, focusing specifically on the interpretation and understanding of dreams and their potential prophetic meanings.",
+    "answer_variations":[
+      "Inigo Imago",
+      "Imago"
+    ],
+    "semantic_entity_refs":[
+      "Inigo Imago"
+    ],
+    "semantic_lore_concepts":[
+      "Dream Oracle author",
+      "Divination scholar"
+    ]
+  },
+  {
+    "original_question_id":1264,
+    "question_source":"legacy",
+    "question_type":"EX",
+    "question":"In Transfiguration, what specific characteristic between the original object and the desired outcome makes a transformation easier to perform?",
+    "mcq_options":null,
+    "answer":"Similarity in appearance",
+    "hint_1":"This characteristic relates to how alike the starting and ending forms are.",
+    "hint_2":"It's much simpler to transform something into another object that looks quite similar.",
+    "hint_3":"The ease of transformation is directly linked to the visual resemblance between the two states.",
+    "explanation":"In Transfiguration, a key characteristic that makes a transformation easier to perform is similarity in appearance between the original object and the desired outcome. The more alike the two objects look, the less magical energy and skill are required to achieve the transformation successfully.",
+    "answer_variations":[
+      "Similarity in appearance between the original object and the desired outcome makes a Transfiguration easier.",
+      "Similarity in appearance makes Transfiguration easier.",
+      "Similarity, appearance, easier, Transfiguration"
+    ],
+    "semantic_entity_refs":[
+      "Transfiguration"
+    ],
+    "semantic_lore_concepts":[
+      "Transfiguration principles",
+      "Gamp's Law of Elemental Transfiguration",
+      "Morphological transfiguration"
+    ]
+  },
+  {
+    "original_question_id":1357,
+    "question_source":"legacy",
+    "question_type":"EX",
+    "question":"Who had Severus Snape’s true allegiance, and why?",
+    "mcq_options":null,
+    "answer":"Albus Dumbledore: Snape's allegiance was to him because of his enduring love for Lily Potter and his desire to protect her son.",
+    "hint_1":"The person he was loyal to was the headmaster of Hogwarts for many years.",
+    "hint_2":"His loyalty stemmed from a deeply personal connection to Harry's mother.",
+    "hint_3":"This profound emotional tie dictated his actions and his secret life as a double agent.",
+    "explanation":"Severus Snape's true allegiance lay with Albus Dumbledore. His unwavering loyalty was driven by his lifelong love for Lily Potter, Harry's mother. This love compelled him to protect Harry and secretly work against the Dark Lord, fulfilling Dumbledore's requests until his own death.",
+    "answer_variations":[
+      "Severus Snape's true allegiance was to Albus Dumbledore, motivated by his enduring love for Lily Potter and his commitment to protecting her son, Harry.",
+      "Snape's allegiance was Dumbledore due to his love for Lily.",
+      "Albus Dumbledore, Lily Potter, Snape's love, protect Harry, allegiance"
+    ],
+    "semantic_entity_refs":[
+      "Albus Dumbledore",
+      "Severus Snape",
+      "Lily Potter",
+      "Harry Potter"
+    ],
+    "semantic_lore_concepts":[
+      "Unrequited love",
+      "Protecting the son",
+      "Atonement",
+      "Double agent",
+      "Always"
+    ]
+  },
+  {
+    "original_question_id":136,
+    "question_source":"legacy",
+    "question_type":"FR",
+    "question":"What is the antidote to Swelling Solution?",
+    "mcq_options":null,
+    "answer":"Deflating Draught",
+    "hint_1":"This potion is designed to reverse the effects of another common, often mischievous, concoction.",
+    "hint_2":"If something has been made to grow unnaturally large, this potion can return it to its normal size.",
+    "hint_3":"It's the perfect counter for an enchantment that causes objects or body parts to expand.",
+    "explanation":"The Deflating Draught is a potent antidote specifically formulated to counteract the effects of the Swelling Solution, which causes rapid and often grotesque enlargement of objects or body parts.",
+    "answer_variations":[
+      "Deflating Draught",
+      "Draught of Deflation"
+    ],
+    "semantic_entity_refs":[
+      "Deflating Draught"
+    ],
+    "semantic_lore_concepts":[
+      "Antidote potion",
+      "Swelling Solution counter"
+    ]
+  },
+  {
+    "original_question_id":1147,
+    "question_source":"legacy",
+    "question_type":"MCQ",
+    "question":"Which of these is a Wiggenweld potion ingredient from the sea:",
+    "mcq_options":[
+      "gillyweed",
+      "kelp",
+      "lionfish spine",
+      "mandrake root"
+    ],
+    "answer":"lionfish spine",
+    "hint_1":"The Wiggenweld Potion is a powerful healing potion.",
+    "hint_2":"Think about sea creatures that might have a sharp or defensive part used in potions.",
+    "hint_3":"This ingredient implies a specific, potentially dangerous marine animal, not just a general plant from the ocean.",
+    "explanation":"The Wiggenweld Potion is a complex healing potion that requires various ingredients, some of which come from the sea. Among the options provided, the spine of a lionfish is a specific magical ingredient derived from a sea creature, aligning with the requirement for an aquatic component in the potion. Gillyweed and kelp are plants, not animal parts.",
+    "answer_variations":[
+      "lionfish spine"
+    ],
+    "semantic_entity_refs":[
+      "Lionfish spine"
+    ],
+    "semantic_lore_concepts":[
+      "Wiggenweld Potion component",
+      "Marine potion ingredient",
+      "Potions ingredient from the sea"
+    ]
+  },
+  {
+    "original_question_id":1155,
+    "question_source":"legacy",
+    "question_type":"MCQ",
+    "question":"Which of these factors does NOT affect Transfiguration:",
+    "mcq_options":[
+      "concentration",
+      "wand power",
+      "hue of the object",
+      "weight of the object"
+    ],
+    "answer":"hue of the object",
+    "hint_1":"Think about the essential elements required for successful magic, especially changing one thing into another.",
+    "hint_2":"Transfiguration spells primarily depend on the caster's willpower, precision, and understanding of the transformation.",
+    "hint_3":"While the final product might have a specific color, the color itself doesn't determine the success or failure of the magical change.",
+    "explanation":"Factors like concentration, wand power, and the viciousness of intent (for certain dark transfigurations) are known to affect Transfiguration. However, the 'hue' or color of an object is generally a resulting characteristic, not a factor that influences the success or failure of the spell itself.",
+    "answer_variations":[
+      "hue",
+      "color"
+    ],
+    "semantic_entity_refs":[
+      "hue",
+      "colour"
+    ],
+    "semantic_lore_concepts":[
+      "Transfiguration principles",
+      "Magical property",
+      "Visual attribute"
+    ]
+  },
+  {
+    "original_question_id":1381,
+    "question_source":"legacy",
+    "question_type":"EX",
+    "question":" In Harry Potter and the Order of the Phoenix, after Harry's Dementor attack, a mysterious Howler arrives for Aunt Petunia, stopping her from throwing Harry out. Who sent this Howler, and what was their crucial reason for doing so?",
+    "mcq_options":null,
+    "answer":"Albus Dumbledore: He sent the Howler ('Remember my last, Petunia') to remind her of her blood pact to protect Harry.",
+    "hint_1":"The sender was the powerful headmaster of Hogwarts, who always had Harry's best interests at heart.",
+    "hint_2":"The message contained a cryptic but potent reminder about a previous agreement.",
+    "hint_3":"The magic binding Harry to his aunt's home was a vital protection, necessitating a strong intervention.",
+    "explanation":"Albus Dumbledore sent the mysterious Howler to Aunt Petunia. His crucial reason was to remind her of the blood protection she unknowingly provided Harry by allowing him to live under her roof. The Howler, by stating 'Remember my last, Petunia,' referred to his earlier letter explaining this magical pact, ensuring Harry's safety at Privet Drive.",
+    "answer_variations":[
+      "Albus Dumbledore sent the Howler to Aunt Petunia, reminding her of the blood pact that protected Harry while he was at Privet Drive.",
+      "Dumbledore sent a Howler reminding Petunia of her blood pact to protect Harry.",
+      "Albus Dumbledore, Howler, Aunt Petunia, blood pact, protect Harry"
+    ],
+    "semantic_entity_refs":[
+      "Albus Dumbledore",
+      "Aunt Petunia",
+      "Harry Potter",
+      "Howler"
+    ],
+    "semantic_lore_concepts":[
+      "Blood pact",
+      "Protective enchantment",
+      "Dementor attack aftermath"
+    ]
+  }
+]

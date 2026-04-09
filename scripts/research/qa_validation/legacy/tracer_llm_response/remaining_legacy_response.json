@@ -1,0 +1,530 @@
+[
+  {
+    "row_id": "1130",
+    "overall_status": "fail",
+    "flags": [
+      {
+        "column": "explanation",
+        "severity": "error",
+        "reason": "The explanation explicitly states that Harry was never a Prefect, which validates one of the distractor options ('prefect') as another correct answer to the 'NOT' question."
+      }
+    ],
+    "notes": "The explanation points out a factual flaw in the distractors, directly bleeding into and validating a wrong MCQ option."
+  },
+  {
+    "row_id": "1279",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Hints are progressive; explanation and variations are accurate and consistent."
+  },
+  {
+    "row_id": "795",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Valid explanations and hints. Good semantic concepts."
+  },
+  {
+    "row_id": "1087",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Hints properly scaffold without giving away the answer; variations are correct."
+  },
+  {
+    "row_id": "1093",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Explanation supports the answer well without bleeding into distractors."
+  },
+  {
+    "row_id": "1137",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Well-constructed hints and a robust explanation."
+  },
+  {
+    "row_id": "1145",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Answer variations properly capture the core action/effect."
+  },
+  {
+    "row_id": "1143",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "The explanation effectively justifies the 'NOT' condition without validating other options."
+  },
+  {
+    "row_id": "1229",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "All augmented fields appropriately fit the anchor."
+  },
+  {
+    "row_id": "1209",
+    "overall_status": "fail",
+    "flags": [
+      {
+        "column": "explanation",
+        "severity": "error",
+        "reason": "The explanation vaguely refers to a 'deep, calming hue' but completely fails to explicitly state the correct answer string ('purple'), thus not fully justifying the correct option."
+      }
+    ],
+    "notes": "An explanation must explicitly confirm the anchor's answer, rather than using vague pronouns or descriptors that leave the exact color ambiguous."
+  },
+  {
+    "row_id": "1241",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Hints and explanations accurately support the anchor without directly giving away the string."
+  },
+  {
+    "row_id": "1123",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Progressive hints and valid variations."
+  },
+  {
+    "row_id": "1196",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "The explanation logically justifies why the correct option is the outlier."
+  },
+  {
+    "row_id": "1085",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Coherent explanation and suitable variations."
+  },
+  {
+    "row_id": "749",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Accurately categorizes the distractors vs. the correct answer."
+  },
+  {
+    "row_id": "1095",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "All augmented fields appropriately fit the anchor."
+  },
+  {
+    "row_id": "1135",
+    "overall_status": "fail",
+    "flags": [
+      {
+        "column": "explanation",
+        "severity": "error",
+        "reason": "The explanation admits 'Reparo' is for mending (not cleaning) and alters the question's criteria to 'cleaning or restorative function', inadvertently validating a distractor ('reparo') as a correct answer to the original 'NOT a cleaning spell' question."
+      }
+    ],
+    "notes": "The explanation must not redefine the question to excuse a distractor that fits the 'NOT' criteria."
+  },
+  {
+    "row_id": "1167",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Hint progression and explanation effectively support the target number."
+  },
+  {
+    "row_id": "1166",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Valid semantic concepts and hint scaffolding."
+  },
+  {
+    "row_id": "1179",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Answer variations properly follow EX multi-resolution structure and lengths."
+  },
+  {
+    "row_id": "1307",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Good progression of hints and accurate answer variations."
+  },
+  {
+    "row_id": "1359",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Clear explanations and variations that capture the semantic core."
+  },
+  {
+    "row_id": "1381",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Accurate explanation and appropriate multi-resolution variations."
+  },
+  {
+    "row_id": "453",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Hints and explanations accurately support the visual quality of the potion."
+  },
+  {
+    "row_id": "1280",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Progressive hints and valid variations."
+  },
+  {
+    "row_id": "1402",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "All augmented fields appropriately fit the anchor."
+  },
+  {
+    "row_id": "1425",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Excellent hints and semantic concepts."
+  },
+  {
+    "row_id": "171",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Simple, direct answer properly supported by hints and variations."
+  },
+  {
+    "row_id": "1415",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Coherent explanation and suitable variations."
+  },
+  {
+    "row_id": "1350",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Accurately captures the emotional motivation of the character."
+  },
+
+  {
+    "row_id": "1256",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Excellent multi-resolution answer variations and progressive hints."
+  },
+  {
+    "row_id": "1369",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Variations accurately distill the complex causal logic of the answer."
+  },
+  {
+    "row_id": "1247",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "All augmented fields appropriately fit the anchor and capture the core entity and action."
+  },
+  {
+    "row_id": "1344",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "The explanation properly frames the causal events leading to the answer."
+  },
+  {
+    "row_id": "919",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Variations successfully convert a short factual answer into proper EX structure."
+  },
+  {
+    "row_id": "1401",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Valid hints and strong semantic concepts that capture the specific lore."
+  },
+  {
+    "row_id": "169",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Progressive hints and clean, accurate semantic variations."
+  },
+  {
+    "row_id": "1210",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Properly accommodates a list-based EX question without exceeding length constraints."
+  },
+  {
+    "row_id": "1358",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Variations accurately summarize the multiple layers of the answer."
+  },
+  {
+    "row_id": "1086",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Hints properly scaffold the action without giving away the exact outcome."
+  },
+  {
+    "row_id": "104",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Excellent hints and multi-resolution semantic variations."
+  },
+  {
+    "row_id": "1345",
+    "overall_status": "review",
+    "flags": [
+      {
+        "column": "hint_2",
+        "severity": "warning",
+        "reason": "Claims the prophecy occurred during an O.W.L. exam, which is lore-implausible as Prisoner of Azkaban takes place in Harry's third year."
+      },
+      {
+        "column": "explanation",
+        "severity": "warning",
+        "reason": "Introduces a lore error by stating the exam was an O.W.L. exam, contradicting the third-year setting of the anchor."
+      }
+    ],
+    "notes": "Variations properly capture the semantic core, but the O.W.L. reference is factually incorrect for this book."
+  },
+  {
+    "row_id": "1270",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Good hint progression and robust answer variations."
+  },
+  {
+    "row_id": "1115",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Answer variations properly include numeric and word forms."
+  },
+  {
+    "row_id": "1202",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "All augmented fields appropriately fit the anchor."
+  },
+  {
+    "row_id": "1203",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Valid semantic concepts and hint scaffolding."
+  },
+  {
+    "row_id": "1222",
+    "overall_status": "review",
+    "flags": [
+      {
+        "column": "hint_1",
+        "severity": "warning",
+        "reason": "Hint 1 is too specific by listing the exact breakdown of the 7 positions, destroying the broad-to-narrow progression."
+      }
+    ],
+    "notes": "The hints are almost in reverse order of specificity."
+  },
+  {
+    "row_id": "1194",
+    "overall_status": "review",
+    "flags": [
+      {
+        "column": "hint_3",
+        "severity": "warning",
+        "reason": "Hint 3 provides broad, generic lore that is less specific than Hint 2 (which gave the exact century), breaking the progression."
+      }
+    ],
+    "notes": "Hint progression feels reversed between hints 2 and 3."
+  },
+  {
+    "row_id": "1309",
+    "overall_status": "review",
+    "flags": [
+      {
+        "column": "hint_3",
+        "severity": "warning",
+        "reason": "Hint 3 is a generic lore statement that is much broader than Hint 2 (which gave the specific century), breaking the progressive scaffold."
+      }
+    ],
+    "notes": "Hint progression does not scaffold properly from broad to close."
+  },
+  {
+    "row_id": "1197",
+    "overall_status": "review",
+    "flags": [
+      {
+        "column": "hint_3",
+        "severity": "warning",
+        "reason": "Hint 3 is less specific than Hint 2, failing to provide the closest clue at the end of the sequence."
+      }
+    ],
+    "notes": "Once again, the 15th-century clue in hint 2 makes hint 3 feel like a step backward."
+  },
+  {
+    "row_id": "736",
+    "overall_status": "review",
+    "flags": [
+      {
+        "column": "hint_3",
+        "severity": "warning",
+        "reason": "Hint 3 is a generic lore statement that is much broader than Hint 2 (which pointed directly to the middle of the 11th century), breaking the progressive scaffold."
+      }
+    ],
+    "notes": "Hint progression does not scaffold properly from broad to close."
+  },
+  {
+    "row_id": "1244",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Hints properly cover the month/day and the year; valid multi-format answer variations for dates."
+  },
+  {
+    "row_id": "1298",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Variations accurately capture the date and its surface forms."
+  },
+  {
+    "row_id": "1278",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Good semantic coverage for date variations."
+  },
+  {
+    "row_id": "921",
+    "overall_status": "review",
+    "flags": [
+      {
+        "column": "hint_3",
+        "severity": "warning",
+        "reason": "Hint 3 provides no additional clues to guess the specific date and just restates the event's significance, failing to provide the closest scaffold."
+      }
+    ],
+    "notes": "Hint 3 feels like a step backward in specificity compared to hints 1 and 2."
+  },
+  {
+    "row_id": "168",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Valid explanations and hints. Good semantic concepts."
+  },
+  {
+    "row_id": "185",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Excellent hints that accurately describe the mythological creature without explicitly naming it."
+  },
+  {
+    "row_id": "1084",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Answer variations properly capture the core intent of the phrasing."
+  },
+  {
+    "row_id": "659",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Variations properly cover the shortened and full-name forms of the children."
+  },
+  {
+    "row_id": "1346",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Good progressive hints and suitable variations."
+  },
+  {
+    "row_id": "394",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Excellent progressive hints and semantic concepts."
+  },
+  {
+    "row_id": "108",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Answer variations properly capture both the base entity and the article."
+  },
+  {
+    "row_id": "192",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Variations accurately reflect common permutations of the entity's name."
+  },
+  {
+    "row_id": "1330",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Good hint scaffolding and coherent explanation."
+  },
+  {
+    "row_id": "175",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "All variations cover the different implicit ways the list could be written."
+  },
+  {
+    "row_id": "77",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Comprehensive answer variations capture the family name as well as specific members."
+  },
+  {
+    "row_id": "18",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Well-constructed hints properly scaffold the event."
+  },
+  {
+    "row_id": "1374",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Answer variations correctly capture numerical and word forms."
+  },
+  {
+    "row_id": "1033",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "All augmented fields appropriately fit the anchor."
+  },
+  {
+    "row_id": "582",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Hints properly enumerate the different items in the list answer."
+  },
+  {
+    "row_id": "366",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Good hint scaffolding and coherent answer variations."
+  },
+  {
+    "row_id": "1268",
+    "overall_status": "review",
+    "flags": [
+      {
+        "column": "hint_3",
+        "severity": "warning",
+        "reason": "Hint 3 simply restates the premise of the question (that St. Mungo's is for magical injuries) rather than providing a closer clue to the actual answer (Purge & Dowse Ltd)."
+      }
+    ],
+    "notes": "Hint 3 fails to progress the scaffolding toward the target answer."
+  },
+  {
+    "row_id": "1149",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Accurate lore reference to the film version of Chamber of Secrets where Tom Riddle uses this spell."
+  },
+  {
+    "row_id": "1152",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "All augmented fields appropriately fit the anchor and support the 'NOT' condition."
+  },
+  {
+    "row_id": "1361",
+    "overall_status": "fail",
+    "flags": [
+      {
+        "column": "hint_1",
+        "severity": "error",
+        "reason": "Hint 1 explicitly states the event happened 'long before they received their Hogwarts letters', which instantly eliminates the three distractors that take place at Hogwarts, making the question trivial."
+      }
+    ],
+    "notes": "Hints for MCQs must not instantly eliminate all distractors in the first broad clue."
+  }
+]

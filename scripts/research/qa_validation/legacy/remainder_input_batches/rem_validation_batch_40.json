@@ -1,0 +1,296 @@
+[
+  {
+    "generation_model":"gemini-2.5-flash",
+    "generation_prompt_version":null,
+    "lex_enrich_prompt_version":"legacy_enrichment_prompt_master_v1.txt",
+    "semantic_enrich_prompt_version":"legacy_context_variations_master.txt",
+    "question_type":"EX",
+    "question_source":"legacy",
+    "question":"Why did Liechtenstein not attend the first meeting of the International Confederation of Wizards?",
+    "answer":"their stance on troll rights",
+    "answer_variations":[
+      "liechtenstein did not attend the first meeting because of its strong and controversial stance on troll rights.",
+      "liechtenstein disagreed on troll rights, so they didn't attend.",
+      "liechtenstein, troll rights, disagreement, non-attendance"
+    ],
+    "hint_1":"This country had a strong ethical disagreement with the global magical community.",
+    "hint_2":"The non-attendance was due to a debate about the treatment of large, less intelligent magical beings.",
+    "hint_3":"This particular magical nation held a controversial view on the rights of a certain species, causing their diplomatic absence.",
+    "explanation":"Liechtenstein did not attend the first meeting of the International Confederation of Wizards due to their unique stance on Troll rights. They disagreed with the prevailing views of other magical nations regarding the status and treatment of Trolls, leading to their absence from this foundational diplomatic gathering.",
+    "semantic_entity_refs":[
+      "Liechtenstein",
+      "Trolls",
+      "International Confederation of Wizards"
+    ],
+    "semantic_lore_concepts":[
+      "Troll rights",
+      "Wizarding politics",
+      "Magical creature advocacy"
+    ],
+    "original_question_id":104,
+    "mcq_options":null
+  },
+  {
+    "generation_model":"gemini-2.5-flash",
+    "generation_prompt_version":null,
+    "lex_enrich_prompt_version":"legacy_enrichment_prompt_master_v1.txt",
+    "semantic_enrich_prompt_version":"legacy_context_variations_master.txt",
+    "question_type":"EX",
+    "question_source":"legacy",
+    "question":"What was the second true prophecy made by Professor Trelawney that occurs in Harry Potter and the Prisoner of Azkaban?",
+    "answer":"that the dark lord would rise again, and his servant would break free and return to him — referring to peter pettigrew escaping to rejoin voldemort",
+    "answer_variations":[
+      "the second true prophecy was that the dark lord would rise again, and his servant, peter pettigrew, would break free and return to him.",
+      "dark lord would rise; his servant, peter pettigrew, would return.",
+      "dark lord rise, servant, peter pettigrew, break free, return"
+    ],
+    "hint_1":"This prophecy foretold the re-emergence of the Dark Lord and the escape of a specific individual.",
+    "hint_2":"It was made unexpectedly during an O.W.L. exam and concerned a faithful follower's return.",
+    "hint_3":"The prophecy describes a servant escaping to reunite with their master, leading to the master's eventual return to power.",
+    "explanation":"Professor Trelawney's second true prophecy occurred during an O.W.L. Divination exam in the Prisoner of Azkaban. She declared that the Dark Lord would rise again and that his servant, Peter Pettigrew, would break free and rejoin him. This prophecy foreshadowed Pettigrew's escape and role in Voldemort's return.",
+    "semantic_entity_refs":[
+      "Peter Pettigrew",
+      "Wormtail",
+      "Voldemort",
+      "Lord Voldemort"
+    ],
+    "semantic_lore_concepts":[
+      "Prophecy",
+      "Voldemort's resurrection",
+      "Servant's return"
+    ],
+    "original_question_id":1345,
+    "mcq_options":null
+  },
+  {
+    "generation_model":"gemini-2.5-flash",
+    "generation_prompt_version":null,
+    "lex_enrich_prompt_version":"legacy_enrichment_prompt_master_v1.txt",
+    "semantic_enrich_prompt_version":"legacy_context_variations_master.txt",
+    "question_type":"EX",
+    "question_source":"legacy",
+    "question":"In Harry Potter and the Prisoner of Azkaban, what specific accusation regarding their pets causes Ron Weasley and Hermione Granger to have a major falling out?",
+    "answer":"ron blames hermione’s cat, crookshanks, for the disappearance of his pet rat, scabbers.",
+    "answer_variations":[
+      "ron blamed hermione’s cat, crookshanks, for the disappearance and presumed death of his pet rat, scabbers.",
+      "ron blamed crookshanks for scabbers' disappearance.",
+      "ron, hermione, crookshanks, scabbers, disappearance, blame"
+    ],
+    "hint_1":"The conflict arose over the perceived actions of one magical creature against another.",
+    "hint_2":"Ron accused Hermione's fluffy companion of harming his aging, unremarkable rodent.",
+    "hint_3":"This disagreement was about a predatory pet seemingly preying on a smaller, beloved animal.",
+    "explanation":"Ron Weasley and Hermione Granger had a major falling out in Prisoner of Azkaban because Ron blamed Hermione’s cat, Crookshanks, for the disappearance of his pet rat, Scabbers. Ron was convinced that Crookshanks had eaten Scabbers, leading to a prolonged period of anger and tension between the two friends.",
+    "semantic_entity_refs":[
+      "Crookshanks",
+      "Scabbers",
+      "Peter Pettigrew",
+      "Ron Weasley",
+      "Hermione Granger"
+    ],
+    "semantic_lore_concepts":[
+      "Animagus form",
+      "Pet rivalry",
+      "Marauders"
+    ],
+    "original_question_id":1270,
+    "mcq_options":null
+  },
+  {
+    "generation_model":"gemini-2.5-flash",
+    "generation_prompt_version":null,
+    "lex_enrich_prompt_version":"legacy_enrichment_prompt_master_v1.txt",
+    "semantic_enrich_prompt_version":"legacy_context_variations_master.txt",
+    "question_type":"FR",
+    "question_source":"legacy",
+    "question":"Switching spells simultaneously transfigure how many objects?",
+    "answer":"2",
+    "answer_variations":[
+      "2",
+      "two",
+      "a pair",
+      "a couple"
+    ],
+    "hint_1":"Think about the core concept of 'switching' between things.",
+    "hint_2":"The spell is designed to exchange the characteristics or positions of a specific number of items.",
+    "hint_3":"It involves a direct exchange or swap, meaning it requires an equal number of participants on both sides of the magical interaction.",
+    "explanation":"Switching spells, as their name implies, are used to swap the physical properties or positions of objects. This magical exchange inherently involves two distinct entities.",
+    "semantic_entity_refs":[
+
+    ],
+    "semantic_lore_concepts":[
+      "Switching Spells",
+      "Transfiguration mechanics"
+    ],
+    "original_question_id":1115,
+    "mcq_options":null
+  },
+  {
+    "generation_model":"gemini-2.5-flash",
+    "generation_prompt_version":null,
+    "lex_enrich_prompt_version":"legacy_enrichment_prompt_master_v1.txt",
+    "semantic_enrich_prompt_version":"legacy_context_variations_master.txt",
+    "question_type":"FR",
+    "question_source":"legacy",
+    "question":"How many points is the Golden Snitch worth?",
+    "answer":"150",
+    "answer_variations":[
+      "150",
+      "one hundred fifty"
+    ],
+    "hint_1":"Catching this object immediately ends the game.",
+    "hint_2":"Its value is often enough to decide the winner of a match, even if the team is far behind.",
+    "hint_3":"This amount is a multiple of 50, and represents a significant advantage in the overall score.",
+    "explanation":"The Golden Snitch is worth a massive 150 points in Quidditch. This high value means that catching it is usually the decisive factor in winning a game, often overshadowing the points scored by Chasers.",
+    "semantic_entity_refs":[
+      "Golden Snitch",
+      "Snitch"
+    ],
+    "semantic_lore_concepts":[
+      "Quidditch scoring",
+      "Game-ending capture",
+      "Seeker's catch value"
+    ],
+    "original_question_id":1202,
+    "mcq_options":null
+  },
+  {
+    "generation_model":"gemini-2.5-flash",
+    "generation_prompt_version":null,
+    "lex_enrich_prompt_version":"legacy_enrichment_prompt_master_v1.txt",
+    "semantic_enrich_prompt_version":"legacy_context_variations_master.txt",
+    "question_type":"FR",
+    "question_source":"legacy",
+    "question":"As the wizarding world's high court and parliament, the Wizengamot wields significant power. How many wizards serve on this esteemed body?",
+    "answer":"50",
+    "answer_variations":[
+      "50",
+      "fifty"
+    ],
+    "hint_1":"This number reflects a substantial, but not overwhelming, assembly.",
+    "hint_2":"Think of a round number, often associated with a 'half-century' count.",
+    "hint_3":"The body is large enough to represent a significant portion of the wizarding community's elders and legal minds, but small enough to deliberate effectively.",
+    "explanation":"The Wizengamot is composed of 50 members. This legislative and judicial body is responsible for overseeing magical law and acting as the highest court in the British wizarding world.",
+    "semantic_entity_refs":[
+      "Wizengamot",
+      "Wizarding high court"
+    ],
+    "semantic_lore_concepts":[
+      "Ministry of Magic governance",
+      "Judicial body members"
+    ],
+    "original_question_id":1203,
+    "mcq_options":null
+  },
+  {
+    "generation_model":"gemini-2.5-flash",
+    "generation_prompt_version":null,
+    "lex_enrich_prompt_version":"legacy_enrichment_prompt_master_v1.txt",
+    "semantic_enrich_prompt_version":"legacy_context_variations_master.txt",
+    "question_type":"FR",
+    "question_source":"legacy",
+    "question":"How many players are on a Quidditch team?",
+    "answer":"7",
+    "answer_variations":[
+      "7",
+      "seven"
+    ],
+    "hint_1":"Each team has three Chasers, two Beaters, one Keeper, and one Seeker.",
+    "hint_2":"Consider the total count of the different positions on the pitch.",
+    "hint_3":"This number is considered fortunate by some and is often seen in magical contexts.",
+    "explanation":"A standard Quidditch team consists of seven players: three Chasers, two Beaters, one Keeper, and one Seeker. Each player has a distinct role essential to the game.",
+    "semantic_entity_refs":[
+      "Quidditch team"
+    ],
+    "semantic_lore_concepts":[
+      "Quidditch rules",
+      "Team composition"
+    ],
+    "original_question_id":1222,
+    "mcq_options":null
+  },
+  {
+    "generation_model":"gemini-2.5-flash",
+    "generation_prompt_version":null,
+    "lex_enrich_prompt_version":"legacy_enrichment_prompt_master_v1.txt",
+    "semantic_enrich_prompt_version":"legacy_context_variations_master.txt",
+    "question_type":"FR",
+    "question_source":"legacy",
+    "question":"When was Azkaban Prison established?",
+    "answer":"1718",
+    "answer_variations":[
+      "1718",
+      "seventeen eighteen"
+    ],
+    "hint_1":"The prison has been in operation for several centuries.",
+    "hint_2":"Think of a year in the early 18th century.",
+    "hint_3":"It was established long after the main wizarding institutions, but still has a very extensive and grim history.",
+    "explanation":"Azkaban Prison was established in 1718. Before that, it was a fortress used by the dark wizard Ekrizdis, which later fell under the control of the Ministry of Magic to serve as a high-security correctional facility.",
+    "semantic_entity_refs":[
+      "Azkaban Prison",
+      "Azkaban"
+    ],
+    "semantic_lore_concepts":[
+      "Wizarding prison establishment",
+      "Dementor fortress history"
+    ],
+    "original_question_id":1194,
+    "mcq_options":null
+  },
+  {
+    "generation_model":"gemini-2.5-flash",
+    "generation_prompt_version":null,
+    "lex_enrich_prompt_version":"legacy_enrichment_prompt_master_v1.txt",
+    "semantic_enrich_prompt_version":"legacy_context_variations_master.txt",
+    "question_type":"FR",
+    "question_source":"legacy",
+    "question":"When was the first full description of the game of Quidditch written?",
+    "answer":"1398",
+    "answer_variations":[
+      "1398",
+      "thirteen ninety-eight"
+    ],
+    "hint_1":"The sport itself is older, but its rules were formally documented much later.",
+    "hint_2":"This was towards the end of the 14th century.",
+    "hint_3":"The detailed account appeared in a historical text, formalizing the game's structure for future generations.",
+    "explanation":"The first full description of Quidditch was written in 1398 by an author named Goodwin Kneen. This account detailed the various aspects of the game, including rules and common fouls.",
+    "semantic_entity_refs":[
+      "Quidditch"
+    ],
+    "semantic_lore_concepts":[
+      "Quidditch history",
+      "Game rules documentation",
+      "Ancient sport records"
+    ],
+    "original_question_id":1309,
+    "mcq_options":null
+  },
+  {
+    "generation_model":"gemini-2.5-flash",
+    "generation_prompt_version":null,
+    "lex_enrich_prompt_version":"legacy_enrichment_prompt_master_v1.txt",
+    "semantic_enrich_prompt_version":"legacy_context_variations_master.txt",
+    "question_type":"FR",
+    "question_source":"legacy",
+    "question":"When did Gringotts Wizarding Bank open?",
+    "answer":"1474",
+    "answer_variations":[
+      "1474",
+      "fourteen seventy-four"
+    ],
+    "hint_1":"This goblin-run institution has been safeguarding wizarding wealth for a very long time.",
+    "hint_2":"The bank opened in the latter half of the 15th century.",
+    "hint_3":"It is the only wizarding bank in Britain and has centuries of history protecting vast amounts of treasure and magical artifacts.",
+    "explanation":"Gringotts Wizarding Bank, the only bank for witches and wizards in Great Britain, first opened its doors in 1474. It has been managed by goblins ever since its establishment.",
+    "semantic_entity_refs":[
+      "Gringotts Wizarding Bank",
+      "Gringotts"
+    ],
+    "semantic_lore_concepts":[
+      "Wizarding bank establishment",
+      "Goblin-run institution history",
+      "Magical finance origin"
+    ],
+    "original_question_id":1197,
+    "mcq_options":null
+  }
+]

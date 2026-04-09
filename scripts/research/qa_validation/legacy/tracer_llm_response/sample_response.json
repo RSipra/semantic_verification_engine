@@ -1,0 +1,206 @@
+[
+  {
+    "row_id": "1190",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Variations follow the EX compression chain perfectly. Hints and explanation are solid."
+  },
+  {
+    "row_id": "1158",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Hints are progressive and lore-accurate. Variations are suitable for MCQ."
+  },
+  {
+    "row_id": "1153",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Valid explanations and hints. Variations capture semantic equivalents accurately."
+  },
+  {
+    "row_id": "1257",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "All variations capture the exact intent and accepted aliases for the potion."
+  },
+  {
+    "row_id": "106",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Hints are good, pointing smoothly to Japan. Accurate."
+  },
+  {
+    "row_id": "1342",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Variations adhere precisely to EX multi-resolution structure. Explanation accurately details the event."
+  },
+  {
+    "row_id": "1220",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Variations account for implicit forms (digits vs words). Excellent coverage."
+  },
+  {
+    "row_id": "978",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Formatting variations of the date are highly suitable for semantic recall."
+  },
+  {
+    "row_id": "1128",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Hints carefully guide to the spiral dive without giving it away."
+  },
+  {
+    "row_id": "798",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Clear, progressive hints and concise variations."
+  },
+  {
+    "row_id": "1097",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Hints scaffold nicely without giving away the answer, and variations uniquely capture the MCQ option."
+  },
+  {
+    "row_id": "1163",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Good contrast in hints and comprehensive explanation of why the other options are concealment charms."
+  },
+  {
+    "row_id": "152",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Accurate scaffolding for a specific date recall."
+  },
+  {
+    "row_id": "691",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Variations capture full name and surname correctly."
+  },
+  {
+    "row_id": "1264",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "EX variations align correctly with the Multi-Resolution word limit rules."
+  },
+  {
+    "row_id": "1357",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Excellent EX variation compression (Index 0: 24 words, Index 1: 10 words). Semantic concepts are highly relevant."
+  },
+  {
+    "row_id": "136",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Perfect semantic aliases provided for the potion."
+  },
+  {
+    "row_id": "1147",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Hint 3 wonderfully distinguishes the correct animal ingredient from the plant distractors without spelling it out."
+  },
+  {
+    "row_id": "1155",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Variations accurately identify semantic equivalents for 'hue'."
+  },
+  {
+    "row_id": "1381",
+    "overall_status": "fail",
+    "flags": [
+      {
+        "column": "answer_variations",
+        "severity": "error",
+        "reason": "Index 1 variation contains 13 words, exceeding the strict ≤12 word limit for EX Multi-Resolution formatting."
+      }
+    ],
+    "notes": "The wording 'Dumbledore sent a Howler reminding Petunia of her blood pact to protect Harry.' must be trimmed by at least one word."
+  },
+  {
+    "row_id": "938",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Hints properly scaffold and variations are well-suited for factual recall."
+  },
+  {
+    "row_id": "1169",
+    "overall_status": "fail",
+    "flags": [
+      {
+        "column": "hint_3",
+        "severity": "error",
+        "reason": "Hint 3 is mathematically incorrect and contradicts the answer, as a 'baker's dozen plus one' equals 14, not 12."
+      }
+    ],
+    "notes": "The first half of the hint ('multiple of three and four') is correct, but the second half is flawed."
+  },
+  {
+    "row_id": "1140",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Accurate explanation and logical variations for the MCQ option."
+  },
+  {
+    "row_id": "1173",
+    "overall_status": "review",
+    "flags": [
+      {
+        "column": "hint_3",
+        "severity": "warning",
+        "reason": "The hint confusingly states 17 is 'one year before' the Muggle driving age, which is inaccurate for both the UK (where the driving age is 17) and the US (where it is typically 16)."
+      }
+    ],
+    "notes": "Hint 3 should probably reference the Muggle age of adulthood (18) rather than the driving license age."
+  },
+  {
+    "row_id": "848",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Excellent hints and robust semantic variations for the character name."
+  },
+  {
+    "row_id": "47",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Variations strictly follow the multi-resolution EX formatting rules."
+  },
+  {
+    "row_id": "1170",
+    "overall_status": "fail",
+    "flags": [
+      {
+        "column": "hint_3",
+        "severity": "error",
+        "reason": "Hint 3 directly states the exact digits of the answer ('7, 1, and 3'), giving away the correct string outright."
+      }
+    ],
+    "notes": "Since this is an MCQ and 713 is one of the options, providing the digits destroys the challenge."
+  },
+  {
+    "row_id": "1165",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "The variations safely capture distinct keywords from the correct option without bleeding into distractors."
+  },
+  {
+    "row_id": "1206",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "EX variations are properly constrained in length and capture the semantic intent accurately."
+  },
+  {
+    "row_id": "1168",
+    "overall_status": "pass",
+    "flags": [],
+    "notes": "Hint 3 works well as a final scaffold by placing the number 'slightly less than 30' among the MCQ options."
+  }
+]  

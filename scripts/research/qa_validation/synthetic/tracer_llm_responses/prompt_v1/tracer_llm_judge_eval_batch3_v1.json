@@ -1,0 +1,197 @@
+[
+  {
+    "temp_qid": "SYN_011",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote is an exact, continuous extraction from the provided text.",
+      "step_2_answer_grounding": "The answer is strictly grounded in the provided quote, stating the mechanics of Harry's survival through Lily's protection.",
+      "step_3_question_logic": "The question uses appropriate contextual framing ('ethereal King's Cross', 'Killing Curse', 'in the forest') to orient the user to the specific macro-event."
+    },
+    "scores": {
+      "source_quote_code": 0,
+      "answer_grounding_code": 0,
+      "question_logic_code": 1
+    }
+  },
+  {
+    "temp_qid": "SYN_012",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote is an exact, continuous extraction from the provided text.",
+      "step_2_answer_grounding": "The answer is fully grounded in the provided quote, explaining the wand core regurgitation mechanic.",
+      "step_3_question_logic": "The question frames the event using wider canon context ('after Harry left Privet Drive for the last time') to help the player understand which encounter is being referenced."
+    },
+    "scores": {
+      "source_quote_code": 0,
+      "answer_grounding_code": 0,
+      "question_logic_code": 1
+    }
+  },
+  {
+    "temp_qid": "SYN_013",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote is spliced, merging two non-adjacent sentences from the text using 'and'.",
+      "step_2_answer_grounding": "The answer correctly uses the immediate text and expands on it with valid scene/canon knowledge (mentioning Grindelwald explicitly, which happens earlier in the chapter).",
+      "step_3_question_logic": "The question is logically sound and clearly asks about Dumbledore refusing the Minister of Magic position."
+    },
+    "scores": {
+      "source_quote_code": 1,
+      "answer_grounding_code": 1,
+      "question_logic_code": 0
+    }
+  },
+  {
+    "temp_qid": "SYN_014",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote is an exact, unbroken extraction from the source text.",
+      "step_2_answer_grounding": "The answer relies on the quote but brings in canon expansion/scene context by explicitly naming 'Ariana' and 'Aberforth', which are not in the isolated quote.",
+      "step_3_question_logic": "The question includes valid contextual framing by explicitly naming 'Gellert Grindelwald' and referencing the 'delay', which is verified in the surrounding scene context."
+    },
+    "scores": {
+      "source_quote_code": 0,
+      "answer_grounding_code": 1,
+      "question_logic_code": 1
+    }
+  },
+  {
+    "temp_qid": "SYN_015",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote is an exact extraction from the text.",
+      "step_2_answer_grounding": "The answer integrates information from the quote as well as broader scene context (adding 'understands nothing of love or loyalty' which is stated a few paragraphs prior).",
+      "step_3_question_logic": "The question is straightforward, logically framed, and does not leak the answer."
+    },
+    "scores": {
+      "source_quote_code": 0,
+      "answer_grounding_code": 1,
+      "question_logic_code": 0
+    }
+  },
+  {
+    "temp_qid": "SYN_026",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote is edited and spliced, combining dialogue lines and narrative blocks with ellipses.",
+      "step_2_answer_grounding": "The answer (Neville Longbottom) is strictly deducible from the provided text quote.",
+      "step_3_question_logic": "The question adds the location 'Forbidden Forest' as a valid contextual framing element to orient the player."
+    },
+    "scores": {
+      "source_quote_code": 1,
+      "answer_grounding_code": 0,
+      "question_logic_code": 1
+    }
+  },
+  {
+    "temp_qid": "SYN_027",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote is an exact match to a continuous block of the source text.",
+      "step_2_answer_grounding": "The answer 'golden snitch' is strictly deducible from the quote.",
+      "step_3_question_logic": "The question clearly prompts the user for the object based exactly on the events in the quote."
+    },
+    "scores": {
+      "source_quote_code": 0,
+      "answer_grounding_code": 0,
+      "question_logic_code": 0
+    }
+  },
+  {
+    "temp_qid": "SYN_028",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote is an exact match to the text provided.",
+      "step_2_answer_grounding": "The answer 'Rowle' is explicitly stated in the provided quote.",
+      "step_3_question_logic": "The question contextualizes the macro-event by noting 'Forbidden Forest' and 'after Harry revealed himself', which is accurate framing."
+    },
+    "scores": {
+      "source_quote_code": 0,
+      "answer_grounding_code": 0,
+      "question_logic_code": 1
+    }
+  },
+  {
+    "temp_qid": "SYN_029",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote exactly matches a sentence from the source text.",
+      "step_2_answer_grounding": "The answer is perfectly grounded in the quote.",
+      "step_3_question_logic": "The question is logically sound and straightforward without leaks."
+    },
+    "scores": {
+      "source_quote_code": 0,
+      "answer_grounding_code": 0,
+      "question_logic_code": 0
+    }
+  },
+  {
+    "temp_qid": "SYN_030",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote is exactly matched, including a minor typo ('lo cleaner') present in the raw source text.",
+      "step_2_answer_grounding": "The answer 'King's Cross station' is strictly in the text.",
+      "step_3_question_logic": "The question introduces 'London station' as acceptable contextual framing to help a human player pinpoint the location."
+    },
+    "scores": {
+      "source_quote_code": 0,
+      "answer_grounding_code": 0,
+      "question_logic_code": 1
+    }
+  },
+  {
+    "temp_qid": "SYN_031",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote is an exact extraction from the text.",
+      "step_2_answer_grounding": "The answer is found directly in the source quote.",
+      "step_3_question_logic": "The question relies only on the premise provided in the quote and asks a straightforward factual question."
+    },
+    "scores": {
+      "source_quote_code": 0,
+      "answer_grounding_code": 0,
+      "question_logic_code": 0
+    }
+  },
+  {
+    "temp_qid": "SYN_044",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote perfectly matches the text.",
+      "step_2_answer_grounding": "The answer is strictly derived from the provided quote.",
+      "step_3_question_logic": "The question frames the event 'after the battle' which is true canon macro-context."
+    },
+    "scores": {
+      "source_quote_code": 0,
+      "answer_grounding_code": 0,
+      "question_logic_code": 1
+    }
+  },
+  {
+    "temp_qid": "SYN_045",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote has been slightly edited, truncating the end of Harry's dialogue ('Ron and Hermione know that...') without ellipses.",
+      "step_2_answer_grounding": "The answer is contained strictly within the provided quote.",
+      "step_3_question_logic": "The question logic is direct, unambiguous, and does not leak the answer."
+    },
+    "scores": {
+      "source_quote_code": 1,
+      "answer_grounding_code": 0,
+      "question_logic_code": 0
+    }
+  },
+  {
+    "temp_qid": "SYN_046",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote is an exact, unbroken match from the text.",
+      "step_2_answer_grounding": "The answer is directly stated in the quote.",
+      "step_3_question_logic": "The question expands Sirius's name to 'Sirius Black' and adds 'in the forest' as valid contextual framing."
+    },
+    "scores": {
+      "source_quote_code": 0,
+      "answer_grounding_code": 0,
+      "question_logic_code": 1
+    }
+  },
+  {
+    "temp_qid": "SYN_047",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote is an exact extraction from the text.",
+      "step_2_answer_grounding": "The answer is explicitly in the quote.",
+      "step_3_question_logic": "The question logically describes the scenario and accurately references the setting."
+    },
+    "scores": {
+      "source_quote_code": 0,
+      "answer_grounding_code": 0,
+      "question_logic_code": 0
+    }
+  }
+]

@@ -1,0 +1,325 @@
+[
+  {
+    "temp_qid":"SYN_011",
+    "question_type":"EX",
+    "question_source":"synthetic",
+    "question":"In the ethereal King's Cross, why was Harry still alive after Voldemort hit him with the Killing Curse in the forest, despite Harry not defending himself?",
+    "answer":"harry survived because voldemort had used harry's blood, which contained lily potter's protection, to rebuild his own body. this act tethered harry to life as long as voldemort himself lived.",
+    "answer_variations":[
+      "voldemort used harry's blood to rebuild his body, anchoring lily's protection to himself, which tethered harry to life.",
+      "voldemort's use of harry's blood anchored lily's protection.",
+      "harry, voldemort, lily potter, blood, protection, tether, survived"
+    ],
+    "hint_1":"Recall the dark ritual used to resurrect Voldemort in the graveyard, involving a specific blood connection.",
+    "hint_2":"Lily Potter's sacrifice had an unforeseen, extended effect due to Voldemort's unwitting actions.",
+    "hint_3":"The darkest magic can sometimes inadvertently become an anchor for the very protection it seeks to destroy, especially when linked to profound sacrifice.",
+    "explanation":"Harry survived because when Voldemort rebuilt his body, he used Harry's blood, which contained Lily Potter's sacrificial protection. This action inadvertently tethered Harry's life to Voldemort's, meaning Harry could not truly die as long as Voldemort lived.",
+    "semantic_entity_refs":[
+      "Harry Potter",
+      "The Chosen One",
+      "Lord Voldemort",
+      "Killing Curse",
+      "Lily Potter",
+      "Harry's mother"
+    ],
+    "semantic_lore_concepts":[
+      "Blood protection magic",
+      "Resurrection through Harry's blood",
+      "Tether to life",
+      "Sacrificial protection",
+      "Horcrux connection (unintended)"
+    ],
+    "llm_predicted_category":"Magical Theory\/Lore",
+    "llm_predicted_difficulty":"Medium",
+    "source_reference":"deathly_hallows Chapter 35",
+    "source_quote":"He took your blood and rebuilt his living body with it! Your blood in his veins, Harry, Lily's protection inside both of you! He tethered you to life while he lives!",
+    "mcq_options":null
+  },
+  {
+    "temp_qid":"SYN_012",
+    "question_type":"EX",
+    "question_source":"synthetic",
+    "question":"According to Albus Dumbledore, how was Harry's wand able to break the borrowed wand (Lucius Malfoy's) that Voldemort used in their encounter after Harry left Privet Drive for the last time?",
+    "answer":"dumbledore explained that harry's wand had imbibed some of the power and qualities of voldemort's wand during a previous encounter, effectively containing a part of voldemort himself. it then recognized voldemort as both kin and enemy, regurgitating his own magic against him with immense power.",
+    "answer_variations":[
+      "harry's wand imbibed voldemort's power, recognized him as kin\/enemy, regurgitating his own magic with immense power, breaking the borrowed wand.",
+      "harry's wand imbibed voldemort's power, reflected it back.",
+      "harry's wand, voldemort's wand, imbibed power, kin and enemy, regurgitated magic, broke wand"
+    ],
+    "hint_1":"Recall the unusual effect that occurred when Harry and Voldemort's wands first clashed.",
+    "hint_2":"Harry's wand had absorbed something from Voldemort's wand in a past duel, creating a deep connection.",
+    "hint_3":"The intricate bonds between wands and their masters can lead to unexpected magical reactions, especially when facing a linked foe.",
+    "explanation":"Dumbledore explained Harry's wand had absorbed some of Voldemort's wand's power during a prior encounter, making it contain a part of Voldemort's essence. When facing Voldemort again, it recognized him as both kin and enemy, consequently unleashing his own magic back at him with amplified power, breaking the borrowed wand.",
+    "semantic_entity_refs":[
+      "Harry's wand",
+      "Holly and Phoenix Feather wand",
+      "Lord Voldemort's wand",
+      "Yew and Phoenix Feather wand",
+      "Lucius Malfoy's wand",
+      "Albus Dumbledore",
+      "Harry Potter",
+      "Lord Voldemort"
+    ],
+    "semantic_lore_concepts":[
+      "Wandlore",
+      "Priori Incantatem",
+      "Kin and enemy magic",
+      "Wand allegiance",
+      "Magic regurgitation",
+      "Wand breaking"
+    ],
+    "llm_predicted_category":"Magical Theory\/Lore",
+    "llm_predicted_difficulty":"Hard",
+    "source_reference":"deathly_hallows Chapter 35",
+    "source_quote":"I believe that your wand imbibed some of the power and qualities of Voldemort's wand that night, which is to say that it contained a little of Voldemort himself. So your wand recognized him when he pursued you, recognized a man who was both kin and mortal enemy, and it regurgitated some of his own magic against him, magic much more powerful than anything Lucius's wand had ever performed.",
+    "mcq_options":null
+  },
+  {
+    "temp_qid":"SYN_013",
+    "question_type":"EX",
+    "question_source":"synthetic",
+    "question":"Why did Albus Dumbledore refuse the offer to become Minister of Magic multiple times during his lifetime?",
+    "answer":"dumbledore refused because he had learned that he could not be trusted with power. his experiences as a young man with grindelwald proved that power was his personal weakness and temptation.",
+    "answer_variations":[
+      "dumbledore refused, learning from his grindelwald experience that power was his weakness, meaning he could not be trusted with it.",
+      "dumbledore refused power, learning from grindelwald it was his weakness.",
+      "albus dumbledore, minister of magic, refused, power, weakness, grindelwald"
+    ],
+    "hint_1":"Dumbledore learned a harsh lesson about himself and his capacity for power in his youth.",
+    "hint_2":"Consider a significant early relationship that profoundly shaped his view on leadership and authority.",
+    "hint_3":"True leadership often requires a deep understanding of one's own weaknesses, leading to a humble rejection of unchecked authority.",
+    "explanation":"Dumbledore refused the position because he had a profound understanding of his own weakness regarding power. His tumultuous youthful experiences with Gellert Grindelwald taught him that he could not be trusted with such immense authority, fearing the temptation would corrupt him.",
+    "semantic_entity_refs":[
+      "Albus Dumbledore",
+      "Professor Dumbledore",
+      "Minister of Magic",
+      "Gellert Grindelwald",
+      "Dark Wizard Grindelwald"
+    ],
+    "semantic_lore_concepts":[
+      "Dumbledore's past",
+      "Temptation of power",
+      "Grindelwald's influence",
+      "Avoiding political office"
+    ],
+    "llm_predicted_category":"Character Arc\/Motive",
+    "llm_predicted_difficulty":"Medium",
+    "source_reference":"deathly_hallows Chapter 35",
+    "source_quote":"I, meanwhile, was offered the post of Minister of Magic, not once, but several times. Naturally, I refused. I had learned that I was not to be trusted with power.\" and \"I had proven, as a very young man, that power was my weakness and my temptation.",
+    "mcq_options":null
+  },
+  {
+    "temp_qid":"SYN_014",
+    "question_type":"EX",
+    "question_source":"synthetic",
+    "question":"What was the primary reason Albus Dumbledore delayed confronting Gellert Grindelwald for so many years?",
+    "answer":"dumbledore feared learning the truth about his sister ariana's death. he dreaded the knowledge that he might have cast the curse that killed her during the three-way duel with grindelwald and aberforth.",
+    "answer_variations":[
+      "dumbledore delayed confronting grindelwald, fearing he might have cast the curse that killed his sister ariana during their three-way duel.",
+      "dumbledore feared learning he killed ariana in the duel.",
+      "albus dumbledore, gellert grindelwald, ariana's death, delayed, curse, duel"
+    ],
+    "hint_1":"Consider Dumbledore's greatest personal regret and sorrow from his youth.",
+    "hint_2":"He was afraid of uncovering a painful truth about a specific three-way duel that resulted in a tragic loss.",
+    "hint_3":"The weight of unresolved guilt and the potential for self-condemnation can prevent even the bravest individuals from facing difficult truths.",
+    "explanation":"Dumbledore delayed confronting Grindelwald primarily due to his profound fear of learning the truth about his sister Ariana's death. He dreaded discovering that he might have been the one who accidentally cast the curse that killed her during the fateful three-way duel.",
+    "semantic_entity_refs":[
+      "Albus Dumbledore",
+      "Gellert Grindelwald",
+      "Aberforth Dumbledore",
+      "Ariana Dumbledore",
+      "Dumbledore's sister"
+    ],
+    "semantic_lore_concepts":[
+      "Dumbledore's trauma",
+      "Fear of truth",
+      "Three-way duel",
+      "Accidental death",
+      "Dumbledore family tragedy"
+    ],
+    "llm_predicted_category":"Character Arc\/Motive",
+    "llm_predicted_difficulty":"Hard",
+    "source_reference":"deathly_hallows Chapter 35",
+    "source_quote":"It was the truth I feared. You see, I never knew which of us, in that last, horrific fight, had actually cast the curse that killed my sister. You may call me cowardly: You would be right, Harry. I dreaded beyond all things the knowledge that it had been I who brought about her death, not merely through my arrogance and stupidity, but that I actually struck the blow that snuffed out her life.",
+    "mcq_options":null
+  },
+  {
+    "temp_qid":"SYN_015",
+    "question_type":"EX",
+    "question_source":"synthetic",
+    "question":"Why did Lord Voldemort not recognize the Resurrection Stone as a Deathly Hallow, even after turning it into one of his Horcruxes?",
+    "answer":"voldemort did not value or comprehend the true nature of the resurrection stone because he understands nothing of love or loyalty. he fears the dead and would have no one he would wish to bring back, so he never considered its real purpose.",
+    "answer_variations":[
+      "voldemort didn't recognize the resurrection stone as a hallow because of his loveless nature, therefore he never grasped its true purpose.",
+      "voldemort's loveless nature prevented recognizing the resurrection stone's purpose.",
+      "voldemort, resurrection stone, deathly hallow, love, loyalty, recognize, purpose"
+    ],
+    "hint_1":"Consider Voldemort's fundamental inability to understand certain powerful human emotions.",
+    "hint_2":"The Resurrection Stone's true power revolved around connections to those who had passed on, a concept alien to Voldemort.",
+    "hint_3":"Evil, devoid of empathy and understanding, often misses the profound significance of artifacts whose power derives from virtues it cannot comprehend.",
+    "explanation":"Voldemort did not recognize the Resurrection Stone as a Deathly Hallow because he completely lacked understanding of love and loyalty. Its purpose, to bring back loved ones, was meaningless to him as he feared the dead and had no one he genuinely wished to resurrect, so he saw it only as a vessel for his soul.",
+    "semantic_entity_refs":[
+      "Lord Voldemort",
+      "Tom Riddle",
+      "Resurrection Stone",
+      "Deathly Hallows",
+      "Horcrux",
+      "Gaunt Family Ring"
+    ],
+    "semantic_lore_concepts":[
+      "Voldemort's lack of love",
+      "Fear of death",
+      "Misunderstanding of magic",
+      "Horcrux creation",
+      "Deathly Hallow properties"
+    ],
+    "llm_predicted_category":"Character Arc\/Motive",
+    "llm_predicted_difficulty":"Medium",
+    "source_reference":"deathly_hallows Chapter 35",
+    "source_quote":"I do not think so, because he did not recognize the Resurrection Stone he turned into a Horcrux. But even if he had known about them, Harry. I doubt that he would have been interested in any except the first. He would not think that he needed the Cloak, and as for the stone, whom would he want to bring back from the dead? He fears the dead. He does not love.",
+    "mcq_options":null
+  },
+  {
+    "temp_qid":"SYN_019",
+    "question_type":"FR",
+    "question_source":"synthetic",
+    "question":"In what country did Helena Ravenclaw hide her mother's diadem inside a hollow tree?",
+    "answer":"albania",
+    "answer_variations":[
+      "albania"
+    ],
+    "hint_1":"This country is also known as a place where a powerful dark wizard spent time after his initial downfall.",
+    "hint_2":"It is a real-world country located in southeastern Europe.",
+    "hint_3":"The Gray Lady described it as a 'lonely place' she believed was 'far beyond my mother's reach.'",
+    "explanation":"Helena Ravenclaw, after stealing her mother's diadem, hid it within a hollow tree in a remote forest in Albania. This location was chosen because she believed it was far enough away to be safe from her mother's pursuit.",
+    "semantic_entity_refs":[
+
+    ],
+    "semantic_lore_concepts":[
+      "Diadem hiding place",
+      "Horcrux hiding location",
+      "Ravenclaw's Diadem location"
+    ],
+    "llm_predicted_category":"Location\/Setting",
+    "llm_predicted_difficulty":"Medium",
+    "source_reference":"deathly_hallows Chapter 31",
+    "source_quote":"\"A forest in Albania. A lonely place I thought was far beyond my mother's reach.\"",
+    "mcq_options":null
+  },
+  {
+    "temp_qid":"SYN_020",
+    "question_type":"FR",
+    "question_source":"synthetic",
+    "question":"Which Weasley family member died during the Battle of Hogwarts, with the ghost of his last laugh still etched upon his face?",
+    "answer":"fred",
+    "answer_variations":[
+      "fred",
+      "fred weasley"
+    ],
+    "hint_1":"This Weasley brother was known for his love of pranks and humor.",
+    "hint_2":"He was a co-owner of a popular joke shop in Diagon Alley.",
+    "hint_3":"His twin brother was profoundly affected by his loss in the final battle.",
+    "explanation":"Fred Weasley, one of the mischievous Weasley twins and co-owner of Weasleys' Wizard Wheezes, tragically died during the Battle of Hogwarts. His passing was marked by the poignant detail of his last laugh still etched on his face.",
+    "semantic_entity_refs":[
+      "Fred Weasley",
+      "Weasley twin"
+    ],
+    "semantic_lore_concepts":[
+      "Battle of Hogwarts casualty",
+      "Weasley family death",
+      "Last laugh"
+    ],
+    "llm_predicted_category":"Character Detail",
+    "llm_predicted_difficulty":"Easy",
+    "source_reference":"deathly_hallows Chapter 31",
+    "source_quote":"And Percy was shaking his brother, and Ron was kneeling beside them, and Fred's eyes stared without seeing, the ghost of his last laugh still etched upon his face.",
+    "mcq_options":null
+  },
+  {
+    "temp_qid":"SYN_022",
+    "question_type":"FR",
+    "question_source":"synthetic",
+    "question":"While in the Shrieking Shack, which Death Eater did Voldemort send to fetch Severus Snape?",
+    "answer":"lucius malfoy",
+    "answer_variations":[
+      "lucius malfoy",
+      "malfoy"
+    ],
+    "hint_1":"This Death Eater is the father of a prominent Slytherin student.",
+    "hint_2":"He is known for his long, blonde hair and aristocratic demeanor.",
+    "hint_3":"He often carries a distinctive snake-head cane.",
+    "explanation":"Voldemort, while in the Shrieking Shack, commanded Lucius Malfoy to retrieve Severus Snape. Lucius, a prominent Death Eater and father of Draco, obeyed the Dark Lord's order, though he was visibly frightened.",
+    "semantic_entity_refs":[
+      "Lucius Malfoy",
+      "Draco's father"
+    ],
+    "semantic_lore_concepts":[
+      "Snape's summoner",
+      "Death Eater's task"
+    ],
+    "llm_predicted_category":"Character Detail",
+    "llm_predicted_difficulty":"Easy",
+    "source_reference":"deathly_hallows Chapter 32",
+    "source_quote":"'Go and fetch Snape.' ... Frightened, stumbling a little through the gloom, Lucius left the room.",
+    "mcq_options":null
+  },
+  {
+    "temp_qid":"SYN_025",
+    "question_type":"FR",
+    "question_source":"synthetic",
+    "question":"According to Dumbledore's portrait, under what two specific conditions must the Sword of Gryffindor be taken?",
+    "answer":"need and valor",
+    "answer_variations":[
+      "need and valor",
+      "valor and need",
+      "need",
+      "valor"
+    ],
+    "hint_1":"These conditions relate to the circumstances and character required to wield the legendary blade.",
+    "hint_2":"One condition describes a desperate situation, while the other describes a noble quality.",
+    "hint_3":"The sword only presents itself to those who demonstrate these two core Gryffindor qualities.",
+    "explanation":"Dumbledore's portrait instructed Severus Snape that the Sword of Gryffindor must only be taken under conditions of 'need and valor.' This ensures that the true heir of Gryffindor, demonstrating both desperation and courage, can retrieve the sword.",
+    "semantic_entity_refs":[
+
+    ],
+    "semantic_lore_concepts":[
+      "Sword of Gryffindor conditions",
+      "Goblin-made artifact properties",
+      "True Gryffindor requirements"
+    ],
+    "llm_predicted_category":"Object\/Potion",
+    "llm_predicted_difficulty":"Hard",
+    "source_reference":"deathly_hallows Chapter 33",
+    "source_quote":"'Now, Severus, the sword! Do not forget that it must be taken under conditions of need and valor ¨C and he must not know that you give it!'",
+    "mcq_options":null
+  },
+  {
+    "temp_qid":"SYN_026",
+    "question_type":"FR",
+    "question_source":"synthetic",
+    "question":"Before confronting Voldemort in the Forbidden Forest, who did Harry instruct to kill Nagini, the snake Horcrux, if Ron and Hermione were busy?",
+    "answer":"neville longbottom",
+    "answer_variations":[
+      "neville longbottom",
+      "neville"
+    ],
+    "hint_1":"This character is known for his late-blooming bravery and loyalty.",
+    "hint_2":"He later becomes a professor at Hogwarts, teaching Herbology.",
+    "hint_3":"He ultimately destroys a Horcrux with the Sword of Gryffindor in the Great Hall.",
+    "explanation":"Before facing Voldemort, Harry entrusted Neville Longbottom with the crucial task of killing Nagini, the snake Horcrux, if Ron and Hermione were otherwise occupied. Neville later fulfilled this role heroically by destroying the snake with the Sword of Gryffindor.",
+    "semantic_entity_refs":[
+      "Neville Longbottom",
+      "Destroyer of Nagini",
+      "Gryffindor sword wielder"
+    ],
+    "semantic_lore_concepts":[
+      "Nagini's killer",
+      "Harry's backup plan for Horcrux"
+    ],
+    "llm_predicted_category":"Character Detail",
+    "llm_predicted_difficulty":"Medium",
+    "source_reference":"deathly_hallows Chapter 34",
+    "source_quote":"You know Voldemort's snake. Neville? He's got a huge snake... Calls it Nagini...\"\"I've heard, yeah... What about it?\"\"It's got to be killed. Ron and Hermione know that, but just in case they ¨C\"The awfulness of that possibility smothered him for a moment, made it impossible to keep talking. But he pulled himself together again: This was crucial, he must be like Dumbledore, keep a cool head, make sure there were backups, others to carry on. Dumbledore had died knowing that three people still knew about the Horcruxes; now Neville would take Harry's place: There would still be three in the secret.",
+    "mcq_options":null
+  }
+]

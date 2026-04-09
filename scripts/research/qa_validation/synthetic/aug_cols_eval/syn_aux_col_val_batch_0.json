@@ -1,0 +1,350 @@
+[
+  {
+    "temp_qid":"SYN_001",
+    "question_type":"EX",
+    "question_source":"synthetic",
+    "question":"How did Harry suddenly realize the exact hiding place of the diadem Horcrux within Hogwarts Castle?",
+    "answer":"he recalled seeing a marble bust of rowena ravenclaw with a headdress at xenophilius's, a statue in ravenclaw tower with a diadem, and then remembered a third stone effigy of an ugly old warlock where he had once hidden his old potions book.",
+    "answer_variations":[
+      "harry recognized the diadem's location by remembering hiding his potions book on a warlock effigy, linking it to ravenclaw diadem imagery.",
+      "harry linked old potions book hiding spot to diadem imagery.",
+      "harry, diadem, horcrux, potions book, warlock effigy, room of requirement, ravenclaw"
+    ],
+    "hint_1":"Harry's memory of a seemingly insignificant past action was the key to his sudden realization.",
+    "hint_2":"He remembered hiding a specific school book in a particular place within Hogwarts.",
+    "hint_3":"Sometimes, the most important answers are found by revisiting small, forgotten moments or places of refuge.",
+    "explanation":"Harry realized the diadem's location by connecting various images of Ravenclaw's headdress with a specific ugly warlock effigy. He then remembered that he had once hidden his old Potions book on this very effigy in the Room of Requirement, pinpointing the Horcrux.",
+    "semantic_entity_refs":[
+      "Harry Potter",
+      "Diadem Horcrux",
+      "Rowena Ravenclaw's Diadem",
+      "Room of Requirement",
+      "Come and Go Room"
+    ],
+    "semantic_lore_concepts":[
+      "Horcrux hunting",
+      "Memory recall",
+      "Hidden objects",
+      "Room's properties"
+    ],
+    "llm_predicted_category":"Plot Event",
+    "llm_predicted_difficulty":"Medium",
+    "source_reference":"deathly_hallows Chapter 30",
+    "source_quote":"Its ugly stone face made Harry think suddenly of the marble bust of Rowena Ravenclaw at Xenophilius's house, wearing that mad headdress ¨C and then of the statue in Ravenclaw Tower, with the stone diadem upon her white curls....And as he reached the end of the passage, the memory of a third stone effigy came back to him: that of an ugly old warlock, onto whose head Harry himself had placed a wig and a battered old hat. The shock shot through Harry with the heat of firewhisky, and he nearly stumbled.He knew, at least, where the Horcrux sat waiting for him....",
+    "mcq_options":null
+  },
+  {
+    "temp_qid":"SYN_002",
+    "question_type":"EX",
+    "question_source":"synthetic",
+    "question":"Why did Professor McGonagall instruct Filch to find Peeves during the preparations for battle at Hogwarts?",
+    "answer":"she ordered filch to find peeves so the poltergeist could be enlisted to help defend the school, despite filch's bewilderment at the request.",
+    "answer_variations":[
+      "mcgonagall instructed filch to find peeves, enlisting the poltergeist's chaotic nature to help defend hogwarts during the battle.",
+      "mcgonagall enlisted peeves's chaos to defend hogwarts.",
+      "mcgonagall, filch, peeves, defend, hogwarts, battle, poltergeist"
+    ],
+    "hint_1":"Professor McGonagall was preparing Hogwarts for an unprecedented, full-scale confrontation.",
+    "hint_2":"Consider Peeves's usual behavior and his capacity for causing widespread disruption.",
+    "hint_3":"In dire circumstances, even the most troublesome elements can be directed towards a shared protective purpose.",
+    "explanation":"McGonagall, recognizing the dire situation, saw the potential in Peeves's disruptive nature. She wanted to enlist the poltergeist to cause chaos among the Death Eaters, effectively using his usual nuisance behavior to help defend the school during the battle.",
+    "semantic_entity_refs":[
+      "Minerva McGonagall",
+      "Professor McGonagall",
+      "Peeves",
+      "Hogwarts poltergeist",
+      "Argus Filch",
+      "Hogwarts caretaker"
+    ],
+    "semantic_lore_concepts":[
+      "Battle of Hogwarts",
+      "Enlisting non-traditional help",
+      "Hogwarts defense",
+      "Poltergeist's nature"
+    ],
+    "llm_predicted_category":"Plot Event",
+    "llm_predicted_difficulty":"Medium",
+    "source_reference":"deathly_hallows Chapter 30",
+    "source_quote":"Now go and do something constructive! Find Peeves!P-Peeves? stammered Filch as though he had never heard the name before.Yes, Peeves, you fool, Peeves! Haven't you been complaining about him for a quarter of a century? Go and fetch him, at once.",
+    "mcq_options":null
+  },
+  {
+    "temp_qid":"SYN_003",
+    "question_type":"EX",
+    "question_source":"synthetic",
+    "question":"How did Ron and Hermione manage to destroy Hufflepuff's cup Horcrux?",
+    "answer":"ron had the idea to go to the chamber of secrets, where he opened it using parseltongue (mimicking harry's sound from the locket), and hermione stabbed the cup with a basilisk fang.",
+    "answer_variations":[
+      "ron suggested the chamber of secrets, opened it with parseltongue, and hermione used a basilisk fang to destroy hufflepuff's cup horcrux.",
+      "ron opened chamber with parseltongue; hermione used basilisk fang.",
+      "ron, hermione, chamber of secrets, parseltongue, basilisk fang, hufflepuff's cup, horcrux"
+    ],
+    "hint_1":"What unique, extremely potent magical item was found in the Chamber of Secrets, known for destroying Horcruxes?",
+    "hint_2":"Ron demonstrated an unexpected skill, mimicking a sound he'd heard before to open a hidden chamber.",
+    "hint_3":"Sometimes, the key to solving new problems lies in remembering lessons or capabilities from previous adventures.",
+    "explanation":"Ron cleverly realized they could use a basilisk fang, a known Horcrux-destroyer, from the Chamber of Secrets. He then demonstrated his ability to mimic Parseltongue to open the Chamber, allowing Hermione to use a fang to stab and destroy Hufflepuff's cup.",
+    "semantic_entity_refs":[
+      "Ron Weasley",
+      "Hermione Granger",
+      "Hufflepuff's Cup Horcrux",
+      "Helga Hufflepuff's Cup",
+      "Basilisk fang",
+      "Chamber of Secrets"
+    ],
+    "semantic_lore_concepts":[
+      "Horcrux destruction",
+      "Parseltongue imitation",
+      "Basilisk venom",
+      "Chamber of Secrets entrance"
+    ],
+    "llm_predicted_category":"Plot Event",
+    "llm_predicted_difficulty":"Easy",
+    "source_reference":"deathly_hallows Chapter 31",
+    "source_quote":"It was Ron, all Ron's idea! said Hermione breathlessly. Wasnt it absolutely brilliant? There we were, after we left, and I said to Ron, even if we find the other one, how are we going to get rid of it? We still hadnt got rid of the cup! And then he thought of it! The basilisk!Something to get rid of Horcruxes, said Ron simply.Harry's eyes dropped to the objects clutched in Ron and Hermiones arms: great curved fangs; torn, he now realized, from the skull of a dead basilisk.But how did you get in there? he asked, staring from the fangs to Ron. You need to speak Parseltongue!He did! whispered Hermione. Show him, Ron!Ron made a horrible strangled hissing noise.Its what you did to open the locket, he told Harry apologetically. I had to have a few goes to get it right, but, he shrugged modestly, we got there in the end.He was amazing! said Hermione. Amazing!So we're another Horcrux down, said Ron, and from under his jacket he pulled the mangled remains of Hufflepuff's cup. Hermione stabbed it. Thought she should. She hasn't had the pleasure yet.",
+    "mcq_options":null
+  },
+  {
+    "temp_qid":"SYN_004",
+    "question_type":"EX",
+    "question_source":"synthetic",
+    "question":"Why did Ron Weasley insist they should tell the house-elves to evacuate from Hogwarts during the battle?",
+    "answer":"ron believed they shouldn't order the house-elves to die for them, expressing a desire to avoid another tragedy like dobby's death.",
+    "answer_variations":[
+      "ron believed house-elves shouldn't be ordered to die for them, wanting to prevent another tragedy like dobby's death out of compassion.",
+      "ron protected house-elves, avoiding another dobby-like tragedy.",
+      "ron weasley, house-elves, dobby's death, evacuate, protect, compassion"
+    ],
+    "hint_1":"Ron had a significant personal experience involving a house-elf's heroic sacrifice.",
+    "hint_2":"Recall a recent tragic event that deeply affected Ron, involving the loss of a dear friend.",
+    "hint_3":"The value of all lives, regardless of status, becomes paramount when facing grave danger and potential sacrifice.",
+    "explanation":"Ron's insistence stemmed from his newfound compassion and maturity, particularly after Dobby's death. He felt it was morally wrong to command the house-elves to fight and potentially die for them, expressing a strong desire to prevent further unnecessary casualties.",
+    "semantic_entity_refs":[
+      "Ron Weasley",
+      "House-elves",
+      "Dobby",
+      "Free Elf Dobby"
+    ],
+    "semantic_lore_concepts":[
+      "House-elf welfare",
+      "SPEW advocacy",
+      "Compassion for magical creatures",
+      "Battle of Hogwarts"
+    ],
+    "llm_predicted_category":"Character Arc\/Motive",
+    "llm_predicted_difficulty":"Medium",
+    "source_reference":"deathly_hallows Chapter 31",
+    "source_quote":"The house-elves, they'll all be down in the kitchen, won't they?You mean we ought to get them fighting? asked Harry.No, said Ron seriously, I mean we should tell them to get out. We don't want anymore Dobbies, do we? We can't order them to die for us ¨C",
+    "mcq_options":null
+  },
+  {
+    "temp_qid":"SYN_005",
+    "question_type":"EX",
+    "question_source":"synthetic",
+    "question":"Why did Crabbe ignore Draco Malfoy's warning and use the Fiendfyre curse inside the Room of Requirement?",
+    "answer":"crabbe was furious with malfoy and asserted his independence, stating he no longer took orders from draco and that he cared more about getting potter dead for the dark lord than preserving the diadem or the room.",
+    "answer_variations":[
+      "crabbe, furious and asserting independence, ignored malfoy, prioritizing killing harry for the dark lord over preserving the diadem or room.",
+      "crabbe defied malfoy, prioritizing killing harry for voldemort.",
+      "crabbe, draco malfoy, fiendfyre, room of requirement, dark lord, harry potter, independence"
+    ],
+    "hint_1":"Crabbe's loyalty had shifted, and he was acting independently of Malfoy's usual command.",
+    "hint_2":"Crabbe prioritized capturing or killing Harry above all other objectives, regardless of the consequences.",
+    "hint_3":"Extreme devotion to a dark cause can lead individuals to disregard prudence and former allegiances.",
+    "explanation":"Crabbe, emboldened by his commitment to the Dark Lord and fed up with Malfoy's leadership, asserted his independence. He cared more about killing Harry Potter for Voldemort than following Malfoy's warnings or preserving the diadem or the Room of Requirement itself.",
+    "semantic_entity_refs":[
+      "Vincent Crabbe",
+      "Crabbe",
+      "Draco Malfoy",
+      "Fiendfyre",
+      "Room of Requirement",
+      "Harry Potter",
+      "Lord Voldemort",
+      "The Dark Lord"
+    ],
+    "semantic_lore_concepts":[
+      "Uncontrolled dark magic",
+      "Reckless spellcasting",
+      "Minion's defiance",
+      "Horcrux destruction (accidental)"
+    ],
+    "llm_predicted_category":"Character Arc\/Motive",
+    "llm_predicted_difficulty":"Medium",
+    "source_reference":"deathly_hallows Chapter 31",
+    "source_quote":"What's that matter? said Crabbe, tugging himself free. It's Potter the Dark Lord wants, who cares about a die-dum?Potter came in here to get it, said Malfoy with ill-disguised impatience at the slow-wittedness of his colleagues. so that must mean ¨C 'Must mean'? Crabbe turned on Malfoy with undisguised ferocity. Who cares what you think? I don't take your orders no more, Draco. You an' your dad are finished.",
+    "mcq_options":null
+  },
+  {
+    "temp_qid":"SYN_006",
+    "question_type":"EX",
+    "question_source":"synthetic",
+    "question":"Why did Lord Voldemort order Nagini to kill Severus Snape in the Shrieking Shack during the Battle of Hogwarts?",
+    "answer":"voldemort mistakenly believed that because snape had killed albus dumbledore, snape was the true master of the elder wand. to fully control the wand's power, voldemort thought he needed to defeat snape.",
+    "answer_variations":[
+      "voldemort believed snape was the elder wand's master after killing dumbledore, thus needing snape's defeat to control its full power.",
+      "voldemort mistakenly killed snape, believing him elder wand's master.",
+      "voldemort, nagini, snape, elder wand, dumbledore, master, kill"
+    ],
+    "hint_1":"Voldemort was obsessed with truly mastering the most powerful wand in existence.",
+    "hint_2":"Voldemort believed the Elder Wand's allegiance transferred upon the death of its previous owner, and knew who had struck the fatal blow.",
+    "hint_3":"A literal-minded understanding of power transfers can lead to fatal miscalculations, especially concerning ancient magical artifacts.",
+    "explanation":"Voldemort mistakenly believed that the Elder Wand's allegiance transferred to Severus Snape when Snape killed Albus Dumbledore. To fully command the wand's power, Voldemort concluded he needed to defeat its perceived current master, leading him to order Snape's death.",
+    "semantic_entity_refs":[
+      "Lord Voldemort",
+      "He Who Must Not Be Named",
+      "Nagini",
+      "Severus Snape",
+      "The Potions Master",
+      "Elder Wand",
+      "Albus Dumbledore",
+      "Headmaster Dumbledore"
+    ],
+    "semantic_lore_concepts":[
+      "Mastery of the Elder Wand",
+      "Deathly Hallows theory",
+      "Misunderstanding wand allegiance",
+      "Sacrificial murder"
+    ],
+    "llm_predicted_category":"Magical Theory\/Lore",
+    "llm_predicted_difficulty":"Hard",
+    "source_reference":"deathly_hallows Chapter 32",
+    "source_quote":"The Elder Wand cannot serve me properly, Severus, because I am not its true master. The Elder Wand belongs to the wizard who killed its last owner. You killed Albus Dumbledore. While you live, Severus, the Elder Wand cannot truly be mine.",
+    "mcq_options":null
+  },
+  {
+    "temp_qid":"SYN_007",
+    "question_type":"EX",
+    "question_source":"synthetic",
+    "question":"Why did Albus Dumbledore explicitly ask Severus Snape to kill him, rather than allowing Draco Malfoy to complete Voldemort's assignment?",
+    "answer":"dumbledore wanted to protect draco malfoy's soul from the irreparable damage of committing murder. he believed snape's soul was already complex and could better bear the burden, while also ensuring a swift and dignified end for himself.",
+    "answer_variations":[
+      "dumbledore asked snape to kill him, protecting draco malfoy's soul from murder's irreparable damage, believing snape could bear the burden.",
+      "dumbledore protected draco's soul, asked snape to kill him.",
+      "dumbledore, snape, draco malfoy, soul, murder, protect, kill"
+    ],
+    "hint_1":"Dumbledore often sought to shield young people from the darkest magical fates.",
+    "hint_2":"What are the spiritual consequences of committing murder for a young wizard's soul?",
+    "hint_3":"Dumbledore's plans often extended beyond immediate outcomes, considering the lasting impact on individuals' moral and spiritual well-being.",
+    "explanation":"Dumbledore asked Snape to kill him to protect Draco Malfoy's soul from the profound, irreparable damage of committing murder. He believed Snape's complex soul could better bear the burden, while also ensuring a swift and dignified end for Dumbledore himself before his imminent death.",
+    "semantic_entity_refs":[
+      "Albus Dumbledore",
+      "Headmaster Dumbledore",
+      "Severus Snape",
+      "Professor Snape",
+      "Draco Malfoy",
+      "Dark Lord's target"
+    ],
+    "semantic_lore_concepts":[
+      "Unbreakable Vow",
+      "Soul protection",
+      "Mercy killing",
+      "Dumbledore's plan",
+      "Moral burden of murder"
+    ],
+    "llm_predicted_category":"Character Arc\/Motive",
+    "llm_predicted_difficulty":"Hard",
+    "source_reference":"deathly_hallows Chapter 32",
+    "source_quote":"That boy's soul is not yet so damaged,\" said Dumbledore. \"I would not have it ripped apart on my account.\"\"And my soul, Dumbledore? Mine?\"\"You alone know whether it will harm your soul to help an old man avoid pain and humiliation,\" said Dumbledore. \"I ask this one great favor of you, Severus, because death is coming for me as surely as the Chudley Cannons will finish bottom of this year's league. I confess I should prefer a quick, painless exit to the protracted and messy affair it will be if, for instance, Greyback is involved ¨C I hear Voldemort has recruited him? Or dear Bellatrix, who likes to play with her food before she eats it.",
+    "mcq_options":null
+  },
+  {
+    "temp_qid":"SYN_008",
+    "question_type":"EX",
+    "question_source":"synthetic",
+    "question":"During the Battle of Hogwarts, why did Hermione insist that Harry and Ron must prioritize hunting Nagini, despite Ron's desire to fight Death Eaters for revenge?",
+    "answer":"hermione understood that nagini was lord voldemort's last remaining horcrux. she believed that destroying nagini was the ultimate goal and the only way to finally defeat voldemort and end the war.",
+    "answer_variations":[
+      "hermione prioritized nagini's destruction because it was voldemort's last horcrux, essential for his final defeat and ending the war.",
+      "hermione prioritized nagini's destruction, voldemort's last horcrux, to end war.",
+      "hermione, nagini, voldemort, horcrux, destroy, defeat, end war"
+    ],
+    "hint_1":"Hermione always focused on the most critical strategic objectives in their fight against the Dark Lord.",
+    "hint_2":"Nagini was more than just Voldemort's familiar; she held a vital part of his essence.",
+    "hint_3":"True victory requires prioritizing the strategic dismantling of the enemy's core power over immediate retaliatory actions.",
+    "explanation":"Hermione understood that Nagini was Lord Voldemort's last remaining Horcrux. She correctly deduced that destroying Nagini was the absolute priority, as it was the only way to make Voldemort mortal again and ultimately defeat him, thus ending the war.",
+    "semantic_entity_refs":[
+      "Hermione Granger",
+      "Nagini",
+      "Voldemort's last Horcrux",
+      "Lord Voldemort",
+      "Harry Potter",
+      "Ron Weasley"
+    ],
+    "semantic_lore_concepts":[
+      "Horcrux hunt",
+      "Strategic priority",
+      "Voldemort's defeat",
+      "Battle of Hogwarts strategy"
+    ],
+    "llm_predicted_category":"Character Arc\/Motive",
+    "llm_predicted_difficulty":"Medium",
+    "source_reference":"deathly_hallows Chapter 32",
+    "source_quote":"Ron, we're the only ones who can end it! Please ¨C Ron ¨C we need the snake, we've got to kill the snake!\" said Hermione. \"We're the only ones who can end it!\"",
+    "mcq_options":null
+  },
+  {
+    "temp_qid":"SYN_009",
+    "question_type":"EX",
+    "question_source":"synthetic",
+    "question":"How did Harry, Ron, and Hermione manage to safely enter the secret passage beneath the Whomping Willow during the Battle of Hogwarts?",
+    "answer":"ron used the \"wingardium leviosa\" spell to levitate a twig and jab it into a specific knot on the whomping willow's trunk, which instantly paralyzed its thrashing branches.",
+    "answer_variations":[
+      "ron used 'wingardium leviosa' to jab a twig into the whomping willow's knot, paralyzing its branches for safe passage.",
+      "ron jabbed whomping willow knot with levitated twig.",
+      "ron, wingardium leviosa, twig, knot, whomping willow, secret passage"
+    ],
+    "hint_1":"The Whomping Willow had a specific weakness that could be exploited to disable it temporarily.",
+    "hint_2":"One of the trio applied an early, common levitation spell in a clever, precise way.",
+    "hint_3":"Sometimes, complex problems can be solved by creatively applying basic magical knowledge and recalling specific details.",
+    "explanation":"Ron, remembering the tree's weakness, cleverly used the 'Wingardium Leviosa' spell to levitate a twig. He then precisely jabbed it into the specific knot on the Whomping Willow's trunk, which instantly froze its violent branches, allowing safe passage.",
+    "semantic_entity_refs":[
+      "Ron Weasley",
+      "Whomping Willow",
+      "Wingardium Leviosa",
+      "Levitation Charm"
+    ],
+    "semantic_lore_concepts":[
+      "Secret passage access",
+      "Tree's weak spot",
+      "Paralyzing charm",
+      "Shrieking Shack entrance"
+    ],
+    "llm_predicted_category":"Magical Theory\/Lore",
+    "llm_predicted_difficulty":"Medium",
+    "source_reference":"deathly_hallows Chapter 32",
+    "source_quote":"Ron looked around, then directed his wand at a twig on the ground and said \"Winguardium Leviosa!\" The twig flew up from the ground, spun through the air as if caught by a gust of wind, then zoomed directly at the trunk through the Willow's ominously swaying branches. It jabbed at a place near the roots, and at once, the writhing tree became still.",
+    "mcq_options":null
+  },
+  {
+    "temp_qid":"SYN_010",
+    "question_type":"EX",
+    "question_source":"synthetic",
+    "question":"Why was Lord Voldemort certain that Harry Potter would seek him out in the Shrieking Shack, rather than needing to be found by Death Eaters?",
+    "answer":"voldemort believed that harry's \"one great flaw\" was his refusal to let others die for him. he was confident harry would come to him to stop the battle and prevent more deaths among his friends.",
+    "answer_variations":[
+      "voldemort knew harry's 'flaw' was refusing to let others die, certain harry would come willingly to stop the battle and save his friends.",
+      "voldemort exploited harry's 'flaw' of protecting friends.",
+      "voldemort, harry potter, flaw, protect friends, stop battle, seek out"
+    ],
+    "hint_1":"Voldemort thought he understood Harry's core weakness and moral code very well.",
+    "hint_2":"Harry's deepest desire was always to protect his loved ones and prevent their suffering.",
+    "hint_3":"The villain often mistakes the hero's greatest virtues, like love and self-sacrifice, as exploitable vulnerabilities.",
+    "explanation":"Voldemort was certain Harry would come to him because he perceived Harry's refusal to let others die for him as a fatal flaw. He believed Harry's protective nature would drive him to confront Voldemort personally to end the battle and prevent further casualties among his friends.",
+    "semantic_entity_refs":[
+      "Lord Voldemort",
+      "The Dark Lord",
+      "Harry Potter",
+      "The Boy Who Lived"
+    ],
+    "semantic_lore_concepts":[
+      "Voldemort's miscalculation",
+      "Harry's self-sacrifice",
+      "Protection of friends",
+      "Battle of Hogwarts ultimatum"
+    ],
+    "llm_predicted_category":"Character Arc\/Motive",
+    "llm_predicted_difficulty":"Medium",
+    "source_reference":"deathly_hallows Chapter 32",
+    "source_quote":"Neither of you understands Potter as I do. He does not need finding. Potter will come to me. I knew his weakness you see, his one great flaw. He will hate watching the others struck down around him, knowing that it is for him that it happens. He will want to stop it at any cost. He will come.",
+    "mcq_options":null
+  }
+]

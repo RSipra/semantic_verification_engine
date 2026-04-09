@@ -1,0 +1,304 @@
+[
+  {
+    "generation_model":"gemini-2.5-flash",
+    "generation_prompt_version":null,
+    "lex_enrich_prompt_version":"legacy_enrichment_prompt_master_v1.txt",
+    "semantic_enrich_prompt_version":"legacy_context_variations_master.txt",
+    "question_type":"FR",
+    "question_source":"legacy",
+    "question":"When was Quidditch invented?",
+    "answer":"1050 ad",
+    "answer_variations":[
+      "1050",
+      "one thousand fifty",
+      "1050 ad"
+    ],
+    "hint_1":"The sport has very ancient origins, going back over a millennium.",
+    "hint_2":"Think of a year in the middle of the 11th century.",
+    "hint_3":"This popular magical sport began nearly a thousand years ago, far before it was formally documented.",
+    "explanation":"Quidditch is believed to have been invented around 1050 AD in Queerditch Marsh. It evolved from a primitive broomstick sport into the complex game known today.",
+    "semantic_entity_refs":[
+      "Quidditch"
+    ],
+    "semantic_lore_concepts":[
+      "Quidditch origin",
+      "Invention date of Quidditch",
+      "Ancient wizarding sport inception"
+    ],
+    "original_question_id":736,
+    "mcq_options":null
+  },
+  {
+    "generation_model":"gemini-2.5-flash",
+    "generation_prompt_version":null,
+    "lex_enrich_prompt_version":"legacy_enrichment_prompt_master_v1.txt",
+    "semantic_enrich_prompt_version":"legacy_context_variations_master.txt",
+    "question_type":"FR",
+    "question_source":"legacy",
+    "question":"On what chilling date did baby Harry Potter miraculously survive the Killing Curse resulting in the first downfall of Lord Voldemort",
+    "answer":"halloween (or october 31st), 1981",
+    "answer_variations":[
+      "october 31, 1981",
+      "october 31st, 1981",
+      "halloween 1981",
+      "31 october 1981"
+    ],
+    "hint_1":"This fateful night is associated with a specific autumn holiday.",
+    "hint_2":"Think of the date when the Potters were tragically attacked in Godric's Hollow.",
+    "hint_3":"It was during the early 1980s, marking a pivotal moment in the first wizarding war.",
+    "explanation":"Baby Harry Potter survived the Killing Curse on Halloween, October 31st, 1981. This night marked the first downfall of Lord Voldemort and the tragic death of James and Lily Potter.",
+    "semantic_entity_refs":[
+      "Harry Potter",
+      "Lord Voldemort",
+      "Tom Riddle",
+      "Lily Potter",
+      "James Potter"
+    ],
+    "semantic_lore_concepts":[
+      "Killing Curse survival",
+      "Love protection magic",
+      "Voldemort's first defeat",
+      "Accidental Horcrux creation",
+      "Fidelius Charm breach"
+    ],
+    "original_question_id":1244,
+    "mcq_options":null
+  },
+  {
+    "generation_model":"gemini-2.5-flash",
+    "generation_prompt_version":null,
+    "lex_enrich_prompt_version":"legacy_enrichment_prompt_master_v1.txt",
+    "semantic_enrich_prompt_version":"legacy_context_variations_master.txt",
+    "question_type":"FR",
+    "question_source":"legacy",
+    "question":"What day did James and Lily Potter die?",
+    "answer":"october 31",
+    "answer_variations":[
+      "october 31",
+      "october 31st",
+      "halloween"
+    ],
+    "hint_1":"Their deaths occurred on a well-known autumn holiday.",
+    "hint_2":"It's the same date as the attack that gave Harry his scar.",
+    "hint_3":"This day is often associated with spirits and spooky themes, fitting for such a dark event.",
+    "explanation":"James and Lily Potter were murdered by Lord Voldemort on October 31st, 1981. This tragic event led to Harry Potter being orphaned and sent to live with the Dursleys.",
+    "semantic_entity_refs":[
+      "James Potter",
+      "Lily Potter"
+    ],
+    "semantic_lore_concepts":[
+      "Potter family sacrifice",
+      "Voldemort's attack on Godric's Hollow",
+      "Fidelius Charm failure"
+    ],
+    "original_question_id":1298,
+    "mcq_options":null
+  },
+  {
+    "generation_model":"gemini-2.5-flash",
+    "generation_prompt_version":null,
+    "lex_enrich_prompt_version":"legacy_enrichment_prompt_master_v1.txt",
+    "semantic_enrich_prompt_version":"legacy_context_variations_master.txt",
+    "question_type":"FR",
+    "question_source":"legacy",
+    "question":"What is Snape's birthday?",
+    "answer":"january 9, 1960",
+    "answer_variations":[
+      "january 9, 1960",
+      "jan 9, 1960",
+      "9 january 1960",
+      "january ninth 1960"
+    ],
+    "hint_1":"He was born in the first month of the year.",
+    "hint_2":"Think of a specific date early in the 1960s.",
+    "hint_3":"This character's birthdate falls shortly after the start of a new calendar year, making him a Capricorn.",
+    "explanation":"Severus Snape was born on January 9, 1960. His birth year places him as a contemporary of James Potter, Lily Evans, and the other Marauders.",
+    "semantic_entity_refs":[
+      "Severus Snape",
+      "Half-Blood Prince"
+    ],
+    "semantic_lore_concepts":[
+      "Severus Snape's birthdate",
+      "Snape's life events"
+    ],
+    "original_question_id":1278,
+    "mcq_options":null
+  },
+  {
+    "generation_model":"gemini-2.5-flash",
+    "generation_prompt_version":null,
+    "lex_enrich_prompt_version":"legacy_enrichment_prompt_master_v1.txt",
+    "semantic_enrich_prompt_version":"legacy_context_variations_master.txt",
+    "question_type":"FR",
+    "question_source":"legacy",
+    "question":"On what date did the Battle of Hogwarts end with Voldemort’s death?",
+    "answer":"may 2, 1998",
+    "answer_variations":[
+      "may 2, 1998",
+      "may 2nd, 1998",
+      "2 may 1998"
+    ],
+    "hint_1":"The final confrontation occurred in the spring.",
+    "hint_2":"Think of the specific date in the late 1990s when the wizarding war finally concluded.",
+    "hint_3":"This day marks the official end of the Second Wizarding War and the triumph of good over evil.",
+    "explanation":"The Battle of Hogwarts, and with it Lord Voldemort's death, occurred on May 2, 1998. This date marked the definitive end of the Second Wizarding War and brought peace to the wizarding world.",
+    "semantic_entity_refs":[
+      "Battle of Hogwarts",
+      "Lord Voldemort",
+      "Tom Riddle",
+      "Harry Potter"
+    ],
+    "semantic_lore_concepts":[
+      "Voldemort's final demise",
+      "End of Second Wizarding War",
+      "Elder Wand mastery",
+      "Hogwarts ultimate confrontation"
+    ],
+    "original_question_id":921,
+    "mcq_options":null
+  },
+  {
+    "generation_model":"gemini-2.5-flash",
+    "generation_prompt_version":null,
+    "lex_enrich_prompt_version":"legacy_enrichment_prompt_master_v1.txt",
+    "semantic_enrich_prompt_version":"legacy_context_variations_master.txt",
+    "question_type":"FR",
+    "question_source":"legacy",
+    "question":"In Book 5, Snape is assigned to teach Harry what type of magic?",
+    "answer":"occlumency.",
+    "answer_variations":[
+      "occlumency",
+      "occlumency magic"
+    ],
+    "hint_1":"This branch of magic deals with the mind, specifically protecting thoughts and memories.",
+    "hint_2":"It's the mental art of closing one's mind against outside penetration, especially from a Legilimens.",
+    "hint_3":"Harry struggled greatly with these lessons, which were meant to shield his mind from an invading dark presence.",
+    "explanation":"In 'Harry Potter and the Order of the Phoenix,' Professor Snape was instructed by Dumbledore to teach Harry Occlumency. This skill was crucial for Harry to shield his mind from the Dark Lord, who was attempting to invade and manipulate his thoughts and emotions.",
+    "semantic_entity_refs":[
+      "Occlumency"
+    ],
+    "semantic_lore_concepts":[
+      "Mind-closing magic",
+      "Mental shielding",
+      "Defence against Legilimency"
+    ],
+    "original_question_id":168,
+    "mcq_options":null
+  },
+  {
+    "generation_model":"gemini-2.5-flash",
+    "generation_prompt_version":null,
+    "lex_enrich_prompt_version":"legacy_enrichment_prompt_master_v1.txt",
+    "semantic_enrich_prompt_version":"legacy_context_variations_master.txt",
+    "question_type":"FR",
+    "question_source":"legacy",
+    "question":"The Blast-Ended Skrewt is a hybrid of a Fire Crab and what?",
+    "answer":"manticore",
+    "answer_variations":[
+      "manticore",
+      "a manticore"
+    ],
+    "hint_1":"This creature is known for its immense danger and ferocity.",
+    "hint_2":"It is a mythical beast with the body of a lion, the wings of a bat, and a human head.",
+    "hint_3":"Its tail is often depicted as scorpionesque, capable of delivering a deadly venomous sting.",
+    "explanation":"The Blast-Ended Skrewt, a dangerous creature first encountered in 'Harry Potter and the Goblet of Fire,' is a magical hybrid. It was bred by combining the characteristics of a Fire Crab and a Manticore, resulting in its explosive and aggressive nature.",
+    "semantic_entity_refs":[
+      "Manticore"
+    ],
+    "semantic_lore_concepts":[
+      "Magical creature hybrid parent",
+      "Dangerous beast"
+    ],
+    "original_question_id":185,
+    "mcq_options":null
+  },
+  {
+    "generation_model":"gemini-2.5-flash",
+    "generation_prompt_version":null,
+    "lex_enrich_prompt_version":"legacy_enrichment_prompt_master_v1.txt",
+    "semantic_enrich_prompt_version":"legacy_context_variations_master.txt",
+    "question_type":"FR",
+    "question_source":"legacy",
+    "question":"What does Professor Kettleburn wish to do after retiring from Hogwarts?",
+    "answer":"enjoy more time with his remaining limbs",
+    "answer_variations":[
+      "enjoy more time with his remaining limbs",
+      "spend more time with his remaining limbs",
+      "appreciate his remaining limbs"
+    ],
+    "hint_1":"This Care of Magical Creatures professor had a very dangerous job.",
+    "hint_2":"His profession often led to him losing body parts.",
+    "hint_3":"He desired a calmer life where he could appreciate the physical capabilities he still possessed, away from hazardous magical creatures.",
+    "explanation":"Silvanus Kettleburn, the former Care of Magical Creatures professor, had sustained numerous injuries throughout his career due to working with dangerous beasts. Upon his retirement, he expressed a desire to enjoy his remaining limbs, suggesting a longing for a safer, less limb-threatening existence.",
+    "semantic_entity_refs":[
+
+    ],
+    "semantic_lore_concepts":[
+      "Hogwarts staff retirement",
+      "Injured magical creatures professor"
+    ],
+    "original_question_id":1084,
+    "mcq_options":null
+  },
+  {
+    "generation_model":"gemini-2.5-flash",
+    "generation_prompt_version":null,
+    "lex_enrich_prompt_version":"legacy_enrichment_prompt_master_v1.txt",
+    "semantic_enrich_prompt_version":"legacy_context_variations_master.txt",
+    "question_type":"FR",
+    "question_source":"legacy",
+    "question":"What does Harry name his children?",
+    "answer":"james sirius, albus severus, and lily luna",
+    "answer_variations":[
+      "james sirius, albus severus, and lily luna",
+      "james, albus, and lily",
+      "james sirius potter, albus severus potter, and lily luna potter"
+    ],
+    "hint_1":"Each of his children is named in honor of important figures in his life.",
+    "hint_2":"Their names pay tribute to both beloved family members and brave, complex mentors.",
+    "hint_3":"Think of his father, a revered headmaster, and his mother, as well as a loyal godfather and a unique friend.",
+    "explanation":"Harry Potter named his children in memory of significant people who impacted his life. His eldest son, James Sirius, honors his father and godfather. His second son, Albus Severus, pays tribute to two Hogwarts headmasters, and his daughter, Lily Luna, is named after his mother and a close friend.",
+    "semantic_entity_refs":[
+      "James Sirius Potter",
+      "Albus Severus Potter",
+      "Lily Luna Potter"
+    ],
+    "semantic_lore_concepts":[
+      "Harry Potter's children's names",
+      "Memorial naming tradition",
+      "Tribute to loved ones"
+    ],
+    "original_question_id":659,
+    "mcq_options":null
+  },
+  {
+    "generation_model":"gemini-2.5-flash",
+    "generation_prompt_version":null,
+    "lex_enrich_prompt_version":"legacy_enrichment_prompt_master_v1.txt",
+    "semantic_enrich_prompt_version":"legacy_context_variations_master.txt",
+    "question_type":"FR",
+    "question_source":"legacy",
+    "question":"What gift did Ron bring back for Harry from his family’s trip to Egypt?",
+    "answer":"a pocket sneakoscope",
+    "answer_variations":[
+      "a pocket sneakoscope",
+      "pocket sneakoscope",
+      "sneakoscope"
+    ],
+    "hint_1":"This small magical device is designed to detect dishonesty or danger.",
+    "hint_2":"It looks like a spinning glass top and whistles if someone untrustworthy is nearby.",
+    "hint_3":"Harry often relied on this particular gadget, especially during his time at Hogwarts, to warn him of betrayal.",
+    "explanation":"During the Weasley family's trip to Egypt, Ron purchased a Pocket Sneakoscope for Harry as a gift. This handy device emits a high-pitched whistle and spins when it detects deceit or untrustworthy intentions, making it a useful tool against dark forces.",
+    "semantic_entity_refs":[
+      "Pocket Sneakoscope",
+      "Sneakoscope"
+    ],
+    "semantic_lore_concepts":[
+      "Dark detection device",
+      "Loyalty warning artifact",
+      "Magical truth detector"
+    ],
+    "original_question_id":1346,
+    "mcq_options":null
+  }
+]

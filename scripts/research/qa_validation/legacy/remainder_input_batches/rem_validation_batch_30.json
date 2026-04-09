@@ -1,0 +1,323 @@
+[
+  {
+    "generation_model":"gemini-2.5-flash",
+    "generation_prompt_version":null,
+    "lex_enrich_prompt_version":"legacy_enrichment_prompt_master_v1.txt",
+    "semantic_enrich_prompt_version":"legacy_context_variations_master.txt",
+    "question_type":"EX",
+    "question_source":"legacy",
+    "question":"What does Harry do to impress Professor McGonagall enough that she gets him on the Gryffindor Quidditch team?",
+    "answer":"catches neville longbottom’s remembrall",
+    "answer_variations":[
+      "harry catches neville longbottom's runaway remembrall in mid-air during their first flying lesson, showcasing remarkable flying talent.",
+      "harry catches a flying remembrall for neville, showing great broom skill.",
+      "harry, catches, remembrall, flying, skill"
+    ],
+    "hint_1":"This event happens during the very first flying lesson at Hogwarts.",
+    "hint_2":"The flying lesson involves a classmate who struggles with basic control, leading to a magical item getting away.",
+    "hint_3":"Harry demonstrates exceptional natural talent and a disregard for rules when chasing a runaway object.",
+    "explanation":"During their first flying lesson, Neville Longbottom loses control of his broom, and his Remembrall falls to the ground. Harry courageously flies after it, catching it just before it hits the ground, despite being forbidden to fly without supervision. This act demonstrates his extraordinary flying skills to Professor McGonagall.",
+    "semantic_entity_refs":[
+      "Remembrall",
+      "Harry Potter",
+      "Neville Longbottom"
+    ],
+    "semantic_lore_concepts":[
+      "Broomstick flying",
+      "Remembrall's purpose"
+    ],
+    "original_question_id":1256,
+    "mcq_options":null
+  },
+  {
+    "generation_model":"gemini-2.5-flash",
+    "generation_prompt_version":null,
+    "lex_enrich_prompt_version":"legacy_enrichment_prompt_master_v1.txt",
+    "semantic_enrich_prompt_version":"legacy_context_variations_master.txt",
+    "question_type":"EX",
+    "question_source":"legacy",
+    "question":"Why did Voldemort seek out the imprisoned Gellert Grindelwald in Nurmengard?",
+    "answer":"voldemort wanted to force grindelwald to reveal the location of the elder wand, believing he could extract the information through fear or torture—unaware that grindelwald would refuse to help and that the wand’s allegiance already belonged to dumbledore",
+    "answer_variations":[
+      "voldemort wanted to force grindelwald to reveal the elder wand's location, believing he could gain its allegiance through possession.",
+      "voldemort sought grindelwald for the elder wand's location to gain its power.",
+      "voldemort, grindelwald, elder wand, location, power"
+    ],
+    "hint_1":"The Dark Lord was on a quest for ultimate power, seeking control over a legendary artifact.",
+    "hint_2":"He believed his predecessor in dark magic held vital information about one of the Deathly Hallows.",
+    "hint_3":"This search highlights a critical misunderstanding of wand lore and allegiance by the villain.",
+    "explanation":"Voldemort sought out Grindelwald in Nurmengard because he believed Grindelwald knew the current location of the Elder Wand. Voldemort intended to torture the information out of him, thinking that possessing the wand would make him invincible. He was unaware that the wand's allegiance had already passed from Grindelwald to Albus Dumbledore years earlier, and then to Harry Potter.",
+    "semantic_entity_refs":[
+      "Elder Wand",
+      "Voldemort",
+      "Lord Voldemort",
+      "Gellert Grindelwald",
+      "Albus Dumbledore"
+    ],
+    "semantic_lore_concepts":[
+      "Deathly Hallows",
+      "Wand allegiance",
+      "Master of Death"
+    ],
+    "original_question_id":1369,
+    "mcq_options":null
+  },
+  {
+    "generation_model":"gemini-2.5-flash",
+    "generation_prompt_version":null,
+    "lex_enrich_prompt_version":"legacy_enrichment_prompt_master_v1.txt",
+    "semantic_enrich_prompt_version":"legacy_context_variations_master.txt",
+    "question_type":"EX",
+    "question_source":"legacy",
+    "question":"In Harry Potter and the Chamber of Secrets, why does Neville Longbottom faint in Herbology class?",
+    "answer":"his earmuffs were loose, so he heard the cry of the baby mandrake.",
+    "answer_variations":[
+      "neville fainted because his earmuffs were loose, allowing him to hear the stunning cry of the baby mandrake.",
+      "loose earmuffs caused neville to hear the mandrake's cry and faint.",
+      "neville, earmuffs, loose, mandrake, cry, faint"
+    ],
+    "hint_1":"This incident involves a very loud plant that requires special handling.",
+    "hint_2":"The protective equipment meant to block sound failed for him.",
+    "hint_3":"Neville's sensitivity to magical sounds led to a temporary loss of consciousness.",
+    "explanation":"Neville Longbottom fainted in Herbology class because his earmuffs were not properly secured. This allowed him to hear the high-pitched, potent shriek of the baby Mandrake being repotted, which is strong enough to cause unconsciousness in unprotected individuals.",
+    "semantic_entity_refs":[
+      "Mandrake",
+      "Neville Longbottom",
+      "Earmuffs"
+    ],
+    "semantic_lore_concepts":[
+      "Mandrake cry",
+      "Mandrake restorative properties"
+    ],
+    "original_question_id":1247,
+    "mcq_options":null
+  },
+  {
+    "generation_model":"gemini-2.5-flash",
+    "generation_prompt_version":null,
+    "lex_enrich_prompt_version":"legacy_enrichment_prompt_master_v1.txt",
+    "semantic_enrich_prompt_version":"legacy_context_variations_master.txt",
+    "question_type":"EX",
+    "question_source":"legacy",
+    "question":"Why did Regulus Black decide to leave the Death Eaters and betray Voldemort?",
+    "answer":"because voldemort mistreated kreacher and regulus realized how ruthless and dangerous he truly was.",
+    "answer_variations":[
+      "regulus left the death eaters and betrayed voldemort after realizing his ruthlessness from how he mistreated kreacher, the house-elf.",
+      "voldemort's mistreatment of kreacher revealed his cruelty, prompting regulus's betrayal.",
+      "voldemort, kreacher, mistreatment, cruelty, regulus, betrayal"
+    ],
+    "hint_1":"A specific event involving a house-elf revealed the true nature of the Dark Lord.",
+    "hint_2":"The villain's treatment of a subservient creature changed Regulus's allegiance.",
+    "hint_3":"This act of cruelty exposed the depths of evil that Regulus could no longer condone or serve.",
+    "explanation":"Regulus Black decided to betray Voldemort after seeing how Voldemort treated his house-elf, Kreacher. Voldemort used Kreacher to test the defenses of a Horcrux and left him to die. Kreacher survived and told Regulus, revealing Voldemort's truly callous and ruthless nature, prompting Regulus to turn against him.",
+    "semantic_entity_refs":[
+      "Regulus Black",
+      "R.A.B.",
+      "Voldemort",
+      "Lord Voldemort",
+      "Kreacher"
+    ],
+    "semantic_lore_concepts":[
+      "House-elf bond",
+      "Death Eaters",
+      "Horcrux"
+    ],
+    "original_question_id":1344,
+    "mcq_options":null
+  },
+  {
+    "generation_model":"gemini-2.5-flash",
+    "generation_prompt_version":null,
+    "lex_enrich_prompt_version":"legacy_enrichment_prompt_master_v1.txt",
+    "semantic_enrich_prompt_version":"legacy_context_variations_master.txt",
+    "question_type":"EX",
+    "question_source":"legacy",
+    "question":"How often do the flowers of the Fluttery Bush Bloom?",
+    "answer":"once per century",
+    "answer_variations":[
+      "the flowers of the fluttery bush bloom with extreme rarity, occurring only once every hundred years.",
+      "fluttery bush flowers bloom once per century.",
+      "fluttery bush, bloom, once, century"
+    ],
+    "hint_1":"This plant has a very long blooming cycle.",
+    "hint_2":"Its flowering is an extremely rare event.",
+    "hint_3":"The frequency is measured in a very large span of time.",
+    "explanation":"The flowers of the Fluttery Bush are exceptionally rare. They bloom only once every hundred years, making their flowering a truly infrequent and noteworthy event in the magical world.",
+    "semantic_entity_refs":[
+      "Fluttery Bush"
+    ],
+    "semantic_lore_concepts":[
+      "Centennial blooming cycle",
+      "Rare plant blooming"
+    ],
+    "original_question_id":919,
+    "mcq_options":null
+  },
+  {
+    "generation_model":"gemini-2.5-flash",
+    "generation_prompt_version":null,
+    "lex_enrich_prompt_version":"legacy_enrichment_prompt_master_v1.txt",
+    "semantic_enrich_prompt_version":"legacy_context_variations_master.txt",
+    "question_type":"EX",
+    "question_source":"legacy",
+    "question":"In Chamber of Secrets, what secret did Harry discover about why Rubeus Hagrid was expelled from Hogwarts?",
+    "answer":"he was falsely accused by tom riddle (lord voldemort) of opening the chamber of secrets and unleashing its monster (the basilisk), which led to the death of a student.",
+    "answer_variations":[
+      "harry discovered tom riddle falsely accused hagrid of opening the chamber of secrets and releasing the basilisk, causing a student's death.",
+      "tom riddle falsely accused hagrid of opening the chamber, leading to expulsion.",
+      "tom riddle, hagrid, false accusation, chamber of secrets, expulsion"
+    ],
+    "hint_1":"The reason for Hagrid's expulsion is linked to a dark incident from Hogwarts' past.",
+    "hint_2":"A future Dark Lord framed Hagrid for a serious magical crime that caused harm.",
+    "hint_3":"This secret highlights a major injustice and the villain's manipulative nature.",
+    "explanation":"Harry discovered that Rubeus Hagrid was falsely accused by Tom Riddle of opening the Chamber of Secrets during his time at Hogwarts. Riddle claimed Hagrid released the Basilisk, leading to the death of a student. This accusation resulted in Hagrid's expulsion, though he was innocent.",
+    "semantic_entity_refs":[
+      "Rubeus Hagrid",
+      "Tom Riddle",
+      "Lord Voldemort",
+      "Basilisk",
+      "Chamber of Secrets",
+      "Moaning Myrtle"
+    ],
+    "semantic_lore_concepts":[
+      "False accusation",
+      "Heir of Slytherin",
+      "Monster of Slytherin"
+    ],
+    "original_question_id":1401,
+    "mcq_options":null
+  },
+  {
+    "generation_model":"gemini-2.5-flash",
+    "generation_prompt_version":null,
+    "lex_enrich_prompt_version":"legacy_enrichment_prompt_master_v1.txt",
+    "semantic_enrich_prompt_version":"legacy_context_variations_master.txt",
+    "question_type":"EX",
+    "question_source":"legacy",
+    "question":"How is the Grey Lady related to Rowena Ravenclaw?",
+    "answer":"she's rowena's daughter.",
+    "answer_variations":[
+      "the grey lady, helena ravenclaw, is the biological daughter of hogwarts founder rowena ravenclaw.",
+      "the grey lady is rowena ravenclaw's daughter.",
+      "grey lady, helena, rowena ravenclaw, daughter"
+    ],
+    "hint_1":"The Grey Lady is a ghost who haunts Ravenclaw Tower.",
+    "hint_2":"Her identity is tied directly to one of the Hogwarts founders.",
+    "hint_3":"This spectral figure shares a family bond with a legendary witch.",
+    "explanation":"The Grey Lady is the ghost of Helena Ravenclaw, who is the daughter of Rowena Ravenclaw, one of the four founders of Hogwarts. She stole her mother's diadem and was later murdered by the Bloody Baron.",
+    "semantic_entity_refs":[
+      "Grey Lady",
+      "Helena Ravenclaw",
+      "Rowena Ravenclaw"
+    ],
+    "semantic_lore_concepts":[
+      "Hogwarts house ghost",
+      "Founder's daughter"
+    ],
+    "original_question_id":169,
+    "mcq_options":null
+  },
+  {
+    "generation_model":"gemini-2.5-flash",
+    "generation_prompt_version":null,
+    "lex_enrich_prompt_version":"legacy_enrichment_prompt_master_v1.txt",
+    "semantic_enrich_prompt_version":"legacy_context_variations_master.txt",
+    "question_type":"EX",
+    "question_source":"legacy",
+    "question":"Harry discovers he’s one of Voldemort’s seven Horcruxes. What are the others?",
+    "answer":"tom riddle’s diary, nagini, the gaunt ring, the hufflepuff cup, slytherin locket, and ravenclaw diadem.",
+    "answer_variations":[
+      "the other horcruxes are tom riddle’s diary, nagini, the gaunt ring, the hufflepuff cup, slytherin locket, and ravenclaw diadem.",
+      "diary, nagini, gaunt ring, hufflepuff cup, slytherin locket, ravenclaw diadem.",
+      "tom riddle's diary, nagini, gaunt ring, hufflepuff cup, slytherin locket, ravenclaw diadem"
+    ],
+    "hint_1":"There are six other objects or living beings that contain fragments of the Dark Lord's soul.",
+    "hint_2":"Some are ancient magical artifacts, while others are more personal items or even creatures.",
+    "hint_3":"Each item represents a piece of magical history or a significant personal connection to the villain.",
+    "explanation":"Besides Harry himself, the other six Horcruxes created by Voldemort were: Tom Riddle’s Diary, Nagini (his snake), Marvolo Gaunt’s Ring, Helga Hufflepuff’s Cup, Salazar Slytherin’s Locket, and Rowena Ravenclaw’s Diadem. These objects held fragments of his soul, making him nearly immortal.",
+    "semantic_entity_refs":[
+      "Tom Riddle's Diary",
+      "Nagini",
+      "Marvolo Gaunt's Ring",
+      "Helga Hufflepuff's Cup",
+      "Salazar Slytherin's Locket",
+      "Rowena Ravenclaw's Diadem",
+      "Harry Potter",
+      "Voldemort",
+      "Lord Voldemort"
+    ],
+    "semantic_lore_concepts":[
+      "Horcruxes",
+      "Soul fragments",
+      "Immortality magic",
+      "Founders' objects"
+    ],
+    "original_question_id":1210,
+    "mcq_options":null
+  },
+  {
+    "generation_model":"gemini-2.5-flash",
+    "generation_prompt_version":null,
+    "lex_enrich_prompt_version":"legacy_enrichment_prompt_master_v1.txt",
+    "semantic_enrich_prompt_version":"legacy_context_variations_master.txt",
+    "question_type":"EX",
+    "question_source":"legacy",
+    "question":"Why was Sirius Black sent to Azkaban?",
+    "answer":"he was wrongly accused of betraying the potters to voldemort and of killing peter pettigrew and twelve muggles with a single curse.",
+    "answer_variations":[
+      "sirius black was wrongly accused of betraying the potters to voldemort and of murdering peter pettigrew and twelve muggles.",
+      "wrongly accused of betraying potters and murdering pettigrew and muggles.",
+      "sirius black, wrongly accused, potters' betrayal, peter pettigrew, muggles, murder"
+    ],
+    "hint_1":"His imprisonment was the result of a grave misunderstanding and a villain's deception.",
+    "hint_2":"Everyone believed he was responsible for the deaths of his friends and another wizard.",
+    "hint_3":"He was perceived as the secret-keeper who handed over the location of his best friends to their murderer.",
+    "explanation":"Sirius Black was sent to Azkaban because he was wrongly accused of being the Potters' Secret-Keeper and betraying them to Voldemort. Furthermore, he was believed to have murdered Peter Pettigrew and twelve Muggles with a single curse, a crime actually committed by Pettigrew to fake his own death and frame Sirius.",
+    "semantic_entity_refs":[
+      "Sirius Black",
+      "Padfoot",
+      "Peter Pettigrew",
+      "Wormtail",
+      "Voldemort",
+      "Lord Voldemort",
+      "James Potter",
+      "Lily Potter"
+    ],
+    "semantic_lore_concepts":[
+      "Fidelius Charm",
+      "Secret-Keeper",
+      "Wrongful imprisonment"
+    ],
+    "original_question_id":1358,
+    "mcq_options":null
+  },
+  {
+    "generation_model":"gemini-2.5-flash",
+    "generation_prompt_version":null,
+    "lex_enrich_prompt_version":"legacy_enrichment_prompt_master_v1.txt",
+    "semantic_enrich_prompt_version":"legacy_context_variations_master.txt",
+    "question_type":"EX",
+    "question_source":"legacy",
+    "question":"How do you tell if a door is Imperturbable?",
+    "answer":"test if it repels objects and sounds",
+    "answer_variations":[
+      "you can tell if a door is imperturbable by testing if it repels all objects and muffles or blocks all sounds.",
+      "test if it repels objects and blocks sounds.",
+      "repels objects, blocks sounds, test"
+    ],
+    "hint_1":"This charm makes a barrier impenetrable to certain things.",
+    "hint_2":"You can check by trying to throw something through it or make a noise past it.",
+    "hint_3":"The effect of this charm prevents external interference from crossing the threshold.",
+    "explanation":"An Imperturbable Charm makes a door or surface impenetrable to physical objects, sounds, and certain magical effects. To test if a door is imperturbable, one would try to throw an object at it (which would bounce off) or attempt to pass sound through it (which would be muffled or blocked).",
+    "semantic_entity_refs":[
+      "Imperturbable Charm"
+    ],
+    "semantic_lore_concepts":[
+      "Protective enchantments",
+      "Repelling spells",
+      "Anti-eavesdropping"
+    ],
+    "original_question_id":1086,
+    "mcq_options":null
+  }
+]

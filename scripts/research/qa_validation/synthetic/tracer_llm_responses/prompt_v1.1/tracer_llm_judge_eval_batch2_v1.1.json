@@ -1,0 +1,171 @@
+[
+  {
+    "temp_qid": "SYN_006",
+    "evaluation_trace": {
+      "step_1_quote_match": "The source quote is an exact, unbroken string from the text.",
+      "step_2_answer_grounding": "The answer is fully grounded in the provided quote and immediate context.",
+      "step_3_question_logic": "The question is clear, logical, and does not leak the answer."
+    },
+    "scores": {
+      "source_quote_code": 0,
+      "answer_grounding_code": 0,
+      "question_logic_code": 0
+    }
+  },
+  {
+    "temp_qid": "SYN_007",
+    "evaluation_trace": {
+      "step_1_quote_match": "The source quote is exactly matched, only omitting minor whitespace/narrative breaks between dialogue.",
+      "step_2_answer_grounding": "The answer relies slightly on external interpretation ('already complex') to describe Snape's soul, representing a minor canon expansion based on Dumbledore's prompt.",
+      "step_3_question_logic": "The question is logically framed and unambiguous."
+    },
+    "scores": {
+      "source_quote_code": 0,
+      "answer_grounding_code": 1,
+      "question_logic_code": 0
+    }
+  },
+  {
+    "temp_qid": "SYN_008",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote is spliced. It combines two different statements by Hermione, removing intervening narration and another line of dialogue.",
+      "step_2_answer_grounding": "The answer explicitly mentions 'last remaining horcrux', which requires pan-series canon knowledge beyond the provided quote which only says 'we need the snake'.",
+      "step_3_question_logic": "The question establishes a clear scenario and is perfectly playable."
+    },
+    "scores": {
+      "source_quote_code": 1,
+      "answer_grounding_code": 1,
+      "question_logic_code": 0
+    }
+  },
+  {
+    "temp_qid": "SYN_009",
+    "evaluation_trace": {
+      "step_1_quote_match": "The source quote is a perfect match to the text.",
+      "step_2_answer_grounding": "The answer is strictly grounded in the events described in the quote.",
+      "step_3_question_logic": "The question is clear, logical, and directly solvable from the text."
+    },
+    "scores": {
+      "source_quote_code": 0,
+      "answer_grounding_code": 0,
+      "question_logic_code": 0
+    }
+  },
+  {
+    "temp_qid": "SYN_010",
+    "evaluation_trace": {
+      "step_1_quote_match": "The source quote is a direct extraction, omitting only the preceding sentence but remaining an unbroken block.",
+      "step_2_answer_grounding": "The answer is entirely deducible from the quote.",
+      "step_3_question_logic": "The question provides sound framing and does not leak the answer."
+    },
+    "scores": {
+      "source_quote_code": 0,
+      "answer_grounding_code": 0,
+      "question_logic_code": 0
+    }
+  },
+  {
+    "temp_qid": "SYN_022",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote uses an ellipsis to splice two separate parts of the scene together, skipping over a short exchange between Voldemort and Lucius.",
+      "step_2_answer_grounding": "The answer is directly stated within the provided quote.",
+      "step_3_question_logic": "The question is appropriately framed and asks for a clear factual detail."
+    },
+    "scores": {
+      "source_quote_code": 1,
+      "answer_grounding_code": 0,
+      "question_logic_code": 0
+    }
+  },
+  {
+    "temp_qid": "SYN_023",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote is an unbroken string from the text.",
+      "step_2_answer_grounding": "The answer is directly found in the quote.",
+      "step_3_question_logic": "The question contains a false premise. The battle where Trelawney drops the crystal ball on Greyback takes place in the Entrance Hall, not the Great Hall. The Great Hall is only visited later as the location where the dead are laid out."
+    },
+    "scores": {
+      "source_quote_code": 0,
+      "answer_grounding_code": 0,
+      "question_logic_code": 2
+    }
+  },
+  {
+    "temp_qid": "SYN_025",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote is a perfect match from the text.",
+      "step_2_answer_grounding": "The answer is exactly what is stated in the quote.",
+      "step_3_question_logic": "The question is logically sound and clear."
+    },
+    "scores": {
+      "source_quote_code": 0,
+      "answer_grounding_code": 0,
+      "question_logic_code": 0
+    }
+  },
+  {
+    "temp_qid": "SYN_039",
+    "evaluation_trace": {
+      "step_1_quote_match": "The source quote is an exact, continuous extraction from the text.",
+      "step_2_answer_grounding": "The answer matches the description provided exactly in the quote.",
+      "step_3_question_logic": "The question uses valid context to accurately solicit the description."
+    },
+    "scores": {
+      "source_quote_code": 0,
+      "answer_grounding_code": 0,
+      "question_logic_code": 0
+    }
+  },
+  {
+    "temp_qid": "SYN_040",
+    "evaluation_trace": {
+      "step_1_quote_match": "The source quote is exactly matched to the text.",
+      "step_2_answer_grounding": "The answer is fully deducible directly from the text.",
+      "step_3_question_logic": "The question sets up a clear premise and targets the correct entity without leaking."
+    },
+    "scores": {
+      "source_quote_code": 0,
+      "answer_grounding_code": 0,
+      "question_logic_code": 0
+    }
+  },
+  {
+    "temp_qid": "SYN_041",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote is a perfect match of the dialogue.",
+      "step_2_answer_grounding": "The text only says 'You must kill me.' The answer expands slightly by specifying 'the killing curse', which is a canon fact relevant to how Dumbledore's death ultimately occurs.",
+      "step_3_question_logic": "The question is unambiguous and logical."
+    },
+    "scores": {
+      "source_quote_code": 0,
+      "answer_grounding_code": 1,
+      "question_logic_code": 0
+    }
+  },
+  {
+    "temp_qid": "SYN_042",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote perfectly matches the text snippet.",
+      "step_2_answer_grounding": "The answer is strictly grounded in the provided quote.",
+      "step_3_question_logic": "The question clearly identifies the topic and asks for the specific secret."
+    },
+    "scores": {
+      "source_quote_code": 0,
+      "answer_grounding_code": 0,
+      "question_logic_code": 0
+    }
+  },
+  {
+    "temp_qid": "SYN_043",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote is an exact match.",
+      "step_2_answer_grounding": "The phrase 'near their homes' goes slightly beyond the immediate quote, acting as canon expansion since the quote only mentions a 'nearly deserted playground'.",
+      "step_3_question_logic": "The question refers to their 'first encounter', but in the text Snape mentions he has been 'watching you for a while'. It is their first interaction, making the premise slightly ambiguous but playable."
+    },
+    "scores": {
+      "source_quote_code": 0,
+      "answer_grounding_code": 1,
+      "question_logic_code": 1
+    }
+  }
+]

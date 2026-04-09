@@ -1,0 +1,197 @@
+[
+  {
+    "temp_qid": "SYN_011",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote matches the source text perfectly with no alterations.",
+      "step_2_answer_grounding": "The answer is strictly derived from the provided quote and the immediate context surrounding it.",
+      "step_3_question_logic": "The question is logically framed, sets up the context perfectly, and points to the answer without leaking it."
+    },
+    "scores": {
+      "source_quote_code": 0,
+      "answer_grounding_code": 0,
+      "question_logic_code": 0
+    }
+  },
+  {
+    "temp_qid": "SYN_012",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote is an exact, contiguous extraction from the provided text.",
+      "step_2_answer_grounding": "The answer accurately reflects the quote provided, relying only on the immediate text.",
+      "step_3_question_logic": "The question successfully integrates surrounding context without ambiguity and points clearly to the answer."
+    },
+    "scores": {
+      "source_quote_code": 0,
+      "answer_grounding_code": 0,
+      "question_logic_code": 0
+    }
+  },
+  {
+    "temp_qid": "SYN_013",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote combines two separate sentences from different parts of the text using 'and'. This is a spliced quote.",
+      "step_2_answer_grounding": "The answer is directly deduced from the combined quotes.",
+      "step_3_question_logic": "The question logic is clear, accurate, and sets up a fair and playable scenario."
+    },
+    "scores": {
+      "source_quote_code": 1,
+      "answer_grounding_code": 0,
+      "question_logic_code": 0
+    }
+  },
+  {
+    "temp_qid": "SYN_014",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote is a continuous extraction from the text.",
+      "step_2_answer_grounding": "The answer identifies the sister as 'Ariana' and references the 'three-way duel with grindelwald and aberforth', which requires synthesizing information from earlier in the chapter and wider canon. This is an accurate canon expansion.",
+      "step_3_question_logic": "The question establishes a clear timeline and premise without leaking the answer."
+    },
+    "scores": {
+      "source_quote_code": 0,
+      "answer_grounding_code": 1,
+      "question_logic_code": 0
+    }
+  },
+  {
+    "temp_qid": "SYN_015",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote is extracted exactly as it appears in the text, including its punctuation.",
+      "step_2_answer_grounding": "The answer perfectly translates the provided quote without relying on external knowledge.",
+      "step_3_question_logic": "The question is cleanly framed, relies on a solid premise, and guides to the correct answer effectively."
+    },
+    "scores": {
+      "source_quote_code": 0,
+      "answer_grounding_code": 0,
+      "question_logic_code": 0
+    }
+  },
+  {
+    "temp_qid": "SYN_026",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote exactly matches a continuous block of text from the source.",
+      "step_2_answer_grounding": "The answer ('Neville Longbottom') is fully grounded in the provided quote.",
+      "step_3_question_logic": "The question uses appropriate context to establish the scenario and asks unambiguously about the character."
+    },
+    "scores": {
+      "source_quote_code": 0,
+      "answer_grounding_code": 0,
+      "question_logic_code": 0
+    }
+  },
+  {
+    "temp_qid": "SYN_027",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote is identical to the source text.",
+      "step_2_answer_grounding": "The answer is fully contained in the source quote.",
+      "step_3_question_logic": "The question vividly establishes the scene and specific event without giving the answer away."
+    },
+    "scores": {
+      "source_quote_code": 0,
+      "answer_grounding_code": 0,
+      "question_logic_code": 0
+    }
+  },
+  {
+    "temp_qid": "SYN_028",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote is extracted verbatim from the source text.",
+      "step_2_answer_grounding": "The answer is strictly grounded in the provided text.",
+      "step_3_question_logic": "The question is clear, logical, and points directly to the answer."
+    },
+    "scores": {
+      "source_quote_code": 0,
+      "answer_grounding_code": 0,
+      "question_logic_code": 0
+    }
+  },
+  {
+    "temp_qid": "SYN_029",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote is perfectly matching the source text.",
+      "step_2_answer_grounding": "The answer is completely explicitly stated in the source quote.",
+      "step_3_question_logic": "The question frames the scenario well and asks for a precise, verifiable detail."
+    },
+    "scores": {
+      "source_quote_code": 0,
+      "answer_grounding_code": 0,
+      "question_logic_code": 0
+    }
+  },
+  {
+    "temp_qid": "SYN_030",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote is an exact match to the source text, retaining original formatting.",
+      "step_2_answer_grounding": "The answer is deduced explicitly from the provided quote.",
+      "step_3_question_logic": "The question is properly formulated, asking for the specific location name."
+    },
+    "scores": {
+      "source_quote_code": 0,
+      "answer_grounding_code": 0,
+      "question_logic_code": 0
+    }
+  },
+  {
+    "temp_qid": "SYN_031",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote exactly matches a continuous block of text in the excerpt.",
+      "step_2_answer_grounding": "The answer is perfectly grounded in the quote.",
+      "step_3_question_logic": "The question captures a specific trivia detail gracefully without leaks."
+    },
+    "scores": {
+      "source_quote_code": 0,
+      "answer_grounding_code": 0,
+      "question_logic_code": 0
+    }
+  },
+  {
+    "temp_qid": "SYN_044",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote is an exact extraction from the text.",
+      "step_2_answer_grounding": "The answer relies entirely on the quote provided.",
+      "step_3_question_logic": "The question premise is valid, concise, and logically targets the intended answer."
+    },
+    "scores": {
+      "source_quote_code": 0,
+      "answer_grounding_code": 0,
+      "question_logic_code": 0
+    }
+  },
+  {
+    "temp_qid": "SYN_045",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote truncates the end of the last sentence, but remains a contiguous extraction from the text.",
+      "step_2_answer_grounding": "The answer is strictly contained within the quoted dialogue.",
+      "step_3_question_logic": "The question is clear, accurate, and unambiguous."
+    },
+    "scores": {
+      "source_quote_code": 0,
+      "answer_grounding_code": 0,
+      "question_logic_code": 0
+    }
+  },
+  {
+    "temp_qid": "SYN_046",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote directly matches the source text.",
+      "step_2_answer_grounding": "The answer is derived verbatim from the source quote.",
+      "step_3_question_logic": "The question correctly frames the trivia scenario, pointing directly to the dialogue."
+    },
+    "scores": {
+      "source_quote_code": 0,
+      "answer_grounding_code": 0,
+      "question_logic_code": 0
+    }
+  },
+  {
+    "temp_qid": "SYN_047",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote is an exact continuous match to the provided text.",
+      "step_2_answer_grounding": "The answer is directly stated in the quoted text.",
+      "step_3_question_logic": "The logic is sound and correctly framed as a playable question."
+    },
+    "scores": {
+      "source_quote_code": 0,
+      "answer_grounding_code": 0,
+      "question_logic_code": 0
+    }
+  }
+]

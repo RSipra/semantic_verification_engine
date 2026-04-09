@@ -1,0 +1,210 @@
+[
+  {
+    "temp_qid": "SYN_000",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote matches the text exactly, with minor formatting differences.",
+      "step_2_answer_grounding": "The answer invents an unverified assumption by stating Dumbledore or Flitwick 'likely asked for practical reasons'. This is a fabricated psychological motive not found in the text.",
+      "step_3_question_logic": "The question logic is clearly written, though it is based on the flawed assumption present in the answer."
+    },
+    "scores": {
+      "source_quote_code": 0,
+      "answer_grounding_code": 2,
+      "question_logic_code": 0
+    }
+  },
+  {
+    "temp_qid": "SYN_001",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote is an exact, continuous extraction from the grounding text.",
+      "step_2_answer_grounding": "The answer is strictly grounded in the provided text, directly mirroring Harry's train of thought.",
+      "step_3_question_logic": "The question is structurally sound and accurately references the information in the quote without leaking the answer."
+    },
+    "scores": {
+      "source_quote_code": 0,
+      "answer_grounding_code": 0,
+      "question_logic_code": 0
+    }
+  },
+  {
+    "temp_qid": "SYN_002",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote correctly extracts text verbatim, with minor omissions of quotation marks and whitespace.",
+      "step_2_answer_grounding": "The text states to 'do something constructive' and fetch Peeves. The answer explicitly mentioning that the poltergeist 'could be enlisted to help defend the school' relies on verifiable canon context from the broader scene.",
+      "step_3_question_logic": "The question is clearly written and effectively uses canon context to set up the scene."
+    },
+    "scores": {
+      "source_quote_code": 0,
+      "answer_grounding_code": 1,
+      "question_logic_code": 0
+    }
+  },
+  {
+    "temp_qid": "SYN_003",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote is structurally edited and spliced, removing dialogue tags and combining non-adjacent sentences from the scene.",
+      "step_2_answer_grounding": "The answer is entirely deducible from the detailed quote provided.",
+      "step_3_question_logic": "The question premise is perfectly valid and leads smoothly to the correct answer without leaking it."
+    },
+    "scores": {
+      "source_quote_code": 1,
+      "answer_grounding_code": 0,
+      "question_logic_code": 0
+    }
+  },
+  {
+    "temp_qid": "SYN_004",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote matches the source text verbatim aside from the omission of quotation marks.",
+      "step_2_answer_grounding": "The answer directly reflects Ron's reasoning as stated strictly within the text quote.",
+      "step_3_question_logic": "The question is direct and clearly sets up the answer based on the source excerpt."
+    },
+    "scores": {
+      "source_quote_code": 0,
+      "answer_grounding_code": 0,
+      "question_logic_code": 0
+    }
+  },
+  {
+    "temp_qid": "SYN_005",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote correctly captures the text sequence, splicing to remove narrative descriptors.",
+      "step_2_answer_grounding": "The answer explains Crabbe's defiance accurately based on the quote provided. However, tying it strictly to the 'Fiendfyre' curse requires canon context, as Fiendfyre is named slightly later in the text.",
+      "step_3_question_logic": "The question is playable but slightly flawed. It conflates Crabbe's statement of defiance (which happened when casting Descendo) with his later use of the Fiendfyre curse."
+    },
+    "scores": {
+      "source_quote_code": 1,
+      "answer_grounding_code": 1,
+      "question_logic_code": 1
+    }
+  },
+  {
+    "temp_qid": "SYN_016",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote is a perfect match to the original text.",
+      "step_2_answer_grounding": "The answer ('stunned') is strictly contained within the quote.",
+      "step_3_question_logic": "The question properly asks for the effect of Luna's spell without any ambiguity."
+    },
+    "scores": {
+      "source_quote_code": 0,
+      "answer_grounding_code": 0,
+      "question_logic_code": 0
+    }
+  },
+  {
+    "temp_qid": "SYN_018",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote perfectly matches the source text.",
+      "step_2_answer_grounding": "The answer ('helena ravenclaw') is entirely contained within the quote. The question uses canon expansion to identify her as the ghost, which is valid.",
+      "step_3_question_logic": "The question clearly frames the context to ask for the character's true name."
+    },
+    "scores": {
+      "source_quote_code": 0,
+      "answer_grounding_code": 0,
+      "question_logic_code": 0
+    }
+  },
+  {
+    "temp_qid": "SYN_019",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote is an exact match.",
+      "step_2_answer_grounding": "The answer ('albania') is strictly derived from the provided quote.",
+      "step_3_question_logic": "The question premise is correct and points unambiguously to the location."
+    },
+    "scores": {
+      "source_quote_code": 0,
+      "answer_grounding_code": 0,
+      "question_logic_code": 0
+    }
+  },
+  {
+    "temp_qid": "SYN_020",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote is an unbroken match from the text.",
+      "step_2_answer_grounding": "The answer ('fred') is fully grounded in the quote.",
+      "step_3_question_logic": "The question is clear and does not leak the answer."
+    },
+    "scores": {
+      "source_quote_code": 0,
+      "answer_grounding_code": 0,
+      "question_logic_code": 0
+    }
+  },
+  {
+    "temp_qid": "SYN_032",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote is a perfect match except for a missing opening quotation mark.",
+      "step_2_answer_grounding": "The answer accurately summarizes the provided text without external knowledge.",
+      "step_3_question_logic": "The question sets up a clear premise."
+    },
+    "scores": {
+      "source_quote_code": 0,
+      "answer_grounding_code": 0,
+      "question_logic_code": 0
+    }
+  },
+  {
+    "temp_qid": "SYN_033",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote correctly matches the dialogue from the text.",
+      "step_2_answer_grounding": "The answer exactly matches the text.",
+      "step_3_question_logic": "The question frames the scenario perfectly without leaking the answer."
+    },
+    "scores": {
+      "source_quote_code": 0,
+      "answer_grounding_code": 0,
+      "question_logic_code": 0
+    }
+  },
+  {
+    "temp_qid": "SYN_034",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote matches the source text exactly.",
+      "step_2_answer_grounding": "The answer is strictly derived from the text provided.",
+      "step_3_question_logic": "The question logic is flawless and correctly incorporates context."
+    },
+    "scores": {
+      "source_quote_code": 0,
+      "answer_grounding_code": 0,
+      "question_logic_code": 0
+    }
+  },
+  {
+    "temp_qid": "SYN_035",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote is an exact match.",
+      "step_2_answer_grounding": "The answer relies entirely on the provided excerpt.",
+      "step_3_question_logic": "The question asks for the object clearly and logically, correctly expanding context to mention the Chamber of Secrets."
+    },
+    "scores": {
+      "source_quote_code": 0,
+      "answer_grounding_code": 0,
+      "question_logic_code": 0
+    }
+  },
+  {
+    "temp_qid": "SYN_036",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote is appropriately spliced using ellipses, combining two relevant sections accurately.",
+      "step_2_answer_grounding": "The answer ('fiendfyre') is explicitly stated in the spliced quote.",
+      "step_3_question_logic": "The question accurately frames Crabbe's spell and the location."
+    },
+    "scores": {
+      "source_quote_code": 1,
+      "answer_grounding_code": 0,
+      "question_logic_code": 0
+    }
+  },
+  {
+    "temp_qid": "SYN_037",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote exactly matches the text.",
+      "step_2_answer_grounding": "The inscription is accurately extracted directly from the quote.",
+      "step_3_question_logic": "The question is succinct, unambiguous, and logically sound."
+    },
+    "scores": {
+      "source_quote_code": 0,
+      "answer_grounding_code": 0,
+      "question_logic_code": 0
+    }
+  }
+]

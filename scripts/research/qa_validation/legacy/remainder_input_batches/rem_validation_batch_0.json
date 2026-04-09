@@ -1,0 +1,339 @@
+[
+  {
+    "generation_model":"gemini-2.5-flash",
+    "generation_prompt_version":null,
+    "lex_enrich_prompt_version":"legacy_enrichment_prompt_master_v1.txt",
+    "semantic_enrich_prompt_version":"legacy_context_variations_master.txt",
+    "question_type":"MCQ",
+    "question_source":"legacy",
+    "question":"Which of these titles or identities has NOT been held by Harry Potter:",
+    "answer":"spew treasurer",
+    "answer_variations":[
+      "spew treasurer",
+      "spew",
+      "treasurer"
+    ],
+    "hint_1":"Consider the various clubs and organizations at Hogwarts. Was Harry a leader or member of all of them?",
+    "hint_2":"Think about Hermione Granger's passion for house-elf rights and the group she founded.",
+    "hint_3":"This particular role was specific to an organization dedicated to improving the lives of house-elves, a cause championed primarily by Hermione.",
+    "explanation":"Harry Potter was a Seeker for Gryffindor, a Triwizard Champion, but he was never a Prefect. The role of 'S.P.E.W. treasurer' was held by Hermione Granger, who founded the Society for the Promotion of Elfish Welfare, not Harry.",
+    "semantic_entity_refs":[
+      "S.P.E.W. treasurer",
+      "Society for the Promotion of Elfish Welfare treasurer"
+    ],
+    "semantic_lore_concepts":[
+      "S.P.E.W.",
+      "House-elf rights advocacy",
+      "Hermione Granger's initiatives"
+    ],
+    "original_question_id":1130,
+    "mcq_options":[
+      "seeker for gryffindor",
+      "spew treasurer",
+      "prefect",
+      "triwizard champion"
+    ]
+  },
+  {
+    "generation_model":"gemini-2.5-flash",
+    "generation_prompt_version":null,
+    "lex_enrich_prompt_version":"legacy_enrichment_prompt_master_v1.txt",
+    "semantic_enrich_prompt_version":"legacy_context_variations_master.txt",
+    "question_type":"MCQ",
+    "question_source":"legacy",
+    "question":"Which of the following spells is considered one of the three Unforgivable Curses, punishable by a life sentence in Azkaban if cast on a human:",
+    "answer":"crucio",
+    "answer_variations":[
+      "crucio",
+      "cruciatus"
+    ],
+    "hint_1":"Recall the darkest and most feared spells that are strictly forbidden in the wizarding world.",
+    "hint_2":"One of these spells causes intense, agonizing pain without physical injury.",
+    "hint_3":"This curse is often used by followers of the Dark Lord to torture their victims.",
+    "explanation":"The Cruciatus Curse, 'Crucio', is one of the three Unforgivable Curses. It inflicts unbearable pain upon the victim and its use on another human is punishable by a life sentence in Azkaban.",
+    "semantic_entity_refs":[
+      "Crucio",
+      "Cruciatus Curse"
+    ],
+    "semantic_lore_concepts":[
+      "Unforgivable Curses",
+      "Torture spell",
+      "Dark Arts"
+    ],
+    "original_question_id":1279,
+    "mcq_options":[
+      "sectumsempra",
+      "confringo",
+      "crucio",
+      "reducto"
+    ]
+  },
+  {
+    "generation_model":"gemini-2.5-flash",
+    "generation_prompt_version":null,
+    "lex_enrich_prompt_version":"legacy_enrichment_prompt_master_v1.txt",
+    "semantic_enrich_prompt_version":"legacy_context_variations_master.txt",
+    "question_type":"MCQ",
+    "question_source":"legacy",
+    "question":"Who is NOT in Gryffindor:",
+    "answer":"draco malfoy",
+    "answer_variations":[
+      "draco malfoy",
+      "malfoy"
+    ],
+    "hint_1":"Consider the main characters and their respective Hogwarts Houses.",
+    "hint_2":"This character is a prominent rival of Harry Potter throughout his time at Hogwarts.",
+    "hint_3":"This individual belongs to the house known for ambition, cunning, and resourcefulness, often associated with a serpent emblem.",
+    "explanation":"Harry Potter, Ron Weasley, and Ginny Weasley are all members of Gryffindor House. Draco Malfoy is famously a member of Slytherin House, known for his rivalry with Harry.",
+    "semantic_entity_refs":[
+      "Draco Malfoy",
+      "Malfoy"
+    ],
+    "semantic_lore_concepts":[
+      "Slytherin House affiliation",
+      "Pure-blood ideology",
+      "School rival"
+    ],
+    "original_question_id":795,
+    "mcq_options":[
+      "harry potter",
+      "ron weasley",
+      "draco malfoy",
+      "ginny weasley"
+    ]
+  },
+  {
+    "generation_model":"gemini-2.5-flash",
+    "generation_prompt_version":null,
+    "lex_enrich_prompt_version":"legacy_enrichment_prompt_master_v1.txt",
+    "semantic_enrich_prompt_version":"legacy_context_variations_master.txt",
+    "question_type":"MCQ",
+    "question_source":"legacy",
+    "question":"Which of the following plants is known for its tendency to slap people:",
+    "answer":"bouncing bulbs",
+    "answer_variations":[
+      "bouncing bulbs",
+      "bulbs"
+    ],
+    "hint_1":"Think about magical plants that are known for their lively and aggressive behavior.",
+    "hint_2":"The name of this plant gives a clear clue about its movement and interaction with its surroundings.",
+    "hint_3":"These plants are quite unruly and are known to strike out at anyone who gets too close.",
+    "explanation":"Bouncing Bulbs are aggressive magical plants known for their erratic movements and tendency to slap people. They require careful handling, as seen in Herbology classes.",
+    "semantic_entity_refs":[
+      "bouncing bulbs"
+    ],
+    "semantic_lore_concepts":[
+      "Magical plant",
+      "Herbology study",
+      "Aggressive flora"
+    ],
+    "original_question_id":1087,
+    "mcq_options":[
+      "fanged geranium",
+      "bubotuber",
+      "bouncing bulbs",
+      "snargaluff"
+    ]
+  },
+  {
+    "generation_model":"gemini-2.5-flash",
+    "generation_prompt_version":null,
+    "lex_enrich_prompt_version":"legacy_enrichment_prompt_master_v1.txt",
+    "semantic_enrich_prompt_version":"legacy_context_variations_master.txt",
+    "question_type":"MCQ",
+    "question_source":"legacy",
+    "question":"Which of these words best describes Slytherin House:",
+    "answer":"resourceful",
+    "answer_variations":[
+      "resourceful",
+      "resourcefulness"
+    ],
+    "hint_1":"Recall the defining characteristics and ambitions of students typically sorted into Slytherin.",
+    "hint_2":"While often associated with ambition, this house is also known for its members' ability to find clever ways to achieve their goals.",
+    "hint_3":"They are particularly skilled at finding quick and imaginative solutions to difficulties.",
+    "explanation":"Slytherin House values ambition, cunning, leadership, and resourcefulness. Its members are known for their determination to achieve their ends, often by finding ingenious or unconventional means.",
+    "semantic_entity_refs":[
+      "resourceful",
+      "cunning"
+    ],
+    "semantic_lore_concepts":[
+      "Slytherin House qualities",
+      "House characteristics",
+      "Ambition (Slytherin trait)"
+    ],
+    "original_question_id":1093,
+    "mcq_options":[
+      "daring",
+      "patient",
+      "resourceful",
+      "witty"
+    ]
+  },
+  {
+    "generation_model":"gemini-2.5-flash",
+    "generation_prompt_version":null,
+    "lex_enrich_prompt_version":"legacy_enrichment_prompt_master_v1.txt",
+    "semantic_enrich_prompt_version":"legacy_context_variations_master.txt",
+    "question_type":"MCQ",
+    "question_source":"legacy",
+    "question":"Which of these spells keeps a charm stable:",
+    "answer":"fianto duri",
+    "answer_variations":[
+      "fianto duri",
+      "duri"
+    ],
+    "hint_1":"Think about spells that reinforce or strengthen existing magical protections.",
+    "hint_2":"This charm is often used in combination with other defensive spells to make them more durable and lasting.",
+    "hint_3":"It was notably used during the Battle of Hogwarts to strengthen the protective enchantments around the castle.",
+    "explanation":"The Fianto Duri spell is used to strengthen and stabilize protective enchantments, making them more resilient against attacks. It was employed by professors like Flitwick during the Battle of Hogwarts to reinforce the castle's defenses.",
+    "semantic_entity_refs":[
+      "Fianto Duri"
+    ],
+    "semantic_lore_concepts":[
+      "Charm strengthening",
+      "Spell stability",
+      "Defensive enchantment"
+    ],
+    "original_question_id":1137,
+    "mcq_options":[
+      "fianto duri",
+      "protego",
+      "episkey",
+      "rictusempra"
+    ]
+  },
+  {
+    "generation_model":"gemini-2.5-flash",
+    "generation_prompt_version":null,
+    "lex_enrich_prompt_version":"legacy_enrichment_prompt_master_v1.txt",
+    "semantic_enrich_prompt_version":"legacy_context_variations_master.txt",
+    "question_type":"MCQ",
+    "question_source":"legacy",
+    "question":"What is the primary effect of Wiggenweld Potion:",
+    "answer":"healing injuries",
+    "answer_variations":[
+      "healing injuries",
+      "healing",
+      "heal"
+    ],
+    "hint_1":"Consider potions that are commonly found in the hospital wing or used for restorative purposes.",
+    "hint_2":"This potion is a general-purpose antidote and health restorative, often used for minor ailments and wounds.",
+    "hint_3":"It can awaken a sleeping person and is effective in reversing the effects of common poisons and mending various hurts.",
+    "explanation":"The Wiggenweld Potion is a powerful healing potion. It is known for its ability to mend injuries, restore health, and even awaken those who are magically slumbering.",
+    "semantic_entity_refs":[
+      "healing injuries",
+      "restorative properties"
+    ],
+    "semantic_lore_concepts":[
+      "Wiggenweld Potion",
+      "Medical potion",
+      "Counter-charm (Sleeping Draught)"
+    ],
+    "original_question_id":1145,
+    "mcq_options":[
+      "inducing euphoria",
+      "inducing luck",
+      "healing injuries",
+      "shrinking a target"
+    ]
+  },
+  {
+    "generation_model":"gemini-2.5-flash",
+    "generation_prompt_version":null,
+    "lex_enrich_prompt_version":"legacy_enrichment_prompt_master_v1.txt",
+    "semantic_enrich_prompt_version":"legacy_context_variations_master.txt",
+    "question_type":"MCQ",
+    "question_source":"legacy",
+    "question":"Which of these tasks can NOT be aided by a Vanishing Spell:",
+    "answer":"dancing",
+    "answer_variations":[
+      "dancing",
+      "dance"
+    ],
+    "hint_1":"Think about the fundamental effect of a Vanishing Spell.",
+    "hint_2":"This spell's purpose is to make objects disappear, rather than to facilitate an action or activity.",
+    "hint_3":"One of these options is a physical movement or expressive art, not something that can be made to cease existing.",
+    "explanation":"A Vanishing Spell causes an object to disappear from existence. While it can be used to clean a room by vanishing messes, hide evidence by making items vanish, or empty a cauldron by vanishing its contents, it has no application for a physical activity like dancing.",
+    "semantic_entity_refs":[
+      "dancing"
+    ],
+    "semantic_lore_concepts":[
+      "Vanishing Spell limitations",
+      "Non-magical activity"
+    ],
+    "original_question_id":1143,
+    "mcq_options":[
+      "cleaning a room",
+      "hiding evidence",
+      "dancing",
+      "emptying a cauldron"
+    ]
+  },
+  {
+    "generation_model":"gemini-2.5-flash",
+    "generation_prompt_version":null,
+    "lex_enrich_prompt_version":"legacy_enrichment_prompt_master_v1.txt",
+    "semantic_enrich_prompt_version":"legacy_context_variations_master.txt",
+    "question_type":"MCQ",
+    "question_source":"legacy",
+    "question":"When Hagrid attempts to turn Dudley Dursley into a pig, what is the only part of the transformation that succeeds:",
+    "answer":"a curly tail",
+    "answer_variations":[
+      "a curly tail",
+      "curly tail",
+      "tail"
+    ],
+    "hint_1":"Recall the famous scene in the Dursleys' hut on the rock.",
+    "hint_2":"Hagrid's magic was powerful but not precise enough to fully transfigure a human, resulting in only a partial change.",
+    "hint_3":"The part that transformed was a specific appendage associated with pigs, growing out from the posterior.",
+    "explanation":"When Hagrid attempted to turn Dudley Dursley into a pig, due to the difficulty of human Transfiguration, only a small part of the spell succeeded. Dudley ended up with a pig's curly tail.",
+    "semantic_entity_refs":[
+      "a curly tail",
+      "pig's tail"
+    ],
+    "semantic_lore_concepts":[
+      "Partial transfiguration",
+      "Hagrid's accidental magic",
+      "Dudley Dursley's transformation"
+    ],
+    "original_question_id":1229,
+    "mcq_options":[
+      "a snout",
+      "a curly tail",
+      "piggy eyes",
+      "floppy ears"
+    ]
+  },
+  {
+    "generation_model":"gemini-2.5-flash",
+    "generation_prompt_version":null,
+    "lex_enrich_prompt_version":"legacy_enrichment_prompt_master_v1.txt",
+    "semantic_enrich_prompt_version":"legacy_context_variations_master.txt",
+    "question_type":"MCQ",
+    "question_source":"legacy",
+    "question":"According to the description from Professor Slughorn's classroom, what color is the Draught of Dreamless Sleep:",
+    "answer":"purple",
+    "answer_variations":[
+      "purple"
+    ],
+    "hint_1":"Think about the soothing quality associated with a peaceful night's rest.",
+    "hint_2":"This potion is designed to bring deep, undisturbed sleep, often associated with a rich, calming hue.",
+    "hint_3":"Its appearance is described as a deep, rich color, often linked to royalty or magic.",
+    "explanation":"The Draught of Dreamless Sleep is known for its ability to induce a deep, dream-free slumber. Professor Slughorn's description specifies its color as a deep, calming hue. This distinct shade helps witches and wizards identify the correct potion for their needs.",
+    "semantic_entity_refs":[
+      "Draught of Dreamless Sleep"
+    ],
+    "semantic_lore_concepts":[
+      "Potion color",
+      "Dreamless Sleep effect",
+      "Purple hue of potion"
+    ],
+    "original_question_id":1209,
+    "mcq_options":[
+      "gold",
+      "pearly white",
+      "purple",
+      "emerald green"
+    ]
+  }
+]

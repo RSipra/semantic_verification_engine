@@ -1,0 +1,274 @@
+[
+  {
+    "temp_qid": "SYN_000",
+    "evaluation_trace": {
+      "step_1_quote_match": "The source quote is an exact match to the provided text.",
+      "step_2_answer_grounding": "The answer claims Dumbledore or Flitwick 'likely asked for practical reasons'. The text states they were denied, but gives no reasons for why they asked. This requires outside inference.",
+      "step_3_question_logic": "The question is clear and does not leak the answer.",
+      "step_4_column_conformity": "The explanation introduces the outside assumption regarding 'practical reasons'."
+    },
+    "flags": {
+      "quote_failed": false,
+      "grounding_failed": true,
+      "logic_failed": false,
+      "columns_failed": true
+    },
+    "is_hallucinated": true,
+    "justification": "The answer and explanation introduce the assumption that Dumbledore and Flitwick asked for 'practical reasons', which is not supported by the text."
+  },
+  {
+    "temp_qid": "SYN_001",
+    "evaluation_trace": {
+      "step_1_quote_match": "The source quote accurately reflects the text.",
+      "step_2_answer_grounding": "The answer correctly references the marble bust, the Ravenclaw Tower statue, and the warlock effigy where the Potions book was hidden, all of which are in the text.",
+      "step_3_question_logic": "The question flows logically and does not contain the answer.",
+      "step_4_column_conformity": "The hints and explanations are fully supported by the text without bringing in outside lore."
+    },
+    "flags": {
+      "quote_failed": false,
+      "grounding_failed": false,
+      "logic_failed": false,
+      "columns_failed": false
+    },
+    "is_hallucinated": false,
+    "justification": "The question and answer are fully deducible from the text."
+  },
+  {
+    "temp_qid": "SYN_002",
+    "evaluation_trace": {
+      "step_1_quote_match": "The source quote exactly matches the provided text.",
+      "step_2_answer_grounding": "The answer accurately reflects McGonagall's instruction to find Peeves for a constructive purpose during the battle preparations.",
+      "step_3_question_logic": "The question is straightforward and directly based on the quote.",
+      "step_4_column_conformity": "The hints and explanations reasonably extrapolate Peeves's 'nuisance behavior' from Filch's complaints, relying on provided context."
+    },
+    "flags": {
+      "quote_failed": false,
+      "grounding_failed": false,
+      "logic_failed": false,
+      "columns_failed": false
+    },
+    "is_hallucinated": false,
+    "justification": "The question is accurately grounded and relies purely on the events occurring in the text."
+  },
+  {
+    "temp_qid": "SYN_003",
+    "evaluation_trace": {
+      "step_1_quote_match": "The source quote exactly matches the text.",
+      "step_2_answer_grounding": "The answer perfectly captures the method described in the text: Chamber of Secrets, Parseltongue, and stabbing with a basilisk fang.",
+      "step_3_question_logic": "The question directly targets the method of destruction mentioned in the quote.",
+      "step_4_column_conformity": "The hints and explanations remain faithful to the excerpt provided."
+    },
+    "flags": {
+      "quote_failed": false,
+      "grounding_failed": false,
+      "logic_failed": false,
+      "columns_failed": false
+    },
+    "is_hallucinated": false,
+    "justification": "All details are faithfully extracted from the text."
+  },
+  {
+    "temp_qid": "SYN_004",
+    "evaluation_trace": {
+      "step_1_quote_match": "The source quote exactly matches the text.",
+      "step_2_answer_grounding": "The answer correctly cites Ron's reasoning to not order house-elves to die, referencing 'Dobbies'.",
+      "step_3_question_logic": "The question is unambiguous and logical.",
+      "step_4_column_conformity": "Hints and explanations accurately summarize the text without introducing outside lore."
+    },
+    "flags": {
+      "quote_failed": false,
+      "grounding_failed": false,
+      "logic_failed": false,
+      "columns_failed": false
+    },
+    "is_hallucinated": false,
+    "justification": "The record perfectly mirrors Ron's dialogue and reasoning from the text."
+  },
+  {
+    "temp_qid": "SYN_005",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote accurately reflects the text without alteration.",
+      "step_2_answer_grounding": "The answer explains Crabbe's defiance and priority to kill Harry, directly mapping to the source quote.",
+      "step_3_question_logic": "The question logically bridges the quote to Crabbe's broader actions in the scene.",
+      "step_4_column_conformity": "The hints and explanations rely solely on Crabbe's dialogue in the text."
+    },
+    "flags": {
+      "quote_failed": false,
+      "grounding_failed": false,
+      "logic_failed": false,
+      "columns_failed": false
+    },
+    "is_hallucinated": false,
+    "justification": "The question is well-grounded in Crabbe's dialogue and actions from the chapter."
+  },
+  {
+    "temp_qid": "SYN_016",
+    "evaluation_trace": {
+      "step_1_quote_match": "The source quote matches the text exactly.",
+      "step_2_answer_grounding": "The answer 'stunned' is explicitly given in the quote.",
+      "step_3_question_logic": "The question points directly to the answer without leaking it.",
+      "step_4_column_conformity": "The columns summarize the information accurately without external lore."
+    },
+    "flags": {
+      "quote_failed": false,
+      "grounding_failed": false,
+      "logic_failed": false,
+      "columns_failed": false
+    },
+    "is_hallucinated": false,
+    "justification": "The spell effect is clearly documented in the excerpt."
+  },
+  {
+    "temp_qid": "SYN_018",
+    "evaluation_trace": {
+      "step_1_quote_match": "The source quote is exact.",
+      "step_2_answer_grounding": "The answer 'Helena Ravenclaw' is explicitly spoken by the ghost in the text.",
+      "step_3_question_logic": "The question asks for the identity of the ghost, which is clear and logical.",
+      "step_4_column_conformity": "No external lore is used; everything aligns with the text."
+    },
+    "flags": {
+      "quote_failed": false,
+      "grounding_failed": false,
+      "logic_failed": false,
+      "columns_failed": false
+    },
+    "is_hallucinated": false,
+    "justification": "The identity of the Gray Lady is strictly sourced from the text."
+  },
+  {
+    "temp_qid": "SYN_019",
+    "evaluation_trace": {
+      "step_1_quote_match": "The source quote is exact.",
+      "step_2_answer_grounding": "The answer 'Albania' is stated directly in the text.",
+      "step_3_question_logic": "The question unambiguously asks for the location.",
+      "step_4_column_conformity": "Hint 1 introduces outside knowledge by referencing Voldemort's 'initial downfall', and Hint 2 introduces external real-world geography."
+    },
+    "flags": {
+      "quote_failed": false,
+      "grounding_failed": false,
+      "logic_failed": false,
+      "columns_failed": true
+    },
+    "is_hallucinated": true,
+    "justification": "The hints introduce outside Harry Potter lore ('initial downfall') and external geographical trivia."
+  },
+  {
+    "temp_qid": "SYN_020",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote matches the text.",
+      "step_2_answer_grounding": "The text explicitly says Fred died with his last laugh etched on his face.",
+      "step_3_question_logic": "The question references the quote cleanly.",
+      "step_4_column_conformity": "Hint 2 introduces outside lore stating he was a 'co-owner of a popular joke shop in Diagon Alley', which is not in the text."
+    },
+    "flags": {
+      "quote_failed": false,
+      "grounding_failed": false,
+      "logic_failed": false,
+      "columns_failed": true
+    },
+    "is_hallucinated": true,
+    "justification": "The hint brings in outside lore about Fred owning a joke shop in Diagon Alley."
+  },
+  {
+    "temp_qid": "SYN_032",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote matches the text.",
+      "step_2_answer_grounding": "The answer accurately captures Luna's observation about the noise and her D.A. lesson experience.",
+      "step_3_question_logic": "The question is direct and free of leaks.",
+      "step_4_column_conformity": "The options are plausible and the hints conform to the text."
+    },
+    "flags": {
+      "quote_failed": false,
+      "grounding_failed": false,
+      "logic_failed": false,
+      "columns_failed": false
+    },
+    "is_hallucinated": false,
+    "justification": "The question and answer are fully supported by the excerpt."
+  },
+  {
+    "temp_qid": "SYN_033",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote matches the text exactly.",
+      "step_2_answer_grounding": "The answer is the verbatim response given by McGonagall.",
+      "step_3_question_logic": "The question logically requests the answer to the riddle.",
+      "step_4_column_conformity": "The distractors and explanation adhere strictly to the text."
+    },
+    "flags": {
+      "quote_failed": false,
+      "grounding_failed": false,
+      "logic_failed": false,
+      "columns_failed": false
+    },
+    "is_hallucinated": false,
+    "justification": "The riddle and its correct answer are explicitly documented in the provided text."
+  },
+  {
+    "temp_qid": "SYN_034",
+    "evaluation_trace": {
+      "step_1_quote_match": "The source quote matches exactly.",
+      "step_2_answer_grounding": "The answer correctly identifies the silver cat with spectacle markings.",
+      "step_3_question_logic": "The question matches the provided answer.",
+      "step_4_column_conformity": "Hint 2 references her keeping an eye on the 'Dursleys at the very beginning of the series', which is external lore not in the text."
+    },
+    "flags": {
+      "quote_failed": false,
+      "grounding_failed": false,
+      "logic_failed": false,
+      "columns_failed": true
+    },
+    "is_hallucinated": true,
+    "justification": "The hints introduce outside lore about the Dursleys from earlier in the series."
+  },
+  {
+    "temp_qid": "SYN_035",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote is an exact match.",
+      "step_2_answer_grounding": "The answer directly identifies the basilisk fangs.",
+      "step_3_question_logic": "The question effectively targets the objects retrieved.",
+      "step_4_column_conformity": "Hint 3 states the monster was defeated 'in his second year', which is outside knowledge not present in the excerpt."
+    },
+    "flags": {
+      "quote_failed": false,
+      "grounding_failed": false,
+      "logic_failed": false,
+      "columns_failed": true
+    },
+    "is_hallucinated": true,
+    "justification": "The hint relies on outside knowledge of Harry's second year."
+  },
+  {
+    "temp_qid": "SYN_036",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote is accurate.",
+      "step_2_answer_grounding": "The spell 'Fiendfyre' is explicitly named in the text.",
+      "step_3_question_logic": "The question is clear and does not leak the answer.",
+      "step_4_column_conformity": "The explanation properly summarizes the text without adding lore."
+    },
+    "flags": {
+      "quote_failed": false,
+      "grounding_failed": false,
+      "logic_failed": false,
+      "columns_failed": false
+    },
+    "is_hallucinated": false,
+    "justification": "All elements of the question are faithful to the text provided."
+  },
+  {
+    "temp_qid": "SYN_037",
+    "evaluation_trace": {
+      "step_1_quote_match": "The source quote exactly matches.",
+      "step_2_answer_grounding": "The inscription is correctly pulled from the text.",
+      "step_3_question_logic": "The question asks for the inscription, which logically fits.",
+      "step_4_column_conformity": "Hint 2 asks the user to think about the 'Sorting Hat's song', which is external knowledge not in the text."
+    },
+    "flags": {
+      "quote_failed": false,
+      "grounding_failed": false,
+      "logic_failed": false,
+      "columns_failed": true
+    },
+    "is_hallucinated": true,
+    "justification": "The hints require outside knowledge by referring to the Sorting Hat's song."
+  }
+]

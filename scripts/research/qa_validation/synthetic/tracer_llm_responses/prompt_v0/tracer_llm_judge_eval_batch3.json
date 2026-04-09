@@ -1,0 +1,227 @@
+[
+  {
+    "temp_qid": "SYN_011",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote is a direct, unaltered extraction from the text.",
+      "step_2_answer_grounding": "The answer is completely deducible from the quote and the surrounding Chapter 35 context, which explicitly mentions the Killing Curse, walking into the forest, and Harry choosing not to defend himself.",
+      "step_3_question_logic": "The question logically leads to the answer without leaking it and relies entirely on the permitted text."
+    },
+    "flags": {
+      "source_quote_failed": false,
+      "answer_grounding_failed": false,
+      "question_logic_failed": false
+    },
+    "is_hallucinated": false,
+    "justification": "All elements of the question and answer are fully supported by the text within the referenced chapter boundary."
+  },
+  {
+    "temp_qid": "SYN_012",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote is an exact match from the Chapter 35 text.",
+      "step_2_answer_grounding": "The answer is strictly derivable from the provided quote and surrounding text.",
+      "step_3_question_logic": "The question references 'Privet Drive', which appears in Chapter 34 but is not mentioned in the Chapter 35 grounding text. This constitutes chapter bleed."
+    },
+    "flags": {
+      "source_quote_failed": false,
+      "answer_grounding_failed": false,
+      "question_logic_failed": true
+    },
+    "is_hallucinated": true,
+    "justification": "The question hallucinates by bleeding information from Chapter 34 (Privet Drive) into a question designated for Chapter 35."
+  },
+  {
+    "temp_qid": "SYN_013",
+    "evaluation_trace": {
+      "step_1_quote_match": "The provided quote merges two non-adjacent sentences from different paragraphs, using an 'and' conjunction to bridge them. This violates the strict exact-extraction rule.",
+      "step_2_answer_grounding": "The answer correctly reflects the intent of the passages, but the quote itself is improperly constructed.",
+      "step_3_question_logic": "The question is logical based on the provided text."
+    },
+    "flags": {
+      "source_quote_failed": true,
+      "answer_grounding_failed": false,
+      "question_logic_failed": false
+    },
+    "is_hallucinated": true,
+    "justification": "The record fails because it merges non-adjacent sentences into a single source quote."
+  },
+  {
+    "temp_qid": "SYN_014",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote exactly matches the text.",
+      "step_2_answer_grounding": "The answer specifies a 'three-way duel with grindelwald and aberforth'. However, the provided text only refers to Dumbledore's 'brother'; the name 'Aberforth' is never explicitly mentioned in the excerpt, making it outside knowledge.",
+      "step_3_question_logic": "The question is clear, but the answer relies on ungrounded external lore."
+    },
+    "flags": {
+      "source_quote_failed": false,
+      "answer_grounding_failed": true,
+      "question_logic_failed": false
+    },
+    "is_hallucinated": true,
+    "justification": "The answer fails because it relies on outside knowledge to name Dumbledore's brother (Aberforth), which is not explicitly stated in the text."
+  },
+  {
+    "temp_qid": "SYN_015",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote matches the text exactly, preserving original punctuation.",
+      "step_2_answer_grounding": "The answer is entirely deducible from the quote and immediate context without relying on outside knowledge.",
+      "step_3_question_logic": "The question logically and unambiguously leads to the answer."
+    },
+    "flags": {
+      "source_quote_failed": false,
+      "answer_grounding_failed": false,
+      "question_logic_failed": false
+    },
+    "is_hallucinated": false,
+    "justification": "The question is fully grounded and relies only on the text provided."
+  },
+  {
+    "temp_qid": "SYN_026",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote exactly matches the text.",
+      "step_2_answer_grounding": "The answer specifies 'neville longbottom'. The grounding text only refers to him as 'Neville' and never includes his surname. This relies on outside knowledge.",
+      "step_3_question_logic": "The question does not leak the answer and is logical."
+    },
+    "flags": {
+      "source_quote_failed": false,
+      "answer_grounding_failed": true,
+      "question_logic_failed": false
+    },
+    "is_hallucinated": true,
+    "justification": "The answer requires outside knowledge to supply Neville's last name, which is completely absent from the provided text."
+  },
+  {
+    "temp_qid": "SYN_027",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote perfectly matches the text.",
+      "step_2_answer_grounding": "The text explicitly mentions 'the Snitch' and 'the golden metal', making the answer 'golden snitch' fully deducible strictly from the text.",
+      "step_3_question_logic": "The question accurately sets up the scenario using only information present in the text."
+    },
+    "flags": {
+      "source_quote_failed": false,
+      "answer_grounding_failed": false,
+      "question_logic_failed": false
+    },
+    "is_hallucinated": false,
+    "justification": "The question and answer are accurately grounded in the provided text."
+  },
+  {
+    "temp_qid": "SYN_028",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote is a direct, exact extraction from the text.",
+      "step_2_answer_grounding": "The answer 'rowle' is explicitly stated in the quote.",
+      "step_3_question_logic": "The question is straightforward and directly points to the event described in the quote."
+    },
+    "flags": {
+      "source_quote_failed": false,
+      "answer_grounding_failed": false,
+      "question_logic_failed": false
+    },
+    "is_hallucinated": false,
+    "justification": "The record adheres strictly to the text without any outside knowledge."
+  },
+  {
+    "temp_qid": "SYN_029",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote matches the text exactly.",
+      "step_2_answer_grounding": "The answer 'midnight blue' is pulled verbatim from the quote.",
+      "step_3_question_logic": "The question focuses on a specific detail explicitly stated in the text."
+    },
+    "flags": {
+      "source_quote_failed": false,
+      "answer_grounding_failed": false,
+      "question_logic_failed": false
+    },
+    "is_hallucinated": false,
+    "justification": "The question and answer are completely supported by the provided text."
+  },
+  {
+    "temp_qid": "SYN_030",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote is an exact match.",
+      "step_2_answer_grounding": "The answer is directly in the text.",
+      "step_3_question_logic": "The question asks for a 'London station'. The word 'London' does not appear anywhere in the grounding text. The question injects outside geographical knowledge."
+    },
+    "flags": {
+      "source_quote_failed": false,
+      "answer_grounding_failed": false,
+      "question_logic_failed": true
+    },
+    "is_hallucinated": true,
+    "justification": "The question relies on outside knowledge by assuming King's Cross is in London, a fact not stated in the excerpt."
+  },
+  {
+    "temp_qid": "SYN_031",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote exactly matches the text.",
+      "step_2_answer_grounding": "The answer 'several times' is stated plainly in the quote.",
+      "step_3_question_logic": "The question is direct and contains no outside knowledge."
+    },
+    "flags": {
+      "source_quote_failed": false,
+      "answer_grounding_failed": false,
+      "question_logic_failed": false
+    },
+    "is_hallucinated": false,
+    "justification": "Fully verifiable based on the text provided."
+  },
+  {
+    "temp_qid": "SYN_044",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote is an exact match.",
+      "step_2_answer_grounding": "The answer 'oliver wood' is explicitly named in the quote as the person carrying Colin.",
+      "step_3_question_logic": "The question effectively links the action to the character using only provided details."
+    },
+    "flags": {
+      "source_quote_failed": false,
+      "answer_grounding_failed": false,
+      "question_logic_failed": false
+    },
+    "is_hallucinated": false,
+    "justification": "The record is completely faithful to the text."
+  },
+  {
+    "temp_qid": "SYN_045",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote is a direct match.",
+      "step_2_answer_grounding": "The answer 'nagini' is stated in the text.",
+      "step_3_question_logic": "The question names 'Neville Longbottom'. As his surname 'Longbottom' does not appear in the text, this injects outside knowledge into the question premise."
+    },
+    "flags": {
+      "source_quote_failed": false,
+      "answer_grounding_failed": false,
+      "question_logic_failed": true
+    },
+    "is_hallucinated": true,
+    "justification": "The question fails because it uses outside knowledge to provide Neville's last name."
+  },
+  {
+    "temp_qid": "SYN_046",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote is exactly as it appears in the text.",
+      "step_2_answer_grounding": "The answer is perfectly grounded in the quote.",
+      "step_3_question_logic": "The question names 'Sirius Black'. The character is only referred to as 'Sirius' in the provided text. The surname 'Black' is outside knowledge."
+    },
+    "flags": {
+      "source_quote_failed": false,
+      "answer_grounding_failed": false,
+      "question_logic_failed": true
+    },
+    "is_hallucinated": true,
+    "justification": "The question hallucinates by adding Sirius's last name, which isn't present in the source text."
+  },
+  {
+    "temp_qid": "SYN_047",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote is an exact match.",
+      "step_2_answer_grounding": "The answer 'king's cross station' is verbatim in the text.",
+      "step_3_question_logic": "The question correctly structures the prompt without adding any outside knowledge."
+    },
+    "flags": {
+      "source_quote_failed": false,
+      "answer_grounding_failed": false,
+      "question_logic_failed": false
+    },
+    "is_hallucinated": false,
+    "justification": "The record passes all integrity checks using only the provided text."
+  }
+]

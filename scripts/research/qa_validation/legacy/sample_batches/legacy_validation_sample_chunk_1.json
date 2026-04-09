@@ -1,0 +1,270 @@
+[
+  {
+    "original_question_id":1190,
+    "question_source":"legacy",
+    "question_type":"EX",
+    "question":"Which puzzle guarding the Philosopher’s Stone does Hermione Granger solve?",
+    "mcq_options":null,
+    "answer":"Professor Snape’s logic puzzle with potion bottles",
+    "hint_1":"This challenge required intelligence and quick thinking, not brute force or flying skills.",
+    "hint_2":"It involved a series of containers and instructions, testing reasoning abilities.",
+    "hint_3":"The task was designed by a master of Potions, requiring the identification of a safe passage.",
+    "explanation":"Hermione Granger, renowned for her brilliant mind, successfully solved Professor Snape's logic puzzle. This challenge required her to choose the correct potion from a lineup to either move forward or go back, based on a riddle. Her quick thinking allowed Harry to continue his pursuit of the Philosopher's Stone.",
+    "answer_variations":[
+      "Hermione solves the logic puzzle created by Professor Snape, which involved choosing the correct potion.",
+      "Hermione solves Professor Snape's logic puzzle with potion bottles.",
+      "Hermione, Snape, logic puzzle, potion bottles, riddle"
+    ],
+    "semantic_entity_refs":[
+      "Professor Snape",
+      "Logic puzzle",
+      "Potion bottles"
+    ],
+    "semantic_lore_concepts":[
+      "Philosopher's Stone defense",
+      "Potions challenge",
+      "Magical logic"
+    ]
+  },
+  {
+    "original_question_id":1158,
+    "question_source":"legacy",
+    "question_type":"MCQ",
+    "question":"which of these plants has healing properties?",
+    "mcq_options":[
+      "dittany",
+      "mandrake",
+      "devil's snare",
+      "wolfsbane"
+    ],
+    "answer":"dittany",
+    "hint_1":"Consider plants that are often used in potions or directly applied to treat injuries.",
+    "hint_2":"This plant's essence is renowned for its ability to staunch bleeding and cause wounds to heal without scarring.",
+    "hint_3":"Hermione Granger used this plant's extract to rapidly heal Ron Weasley's serious Splinching injury.",
+    "explanation":"Dittany is a powerful magical plant with significant healing properties. Its essence is a common ingredient in healing potions and can be used directly to heal cuts and prevent scarring.",
+    "answer_variations":[
+      "dittany",
+      "essence of dittany"
+    ],
+    "semantic_entity_refs":[
+      "Dittany",
+      "Essence of Dittany"
+    ],
+    "semantic_lore_concepts":[
+      "Healing properties",
+      "Potion ingredient",
+      "Wound care"
+    ]
+  },
+  {
+    "original_question_id":1153,
+    "question_source":"legacy",
+    "question_type":"MCQ",
+    "question":"Which of the following creatures eat fairy eggs:",
+    "mcq_options":[
+      "bowtruckles",
+      "nifflers",
+      "cornish pixies",
+      "grindylows"
+    ],
+    "answer":"bowtruckles",
+    "hint_1":"Think about small, tree-dwelling creatures found in the magical world.",
+    "hint_2":"These creatures are known for being guardians of wand-wood trees and have a very specific diet.",
+    "hint_3":"Their diet consists of woodlice and the eggs of various flying insects, including those of small winged beings.",
+    "explanation":"Bowtruckles are small, stick-like creatures that guard wand-wood trees. Their diet includes woodlice and fairy eggs, making them a threat to the fairy population.",
+    "answer_variations":[
+      "bowtruckles",
+      "bowtruckle"
+    ],
+    "semantic_entity_refs":[
+      "Bowtruckles",
+      "Tree guardians"
+    ],
+    "semantic_lore_concepts":[
+      "Magical creature diet",
+      "Fairy egg predation"
+    ]
+  },
+  {
+    "original_question_id":1257,
+    "question_source":"legacy",
+    "question_type":"FR",
+    "question":"Which potion might a studious witch like Hermione use to fight off sleep and power through a long night of homework?",
+    "mcq_options":null,
+    "answer":"Wideye Potion (also known as the Awakening Potion)",
+    "hint_1":"The name of this potion directly suggests its primary effect on the drinker's alertness.",
+    "hint_2":"It's commonly used to keep individuals awake and focused, particularly useful for late-night study sessions.",
+    "hint_3":"If you needed to stay conscious and vigilant for an extended period, perhaps to finish a difficult essay, this would be your potion of choice.",
+    "explanation":"The Wideye Potion, also known as the Awakening Potion, is specifically designed to ward off sleep and keep the drinker alert and awake. This makes it an ideal choice for a studious witch like Hermione seeking to extend her study hours and complete homework.",
+    "answer_variations":[
+      "Wideye Potion",
+      "Awakening Potion",
+      "Wide-eye Potion",
+      "The Wideye Potion"
+    ],
+    "semantic_entity_refs":[
+      "Wideye Potion",
+      "Awakening Potion"
+    ],
+    "semantic_lore_concepts":[
+      "Anti-sleep potion",
+      "Concentration aid",
+      "Alertness draught"
+    ]
+  },
+  {
+    "original_question_id":106,
+    "question_source":"legacy",
+    "question_type":"FR",
+    "question":"Where are Kappas most commonly found?",
+    "mcq_options":null,
+    "answer":"Japan",
+    "hint_1":"This country is an archipelago in East Asia.",
+    "hint_2":"It is known for its rich folklore and traditional myths, where these creatures originate.",
+    "hint_3":"The famous explorer Newt Scamander would have likely encountered these water-dwelling creatures here.",
+    "explanation":"Kappas are water demons found primarily in Japan. These mischievous creatures are known for residing in ponds and rivers, often luring people into the water.",
+    "answer_variations":[
+      "Japan"
+    ],
+    "semantic_entity_refs":[
+
+    ],
+    "semantic_lore_concepts":[
+      "Kappa habitat",
+      "Mythical creature origin"
+    ]
+  },
+  {
+    "original_question_id":1342,
+    "question_source":"legacy",
+    "question_type":"EX",
+    "question":"Where was the real locket Horcrux discovered after the fake one had been retrieved from the cave?",
+    "mcq_options":null,
+    "answer":"At the Ministry of Magic, worn by Dolores Umbridge during a Muggle-born trial.",
+    "hint_1":"The locket was found in a prominent government building in the wizarding world.",
+    "hint_2":"It was being worn by a particularly unpleasant character known for her anti-Muggle-born sentiments.",
+    "hint_3":"The discovery occurred during a controversial legal proceeding targeting those deemed 'undesirable.'",
+    "explanation":"The real locket Horcrux was found within the Ministry of Magic. Dolores Umbridge had acquired it and was wearing it openly, using its dark influence to fuel her prejudice while presiding over the trials of Muggle-borns. Harry, Ron, and Hermione retrieved it during their infiltration.",
+    "answer_variations":[
+      "The genuine locket Horcrux was found at the Ministry of Magic, being worn by Dolores Umbridge during a Muggle-born registration commission trial.",
+      "Dolores Umbridge wore the locket at the Ministry of Magic.",
+      "Ministry of Magic, Dolores Umbridge, Muggle-born trial, locket horcrux"
+    ],
+    "semantic_entity_refs":[
+      "Ministry of Magic",
+      "Dolores Umbridge",
+      "Salazar Slytherin's Locket",
+      "Locket Horcrux"
+    ],
+    "semantic_lore_concepts":[
+      "Horcrux location",
+      "Muggle-born registration",
+      "Ministry corruption"
+    ]
+  },
+  {
+    "original_question_id":1220,
+    "question_source":"legacy",
+    "question_type":"FR",
+    "question":"How many years did Lord Voldemort's first reign of terror last, before his initial downfall in Godric's Hollow?",
+    "mcq_options":null,
+    "answer":"11 Years",
+    "hint_1":"His first period of control ended on Halloween night.",
+    "hint_2":"Think about the duration between his emergence as a prominent dark wizard and the fateful night in Godric's Hollow.",
+    "hint_3":"This period encompassed the rise of the original Order of the Phoenix.",
+    "explanation":"Lord Voldemort's first reign of terror began around 1970 and concluded on October 31, 1981, when he attempted to kill Harry Potter in Godric's Hollow. This period lasted approximately eleven years, a time marked by widespread fear and conflict in the wizarding world.",
+    "answer_variations":[
+      "11",
+      "eleven years",
+      "eleven"
+    ],
+    "semantic_entity_refs":[
+
+    ],
+    "semantic_lore_concepts":[
+      "First Wizarding War",
+      "Voldemort's initial downfall",
+      "Halloween 1981"
+    ]
+  },
+  {
+    "original_question_id":978,
+    "question_source":"legacy",
+    "question_type":"FR",
+    "question":"When is Harry's birthday?",
+    "mcq_options":null,
+    "answer":"July 31, 1980.",
+    "hint_1":"His birthday is in the summer, just before a new school year.",
+    "hint_2":"He shares this birth date with the author of the books.",
+    "hint_3":"This date is significant because it is often when he receives his first letter from Hogwarts or begins planning for the upcoming term.",
+    "explanation":"Harry Potter's birthday is on July 31, 1980. This date is famous for being the same as J.K. Rowling's birthday, and it often marks the start of new adventures for Harry each year.",
+    "answer_variations":[
+      "July 31, 1980",
+      "July 31st, 1980",
+      "31 July 1980",
+      "Jul 31, 1980"
+    ],
+    "semantic_entity_refs":[
+      "Harry Potter",
+      "The Boy Who Lived"
+    ],
+    "semantic_lore_concepts":[
+      "Harry Potter's birthdate",
+      "Prophecy of the Chosen One",
+      "Boy Who Lived origin"
+    ]
+  },
+  {
+    "original_question_id":1128,
+    "question_source":"legacy",
+    "question_type":"MCQ",
+    "question":"Which of the following is another dive commonly used by Seekers:",
+    "mcq_options":[
+      "porskoff ploy",
+      "bludger backbeat",
+      "spiral dive",
+      "kestrel plunge"
+    ],
+    "answer":"spiral dive",
+    "hint_1":"Think about different aerial maneuvers a Quidditch Seeker might use to catch the Golden Snitch.",
+    "hint_2":"This particular dive involves a twisting or corkscrew motion downwards.",
+    "hint_3":"It's a rapid descent that allows a Seeker to drop quickly while still maintaining some degree of control and agility.",
+    "explanation":"The 'spiral dive' is a well-known maneuver in Quidditch, particularly used by Seekers. It involves diving rapidly in a spiral motion to quickly pursue the Golden Snitch or evade opponents.",
+    "answer_variations":[
+      "spiral dive",
+      "spiral"
+    ],
+    "semantic_entity_refs":[
+      "spiral dive"
+    ],
+    "semantic_lore_concepts":[
+      "Quidditch maneuver",
+      "Seeker tactic",
+      "Broomstick technique"
+    ]
+  },
+  {
+    "original_question_id":798,
+    "question_source":"legacy",
+    "question_type":"FR",
+    "question":"When Neville Longbottom dresses his Boggart (Professor Snape) up in his grandmother’s clothes, what stuffed bird is on top of the hat?",
+    "mcq_options":null,
+    "answer":"A vulture",
+    "hint_1":"It's a type of bird often associated with scavenging or bleak landscapes.",
+    "hint_2":"The bird is typically bald-headed.",
+    "hint_3":"It sits atop a green hat, completing the amusing transformation of the scary boggart.",
+    "explanation":"When Neville Longbottom faced his Boggart, which took the form of Professor Snape, he imagined Snape in his grandmother's clothes, topped with a stuffed vulture on her hat. This transformation, inspired by Professor Lupin's lesson, made the boggart appear comical rather than terrifying.",
+    "answer_variations":[
+      "vulture",
+      "a vulture"
+    ],
+    "semantic_entity_refs":[
+
+    ],
+    "semantic_lore_concepts":[
+      "Riddikulus Charm outcome",
+      "Neville's Boggart disguise",
+      "Grandmother's hat decoration"
+    ]
+  }
+]

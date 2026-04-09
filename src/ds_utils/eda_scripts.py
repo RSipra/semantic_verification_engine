@@ -131,7 +131,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 import networkx as nx
 from word2number import w2n
 from scipy import stats
-from scipy.sparse import spmatrix, csr_matrix
+from scipy.sparse import spmatrix
 
 # Import custom methods from project scripts
 from ds_utils import utils_paths as up

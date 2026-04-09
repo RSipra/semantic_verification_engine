@@ -1,0 +1,329 @@
+[
+  {
+    "generation_model":"gemini-2.5-flash",
+    "generation_prompt_version":null,
+    "lex_enrich_prompt_version":"legacy_enrichment_prompt_master_v1.txt",
+    "semantic_enrich_prompt_version":"legacy_context_variations_master.txt",
+    "question_type":"MCQ",
+    "question_source":"legacy",
+    "question":"What are the final, advanced-level exams that Hogwarts students take in their seventh year to qualify for specific careers:",
+    "answer":"n.e.w.t.s",
+    "answer_variations":[
+      "n.e.w.t.s",
+      "newts",
+      "the newts"
+    ],
+    "hint_1":"These exams determine if a student can pursue higher-level magical careers.",
+    "hint_2":"They are taken after the O.W.L.s and are considered much more difficult.",
+    "hint_3":"The name of these exams sounds like a small, amphibious creature often found in ponds.",
+    "explanation":"N.E.W.T.s, or Nastily Exhausting Wizarding Tests, are the highest-level examinations taken by Hogwarts students in their seventh year. Success in these exams is crucial for qualifying for advanced magical professions and further study. They represent the culmination of a student's academic career at Hogwarts.",
+    "semantic_entity_refs":[
+      "N.E.W.T.s",
+      "Nastily Exhausting Wizarding Tests"
+    ],
+    "semantic_lore_concepts":[
+      "Advanced Wizarding Examinations",
+      "Seventh Year Assessment",
+      "Career Qualification"
+    ],
+    "original_question_id":1241,
+    "mcq_options":[
+      "o.w.l.s",
+      "w.o.m.b.a.t.s",
+      "the apparition test",
+      "n.e.w.t.s"
+    ]
+  },
+  {
+    "generation_model":"gemini-2.5-flash",
+    "generation_prompt_version":null,
+    "lex_enrich_prompt_version":"legacy_enrichment_prompt_master_v1.txt",
+    "semantic_enrich_prompt_version":"legacy_context_variations_master.txt",
+    "question_type":"MCQ",
+    "question_source":"legacy",
+    "question":"Which of these plants bloom instantly:",
+    "answer":"puffapod",
+    "answer_variations":[
+      "puffapod"
+    ],
+    "hint_1":"This plant produces bright pink flowers and then pods that burst with seeds.",
+    "hint_2":"It's known for its rapid life cycle, especially its sudden flowering.",
+    "hint_3":"Its name suggests a quick, light action, almost like a small explosion of growth.",
+    "explanation":"The Puffapod is a magical plant known for its distinctive rapid blooming process. It instantly produces large, bright pink flowers before developing pods that burst open, releasing seeds with an audible 'pop'. This characteristic makes it stand out among other magical flora.",
+    "semantic_entity_refs":[
+      "Puffapod"
+    ],
+    "semantic_lore_concepts":[
+      "Instant blooming plant",
+      "Herbology plant characteristic",
+      "Puffapod properties"
+    ],
+    "original_question_id":1123,
+    "mcq_options":[
+      "mandrake",
+      "devil’s snare",
+      "puffapod",
+      "bubotuber"
+    ]
+  },
+  {
+    "generation_model":"gemini-2.5-flash",
+    "generation_prompt_version":null,
+    "lex_enrich_prompt_version":"legacy_enrichment_prompt_master_v1.txt",
+    "semantic_enrich_prompt_version":"legacy_context_variations_master.txt",
+    "question_type":"MCQ",
+    "question_source":"legacy",
+    "question":"Which of the following is NOT a plausible side effect of a miscast Silencing Charm:",
+    "answer":"insatiable hunger",
+    "answer_variations":[
+      "insatiable hunger"
+    ],
+    "hint_1":"Consider what the Silencing Charm is meant to do, and what humorous or ironic failures might occur.",
+    "hint_2":"The plausible side effects would likely relate to sound, speech, or the mouth area.",
+    "hint_3":"This option describes a physical craving, rather than an auditory or vocal malfunction.",
+    "explanation":"The Silencing Charm (Silencio) is intended to render a target speechless or soundless. Therefore, miscast versions would likely result in malfunctions related to sound, hearing, or speech, such as uncontrollable noise, temporary deafness, or issues with the tongue. Insatiable hunger is a physiological effect unrelated to the primary function of a silencing spell.",
+    "semantic_entity_refs":[
+      "Insatiable hunger"
+    ],
+    "semantic_lore_concepts":[
+      "Non-plausible charm side effect",
+      "Unrelated magical ailment",
+      "Spell miscasting consequence"
+    ],
+    "original_question_id":1196,
+    "mcq_options":[
+      "uncontrollable buzzing noise",
+      "temporary deafness",
+      "insatiable hunger",
+      "involuntary tongue-tying"
+    ]
+  },
+  {
+    "generation_model":"gemini-2.5-flash",
+    "generation_prompt_version":null,
+    "lex_enrich_prompt_version":"legacy_enrichment_prompt_master_v1.txt",
+    "semantic_enrich_prompt_version":"legacy_context_variations_master.txt",
+    "question_type":"MCQ",
+    "question_source":"legacy",
+    "question":"Which of the following is NOT a form of Transfiguration:",
+    "answer":"enchantment",
+    "answer_variations":[
+      "enchantment"
+    ],
+    "hint_1":"Transfiguration involves changing the form or appearance of something.",
+    "hint_2":"Consider which option describes adding a magical effect rather than altering physical form.",
+    "hint_3":"This term refers to applying charms or spells to imbue an object with magical properties, rather than changing what it physically is.",
+    "explanation":"Transfiguration is a branch of magic focused on changing the form or appearance of an object or living thing. Switching, vanishing, and conjuration are all recognized categories within Transfiguration, dealing with exchanging, disappearing, or creating things. Enchantment, however, refers to the act of placing a charm or spell upon an object to give it new magical properties, which is distinct from changing its fundamental nature.",
+    "semantic_entity_refs":[
+      "Enchantment"
+    ],
+    "semantic_lore_concepts":[
+      "Non-Transfiguration branch of magic",
+      "Spell category distinction",
+      "Charms discipline"
+    ],
+    "original_question_id":1085,
+    "mcq_options":[
+      "switching",
+      "vanishing",
+      "enchantment",
+      "conjuration"
+    ]
+  },
+  {
+    "generation_model":"gemini-2.5-flash",
+    "generation_prompt_version":null,
+    "lex_enrich_prompt_version":"legacy_enrichment_prompt_master_v1.txt",
+    "semantic_enrich_prompt_version":"legacy_context_variations_master.txt",
+    "question_type":"MCQ",
+    "question_source":"legacy",
+    "question":"Who is NOT in Slytherin:",
+    "answer":"lavender brown",
+    "answer_variations":[
+      "lavender brown",
+      "lavender"
+    ],
+    "hint_1":"This student is a well-known member of Harry Potter's year.",
+    "hint_2":"Consider which house is most associated with bravery and loyalty.",
+    "hint_3":"This person was a good friend of Parvati Patil and had a notable romantic relationship in later years at Hogwarts.",
+    "explanation":"Lavender Brown was sorted into Gryffindor House, known for bravery, daring, nerve, and chivalry. Pansy Parkinson, Blaise Zabini, and Gregory Goyle were all prominent members of Slytherin House, typically associated with ambition, cunning, leadership, and resourcefulness.",
+    "semantic_entity_refs":[
+      "Lavender Brown",
+      "Gryffindor student"
+    ],
+    "semantic_lore_concepts":[
+      "Hogwarts House affiliation",
+      "Student sorting outcome",
+      "Non-Slytherin character"
+    ],
+    "original_question_id":749,
+    "mcq_options":[
+      "lavender brown",
+      "pansy parkinson",
+      "blaise zabini",
+      "gregory goyle"
+    ]
+  },
+  {
+    "generation_model":"gemini-2.5-flash",
+    "generation_prompt_version":null,
+    "lex_enrich_prompt_version":"legacy_enrichment_prompt_master_v1.txt",
+    "semantic_enrich_prompt_version":"legacy_context_variations_master.txt",
+    "question_type":"MCQ",
+    "question_source":"legacy",
+    "question":"Which of the following spells is not used in Transfiguration Class:",
+    "answer":"confundo",
+    "answer_variations":[
+      "confundo"
+    ],
+    "hint_1":"Transfiguration involves changing things.",
+    "hint_2":"This spell is used to confuse or bewilder a target.",
+    "hint_3":"Its purpose is psychological manipulation, not physical alteration.",
+    "explanation":"`Confundo` is the Confundus Charm, used to bewilder or confuse a target, affecting their mind rather than their physical form. `Vera Verto` (transforming an animal into a water goblet), `Evanesco` (vanishing objects), and `Avis` (conjuring birds) are all examples of spells directly related to altering or creating physical objects, which are core elements of Transfiguration.",
+    "semantic_entity_refs":[
+      "Confundo",
+      "Confundus Charm"
+    ],
+    "semantic_lore_concepts":[
+      "Non-Transfiguration spell",
+      "Charms Class spell",
+      "Bewitchment magic"
+    ],
+    "original_question_id":1095,
+    "mcq_options":[
+      "vera verto",
+      "evanesco",
+      "confundo",
+      "avis"
+    ]
+  },
+  {
+    "generation_model":"gemini-2.5-flash",
+    "generation_prompt_version":null,
+    "lex_enrich_prompt_version":"legacy_enrichment_prompt_master_v1.txt",
+    "semantic_enrich_prompt_version":"legacy_context_variations_master.txt",
+    "question_type":"MCQ",
+    "question_source":"legacy",
+    "question":"Which of these spells is not a cleaning spell:",
+    "answer":"confrigo",
+    "answer_variations":[
+      "confrigo"
+    ],
+    "hint_1":"Cleaning spells usually remove dirt or stains.",
+    "hint_2":"This spell is known for causing explosions or inflicting damage.",
+    "hint_3":"Its effect is destructive, rather than restorative or cleansing.",
+    "explanation":"`Confrigo` is the Blasting Curse, designed to cause explosions and inflict damage upon a target. `Scourgify` is used for scrubbing and cleaning, `Tergeo` siphons off liquids and dirt, and `Reparo` mends broken objects. Therefore, `Confrigo` is the only spell listed that does not perform a cleaning or restorative function.",
+    "semantic_entity_refs":[
+      "Confrigo",
+      "Blasting Curse"
+    ],
+    "semantic_lore_concepts":[
+      "Destructive spell",
+      "Non-cleaning charm",
+      "Battle magic"
+    ],
+    "original_question_id":1135,
+    "mcq_options":[
+      "scourgify",
+      "tergeo",
+      "confrigo",
+      "reparo"
+    ]
+  },
+  {
+    "generation_model":"gemini-2.5-flash",
+    "generation_prompt_version":null,
+    "lex_enrich_prompt_version":"legacy_enrichment_prompt_master_v1.txt",
+    "semantic_enrich_prompt_version":"legacy_context_variations_master.txt",
+    "question_type":"MCQ",
+    "question_source":"legacy",
+    "question":"In Harry Potter and the Philosopher's Stone, how many challenges or obstacles protected the Philosopher's Stone:",
+    "answer":"7",
+    "answer_variations":[
+      "7",
+      "seven"
+    ],
+    "hint_1":"Each Hogwarts professor contributed a different magical challenge.",
+    "hint_2":"Harry, Ron, and Hermione had to overcome each one to reach the Stone.",
+    "hint_3":"It's the same number as the books in the main series and a common \"lucky\" number.",
+    "explanation":"To protect the Philosopher's Stone from being stolen, various Hogwarts professors, including Dumbledore, McGonagall, Snape, Quirrell, Flitwick, Sprout, and a mystery contributor (representing the Mirror of Erised), placed a total of seven distinct magical challenges in the path leading to it. Harry, Ron, and Hermione had to navigate each of these to reach their goal.",
+    "semantic_entity_refs":[
+      "Seven challenges for the Philosopher's Stone"
+    ],
+    "semantic_lore_concepts":[
+      "Philosopher's Stone defenses",
+      "Hogwarts magical traps",
+      "Stone protection count"
+    ],
+    "original_question_id":1167,
+    "mcq_options":[
+      "3",
+      "5",
+      "7",
+      "10"
+    ]
+  },
+  {
+    "generation_model":"gemini-2.5-flash",
+    "generation_prompt_version":null,
+    "lex_enrich_prompt_version":"legacy_enrichment_prompt_master_v1.txt",
+    "semantic_enrich_prompt_version":"legacy_context_variations_master.txt",
+    "question_type":"MCQ",
+    "question_source":"legacy",
+    "question":"According to Quidditch Through the Ages, how many possible fouls are there in the game of Quidditch:",
+    "answer":"700",
+    "answer_variations":[
+      "700",
+      "seven hundred"
+    ],
+    "hint_1":"Quidditch is known for being a very complex and sometimes violent sport.",
+    "hint_2":"The official rulebook, written by Kennilworthy Whisp, details the sport's extensive history and rules.",
+    "hint_3":"This number is quite large, reflecting the many ways players could illegally interfere in a game.",
+    "explanation":"According to the authoritative text \"Quidditch Through the Ages\" by Kennilworthy Whisp, the game of Quidditch has accumulated a staggering number of potential fouls throughout its history. While many are no longer relevant, the sheer volume of 700 recorded fouls highlights the sport's long and often unruly past, and the necessity for strict regulations.",
+    "semantic_entity_refs":[
+      "Seven hundred Quidditch fouls"
+    ],
+    "semantic_lore_concepts":[
+      "Quidditch rulebook detail",
+      "Magical sports infractions",
+      "Quidditch Through the Ages information"
+    ],
+    "original_question_id":1166,
+    "mcq_options":[
+      "150",
+      "325",
+      "700",
+      "950"
+    ]
+  },
+  {
+    "generation_model":"gemini-2.5-flash",
+    "generation_prompt_version":null,
+    "lex_enrich_prompt_version":"legacy_enrichment_prompt_master_v1.txt",
+    "semantic_enrich_prompt_version":"legacy_context_variations_master.txt",
+    "question_type":"EX",
+    "question_source":"legacy",
+    "question":"At the beginning of Harry Potter and the Prisoner of Azkaban, where is Hedwig waiting for Harry after he flees the Dursleys' house?",
+    "answer":"in his room at the leaky cauldron",
+    "answer_variations":[
+      "hedwig is waiting in harry's room at the magical inn he stays at before returning to hogwarts.",
+      "hedwig is in harry's room at the leaky cauldron.",
+      "harry's room, leaky cauldron, wizarding inn, waiting"
+    ],
+    "hint_1":"Think about where Harry goes immediately after leaving his relatives' home.",
+    "hint_2":"This is a secret wizarding inn that serves as a gateway to Diagon Alley.",
+    "hint_3":"The location provides a safe haven for young wizards and is often a first stop when coming to London from the Muggle world.",
+    "explanation":"After Harry accidentally inflates Aunt Marge and flees Privet Drive, he is picked up by the Knight Bus and taken to the Leaky Cauldron. The Ministry of Magic decides not to punish him, and he spends the remainder of his summer there. Hedwig is waiting for him in his assigned room.",
+    "semantic_entity_refs":[
+      "Leaky Cauldron",
+      "Harry Potter's room"
+    ],
+    "semantic_lore_concepts":[
+      "Wizarding inn",
+      "Temporary refuge",
+      "Diagon Alley access"
+    ],
+    "original_question_id":1179,
+    "mcq_options":null
+  }
+]

@@ -1,0 +1,165 @@
+[
+  {
+    "generation_model":"gemini-2.5-flash",
+    "generation_prompt_version":null,
+    "lex_enrich_prompt_version":"legacy_enrichment_prompt_master_v1.txt",
+    "semantic_enrich_prompt_version":"legacy_context_variations_master.txt",
+    "question_type":"FR",
+    "question_source":"legacy",
+    "question":"Where are the vaults kept in Gringotts Bank?",
+    "answer":"deep underground.",
+    "answer_variations":[
+      "deep underground",
+      "underground",
+      "far underground"
+    ],
+    "hint_1":"The bank uses heavily secured tracks and carts to reach them.",
+    "hint_2":"These chambers are located far below the main banking hall.",
+    "hint_3":"The deeper the location, the higher the security and the more ancient the wizarding families associated with them.",
+    "explanation":"The vaults in Gringotts Bank are kept deep underground, accessed by a network of winding tracks and mine carts. This subterranean location provides maximum security for the treasures stored within, especially for the oldest and most valuable vaults.",
+    "semantic_entity_refs":[
+
+    ],
+    "semantic_lore_concepts":[
+      "Gringotts security",
+      "Wizarding bank vaults",
+      "Gringotts depths"
+    ],
+    "original_question_id":366,
+    "mcq_options":null
+  },
+  {
+    "generation_model":"gemini-2.5-flash",
+    "generation_prompt_version":null,
+    "lex_enrich_prompt_version":"legacy_enrichment_prompt_master_v1.txt",
+    "semantic_enrich_prompt_version":"legacy_context_variations_master.txt",
+    "question_type":"FR",
+    "question_source":"legacy",
+    "question":"Where is the entrance to St. Mungos located?",
+    "answer":"behind the seemingly abandoned department store called purge & dowse ltd., in muggle london",
+    "answer_variations":[
+      "purge & dowse ltd.",
+      "behind purge & dowse ltd.",
+      "in muggle london",
+      "purge and dowse"
+    ],
+    "hint_1":"It's cleverly disguised within a busy non-magical city.",
+    "hint_2":"The actual entrance is found by going through a particular window of a specific building.",
+    "hint_3":"This location is a cover for a place dedicated to magical injuries and illnesses.",
+    "explanation":"The entrance to St. Mungo's Hospital for Magical Maladies and Injuries is cleverly hidden in Muggle London, behind a seemingly abandoned department store called Purge & Dowse Ltd. Witches and wizards gain entry by speaking to a mannequin in a dirty window.",
+    "semantic_entity_refs":[
+
+    ],
+    "semantic_lore_concepts":[
+      "St. Mungo's entrance",
+      "Muggle London concealment",
+      "Wizarding hospital location",
+      "Purge & Dowse disguise"
+    ],
+    "original_question_id":1268,
+    "mcq_options":null
+  },
+  {
+    "generation_model":"gemini-2.5-flash",
+    "generation_prompt_version":null,
+    "lex_enrich_prompt_version":"legacy_enrichment_prompt_master_v1.txt",
+    "semantic_enrich_prompt_version":"legacy_context_variations_master.txt",
+    "question_type":"MCQ",
+    "question_source":"legacy",
+    "question":"In which of these scenarios would you use the spell Cistem Aperio:",
+    "answer":"blasting open a locked trunk",
+    "answer_variations":[
+      "blasting open",
+      "locked trunk",
+      "blasting open a locked trunk"
+    ],
+    "hint_1":"This spell is used to forcibly open something that is closed.",
+    "hint_2":"It's not a subtle unlocking charm, but rather a more forceful approach.",
+    "hint_3":"Think about a scene where a certain boy wizard uses this spell in a tight space to reveal hidden contents.",
+    "explanation":"The spell Cistem Aperio is used to blast open a locked trunk or similar container. This charm was notably used by Tom Riddle in the Chamber of Secrets to reveal Hagrid's pet Acromantula, Aragog, from a box.",
+    "semantic_entity_refs":[
+
+    ],
+    "semantic_lore_concepts":[
+      "Cistem Aperio spell",
+      "Trunk-blasting charm",
+      "Container-opening spell"
+    ],
+    "original_question_id":1149,
+    "mcq_options":[
+      "mending a broken object",
+      "summoning an object",
+      "blasting open a locked trunk",
+      "unlocking a door"
+    ]
+  },
+  {
+    "generation_model":"gemini-2.5-flash",
+    "generation_prompt_version":null,
+    "lex_enrich_prompt_version":"legacy_enrichment_prompt_master_v1.txt",
+    "semantic_enrich_prompt_version":"legacy_context_variations_master.txt",
+    "question_type":"MCQ",
+    "question_source":"legacy",
+    "question":"Which of these is not a species of dragon:",
+    "answer":"finnish flamethrower",
+    "answer_variations":[
+      "finnish flamethrower",
+      "finnish",
+      "flamethrower"
+    ],
+    "hint_1":"Consider the known dragon types mentioned throughout the series, especially during the Triwizard Tournament.",
+    "hint_2":"Some of the options are real, formidable magical creatures from different parts of the world.",
+    "hint_3":"One of these names sounds plausible but does not appear in official magical creature classifications.",
+    "explanation":"The 'Finnish Flamethrower' is not a recognized species of dragon in the wizarding world. The Hungarian Horntail, Chinese Fireball, and Swedish Short-Snout are all established and dangerous dragon breeds.",
+    "semantic_entity_refs":[
+
+    ],
+    "semantic_lore_concepts":[
+      "Non-canonical dragon",
+      "Fictional creature",
+      "Invented dragon breed"
+    ],
+    "original_question_id":1152,
+    "mcq_options":[
+      "hungarian horntail",
+      "chinese fireball",
+      "finnish flamethrower",
+      "swedish short-snout"
+    ]
+  },
+  {
+    "generation_model":"gemini-2.5-flash",
+    "generation_prompt_version":null,
+    "lex_enrich_prompt_version":"legacy_enrichment_prompt_master_v1.txt",
+    "semantic_enrich_prompt_version":"legacy_context_variations_master.txt",
+    "question_type":"MCQ",
+    "question_source":"legacy",
+    "question":"When did Lily Evans first meet Severus Snape:",
+    "answer":"as children in a park near their homes before they attended hogwarts",
+    "answer_variations":[
+      "as children",
+      "in a park",
+      "before they attended hogwarts",
+      "children in a park"
+    ],
+    "hint_1":"Their relationship began long before they received their Hogwarts letters.",
+    "hint_2":"The setting of their first meeting was a mundane, non-magical place.",
+    "hint_3":"This early encounter established a significant, complex bond that would shape both their lives.",
+    "explanation":"Lily Evans and Severus Snape first met as children in a park near their homes, before either of them had attended Hogwarts. Snape, living near Lily, observed her emerging magical abilities and introduced himself, beginning their complicated friendship.",
+    "semantic_entity_refs":[
+
+    ],
+    "semantic_lore_concepts":[
+      "Pre-Hogwarts meeting",
+      "Childhood friendship start",
+      "Spinner's End connection"
+    ],
+    "original_question_id":1361,
+    "mcq_options":[
+      "on the hogwarts express during their first journey to school",
+      "as children in a park near their homes before they attended hogwarts",
+      "during the sorting ceremony of their first year",
+      "in their first potions class taught by professor slughorn"
+    ]
+  }
+]

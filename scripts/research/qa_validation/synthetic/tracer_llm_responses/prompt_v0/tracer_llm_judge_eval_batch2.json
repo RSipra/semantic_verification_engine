@@ -1,0 +1,197 @@
+[
+  {
+    "temp_qid": "SYN_006",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote matches the source text exactly.",
+      "step_2_answer_grounding": "The answer states Voldemort 'mistakenly believed' Snape was the master. The fact that this belief is mistaken is not revealed in Chapter 32, but in Chapter 33. This constitutes chapter bleed.",
+      "step_3_question_logic": "The question is logically framed based on the events in the shack."
+    },
+    "flags": {
+      "source_quote_failed": false,
+      "answer_grounding_failed": true,
+      "question_logic_failed": false
+    },
+    "is_hallucinated": true,
+    "justification": "The answer relies on knowledge from Chapter 33 to declare Voldemort's belief 'mistaken', violating the strict chapter constraint."
+  },
+  {
+    "temp_qid": "SYN_007",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote matches the source text exactly.",
+      "step_2_answer_grounding": "The answer claims Dumbledore believed Snape's soul was 'already complex'. The text only says Dumbledore told Snape 'You alone know whether it will harm your soul'. This extrapolates Dumbledore's explicitly stated rationale.",
+      "step_3_question_logic": "The question is clear and logically follows from the text."
+    },
+    "flags": {
+      "source_quote_failed": false,
+      "answer_grounding_failed": true,
+      "question_logic_failed": false
+    },
+    "is_hallucinated": true,
+    "justification": "The answer hallucinates Dumbledore's belief about Snape's soul being 'already complex', which is not supported by the provided text."
+  },
+  {
+    "temp_qid": "SYN_008",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote improperly merges non-adjacent sentences from Hermione's dialogue, skipping Harry's internal monologue in between.",
+      "step_2_answer_grounding": "The answer claims Nagini was the 'last remaining horcrux', but the text only refers to her as 'another Horcrux'. This relies on outside knowledge.",
+      "step_3_question_logic": "The question accurately reflects the conflict between Hermione and Ron in the text."
+    },
+    "flags": {
+      "source_quote_failed": true,
+      "answer_grounding_failed": true,
+      "question_logic_failed": false
+    },
+    "is_hallucinated": true,
+    "justification": "The record fails because it merges non-adjacent sentences in the quote and uses outside knowledge to identify Nagini as the 'last remaining horcrux'."
+  },
+  {
+    "temp_qid": "SYN_009",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote exactly matches the source text.",
+      "step_2_answer_grounding": "The answer is fully deducible from the quote and the immediate context.",
+      "step_3_question_logic": "The question is unambiguous and does not leak the answer."
+    },
+    "flags": {
+      "source_quote_failed": false,
+      "answer_grounding_failed": false,
+      "question_logic_failed": false
+    },
+    "is_hallucinated": false,
+    "justification": "The record passes all strict faithfulness criteria."
+  },
+  {
+    "temp_qid": "SYN_010",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote is an exact match from the source text.",
+      "step_2_answer_grounding": "The answer is fully supported by the text, summarizing Voldemort's belief about Harry's flaw.",
+      "step_3_question_logic": "The question logically asks for the reasoning explicitly provided in the quote."
+    },
+    "flags": {
+      "source_quote_failed": false,
+      "answer_grounding_failed": false,
+      "question_logic_failed": false
+    },
+    "is_hallucinated": false,
+    "justification": "The record passes all strict faithfulness criteria."
+  },
+  {
+    "temp_qid": "SYN_022",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote uses an ellipsis to merge non-adjacent sentences, skipping dialogue between Voldemort and Lucius.",
+      "step_2_answer_grounding": "The answer 'lucius malfoy' is correct based on the text, but the quote itself is flawed.",
+      "step_3_question_logic": "The question is direct and appropriate."
+    },
+    "flags": {
+      "source_quote_failed": true,
+      "answer_grounding_failed": false,
+      "question_logic_failed": false
+    },
+    "is_hallucinated": true,
+    "justification": "The quote merges non-adjacent sentences, which is an automatic failure."
+  },
+  {
+    "temp_qid": "SYN_023",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote correctly concatenates two adjacent sentences, separated only by a paragraph break.",
+      "step_2_answer_grounding": "The answer 'professor trelawney' matches the text accurately.",
+      "step_3_question_logic": "The question asks about an event 'in the Great Hall', but the text explicitly locates this event in the entrance hall/marble staircase area. The premise is a hallucination."
+    },
+    "flags": {
+      "source_quote_failed": false,
+      "answer_grounding_failed": false,
+      "question_logic_failed": true
+    },
+    "is_hallucinated": true,
+    "justification": "The question hallucinates the location of the event, contradicting the text which sets the scene in the entrance hall, not the Great Hall."
+  },
+  {
+    "temp_qid": "SYN_025",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote matches the source text exactly.",
+      "step_2_answer_grounding": "The answer 'need and valor' is perfectly extracted from the quote.",
+      "step_3_question_logic": "The question is clear and relies entirely on the provided text."
+    },
+    "flags": {
+      "source_quote_failed": false,
+      "answer_grounding_failed": false,
+      "question_logic_failed": false
+    },
+    "is_hallucinated": false,
+    "justification": "The record passes all strict faithfulness criteria."
+  },
+  {
+    "temp_qid": "SYN_039",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote perfectly matches the source text.",
+      "step_2_answer_grounding": "The answer is strictly derived from the quote.",
+      "step_3_question_logic": "The question is logically sound and directly points to the quote."
+    },
+    "flags": {
+      "source_quote_failed": false,
+      "answer_grounding_failed": false,
+      "question_logic_failed": false
+    },
+    "is_hallucinated": false,
+    "justification": "The record passes all strict faithfulness criteria."
+  },
+  {
+    "temp_qid": "SYN_040",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote exactly matches the source text.",
+      "step_2_answer_grounding": "The answer 'a silver doe' is perfectly grounded in the quote.",
+      "step_3_question_logic": "The question is well-formed and relies exclusively on the text."
+    },
+    "flags": {
+      "source_quote_failed": false,
+      "answer_grounding_failed": false,
+      "question_logic_failed": false
+    },
+    "is_hallucinated": false,
+    "justification": "The record passes all strict faithfulness criteria."
+  },
+  {
+    "temp_qid": "SYN_041",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote extracts dialogue directly from the text without improperly merging non-adjacent sentences.",
+      "step_2_answer_grounding": "The answer states Dumbledore asked Snape to 'perform the killing curse on him'. The text only says 'You must kill me.' Naming the specific curse requires outside knowledge.",
+      "step_3_question_logic": "The question is validly structured."
+    },
+    "flags": {
+      "source_quote_failed": false,
+      "answer_grounding_failed": true,
+      "question_logic_failed": false
+    },
+    "is_hallucinated": true,
+    "justification": "The answer relies on outside knowledge by specifying the 'killing curse', which is never mentioned in the provided text concerning Dumbledore's death."
+  },
+  {
+    "temp_qid": "SYN_042",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote is an exact match.",
+      "step_2_answer_grounding": "The answer accurately reflects the quote without bringing in outside knowledge.",
+      "step_3_question_logic": "The question logically asks for the central secret revealed in the quote."
+    },
+    "flags": {
+      "source_quote_failed": false,
+      "answer_grounding_failed": false,
+      "question_logic_failed": false
+    },
+    "is_hallucinated": false,
+    "justification": "The record passes all strict faithfulness criteria."
+  },
+  {
+    "temp_qid": "SYN_043",
+    "evaluation_trace": {
+      "step_1_quote_match": "The quote matches the source text exactly.",
+      "step_2_answer_grounding": "The answer states it was their 'first encounter' and 'near their homes', neither of which is explicitly stated in the immediate text or the quote. This requires synthesizing outside knowledge or distant passages.",
+      "step_3_question_logic": "The question assumes this was their 'first encounter', which is not confirmed by the text."
+    },
+    "flags": {
+      "source_quote_failed": false,
+      "answer_grounding_failed": true,
+      "question_logic_failed": true
+    },
+    "is_hallucinated": true,
+    "justification": "The answer and question introduce ungrounded details like 'first encounter' and 'near their homes' not found in the immediate context."
+  }
+]

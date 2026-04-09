@@ -1,0 +1,301 @@
+[
+  {
+    "generation_model":"gemini-2.5-flash",
+    "generation_prompt_version":null,
+    "lex_enrich_prompt_version":"legacy_enrichment_prompt_master_v1.txt",
+    "semantic_enrich_prompt_version":"legacy_context_variations_master.txt",
+    "question_type":"FR",
+    "question_source":"legacy",
+    "question":"The Diricawl is actually thought to be which extinct Muggle bird?",
+    "answer":"the dodo.",
+    "answer_variations":[
+      "the dodo",
+      "dodo"
+    ],
+    "hint_1":"This non-magical bird is famously flightless and known for its tragic disappearance.",
+    "hint_2":"It originates from the island of Mauritius and is often used as an example of species extinction.",
+    "hint_3":"It makes a notable appearance in a classic tale about a girl falling into a fantastical rabbit hole.",
+    "explanation":"In the wizarding world, the Diricawl is a magical bird capable of vanishing and reappearing to escape danger. Muggles, however, mistakenly believed these birds to be extinct, referring to them as Dodos, unaware of their magical ability to simply disappear from view.",
+    "semantic_entity_refs":[
+      "Dodo"
+    ],
+    "semantic_lore_concepts":[
+      "Muggle extinct bird equivalent",
+      "Diricawl's true identity",
+      "Concealment of magical creatures"
+    ],
+    "original_question_id":394,
+    "mcq_options":null
+  },
+  {
+    "generation_model":"gemini-2.5-flash",
+    "generation_prompt_version":null,
+    "lex_enrich_prompt_version":"legacy_enrichment_prompt_master_v1.txt",
+    "semantic_enrich_prompt_version":"legacy_context_variations_master.txt",
+    "question_type":"FR",
+    "question_source":"legacy",
+    "question":"The Deflating Drought is an antidote to which potion?",
+    "answer":"swelling solution",
+    "answer_variations":[
+      "swelling solution",
+      "the swelling solution"
+    ],
+    "hint_1":"This potion causes objects or body parts to grow abnormally large.",
+    "hint_2":"It often results in comedic or troublesome inflation when used, sometimes as a prank.",
+    "hint_3":"If someone's tongue or nose has suddenly ballooned in size, this is likely the potion responsible.",
+    "explanation":"The Deflating Draught serves as a direct antidote to the Swelling Solution. The Swelling Solution is a potion that causes rapid and often dramatic enlargement, making the Deflating Draught essential for reversing its effects.",
+    "semantic_entity_refs":[
+      "Swelling Solution"
+    ],
+    "semantic_lore_concepts":[
+      "Puffing potion",
+      "Deflating Draught target"
+    ],
+    "original_question_id":108,
+    "mcq_options":null
+  },
+  {
+    "generation_model":"gemini-2.5-flash",
+    "generation_prompt_version":null,
+    "lex_enrich_prompt_version":"legacy_enrichment_prompt_master_v1.txt",
+    "semantic_enrich_prompt_version":"legacy_context_variations_master.txt",
+    "question_type":"FR",
+    "question_source":"legacy",
+    "question":"Which Alchemist was active during the Medieval age?",
+    "answer":"nicholas flamel",
+    "answer_variations":[
+      "nicholas flamel",
+      "flamel",
+      "nicolas flamel"
+    ],
+    "hint_1":"This individual is famously associated with the creation of the Philosopher's Stone.",
+    "hint_2":"He was a very old and trusted friend of Albus Dumbledore.",
+    "hint_3":"His groundbreaking work in alchemy granted him an extraordinarily long lifespan, making him over six hundred years old.",
+    "explanation":"Nicholas Flamel was a renowned alchemist active during the Medieval Age, specifically known for being the only known creator of the Philosopher's Stone. This legendary artifact granted him and his wife, Perenelle, immortality through the Elixir of Life.",
+    "semantic_entity_refs":[
+      "Nicholas Flamel",
+      "Flamel"
+    ],
+    "semantic_lore_concepts":[
+      "Alchemist",
+      "Philosopher's Stone co-creator",
+      "Immortal wizard"
+    ],
+    "original_question_id":192,
+    "mcq_options":null
+  },
+  {
+    "generation_model":"gemini-2.5-flash",
+    "generation_prompt_version":null,
+    "lex_enrich_prompt_version":"legacy_enrichment_prompt_master_v1.txt",
+    "semantic_enrich_prompt_version":"legacy_context_variations_master.txt",
+    "question_type":"FR",
+    "question_source":"legacy",
+    "question":"Which famously eccentric historical wizard, whose Chocolate Frog card features him trying to communicate with trolls using Morse code?",
+    "answer":"uric the oddball",
+    "answer_variations":[
+      "uric the oddball",
+      "uric"
+    ],
+    "hint_1":"His well-known moniker perfectly describes his peculiar and unpredictable nature.",
+    "hint_2":"He was known for a variety of bizarre magical experiments and often strange behavior.",
+    "hint_3":"Among his many eccentricities, he once attempted to declare a full month consisting entirely of Wednesdays.",
+    "explanation":"Uric the Oddball was a famously eccentric historical wizard whose peculiar antics earned him his distinctive name. His Chocolate Frog card indeed features one of his more unusual experiments, attempting to communicate with trolls through the unconventional method of Morse code.",
+    "semantic_entity_refs":[
+      "Uric the Oddball",
+      "Uric"
+    ],
+    "semantic_lore_concepts":[
+      "Eccentric historical wizard",
+      "Chocolate Frog Card personality",
+      "Troll communicator"
+    ],
+    "original_question_id":1330,
+    "mcq_options":null
+  },
+  {
+    "generation_model":"gemini-2.5-flash",
+    "generation_prompt_version":null,
+    "lex_enrich_prompt_version":"legacy_enrichment_prompt_master_v1.txt",
+    "semantic_enrich_prompt_version":"legacy_context_variations_master.txt",
+    "question_type":"FR",
+    "question_source":"legacy",
+    "question":"Who are the members of the 'Golden Trio'?",
+    "answer":"harry potter, ron weasley, hermione granger",
+    "answer_variations":[
+      "harry potter, ron weasley, hermione granger",
+      "harry, ron, and hermione",
+      "potter, weasley, granger"
+    ],
+    "hint_1":"These three individuals are the central protagonists of the entire book series.",
+    "hint_2":"They are inseparable best friends who form the core of the fight against dark magic.",
+    "hint_3":"Think of the three Gryffindor students who always stand together through every adventure and challenge at Hogwarts.",
+    "explanation":"The 'Golden Trio' refers to the three main protagonists of the Harry Potter series: Harry Potter, Ron Weasley, and Hermione Granger. Their strong friendship, courage, and combined skills were central to defeating the Dark Lord and saving the wizarding world.",
+    "semantic_entity_refs":[
+      "Harry Potter",
+      "Ron Weasley",
+      "Hermione Granger",
+      "Golden Trio"
+    ],
+    "semantic_lore_concepts":[
+      "Gryffindor heroes",
+      "Main protagonists",
+      "Hogwarts student friends"
+    ],
+    "original_question_id":175,
+    "mcq_options":null
+  },
+  {
+    "generation_model":"gemini-2.5-flash",
+    "generation_prompt_version":null,
+    "lex_enrich_prompt_version":"legacy_enrichment_prompt_master_v1.txt",
+    "semantic_enrich_prompt_version":"legacy_context_variations_master.txt",
+    "question_type":"FR",
+    "question_source":"legacy",
+    "question":"Who does Harry live with before going to Hogwarts?",
+    "answer":"his aunt and uncle, petunia and vernon dursley, and cousin dudley.",
+    "answer_variations":[
+      "the dursleys",
+      "petunia, vernon, and dudley dursley",
+      "aunt petunia, uncle vernon, and dudley",
+      "his aunt and uncle and cousin"
+    ],
+    "hint_1":"They are his only living relatives on his mother's side of the family.",
+    "hint_2":"They reside at number four, Privet Drive, a very ordinary Muggle household.",
+    "hint_3":"This family famously despises magic and treated Harry rather poorly during his upbringing.",
+    "explanation":"Before attending Hogwarts, Harry Potter lived with his only remaining relatives, the Dursley family. This included his aunt Petunia, his uncle Vernon, and his cousin Dudley, who all resented Harry and anything connected to the magical world.",
+    "semantic_entity_refs":[
+      "Petunia Dursley",
+      "Vernon Dursley",
+      "Dudley Dursley"
+    ],
+    "semantic_lore_concepts":[
+      "Harry's Muggle relatives",
+      "Blood protection guardians",
+      "Abusive caregivers"
+    ],
+    "original_question_id":77,
+    "mcq_options":null
+  },
+  {
+    "generation_model":"gemini-2.5-flash",
+    "generation_prompt_version":null,
+    "lex_enrich_prompt_version":"legacy_enrichment_prompt_master_v1.txt",
+    "semantic_enrich_prompt_version":"legacy_context_variations_master.txt",
+    "question_type":"FR",
+    "question_source":"legacy",
+    "question":"Who destroyed the Horcrux in Helga Hufflepuff's Cup?",
+    "answer":"hermione granger",
+    "answer_variations":[
+      "hermione granger",
+      "hermione",
+      "miss granger"
+    ],
+    "hint_1":"This character is known for her intelligence and magical prowess.",
+    "hint_2":"The destruction happened during the Battle of Hogwarts, in the Chamber of Secrets.",
+    "hint_3":"She used a specific fanged object from a defeated magical creature to destroy this dark item.",
+    "explanation":"Hermione Granger used a basilisk fang to destroy the Horcrux within Helga Hufflepuff's Cup. She did this in the Chamber of Secrets during the Battle of Hogwarts, demonstrating her bravery and strategic thinking.",
+    "semantic_entity_refs":[
+      "Hermione Granger",
+      "Hermione Jean Granger",
+      "Brightest Witch of Her Age"
+    ],
+    "semantic_lore_concepts":[
+      "Basilisk venom",
+      "Horcrux destruction",
+      "Chamber of Secrets fang"
+    ],
+    "original_question_id":18,
+    "mcq_options":null
+  },
+  {
+    "generation_model":"gemini-2.5-flash",
+    "generation_prompt_version":null,
+    "lex_enrich_prompt_version":"legacy_enrichment_prompt_master_v1.txt",
+    "semantic_enrich_prompt_version":"legacy_context_variations_master.txt",
+    "question_type":"FR",
+    "question_source":"legacy",
+    "question":"How old was dumbledore when he died?",
+    "answer":"115 years old",
+    "answer_variations":[
+      "115",
+      "115 years",
+      "one hundred fifteen",
+      "one hundred fifteen years old"
+    ],
+    "hint_1":"He was a very old and powerful wizard.",
+    "hint_2":"His death occurred in his final year as Headmaster of the school.",
+    "hint_3":"He lived through many significant events in wizarding history, accumulating vast knowledge and experience over more than a century.",
+    "explanation":"Albus Dumbledore was born in 1881 and died in 1997, making him 115 years old at the time of his death. His long life was filled with significant magical achievements and leadership roles within the wizarding community.",
+    "semantic_entity_refs":[
+
+    ],
+    "semantic_lore_concepts":[
+      "Planned death",
+      "Elder Wand transfer",
+      "Astronomy Tower incident"
+    ],
+    "original_question_id":1374,
+    "mcq_options":null
+  },
+  {
+    "generation_model":"gemini-2.5-flash",
+    "generation_prompt_version":null,
+    "lex_enrich_prompt_version":"legacy_enrichment_prompt_master_v1.txt",
+    "semantic_enrich_prompt_version":"legacy_context_variations_master.txt",
+    "question_type":"FR",
+    "question_source":"legacy",
+    "question":"Voldemort stole Helga Hufflepuff's cup from an old woman named Hepzibah Smith. What was the name of her house-elf?",
+    "answer":"hokey",
+    "answer_variations":[
+      "hokey"
+    ],
+    "hint_1":"This house-elf inadvertently played a role in a dark wizard's scheme.",
+    "hint_2":"Her memories were crucial in understanding how the dark lord acquired a specific item.",
+    "hint_3":"This loyal servant of Hepzibah Smith was very old and often underestimated by others.",
+    "explanation":"Hepzibah Smith's house-elf was named Hokey. She was a key witness, albeit an unwitting one, to Tom Riddle's theft of Helga Hufflepuff's Cup and Salazar Slytherin's locket, which he later turned into Horcruxes.",
+    "semantic_entity_refs":[
+      "Hokey",
+      "Hepzibah Smith's house-elf"
+    ],
+    "semantic_lore_concepts":[
+      "Memory modification",
+      "Horcrux theft accomplice",
+      "House-elf service"
+    ],
+    "original_question_id":1033,
+    "mcq_options":null
+  },
+  {
+    "generation_model":"gemini-2.5-flash",
+    "generation_prompt_version":null,
+    "lex_enrich_prompt_version":"legacy_enrichment_prompt_master_v1.txt",
+    "semantic_enrich_prompt_version":"legacy_context_variations_master.txt",
+    "question_type":"FR",
+    "question_source":"legacy",
+    "question":"Name the three different types of balls used in Quidditch.",
+    "answer":"quaffle, bludger, snitch.",
+    "answer_variations":[
+      "quaffle, bludger, snitch",
+      "snitch, bludger, quaffle",
+      "bludger, snitch, quaffle"
+    ],
+    "hint_1":"One ball is used for scoring by the Chasers.",
+    "hint_2":"Another type of ball tries to knock players off their brooms.",
+    "hint_3":"The third, smallest, and most elusive ball, ends the game when caught.",
+    "explanation":"Quidditch uses three types of balls: the Quaffle, which Chasers use to score points; two Bludgers, which attempt to unseat players and must be defended against by Beaters; and the Golden Snitch, which Seeker's must catch to end the game and earn points.",
+    "semantic_entity_refs":[
+      "Quaffle",
+      "Bludger",
+      "Golden Snitch"
+    ],
+    "semantic_lore_concepts":[
+      "Quidditch equipment",
+      "Scoring object",
+      "Seeker's target",
+      "Beater's defense"
+    ],
+    "original_question_id":582,
+    "mcq_options":null
+  }
+]
