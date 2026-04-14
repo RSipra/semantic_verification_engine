@@ -6,13 +6,17 @@ TODO (Full Dev): Move methods here for SOT for all downstream embedding uses.
 - embeddings methods (generation in qa_validation and processing from NLP lab) 
 - upfront tensor conversions at runtime NLP lab
 """
+from functools import lru_cache
+from sentence_transformers import SentenceTransformer, CrossEncoder
+from core.settings import sbert_settings, nli_settings
 
-from sentence_transformers import SentenceTransformer
-from core.settings import sbert_settings
+# singleton cache internal pointers to loaded model; starts empty.
+_sbert_model_instance = None
+_nli_model_instance = None
 
-# Singleton Cache: internal pointer to loaded model; starts empty.
-_model_instance = None
-
+# ↓lru decorator intercepts the call. returns the saved object instantly in memory, 
+# preventing function body running a second time (so dont need is None check loop)
+@lru_cache(maxsize=1)  #ensure model is loaded into cache only once
 def get_sbert_model() -> SentenceTransformer:
     """
     SBERT LOADER: Ensures a single SBERT instance is shared across the 
@@ -39,13 +43,19 @@ def get_sbert_model() -> SentenceTransformer:
        during full system development to ensure the system never hangs trying to download 
        weights from Hugging Face in a restricted production environment.
     """
-    global _model_instance  # system wide global variable to hold the model instance
-    
-    if _model_instance is None:
-        # retrieve model name from settings
-        print(f"--- [SVE TRACER] Initializing Model: {sbert_settings.model_name} ---")
-        
-        _model_instance = SentenceTransformer(sbert_settings.model_name,
+    global _sbert_model_instance  # system wide global variable to hold the model instance     
+    _sbert_model_instance = SentenceTransformer(sbert_settings.model_name,
                                               device='cpu') # force CPU for compatibility with GCP Free Tier
         
-    return _model_instance
+    return _sbert_model_instance
+ 
+@lru_cache(maxsize=1) 
+def get_nli_model() -> CrossEncoder:
+    """
+    Singleton cache for the NLI Cross-Encoder.
+    Guarantees the model is only loaded into memory once per session.
+    """
+    global _nli_model_instance  # system wide global variable to hold the model instance
+      # Add device='cuda' or device='mps' here if you are using GPU/Mac Silicon
+    _nli_model_instance = CrossEncoder(nli_settings.model_name) 
+    return _nli_model_instance

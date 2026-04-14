@@ -3,6 +3,7 @@ Project: SVE (ref implementation: Harry Potter Trivia)
 PHASE 2 Tracer -> Context Refinery: NLP Lab (Answer checking logic)
 """
 ## setup / imports
+from dataclasses import dataclass, fields
 from typing import List, Tuple
 import pandas as pd
 import numpy as np
@@ -10,22 +11,119 @@ from sentence_transformers import util
 import torch
 from rapidfuzz import fuzz
 import regex as re
-from core.embeddings import get_sbert_model, sbert_settings
-from runtime import player
+from core.embeddings import get_sbert_model, sbert_settings, get_nli_model, nli_settings
 
 ## constants and thresholds
 # thresholds
-FUZZY_THRESHOLD = 85            # 85% character similarity (catches 1-2 letter typos)
+FUZZY_THRESHOLD = 0.85          # 85% (normalized) character similarity (catches 1-2 letter typos)
 SEMANTIC_THRESHOLD = 0.9        # SBERT cosine similarity
 DISTRACTOR_DELTA = 0.30         # player answer comparison against distractors vs. correct answer
-AMBIGUOUS_ANS_THRESHOLD = 0.60  # for enity_ref matches - lower threshold for sim score at which to check  
+AMBIGUOUS_ANS_FLOOR = 0.60  # for enity_ref matches - lower threshold for sim score at which to check  
 ENTITY_REF_MATCH_BOOST = 0.10   # sim score boost if player used a know alias or synoym (inject domain understanding to vanilla sbert) 
+EX_NLI_CONFIDENCE = 0.80
+EX_SBERT_FLOOR = 0.55
 
-# loaded model from singleton cache (sbert model defined centrally)
+# loaded model from singleton cache (SBERT & NLI models defined centrally in embeddings.py)
 model = get_sbert_model()
+nli_model = get_nli_model()
+
+## Structured output: Answer Evaluation Results 
+# standardizing answer evaluation metrics into data classes
+@dataclass
+class BaseEvalResults:
+    """
+    Core fields shared by every single evaluation.
+    Attributes:
+        is_correct (bool): The final boolean result of the evaluation. Defaults to False.
+        resolution_tier (str): Tracks which tier of the pipeline (e.g. 'exact', 'fuzzy', 
+            'semantic', 'failed_semantic') triggered the final decision.
+        fuzzy_score (float): The Tier 2 (RapidFuzz) string matching ratio 
+            (normalized to be between 0 and 1).    
+    """
+    is_correct: bool = False
+    resolution_tier: str = "unresolved" # track how many tiers of evaluation were needed to determine correctness
+    fuzzy_score: float = 0.0
+    
+    def __post_init__(self):
+        """
+        Automatically rounds all float fields in this class and any 
+        subclass to 4 decimal places. (AI generated)
+        """
+        PRECISION = 4  
+        
+        for f in fields(self):
+            value = getattr(self, f.name)
+            if isinstance(value, float):
+                setattr(self, f.name, round(value, PRECISION))
+
+##  MCQ 
+
+@dataclass
+class MCQEvalResults(BaseEvalResults):
+    """
+    evaluation payload for for Multiple Choice Question evaluations.
+
+    Attributes:
+        sim_correct_ans (float): The highest cosine similarity score against 
+            the gold answer or its answer_variations.
+        sim_distractor (float): The highest cosine similarity score against 
+            any distractor option.
+        margin (float): The mathematical difference between the correct similarity 
+            and the distractor similarity.
+        matched_variation (bool): True if the player matched a shorthand/variation 
+            better than the primary gold answer.
+    """
+    sim_correct_ans : float = 0.0  # track semantic similarity score with gold / correct answer
+    sim_distractor: float = 0.0    # track semantic similarity score with closest distractor
+    margin: float = 0.0  # diff between player-gold similarity and player-distractor similarity for semantic tier,
+    matched_variation: bool = False  # whether the player answer matched a variation (shorthand) rather than the main gold answer (telemetry placeholder)
+
+## FR
+@dataclass
+class FREvalResults(BaseEvalResults):
+    """
+    evaluation payload for Factual Recall evaluations.
+    
+    Stores the SBERT similarity scores and tracking flags to monitor 
+    how closely players are matching the expected entities and variations.
+
+    Attributes:
+        base_sim_score (float): The raw cosine similarity score before any modifiers.
+        matched_variation (bool): True if the player matched a variation better 
+            than the primary gold answer.
+        matched_entity_ref (str | None): The specific alias or synonym from the 
+            semantic_entity_refs column that triggered the boost, if any.
+        boost_applied (float): The value of any domain-specific boost applied 
+            (e.g. matching a known alias/synonym from the semantic_entity_refs column)
+        final_boosted_score (float): The final calculated score (base_sim_score + boost_applied)
+    """
+    base_sim_score: float = 0.0      # vs. ans and ans variations
+    matched_variation: bool = False  # flag if player answer matched variation instead of main answer
+    matched_entity_ref: str | None = None     # alias / synonym matched from semantic_entity_refs col
+    boost_applied: float = 0.0       # entitry ref boost for ambiguous similarity scores
+    final_boosted_score: float = 0.0 # base_sim_score + boost_applied
+
+## EX
+@dataclass
+class EXEvalResults(BaseEvalResults):
+    """
+    evaluation payload for Explanation (long narrative) evaluations.
+    Stores primary SBERT and ambiguous NLI results.
+
+    Attributes:
+        primary_similarity_score (float): The highest cosine similarity achieved against the 
+            narrative evaluators (Gold Answer + Variations).
+        matched_variation (bool): returns True if the player answer matched most closely to
+            a variation (instead of the main `answer`)
+        nli_label: label assigned by NLI model (entailment, contradiction, or neutral)
+        nli_confidence: numerical certainty score by NLI model (0 to 1)
+    """
+    primary_similarity_score: float = 0.0
+    matched_ans_variation: bool = False
+    nli_label: str = ""
+    nli_confidence: float = 0.0       
 
 ## 1- dataset preprocessing
-
 ## 1.1: Add tensors for embedding columns
 
 # helper to convert list of arrays into a single 2D tensor,
@@ -83,28 +181,20 @@ def prepare_runtime_tensors(dataframe: pd.DataFrame,
 ## 2- ANSWER LOGIC HELPERS
 
 ### --- TEXT ANSWERS ---
-
 ### common helpers
 
 # FOR MCQ & FR Only: quick direct answer check.    
-def check_exact_match(player_answer: str, correct_answer: str) -> dict | None:
+def _is_exact_match(player_answer: str, correct_answer: str) -> bool:
     """ TIER 1: Exact match of player answer to Gold dataset correct answer for FR, MCQ"""
-    if player_answer == correct_answer: 
-        return {"is_correct": True, "resolution_tier": "exact", "fuzzy_score": 100}
-    return None    
+    return player_answer == correct_answer   
 
 # FOR MCQ & FR Only: quick fuzzy answer check. 
-def check_fuzzy_match(player_answer: str, correct_answer: str, fuzzy_threshold: int) -> dict:
+def _is_fuzzy_match(player_answer: str, correct_answer: str) -> float:
     """TIER 2: Fuzzy match of player answer. Always returns the score for telemetry."""
-    fuzzy_score = fuzz.ratio(player_answer, correct_answer)
-    # if pass:
-    if fuzzy_score >= fuzzy_threshold:
-        return {"is_correct": True, "resolution_tier": "fuzzy", "fuzzy_score": fuzzy_score}
-    # If fails, return status / score
-    return {"is_correct": False, "fuzzy_score": fuzzy_score}
+    return fuzz.ratio(player_answer, correct_answer)/100    # normalized to return vals between 0 to 1.
 
 # central helper for all question types for encoding player answers for semantic checks
-def encode_player_answer(player_answer: str) -> torch.Tensor:
+def _encode_player_answer(player_answer: str) -> torch.Tensor:
     """
     Centralized SBERT encoder enforcing SVE system invariants.
     
@@ -129,7 +219,7 @@ def encode_player_answer(player_answer: str) -> torch.Tensor:
     return tensor.to(active_dtype) # standardized dtype
 
 # FOR MCQ, FR types only: check for horizontal variations (synonyms, aliases) w. matrix comparison of answer variations
-def check_semantic_variations(player_answer_tensor: torch.Tensor,
+def _check_semantic_variations(player_answer_tensor: torch.Tensor,
                                correct_ans_tensor: torch.Tensor,
                                correct_answer_variation_tensor_matrix: torch.Tensor| None = None
                                ) -> Tuple[float, bool]:
@@ -161,17 +251,15 @@ def check_semantic_variations(player_answer_tensor: torch.Tensor,
     return (correct_ans_score, matched_variation)
 
 ### 2.1 MCQ (multiple chocice)
-
 # MCQ with a 'text' answer type (can be evaluated with fuzzy matching and semantic similarity)
-
 def check_mcq_answer(player_answer:str, 
                      gold_answer: str,
                      gold_ans_tensor: torch.Tensor,
                      answer_variation_tensor_matrix: torch.Tensor,
                      distractor_tensor_matrix: torch.Tensor,
-                     fuzzy_threshold: int = FUZZY_THRESHOLD,
+                     fuzzy_threshold: float = FUZZY_THRESHOLD,
                      semantic_threshold: float = SEMANTIC_THRESHOLD,
-                     distractor_delta: float = DISTRACTOR_DELTA) -> dict:
+                     distractor_delta: float = DISTRACTOR_DELTA) -> MCQEvalResults:
     """
     Evaluates a player's multiple-choice answer using a 3-Tier logic.
     
@@ -208,51 +296,39 @@ def check_mcq_answer(player_answer:str,
             Defaults to DISTRACTOR_DELTA (e.g., 0.15).
 
     Returns:
-        dict: A metrics payload containing the verification results:
-            - 'is_correct' (bool): Final evaluation result.
-            - 'tiers_required' (int): Which tier (1, 2, or 3) resolved the logic.
-            - 'fuzzy_score' (int): The RapidFuzz ratio (0-100).
-            - 'sim_correct_ans' (float): Best SBERT score against Gold or Variations.
-            - 'sim_distractor' (float): Best SBERT score against any Distractor.
-            - 'margin' (float): (sim_correct_ans - sim_distractor).
+        MCQEvalResults: A strictly typed payload containing the verification results 
+            and nested telemetry.
     """
     # confirm preprocessing in place
     assert player_answer == player_answer.lower(), "CRITICAL: player_answer must be lowercased before reaching the MCQ checker." 
-
     # normalization of player ans is handled upstream of question_type speciifc helper
-    metrics = {
-        "is_correct": False,  # default to incorrect until proven otherwise
-        "resolution_tier": "unresolved", # track how many tiers of evaluation were needed to determine correctness
-        "fuzzy_score": 0, # track fuzzy score for debugging,
-        "telemetry":{
-            "sim_correct_ans": 0.0, # track semantic similarity score with gold / correct answer
-            "sim_distractor": 0.0, # track semantic similarity score with closest distractor
-            "margin": 0.0, # diff between player-gold similarity and player-distractor similarity for semantic tier,
-            "matched_variation": False # whether the player answer matched a variation (shorthand) rather than the main gold answer (telemetry placeholder)
-        }
-    }
     
-    # TIER 1: fast path (exact match) --> use case: perfect answers
-    t1_result = check_exact_match(player_answer, gold_answer)
-    if t1_result:
-        metrics.update(t1_result)
-        return metrics
+    # initialize mcq results instance
+    result = MCQEvalResults()
+    
+    # TIER 1: fast path (exact match) --> use case: perfect answers 
+    if _is_exact_match(player_answer, gold_answer):
+        # update and return results 
+        result.is_correct = True
+        result.resolution_tier = 'exact'
+        result.fuzzy_score = 100
+        return result
     
     # TIER 2: intermediate path (fuzzy match -> use case: typos, spelling mistakes in short ans (FR, MCQ)
-    t2_result = check_fuzzy_match(player_answer, gold_answer, fuzzy_threshold)
-    metrics["fuzzy_score"] = t2_result["fuzzy_score"] # Log the score regardless of pass/fail
-    if t2_result["is_correct"]:
-        metrics.update(t2_result)
-        return metrics
-    
+    result.fuzzy_score = round(_is_fuzzy_match(player_answer, gold_answer),4)
+    if result.fuzzy_score >= fuzzy_threshold:
+        result.is_correct = True
+        result.resolution_tier = "fuzzy"
+        return result
+
     # TIER 3: semantic logic (resolution path)
     # 1. encode player answer using helper
-    player_tensor = encode_player_answer(player_answer)
+    player_tensor = _encode_player_answer(player_answer)
     
     # 2. calculate similarity scores (against main gold correct answer, answer variations and find most similar) with helper
-    correct_ans_score, matched_variation = check_semantic_variations(player_tensor,
-                                                                     gold_ans_tensor,
-                                                                     answer_variation_tensor_matrix)
+    correct_ans_score, matched_variation = _check_semantic_variations(player_tensor,
+                                                                      gold_ans_tensor,
+                                                                      answer_variation_tensor_matrix)
     
     # 2.2: difference to distractors
     # For the matrix [N, 384], cos_sim returns [1, N]. [0] gets the vector of scores.
@@ -261,32 +337,31 @@ def check_mcq_answer(player_answer:str,
     
     margin = correct_ans_score - max_dist_score
     
-    # 3. update metrics
-    metrics['telemetry'].update({
-        "sim_correct_ans": round(correct_ans_score, 4),
-        "sim_distractor": round(max_dist_score, 4),
-        "margin": round(margin, 4),
-        "matched_variation": matched_variation, # True if a variation (likely shorthand used)
-    })
+    # 3. update results telemetry metrics
+    result.sim_correct_ans = round(correct_ans_score, 4)
+    result.sim_distractor = round(max_dist_score, 4)
+    result.margin =  round(margin, 4)
+    result.matched_variation =  matched_variation # True if a variation (likely shorthand used)
     
     if correct_ans_score >= semantic_threshold and margin >= distractor_delta:
-        metrics.update({"is_correct": True, "resolution_tier": "semantic"})
+        result.is_correct= True
+        result.resolution_tier=  "passed_semantic"
     else:
-        metrics.update({"is_correct": False, "resolution_tier": "failed_semantic"}) 
+        result.is_correct = False
+        result.resolution_tier = "failed_semantic"
     
-    return metrics
+    return result
 
 ### 2.2 FR (Factual Recall)
-
 def check_fr_answer(player_answer: str, 
                     gold_answer: str,
                     entity_refs: List[str],
                     gold_ans_tensor: torch.Tensor,
                     answer_variation_tensor_matrix: torch.Tensor, 
-                    fuzzy_threshold: int = FUZZY_THRESHOLD,
+                    fuzzy_threshold: float = FUZZY_THRESHOLD,
                     semantic_threshold: float = SEMANTIC_THRESHOLD,
-                    ambiguous_ans_threshold: float = AMBIGUOUS_ANS_THRESHOLD,
-                    entity_boost_modifier: float = ENTITY_REF_MATCH_BOOST):
+                    ambiguous_cutoff: float = AMBIGUOUS_ANS_FLOOR,
+                    entity_boost_modifier: float = ENTITY_REF_MATCH_BOOST) -> FREvalResults:
     """
     Evaluates a player's Factual Recall (open-text) answer using a 3-Tier logic.
     
@@ -329,69 +404,49 @@ def check_fr_answer(player_answer: str,
             ENTITY_REF_MATCH_BOOST (e.g. 0.10).
 
     Returns:
-        dict: A metrics payload containing the verification results:
-            - 'is_correct' (bool): Final evaluation result.
-            - 'resolution_tier' (str): Which specific path resolved the logic 
-              (e.g., 'semantic_pass', 'semantic_boosted', 'failed_semantic_threshold').
-            - 'fuzzy_score' (int): The RapidFuzz ratio (0-100).
-            - 'telemetry' (dict): Granular data for analytics and MLOps:
-                - 'base_sim_score' (float): Best raw SBERT score before any boosts.
-                - 'matched_variation' (bool): True if the variation matrix yielded the highest score.
-                - 'boost_applied' (float): The exact mathematical boost added.
-                - 'matched_entity_ref' (str | None): The specific entity string that triggered the boost.
-                - 'final_boosted_score' (float): The final score evaluated against the threshold.
+        FREvalResults: A strictly typed payload containing the verification results 
+            and nested telemetry
     """
     # confirm preprocessing in place
     assert player_answer == player_answer.lower(), "CRITICAL: player_answer must be lowercased before reaching the FR checker." 
     
-    # initialze FR metrics dict
-    metrics = {
-        "is_correct": False,  # default to incorrect until proven otherwise
-        "resolution_tier": "unresolved", # track how many tiers of evaluation were needed to determine correctness
-        "fuzzy_score": 0, # track fuzzy score for debugging,
-        "telemetry":{
-            "base_sim_score": 0.0,
-            "matched_variation": False,
-            "boost_applied": 0.0, 
-            "final_boosted_score": 0.0
-            }
-    }
+    # initialze FR metrics results object
+    result = FREvalResults()
     
     # TIER 1: fast path (exact match) --> use case: perfect answers
-    t1_result = check_exact_match(player_answer, gold_answer)
-    if t1_result:
-        metrics.update(t1_result)
-        return metrics
+    if _is_exact_match(player_answer, gold_answer):
+        result.is_correct = True
+        result.resolution_tier = 'exact'
+        result.fuzzy_score = 100
+        return result
 
     # TIER 2: intermediate path (fuzzy match -> use case: typos, spelling mistakes in short ans (FR, MCQ)
-    t2_result = check_fuzzy_match(player_answer, gold_answer, fuzzy_threshold)
-    metrics["fuzzy_score"] = t2_result["fuzzy_score"] # Log the score regardless of pass/fail
-    if t2_result["is_correct"]:
-        metrics.update(t2_result)
-        return metrics
+    result.fuzzy_score = round(_is_fuzzy_match(player_answer, gold_answer),4)
+    if result.fuzzy_score >= fuzzy_threshold:
+        result.is_correct = True
+        result.resolution_tier = "fuzzy"
+        return result
 
     # TIER 3: Semantic matching (final resolution path)
-    player_tensor = encode_player_answer(player_answer)
+    player_tensor = _encode_player_answer(player_answer)
 
     # check similarity of player answer to gold answer, answer variations with helper
-    correct_ans_score, matched_variation = check_semantic_variations(player_tensor,
-                                                                     gold_ans_tensor,
-                                                                    answer_variation_tensor_matrix)
+    correct_ans_score, matched_variation = _check_semantic_variations(player_tensor,
+                                                                      gold_ans_tensor,
+                                                                      answer_variation_tensor_matrix)
     
     # preload base telemetry (applies to Paths A, B, C)
-    metrics['telemetry'].update({
-        "base_sim_score": round(correct_ans_score, 4),
-        "matched_variation": matched_variation
-    })
+    result.base_sim_score = round(correct_ans_score, 4)
+    result.matched_variation = matched_variation
     
     # Path A: player answer meets threshold immediatetly
     if correct_ans_score >= semantic_threshold:
-        metrics.update({"is_correct": True, 
-                        "resolution_tier" : 'semantic'})
-        return metrics
+        result.is_correct = True
+        result.resolution_tier = 'passed_primary_semantic'
+        return result
 
     # Path B: ambiguous range (boost score if any term matches entity_refs)
-    elif correct_ans_score < semantic_threshold and correct_ans_score >= ambiguous_ans_threshold:
+    elif correct_ans_score < semantic_threshold and correct_ans_score >= ambiguous_cutoff:
         
         # Initialize (prevent UnboundLocalError)
         matched_term = None
@@ -408,29 +463,161 @@ def check_fr_answer(player_answer: str,
                 break
             # check updated score against treshold again
         if updated_correct_ans_score >= semantic_threshold :
-            metrics.update({"is_correct": True, 
-                            "resolution_tier" : 'semantic_boosted'
-                            })
+            result.is_correct = True
+            result.resolution_tier = 'passed_semantic_boosted'
         else:
-            metrics.update({"is_correct": False, 
-                           "resolution_tier" : 'failed_semantic_boosted'})
+            result.is_correct = False
+            result.resolution_tier = 'failed_semantic_boosted'
         
-        metrics['telemetry'].update({
-                        "boost_applied": boost_applied,
-                        "matched_entity_ref" : matched_term, 
-                        "final_boosted_score": round(updated_correct_ans_score, 4)
-                        })
-        return metrics
+        # update common telemetry
+        result.boost_applied = boost_applied
+        result.matched_entity_ref = matched_term
+        result.final_boosted_score = round(updated_correct_ans_score, 4)
+        return result
     
     # Path C: wrong answer (score below the ambiguous threshold)
     else:
-        metrics.update({
-            "is_correct": False,
-            "resolution_tier": "failed_semantic"
-        })
-        return metrics
+        result.is_correct = False
+        result.resolution_tier = "failed_semantic"
+        return result
+
+### 2.3 EX (Explanatory) 
+# coverage check of player answer prior to NLI judge
+def _calculate_coverage_ratio(player_answer:str, 
+                              target_list: List[str]):
+    """
+    Calculates the percentage of target words/phrases found in the text 
+    using strict Regex word boundaries.
+    """
+    if not target_list:
+        return 1.0  # continue with analysis if no target list
+    found_count = 0
+    valid_targets = 0
+
+    for term in target_list:
+        if not term:
+            continue
+        valid_targets+=1
+        pattern = r'\b' + re.escape(term) + r'\b'
+        if re.search(pattern, player_answer):
+            found_count += 1
+
+    if valid_targets == 0:
+        return 1.0
+    return found_count / valid_targets        
+
+# nli evaluation of answer if sbert ambiguous
+# Assuming: from sentence_transformers import CrossEncoder
+# nli_model = CrossEncoder('cross-encoder/nli-deberta-v3-small')
+
+def _check_nli_entailment(premise: str, hypothesis: str, nli_model) -> tuple[bool, str, float]:
+    """
+    Evaluates logical entailment between a gold answer (premise) and player answer (hypothesis).
+    Returns: (is_entailed: bool, predicted_label: str, confidence_score: float)
+    """
+    # 1. run NLI cross-encoder
+    scores = nli_model.predict([(premise, hypothesis)])[0]
+
+    # 2. convert logits to probabilities using softmax (optional, but good for telemetry)
+    probabilities = np.exp(scores) / np.sum(np.exp(scores))
+
+    # 3. get winning id (cast to native int for dict lookup)
+    predicted_class_id = np.argmax(probabilities).item()
+    confidence = probabilities[predicted_class_id]
+
+    # 4. map id to label using our SOT nli from settings.py
+    predicted_label = nli_settings.label_mapping.get(predicted_class_id, "unknown")
     
-    def check_ex_answer():
-        """_summary_
-        """
+    # 5. determine success (only if tag is 'entailed')
+    is_entailed = (predicted_label == "entailment")
     
+    return is_entailed, predicted_label, float(confidence)
+
+# main EX evaluator   
+def check_ex_answer(player_answer: str,
+                    gold_answer: str,
+                    gold_ans_tensor: torch.Tensor,
+                    answer_variation_tensor_matrix: torch.Tensor,
+                    fuzzy_threshold: float = FUZZY_THRESHOLD,
+                    semantic_threshold: float = SEMANTIC_THRESHOLD,
+                    ambiguous_cutoff: float = AMBIGUOUS_ANS_FLOOR,
+                    nli_confidence_threshold: float = EX_NLI_CONFIDENCE,
+                    sbert_floor: float = EX_SBERT_FLOOR) -> EXEvalResults:
+    """_summary_
+    """
+    # confirm preprocessing in place
+    assert player_answer == player_answer.lower(), "CRITICAL: player_answer must be lowercased before reaching the FR checker." 
+    
+    # initialze EX metrics results object
+    result = EXEvalResults()
+    
+    # Tier 1, 2: any quick wins with exact, fuzzy:
+    if _is_exact_match(player_answer, gold_answer):
+        result.is_correct = True
+        result.resolution_tier = 'exact'
+        result.fuzzy_score = 100
+        return result
+
+    result.fuzzy_score = round(_is_fuzzy_match(player_answer, gold_answer),4)
+    if result.fuzzy_score >= fuzzy_threshold:
+        result.is_correct = True
+        result.resolution_tier = "fuzzy"
+        return result
+
+    # Tier 3: semantic resolution
+    player_tensor = _encode_player_answer(player_answer)
+
+    # check similarity of player answer to gold answer, answer variations
+    correct_ans_score, matched_variation = _check_semantic_variations(player_tensor,
+                                                                      gold_ans_tensor,
+                                                                      answer_variation_tensor_matrix)
+
+    # preload base telemetry (applies to Paths A, B, C)
+    result.primary_similarity_score = round(correct_ans_score, 4)
+    result.matched_ans_variation = matched_variation
+
+    # Path A: player answer meets threshold immediatetly
+    if correct_ans_score >= semantic_threshold:
+        result.is_correct = True
+        result.resolution_tier = 'primary_semantic'
+        return result
+
+    # Path B: ambiguous resolution with coverage, NLI judge
+    elif correct_ans_score < semantic_threshold and correct_ans_score >= ambiguous_cutoff:
+
+        # use a cross-encoder NLI judge to score ambiguous answer
+        _, nli_label, nli_confidence = _check_nli_entailment(
+            premise=gold_answer,
+            hypothesis=player_answer,
+            nli_model=nli_model
+        )
+        # append NLI telemetry to your result object
+        result.nli_label = nli_label
+        result.nli_confidence = round(nli_confidence, 4)
+
+        if nli_label == 'entailment' and result.primary_similarity_score >= sbert_floor:
+            result.is_correct = True
+            result.resolution_tier = 'nli_entailment_pass'
+        
+        elif nli_label == 'neutral' and result.nli_confidence >= nli_confidence_threshold:
+            if result.primary_similarity_score >= sbert_floor:
+                result.is_correct = True
+                result.resolution_tier = 'nli_neutral_lore_pass'
+            else:
+                result.is_correct = False
+                result.resolution_tier = 'nli_fail_vague_neutral' 
+            
+        else:
+            # nli logic failure (contradiction or neutral)
+            result.is_correct = False
+            result.resolution_tier = f'nli_failed_{nli_label}'
+        
+        return result
+
+        # TODO Path B.3: SLM resolution in future (optional) if false negatives high
+
+    # Path C: completely wrong answer (below ambiguous lower-bound threshold)
+    else:
+        result.is_correct = False
+        result.resolution_tier = 'primary_semantic_fail'
+        return result
