@@ -3,6 +3,9 @@ Project: SVE (ref implementation: Harry Potter Trivia)
 PHASE 2 Tracer -> Context Refinery: NLP Lab (Answer checking logic)
 """
 ## setup / imports
+import time
+from functools import wraps
+import os
 from dataclasses import dataclass, fields
 from typing import List, Tuple
 import pandas as pd
@@ -11,7 +14,19 @@ from sentence_transformers import util
 import torch
 from rapidfuzz import fuzz
 import regex as re
+from pydantic import BaseModel, Field
+
+from dotenv import load_dotenv, find_dotenv
+import google.generativeai as genai
 from core.embeddings import get_sbert_model, sbert_settings, get_nli_model, nli_settings
+from ds_utils.tracer_descp_features_v0 import count_clean_words
+
+# --configure API for LLM judge for EX evaluator--
+load_dotenv(find_dotenv("config.env"), override=True)
+google_api_key = os.environ.get('GEMINI_API_KEY')
+if not google_api_key:
+    raise ValueError("Error: GOOGLE_API_KEY not found.")
+genai.configure(api_key=google_api_key)  # type: ignore
 
 ## constants and thresholds
 # thresholds
@@ -22,10 +37,194 @@ AMBIGUOUS_ANS_FLOOR = 0.60  # for enity_ref matches - lower threshold for sim sc
 ENTITY_REF_MATCH_BOOST = 0.10   # sim score boost if player used a know alias or synoym (inject domain understanding to vanilla sbert) 
 EX_NLI_CONFIDENCE = 0.80
 EX_SBERT_FLOOR = 0.55
+FR_OUTLIER_THRESHOLD = 6        # outlier wordcount of FR answers in legacy dataset (q3+1.5*IQR)
 
 # loaded model from singleton cache (SBERT & NLI models defined centrally in embeddings.py)
 model = get_sbert_model()
 nli_model = get_nli_model()
+
+# LLM models to use for API calls
+PRIMARY_MODEL = "models/gemini-3.1-flash-lite-preview"
+FALLBACK_MODEL = "models/gemini-flash-latest"   
+
+## LLM calls helpers and method
+
+# system prompt for EX (explantory questions) LLM judge
+SYSTEM_PROMPT_EX = """
+You are an objective Logic Validator for a trivia system.
+Your task is to determine if the Player's Guess semantically entails the causal logic and core meaning of the Ground Truth Context.
+
+EVALUATION RULES:
+1. DIRECTIONALITY & CAUSALITY: Strictly check the active/passive flow. If the player inverts the subject and the object (e.g., "A caused B" instead of "B caused A"), it is INCORRECT.
+2. THEMATIC ADJACENCY IS NOT EQUIVALENCE: Do not pass answers that are merely in the same thematic neighborhood (e.g., "fearing" a concept is not the same as "understanding" it). The core logical meaning must align.
+3. CONTEXTUAL INTENT & PRONOUNS: If a player uses vague pronouns (e.g., "he", "it", "they") or partial explanations, you may evaluate them as CORRECT only if the context of their answer makes their logical intent undeniable. Do not penalize conversational shorthand if the causal meaning is clear.
+4. FORGIVENESS OF STRUCTURE & OMISSIONS: Accept typos, passive voice (e.g., evaluating "Action B was performed by Entity A" as equivalent to "Entity A performed Action B"), and partial explanations, provided the core causal action is present and not contradicted. If a player omits a minor detail but captures the main action, do NOT penalize them.
+5. CRITICAL ANTI-RECITATION RULE: You must write your `reasoning` and `mc_dialogue` using your own original phrasing. Do not quote the source material directly.
+
+Chain of Thought Directive:
+In your `reasoning` field, objectively map the causal logic and flow of the Player's Guess against the Ground Truth. If there is a causal inversion, missing core entity, or thematic mismatch, you must evaluate `is_correct` as false.
+
+In your `mc_dialogue` field, act as an engaging, sympathetic trivia host reacting to the player's attempt.
+"""
+
+# system prompt for EX (explantory questions) LLM judge
+SYSTEM_PROMPT_FR_SPECIALIST = """
+You are an objective Data Validator for a trivia system. 
+Your task is to verify if the Player Guess contains the factual entities required by the Ground Truth Context.
+
+EVALUATION RULES:
+1. STRICT PROPER NOUN IDENTITY: If the ground truth requires a specific named entity (e.g., 'Ron Weasley', 'Purge & Dowse'), the player must provide that specific entity. 'Percy Weasley' or a broad answer like 'London' is a FATAL MISMATCH.
+2. SEMANTIC EQUIVALENCE FOR ACTIONS/DESCRIPTORS: You MUST accept synonyms, paraphrasing, and alternate framings for non-proper nouns. (e.g., "not losing appendages" is semantically equivalent to "keeping remaining limbs"). Do not penalize grammatical framing.
+3. FLUFF NEUTRALITY: Ignore conversational intros, extra lore, and subjective adjectives (e.g., 'nerdy and annoying') as long as the core required entities are present and accurate.
+
+Chain of Thought Directive:
+In your `reasoning` field, first check for Proper Noun identity. If the specific names/places match, or if the core concepts are semantically equivalent, you must evaluate `is_correct` as true.
+"""    
+
+# LLM response pydantic model (EX, FR)
+class LLMJudgeResponse(BaseModel):
+    """
+    """
+    # push model to think before assigning boolean
+    reasoning: str = Field(description="Step-by-step logical proof of why the answer fails or passes the strict criteria.")
+    mc_dialogue: str = Field(description="A short, 1-sentence in-character reaction from the quiz host.")
+    # The boolean comes LAST, after the logic is established
+    is_correct: bool = Field(description="True ONLY if the reasoning proves absolute semantic and entity alignment.")
+# decorator for timing llm calls
+def track_eval_latency(func):
+    """
+    A decorator that intercepts the execution of an evaluator function,
+    calculates the total latency, and dynamically injects it into the 
+    returned EXEvalResults object.
+    """
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        start_time = time.perf_counter()
+        
+        # Execute the main function (this runs all your Tier 1-4 logic)
+        result = func(*args, **kwargs)
+        
+        # Calculate latency and inject it before returning to the Tracer loop
+        latency = time.perf_counter() - start_time
+        result.execution_time_sec = round(latency, 4)
+        
+        return result
+    return wrapper
+
+def _build_prompt_context(gold_answer: str, 
+                          answer_variations: list, 
+                          explanation: str, 
+                          source_quote: str) -> str:
+    """
+    Dynamically constructs the ground truth context block for the LLM judge.
+
+    This helper function aggregates the definitive answers, acceptable aliases, 
+    and lore explanations into a strictly formatted string. It optimizes the prompt 
+    by conditionally injecting the exact source text quote only if it is available 
+    (e.g., from the synthetic generation pipeline), gracefully falling back to the 
+    detailed explanation for legacy dataset entries.
+
+    Args:
+        gold_answer (str): The primary correct answer string from the dataset.
+        answer_variations (list): A list of acceptable canonical alternate answers.
+        explanation (str): The detailed lore explanation of why the answer is correct.
+        source_quote (str): The canonical text quote verifying the answer. Handled safely 
+                            if missing (e.g., evaluates to Pandas NaN or literal "<NA>").
+
+    Returns:
+        str: A formatted context block designed to be injected directly into the user prompt.
+    """ 
+    # base context for every question evaluation
+    context = f"""
+    [GROUND TRUTH CONTEXT]
+    Gold Answer: {gold_answer}
+    Acceptable Variations: {', '.join(answer_variations)}
+    Explanation: {explanation}
+    """
+    # conditionally append the quote only if it exists (for synthetic data)
+    if pd.notna(source_quote) and source_quote.strip() != "<NA>":
+        context += f'    Source Text Quote: "{source_quote}"\n'
+        
+    return context
+
+def _call_llm_judge(question: str, 
+                    gold_answer: str, 
+                    player_answer: str,
+                    answer_variations: list,
+                    source_quote: str,
+                    explanation: str,
+                    system_prompt: str) -> LLMJudgeResponse:
+    """
+    Generalized LLM caller that handles both EX (Logic) and FR (Entity) 
+    evaluation based on the passed system_prompt.
+    """
+    # 1. configuration for resilience 
+    model_cascade = [PRIMARY_MODEL, FALLBACK_MODEL]
+    
+    user_prompt = f"""
+    [EVALUATION TASK]
+    Question: {question}
+    Player Guess: {player_answer}
+    
+    {_build_prompt_context(gold_answer, answer_variations, explanation, source_quote)}           
+    """
+
+    for target_model in model_cascade:
+        try:
+            # initialize the Gemma model
+            model = genai.GenerativeModel( #  type: ignore
+                model_name=target_model, 
+                system_instruction=system_prompt
+            )
+            print("--- Escalating to LLM Judge ---")
+            start_time = time.time()
+            response = model.generate_content(
+                user_prompt,
+                generation_config=genai.GenerationConfig(  # type: ignore
+                    temperature=0.1,
+                    response_mime_type="application/json",
+                    response_schema=LLMJudgeResponse, ),
+                request_options={"timeout": 120.0}
+            )
+            end_time = time.time()
+            print(f"LLM resolution time: {round(end_time - start_time, 2)} seconds")
+            # 2. conservative rate Limiting (10 RPM / 6s buffer)
+            time.sleep(5.0)
+            
+            # clean markdown formatting before parsing
+            raw_text = response.text.strip()
+            if raw_text.startswith("```json"):
+                raw_text = raw_text[7:]
+            elif raw_text.startswith("```"):
+                raw_text = raw_text[3:]
+            if raw_text.endswith("```"):
+                raw_text = raw_text[:-3]
+            
+            # 3. validation    
+            return LLMJudgeResponse.model_validate_json(raw_text.strip())
+
+        except Exception as e:
+            print(f"\n⚠️ API CRASH/TIMEOUT for Question: {question}")
+            print(f"Error Details: {str(e)}\n")
+            error_msg = str(e)
+            if "429" in error_msg or "404" in error_msg:
+                print(f"⚠️ {target_model} failed ({error_msg[:20]})... Attempting fallback.")
+                time.sleep(2.0)
+                continue
+            time.sleep(4.0) # sleep even on errors to cool down the connection
+            
+            return LLMJudgeResponse(
+                is_correct=False,
+                mc_dialogue="The Restricted Section is currently off-limits.",
+                reasoning=f"System error: {str(e)}"
+            )
+    # 4. Graceful Degradation if entire cascade fails
+    return LLMJudgeResponse(
+        is_correct=False,
+        mc_dialogue="The Floo Network is currently congested.",
+        reasoning="System error: All LLM tiers failed or exceeded quota."
+    )        
+    
 
 ## Structured output: Answer Evaluation Results 
 # standardizing answer evaluation metrics into data classes
@@ -102,6 +301,9 @@ class FREvalResults(BaseEvalResults):
     matched_entity_ref: str | None = None     # alias / synonym matched from semantic_entity_refs col
     boost_applied: float = 0.0       # entitry ref boost for ambiguous similarity scores
     final_boosted_score: float = 0.0 # base_sim_score + boost_applied
+    llm_mc_response: str = ""
+    llm_reasoning: str = ""
+    execution_time_sec: float = 0.0
 
 ## EX
 @dataclass
@@ -121,10 +323,18 @@ class EXEvalResults(BaseEvalResults):
     primary_similarity_score: float = 0.0
     matched_ans_variation: bool = False
     nli_label: str = ""
-    nli_confidence: float = 0.0       
+    nli_confidence: float = 0.0
+    llm_mc_response: str = ""
+    llm_reasoning: str = ""
+    execution_time_sec: float = 0.0
 
 ## 1- dataset preprocessing
-## 1.1: Add tensors for embedding columns
+
+## 1.1 player answer processing
+
+
+
+## 1.2: Add tensors for embedding columns
 
 # helper to convert list of arrays into a single 2D tensor,
 # handling edge cases for empty/missing data and read-only Parquet arrays
@@ -353,15 +563,24 @@ def check_mcq_answer(player_answer:str,
     return result
 
 ### 2.2 FR (Factual Recall)
-def check_fr_answer(player_answer: str, 
+
+@track_eval_latency
+def check_fr_answer(question: str, 
+                    player_answer: str, 
                     gold_answer: str,
+                    gold_answer_word_count: int,
+                    answer_variations: List[str],
+                    source_quote: str,
+                    explanation: str,
                     entity_refs: List[str],
                     gold_ans_tensor: torch.Tensor,
                     answer_variation_tensor_matrix: torch.Tensor, 
                     fuzzy_threshold: float = FUZZY_THRESHOLD,
                     semantic_threshold: float = SEMANTIC_THRESHOLD,
                     ambiguous_cutoff: float = AMBIGUOUS_ANS_FLOOR,
-                    entity_boost_modifier: float = ENTITY_REF_MATCH_BOOST) -> FREvalResults:
+                    entity_boost_modifier: float = ENTITY_REF_MATCH_BOOST,
+                    enable_llm_escalation: bool = False  #for notebook experiments only
+                    ) -> FREvalResults:
     """
     Evaluates a player's Factual Recall (open-text) answer using a 3-Tier logic.
     
@@ -370,14 +589,15 @@ def check_fr_answer(player_answer: str,
     rescues ambiguous SBERT scores by dynamically injecting domain knowledge (proper nouns) 
     before failing the player.
 
-    The 3 Tiers of Evaluation:
+    The 4 Tiers of Evaluation:
     --------------------------
     - Tier 1 (Exact): Instant pass for perfect string matches (O(1) fast path).
     - Tier 2 (Fuzzy): Levenshtein distance check to catch minor typos.
-    - Tier 3 (Semantic & Entity Boost): SBERT cosine similarity check against the Gold Answer 
-      and acceptable variations. If the score falls into the ambiguous range, the engine 
-      uses word-boundary Regex to check for core domain entities, applying a score boost
-      if found.
+    - Tier 3 (Semantic & Entity): SBERT cosine similarity check against the Gold Answer 
+      and acceptable variations. Dynamically injects a score boost if core proper nouns match.
+    - Tier 4 (LLM Specialist): If the player's answer is a statistical length outlier 
+      (indicating conversational fluff or lore-dumping), it bypasses Tier 3 and hits 
+      a strict LLM Entity Auditor to prevent semantic dilution.
       
     WARNING: Contractual Assumption
     This function expects `player_answer` and all strings within `entity_refs` to be 
@@ -410,7 +630,7 @@ def check_fr_answer(player_answer: str,
     # confirm preprocessing in place
     assert player_answer == player_answer.lower(), "CRITICAL: player_answer must be lowercased before reaching the FR checker." 
     
-    # initialze FR metrics results object
+    # initialize FR metrics results object
     result = FREvalResults()
     
     # TIER 1: fast path (exact match) --> use case: perfect answers
@@ -439,13 +659,41 @@ def check_fr_answer(player_answer: str,
     result.base_sim_score = round(correct_ans_score, 4)
     result.matched_variation = matched_variation
     
-    # Path A: player answer meets threshold immediatetly
-    if correct_ans_score >= semantic_threshold:
+    # Path A: check player answer lengths (if outlier or if too verbose)
+    player_ans_wc = count_clean_words(player_answer)
+    
+    # edge cases routing to LLM judge
+    is_outlier = player_ans_wc > FR_OUTLIER_THRESHOLD   # exceeds legacy outlier ans word count
+    # verbose player ans: if twice the len of expected and wc in vector dilution range of sbert
+    is_disproportionate = (player_ans_wc >= 2 * gold_answer_word_count) and (player_ans_wc >= 8) 
+        
+    if enable_llm_escalation and (is_outlier or is_disproportionate):
+        llm_judgment = _call_llm_judge(question,
+                                   gold_answer, 
+                                   player_answer,
+                                   answer_variations,
+                                   source_quote,
+                                   explanation,
+                                   SYSTEM_PROMPT_FR_SPECIALIST)
+    
+        if llm_judgment.is_correct:
+            result.is_correct = True
+            result.resolution_tier = 'llm_judge_pass'
+        else:
+            result.is_correct = False
+            result.resolution_tier = 'llm_judge_fail' 
+        # update llm metrics    
+        result.llm_mc_response = llm_judgment.mc_dialogue
+        result.llm_reasoning = llm_judgment.reasoning          
+        return result
+            
+    # Path B: player answer meets threshold immediatetly
+    elif correct_ans_score >= semantic_threshold:
         result.is_correct = True
         result.resolution_tier = 'passed_primary_semantic'
         return result
 
-    # Path B: ambiguous range (boost score if any term matches entity_refs)
+    # Path C: ambiguous range (boost score if any term matches entity_refs)
     elif correct_ans_score < semantic_threshold and correct_ans_score >= ambiguous_cutoff:
         
         # Initialize (prevent UnboundLocalError)
@@ -475,48 +723,24 @@ def check_fr_answer(player_answer: str,
         result.final_boosted_score = round(updated_correct_ans_score, 4)
         return result
     
-    # Path C: wrong answer (score below the ambiguous threshold)
+    # Path D: wrong answer (score below the ambiguous threshold)
     else:
         result.is_correct = False
         result.resolution_tier = "failed_semantic"
         return result
 
 ### 2.3 EX (Explanatory) 
-# coverage check of player answer prior to NLI judge
-def _calculate_coverage_ratio(player_answer:str, 
-                              target_list: List[str]):
-    """
-    Calculates the percentage of target words/phrases found in the text 
-    using strict Regex word boundaries.
-    """
-    if not target_list:
-        return 1.0  # continue with analysis if no target list
-    found_count = 0
-    valid_targets = 0
-
-    for term in target_list:
-        if not term:
-            continue
-        valid_targets+=1
-        pattern = r'\b' + re.escape(term) + r'\b'
-        if re.search(pattern, player_answer):
-            found_count += 1
-
-    if valid_targets == 0:
-        return 1.0
-    return found_count / valid_targets        
 
 # nli evaluation of answer if sbert ambiguous
 # Assuming: from sentence_transformers import CrossEncoder
 # nli_model = CrossEncoder('cross-encoder/nli-deberta-v3-small')
-
-def _check_nli_entailment(premise: str, hypothesis: str, nli_model) -> tuple[bool, str, float]:
+def _check_nli_entailment(premise: str, hypothesis: str, nli_model_inst) -> tuple[bool, str, float]:
     """
     Evaluates logical entailment between a gold answer (premise) and player answer (hypothesis).
     Returns: (is_entailed: bool, predicted_label: str, confidence_score: float)
     """
     # 1. run NLI cross-encoder
-    scores = nli_model.predict([(premise, hypothesis)])[0]
+    scores = nli_model_inst.predict([(premise, hypothesis)])[0]
 
     # 2. convert logits to probabilities using softmax (optional, but good for telemetry)
     probabilities = np.exp(scores) / np.sum(np.exp(scores))
@@ -533,91 +757,267 @@ def _check_nli_entailment(premise: str, hypothesis: str, nli_model) -> tuple[boo
     
     return is_entailed, predicted_label, float(confidence)
 
-# main EX evaluator   
-def check_ex_answer(player_answer: str,
+# MAIN EX Evaluator 
+@track_eval_latency  
+def check_ex_answer(question: str,
+                    player_answer: str,
                     gold_answer: str,
+                    gold_answer_wordcount: int,
                     gold_ans_tensor: torch.Tensor,
+                    answer_variations: List[str],
+                    source_quote: str,
+                    explanation: str,
                     answer_variation_tensor_matrix: torch.Tensor,
                     fuzzy_threshold: float = FUZZY_THRESHOLD,
                     semantic_threshold: float = SEMANTIC_THRESHOLD,
                     ambiguous_cutoff: float = AMBIGUOUS_ANS_FLOOR,
-                    nli_confidence_threshold: float = EX_NLI_CONFIDENCE,
-                    sbert_floor: float = EX_SBERT_FLOOR) -> EXEvalResults:
-    """_summary_
+                    enable_llm_escalation: bool = True  #for notebook experiments only
+                    ) -> EXEvalResults:
+    """
+    Evaluates explanatory (EX) trivia answers through a multi-tier NLP routing matrix.
+
+    This function optimizes compute by resolving simple matches locally and only
+    escalating complex logical or lore-based abstractions to an external language 
+    model API. For the current Tracer iteration, this utilizes Gemma 4 via Vertex AI 
+    (zero-cost open-weights), but the routing architecture is modular to support 
+    interchangeable SLMs/LLMs in future development.
+
+    Args:
+        question (str): The trivia question prompt.
+        player_answer (str): The raw string input provided by the user.
+        gold_answer (str): The primary correct answer string from the dataset.
+        gold_answer_wordcount (int): Precomputed word count of the gold answer.
+        gold_ans_tensor (torch.Tensor): Pre-encoded SBERT embeddings for the gold answer.
+        answer_variations (List[str]): List of acceptable alternate answer strings.
+        source_quote (str): The canonical text quote verifying the answer (if synthetic).
+        explanation (str): The detailed lore explanation of why the answer is correct.
+        answer_variation_tensor_matrix (torch.Tensor): Matrix of embeddings for acceptable alternate answers.
+        fuzzy_threshold (float): Minimum score for a Tier 2 deterministic fuzzy pass.
+        semantic_threshold (float): Minimum SBERT score required before NLI entailment can auto-pass.
+        ambiguous_cutoff (float): The floor for SBERT scores; answers below this fail unless verbosity bypass is triggered.
+        enable_llm_escalation (bool): Toggle to activate/deactivate the Tier 4 LLM judge for A/B testing.
+
+    Returns:
+        EXEvalResults: A populated telemetry object containing the final boolean judgment (`is_correct`), 
+                       the exact pipeline exit node (`resolution_tier`), and internal NLP scores.
+
+    Routing Flow:
+        - Tier 1/2: O(1) Exact and Fuzzy string matching.
+        - Tier 3.1: SBERT vector similarity (filters vocabulary mismatches, features Verbosity Bypass).
+        - Tier 3.2: NLI Cross-Encoder (gates inverted logic and contradictions).
+        - Tier 4: LLM Judge escalation for the "Messy Middle" (vague abstractions/deep lore).
     """
     # confirm preprocessing in place
-    assert player_answer == player_answer.lower(), "CRITICAL: player_answer must be lowercased before reaching the FR checker." 
+    assert player_answer == player_answer.lower(), "CRITICAL: player_answer must be lowercased before reaching the EX checker." 
     
-    # initialze EX metrics results object
+    # initialize EX metrics results object
     result = EXEvalResults()
     
-    # Tier 1, 2: any quick wins with exact, fuzzy:
+    # TIER -1: exact match, grab any O(1) wins
     if _is_exact_match(player_answer, gold_answer):
         result.is_correct = True
         result.resolution_tier = 'exact'
         result.fuzzy_score = 100
         return result
-
+    # TIER-2: fuzzy match, grab any O(1) wins
     result.fuzzy_score = round(_is_fuzzy_match(player_answer, gold_answer),4)
     if result.fuzzy_score >= fuzzy_threshold:
         result.is_correct = True
         result.resolution_tier = "fuzzy"
         return result
 
-    # Tier 3: semantic resolution
+    # TIER-3: semantic resolution (SBERT + NLI)
     player_tensor = _encode_player_answer(player_answer)
-
     # check similarity of player answer to gold answer, answer variations
     correct_ans_score, matched_variation = _check_semantic_variations(player_tensor,
                                                                       gold_ans_tensor,
                                                                       answer_variation_tensor_matrix)
-
-    # preload base telemetry (applies to Paths A, B, C)
+    # preload base telemetry 
     result.primary_similarity_score = round(correct_ans_score, 4)
     result.matched_ans_variation = matched_variation
+    
+    player_answer_wordcount = count_clean_words(player_answer)
+    len_ratio = player_answer_wordcount / max(1, gold_answer_wordcount)
 
-    # Path A: player answer meets threshold immediatetly
-    if correct_ans_score >= semantic_threshold:
-        result.is_correct = True
-        result.resolution_tier = 'primary_semantic'
-        return result
-
-    # Path B: ambiguous resolution with coverage, NLI judge
-    elif correct_ans_score < semantic_threshold and correct_ans_score >= ambiguous_cutoff:
-
-        # use a cross-encoder NLI judge to score ambiguous answer
-        _, nli_label, nli_confidence = _check_nli_entailment(
-            premise=gold_answer,
-            hypothesis=player_answer,
-            nli_model=nli_model
-        )
-        # append NLI telemetry to your result object
-        result.nli_label = nli_label
-        result.nli_confidence = round(nli_confidence, 4)
-
-        if nli_label == 'entailment' and result.primary_similarity_score >= sbert_floor:
-            result.is_correct = True
-            result.resolution_tier = 'nli_entailment_pass'
-        
-        elif nli_label == 'neutral' and result.nli_confidence >= nli_confidence_threshold:
-            if result.primary_similarity_score >= sbert_floor:
+    # Tier 3.1: primary semantic check
+    # verbosity bypass to the LLM
+    if correct_ans_score < ambiguous_cutoff:
+        if len_ratio >= 2.0 and enable_llm_escalation:
+            llm_judgment = _call_llm_judge(question, 
+                                           gold_answer, 
+                                           player_answer,
+                                           answer_variations, 
+                                           source_quote, 
+                                           explanation,
+                                           SYSTEM_PROMPT_EX) 
+            if llm_judgment.is_correct:
                 result.is_correct = True
-                result.resolution_tier = 'nli_neutral_lore_pass'
+                result.resolution_tier = 'llm_judge_long_ans_pass'           
             else:
                 result.is_correct = False
-                result.resolution_tier = 'nli_fail_vague_neutral' 
-            
+                result.resolution_tier = 'llm_judge_long_ans_fail'
+            # return llm metrics for both cases
+            result.llm_mc_response = llm_judgment.mc_dialogue
+            result.llm_reasoning = llm_judgment.reasoning
+            return result
         else:
-            # nli logic failure (contradiction or neutral)
             result.is_correct = False
-            result.resolution_tier = f'nli_failed_{nli_label}'
+            result.resolution_tier = 'primary_semantic_fail'
+            return result
         
+    # Tier 3.2: NLI cross-encoder labelling (logic check)
+    _, nli_label, nli_confidence = _check_nli_entailment(
+            premise=gold_answer,
+            hypothesis=player_answer,
+            nli_model_inst=nli_model
+        )
+    # append NLI telemetry to your result object
+    result.nli_label = nli_label
+    result.nli_confidence = round(nli_confidence, 4)
+
+    # contradiction fail fast
+    if nli_label == 'contradiction':
+        result.is_correct = False
+        result.resolution_tier = 'nli_contradiction_fail'
         return result
 
-        # TODO Path B.3: SLM resolution in future (optional) if false negatives high
+    # entailment pass (high vocab, high directional logic)
+    if nli_label == 'entailment' and result.primary_similarity_score >= semantic_threshold:
+        result.is_correct = True
+        result.resolution_tier = 'nli_entailment_pass'
+        return result
 
-    # Path C: completely wrong answer (below ambiguous lower-bound threshold)
+    # Tier 4: LLM resolution for remaining cases
+    #         all 'neutral' AND 'entailment' with ambiguous sbert scores 
+    #         (i.e. semantic_threshold < sbert_score <= ambiguous_cutoff)
+    
+    # notebook experiment LLM bypass: If toggle is off, fail ambiguous answers locally
+    if not enable_llm_escalation:
+        result.is_correct = False
+        result.resolution_tier = 'ambiguous_fail_without_LLM'
+        return result
+    
+    llm_judgment = _call_llm_judge(question, 
+                                   gold_answer, 
+                                   player_answer,
+                                   answer_variations, 
+                                   source_quote, 
+                                   explanation,
+                                   SYSTEM_PROMPT_EX)
+    
+    if llm_judgment.is_correct:
+        result.is_correct = True
+        result.resolution_tier = 'llm_judge_pass'
     else:
         result.is_correct = False
-        result.resolution_tier = 'primary_semantic_fail'
-        return result
+        result.resolution_tier = 'llm_judge_fail' 
+    # update llm metrics    
+    result.llm_mc_response = llm_judgment.mc_dialogue
+    result.llm_reasoning = llm_judgment.reasoning          
+    return result
+
+# Ex test helper
+def run_ex_evaluation_suite(test_suite: dict, 
+                            runtime_df: pd.DataFrame, 
+                            fuzzy_threshold: float = 0.95,
+                            semantic_threshold: float = 0.80,
+                            ambiguous_cutoff: float = 0.40,
+                            use_llm: bool = False):
+    """
+    Executes a suite of player answers against the EX Evaluator and tracks telemetry.
+    Returns a dictionary of failed cases for easy debugging in Jupyter.
+    """
+    
+    print(f"🚀 Starting EX Evaluation Suite (LLM Enabled: {use_llm})\n" + "-"*50)
+    
+    total_cases = 0
+    pass_count = 0
+    llm_escalation_count = 0
+    llm_pass_count = 0
+    
+    evaluation_logs = {"passed": [], "failed": []}
+    i = 1
+
+    for q_id, q_data in test_suite.items():
+        
+        # 1. Extract the ground truth constants
+        question_text = q_data['question']
+        gold_answer_str = q_data['gold_answer'].lower().strip()
+        answer_variations_list = q_data['answer_variations']
+        source_quote_str = q_data['source_quote']
+        explanation_str = q_data['explanation']
+        
+        # 2. Retrieve tensor/length data from the runtime DataFrame
+        question_data = runtime_df[runtime_df['master_id'] == q_id].iloc[0]
+        gold_ans_wc = question_data['answer_length']
+        gold_ex_tensor = question_data['answer_embeddings_tensor']
+        ex_ans_var_tensor = question_data['answer_variations_embeddings_tensor_matrix']
+        
+        # 3. Iterate through every player guess
+        for case in q_data['test_cases']:
+            total_cases += 1
+            current_player_answer = case['player_answer'].lower().strip() 
+            expected_outcome = case['expected']
+
+            print(f"  -> Testing: '{current_player_answer}'")
+            
+            # Run through the EX checker
+            result_ex = check_ex_answer(
+                question=question_text,
+                player_answer=current_player_answer,
+                gold_answer=gold_answer_str,
+                gold_answer_wordcount=gold_ans_wc,
+                gold_ans_tensor=gold_ex_tensor,
+                answer_variations=answer_variations_list,
+                source_quote=source_quote_str,
+                explanation=explanation_str,
+                answer_variation_tensor_matrix=ex_ans_var_tensor,
+                fuzzy_threshold=fuzzy_threshold,
+                semantic_threshold=semantic_threshold,
+                ambiguous_cutoff=ambiguous_cutoff,
+                enable_llm_escalation=use_llm
+            )
+            
+            # 4. Process Results
+            actual_result = "correct" if result_ex.is_correct else "incorrect"
+            status = "✅ PASS" if actual_result == expected_outcome else "❌ FAIL"
+            
+            # Build the log entry
+            log_entry = {
+                'q_id': q_id,
+                'player_answer': current_player_answer,
+                'expected': expected_outcome,
+                'got': actual_result,
+                'telemetry': result_ex
+            }
+            if status == "✅ PASS":
+                pass_count += 1
+                evaluation_logs["passed"].append(log_entry)
+            else:
+                evaluation_logs["failed"].append(log_entry)
+                
+            if "llm_judge" in result_ex.resolution_tier:
+                llm_escalation_count += 1
+                if status == "✅ PASS":
+                    llm_pass_count += 1   
+                
+            print(f"{i}. {status}: QID {q_id} | Expected: {expected_outcome} | Got: {actual_result}")
+            print(f"Tier: {result_ex.resolution_tier} | Time: {result_ex.execution_time_sec}s\n")
+            i += 1
+            
+    # 5. Generate Summary
+    pass_percentage = (pass_count / total_cases) * 100 if total_cases > 0 else 0
+    llm_percentage = (llm_escalation_count / total_cases) * 100 if total_cases > 0 else 0
+    llm_accuracy = (llm_pass_count / llm_escalation_count) * 100 if llm_escalation_count > 0 else 0 # NEW: Calculate LLM specific accuracy
+
+    print("="*50)
+    print("📊 EX TEST SUITE SUMMARY")
+    print("="*50)
+    print(f"Total test cases:     {total_cases}")
+    print(f"Cases that passed:    {pass_count} ({pass_percentage:.2f}%)")
+    print(f"Cases that failed:    {total_cases - pass_count} ({100 - pass_percentage:.2f}%)")
+    print("-" * 50)
+    print(f"LLM Escalations:      {llm_escalation_count} ({llm_percentage:.2f}% of total traffic)")  
+    print(f"LLM Accuracy:         {llm_pass_count}/{llm_escalation_count} ({llm_accuracy:.2f}%)") # NEW: Print isolated LLM accuracy
+    
+    return evaluation_logs

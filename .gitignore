@@ -22,6 +22,7 @@ docs/design_draft_notes.md
 notebooks/02_research/03_aces_generating_new_questions/.backup
 notebooks/02_research/03_aces_generating_new_questions/.drafts
 scripts/research/question_generation/llm_outputs/.backups
+notebooks/llm_configuration_for_ex.md
 
 # Ignore token files or sensitive configs
 .env

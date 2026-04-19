@@ -17,22 +17,23 @@ from ds_utils import ds_constants as const
 
 ## 1. Length Metrics
 
-# FROM P1 eda_scripts: Helper function that returns a Series of the word counts for a
-# column of interest (e.g. 'question' or 'answer')
+# refactored P1 eda_scripts: Helper function that returns a Series of the word counts for a
+# column of interest (e.g. 'question' or 'answer') - separated so it can be applied to a
+# single string (player answer) or df (gold dataset)
+def count_clean_words(text) -> int:
+    """
+    Returns the number of clean words (ignoring punctuation) in a single string.
+    Safely handles None, NaN, or non-string inputs.
+    """
+    if pd.isna(text) or not isinstance(text, str):
+        return 0
+    return len(re.findall(r'\b\w+\b', text))
+
 def get_clean_word_counts(dataframe: pd.DataFrame, column_name: str) -> pd.Series:
     """
-    Returns a Series with the number of clean words (ignoring punctuation) in each entry.
-    
-    :parame dataframe: the data frame on which to perform the search on.
-    :type dataframe: pd.DataFrame
-    :param column_name: the column name for which to count words in (e.g. `question` or `answer`)
-    :type column_name: str
-    
-    :return: A Series with the word counts for each entry in the specified column.
-    :rtype: pd.Series[int]
-    
+    Returns a Series with the word counts for each entry in the specified column.
     """
-    return dataframe[column_name].apply(lambda x: len(re.findall(r'\b\w+\b', x)) if pd.notnull(x) else 0)
+    return dataframe[column_name].apply(count_clean_words)
 
 # FROM P1 eda_scripts: Helper function to classify answer types using a hierarchical, rule-based approach
 def classify_answer_type(row):
