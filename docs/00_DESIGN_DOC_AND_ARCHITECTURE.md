@@ -11,13 +11,13 @@ This document outlines the architectural evolution of the Semantic Verification 
 2. **Architectural Schemes & ADRS** Detailed diagrams and decision records (ADRs) for each engineering phase.
     - **[Phase 1: The MVP (Legacy)](#phase-1-discovery--foundation)**
      Rules-based logic, MVC patterned game, standalone container.
-    - **[Phase 2: Platform + Semantic Intelligence](#phase-2-end-to-end-system--semantic-intelligence)**
+    - **[Phase 2: System + Semantic Intelligence](#phase-2-end-to-end-system--semantic-intelligence)**
      Automated question generation, contextual feature enrichment, and semantic answer checking using Sentence-BERT.
     - **[Phase 3: Model-Assisted Game Master](#phase-3-model-assisted-game-master)**
        Runtime upgrade with an edge-served small language model (SLM) to maintain host persona and tie-breaker when Sentence-BERT similarity scores are ambiguous.
 3. [**System thinking analysis**](#3-system-thinking-analysis-case-study): A high-level, conceptual exercise to holistically and dynamically assess the architecture and its design implications as part of the project case study.
 4. [**Architectural mapping**](#4-mapping-to-industry-equivalent-patterns) of the project design to industrial patterns to validate and inform decisions.
-> **Note on Execution:** This document groups system evolution into logical engineering *Phases*, however the actual delivery is executed in agile sprints to prioritize the product releases. For the current development roadmap refer to the **[Execution Plan](./01_EXECUTION_PLAN.md)**.
+> **Note on Execution:** This document groups system evolution into logical engineering *Phases*, however the actual delivery would be executed as agile sprints to prioritize the product releases. For the current development roadmap refer to the **[Execution Plan](./01_EXECUTION_PLAN.md)**.
 
 ---
 <br>

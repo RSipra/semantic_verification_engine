@@ -184,12 +184,12 @@ def _call_llm_judge(question: str,
                     temperature=0.1,
                     response_mime_type="application/json",
                     response_schema=LLMJudgeResponse, ),
-                request_options={"timeout": 120.0}
+                request_options={"timeout": 200.0}
             )
             end_time = time.time()
             print(f"LLM resolution time: {round(end_time - start_time, 2)} seconds")
             # 2. conservative rate Limiting (10 RPM / 6s buffer)
-            time.sleep(5.0)
+            time.sleep(6.0)
             
             # clean markdown formatting before parsing
             raw_text = response.text.strip()
@@ -935,6 +935,10 @@ def run_ex_evaluation_suite(test_suite: dict,
     llm_escalation_count = 0
     llm_pass_count = 0
     
+    total_execution_time = 0.0
+    total_local_time = 0.0
+    total_llm_time = 0.0
+    
     evaluation_logs = {"passed": [], "failed": []}
     i = 1
 
@@ -995,11 +999,17 @@ def run_ex_evaluation_suite(test_suite: dict,
                 evaluation_logs["passed"].append(log_entry)
             else:
                 evaluation_logs["failed"].append(log_entry)
-                
+            
+            case_time = float(result_ex.execution_time_sec)
+            total_execution_time += case_time
+            
             if "llm_judge" in result_ex.resolution_tier:
+                total_llm_time += case_time
                 llm_escalation_count += 1
                 if status == "✅ PASS":
-                    llm_pass_count += 1   
+                    llm_pass_count += 1
+            else:
+                total_local_time += case_time          
                 
             print(f"{i}. {status}: QID {q_id} | Expected: {expected_outcome} | Got: {actual_result}")
             print(f"Tier: {result_ex.resolution_tier} | Time: {result_ex.execution_time_sec}s\n")
@@ -1008,7 +1018,13 @@ def run_ex_evaluation_suite(test_suite: dict,
     # 5. Generate Summary
     pass_percentage = (pass_count / total_cases) * 100 if total_cases > 0 else 0
     llm_percentage = (llm_escalation_count / total_cases) * 100 if total_cases > 0 else 0
-    llm_accuracy = (llm_pass_count / llm_escalation_count) * 100 if llm_escalation_count > 0 else 0 # NEW: Calculate LLM specific accuracy
+    llm_accuracy = (llm_pass_count / llm_escalation_count) * 100 if llm_escalation_count > 0 else 0
+    
+    # Calculate Latency Averages
+    avg_total_time = total_execution_time / total_cases if total_cases > 0 else 0
+    local_cases = total_cases - llm_escalation_count
+    avg_local_time = total_local_time / local_cases if local_cases > 0 else 0
+    avg_llm_time = total_llm_time / llm_escalation_count if llm_escalation_count > 0 else 0
 
     print("="*50)
     print("📊 EX TEST SUITE SUMMARY")
@@ -1017,7 +1033,11 @@ def run_ex_evaluation_suite(test_suite: dict,
     print(f"Cases that passed:    {pass_count} ({pass_percentage:.2f}%)")
     print(f"Cases that failed:    {total_cases - pass_count} ({100 - pass_percentage:.2f}%)")
     print("-" * 50)
+    print(f"Avg Overall Latency:  {avg_total_time:.4f}s")
+    print(f"Avg Local Latency:    {avg_local_time * 1000:.2f}ms (SBERT/NLI path)") # Converted to ms
+    print(f"Avg LLM Latency:      {avg_llm_time:.2f}s (Escalation path)")
+    print("-" * 50)
     print(f"LLM Escalations:      {llm_escalation_count} ({llm_percentage:.2f}% of total traffic)")  
-    print(f"LLM Accuracy:         {llm_pass_count}/{llm_escalation_count} ({llm_accuracy:.2f}%)") # NEW: Print isolated LLM accuracy
+    print(f"LLM Accuracy:         {llm_pass_count}/{llm_escalation_count} ({llm_accuracy:.2f}%)") 
     
     return evaluation_logs
