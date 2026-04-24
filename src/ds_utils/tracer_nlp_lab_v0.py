@@ -4,6 +4,7 @@ PHASE 2 Tracer -> Context Refinery: NLP Lab (Answer checking logic)
 """
 ## setup / imports
 import time
+from datetime import date
 from functools import wraps
 import os
 from dataclasses import dataclass, fields
@@ -14,12 +15,15 @@ from sentence_transformers import util
 import torch
 from rapidfuzz import fuzz
 import regex as re
+from dateparser.search import search_dates
+from word2number import w2n
 from pydantic import BaseModel, Field
 
 from dotenv import load_dotenv, find_dotenv
 import google.generativeai as genai
 from core.embeddings import get_sbert_model, sbert_settings, get_nli_model, nli_settings
 from ds_utils.tracer_descp_features_v0 import count_clean_words
+from ds_utils.ds_constants import AnswerType
 
 # --configure API for LLM judge for EX evaluator--
 load_dotenv(find_dotenv("config.env"), override=True)
@@ -38,6 +42,16 @@ ENTITY_REF_MATCH_BOOST = 0.10   # sim score boost if player used a know alias or
 EX_NLI_CONFIDENCE = 0.80
 EX_SBERT_FLOOR = 0.55
 FR_OUTLIER_THRESHOLD = 6        # outlier wordcount of FR answers in legacy dataset (q3+1.5*IQR)
+
+HOLIDAY_MAP ={
+    "halloween":"october 31",
+    "valentines day": "february 14",
+    "valentine's day": "february 14",
+    "christmas": "december 25",
+    "christmas eve": "december 24",
+    "new years eve": "december 31",
+    "new year's eve": "december 31"
+}
 
 # loaded model from singleton cache (SBERT & NLI models defined centrally in embeddings.py)
 model = get_sbert_model()
@@ -328,7 +342,7 @@ class EXEvalResults(BaseEvalResults):
     llm_reasoning: str = ""
     execution_time_sec: float = 0.0
 
-## 1- dataset preprocessing
+## --- 1. DATASET PREPROCESSING ---
 
 ## 1.1 player answer processing
 
@@ -390,7 +404,7 @@ def prepare_runtime_tensors(dataframe: pd.DataFrame,
 
 ## 2- ANSWER LOGIC HELPERS
 
-### --- TEXT ANSWERS ---
+### --- 2. TEXT ANSWERS ---
 ### common helpers
 
 # FOR MCQ & FR Only: quick direct answer check.    
@@ -771,7 +785,8 @@ def check_ex_answer(question: str,
                     fuzzy_threshold: float = FUZZY_THRESHOLD,
                     semantic_threshold: float = SEMANTIC_THRESHOLD,
                     ambiguous_cutoff: float = AMBIGUOUS_ANS_FLOOR,
-                    enable_llm_escalation: bool = True  #for notebook experiments only
+                    enable_llm_escalation: bool = True,  #for notebook experiments only
+                    enable_nli_escalation:bool = False  #for notebook experiments only
                     ) -> EXEvalResults:
     """
     Evaluates explanatory (EX) trivia answers through a multi-tier NLP routing matrix.
@@ -866,26 +881,27 @@ def check_ex_answer(question: str,
             return result
         
     # Tier 3.2: NLI cross-encoder labelling (logic check)
-    _, nli_label, nli_confidence = _check_nli_entailment(
-            premise=gold_answer,
-            hypothesis=player_answer,
-            nli_model_inst=nli_model
-        )
-    # append NLI telemetry to your result object
-    result.nli_label = nli_label
-    result.nli_confidence = round(nli_confidence, 4)
+    if enable_nli_escalation:
+        _, nli_label, nli_confidence = _check_nli_entailment(
+                premise=gold_answer,
+                hypothesis=player_answer,
+                nli_model_inst=nli_model
+            )
+        # append NLI telemetry to your result object
+        result.nli_label = nli_label
+        result.nli_confidence = round(nli_confidence, 4)
 
-    # contradiction fail fast
-    if nli_label == 'contradiction':
-        result.is_correct = False
-        result.resolution_tier = 'nli_contradiction_fail'
-        return result
+        # contradiction fail fast
+        if nli_label == 'contradiction':
+            result.is_correct = False
+            result.resolution_tier = 'nli_contradiction_fail'
+            return result
 
-    # entailment pass (high vocab, high directional logic)
-    if nli_label == 'entailment' and result.primary_similarity_score >= semantic_threshold:
-        result.is_correct = True
-        result.resolution_tier = 'nli_entailment_pass'
-        return result
+        # entailment pass (high vocab, high directional logic)
+        if nli_label == 'entailment' and result.primary_similarity_score >= semantic_threshold:
+            result.is_correct = True
+            result.resolution_tier = 'nli_entailment_pass'
+            return result
 
     # Tier 4: LLM resolution for remaining cases
     #         all 'neutral' AND 'entailment' with ambiguous sbert scores 
@@ -922,7 +938,8 @@ def run_ex_evaluation_suite(test_suite: dict,
                             fuzzy_threshold: float = 0.95,
                             semantic_threshold: float = 0.80,
                             ambiguous_cutoff: float = 0.40,
-                            use_llm: bool = False):
+                            use_llm: bool = False,
+                            use_nli: bool = False):
     """
     Executes a suite of player answers against the EX Evaluator and tracks telemetry.
     Returns a dictionary of failed cases for easy debugging in Jupyter.
@@ -979,7 +996,8 @@ def run_ex_evaluation_suite(test_suite: dict,
                 fuzzy_threshold=fuzzy_threshold,
                 semantic_threshold=semantic_threshold,
                 ambiguous_cutoff=ambiguous_cutoff,
-                enable_llm_escalation=use_llm
+                enable_llm_escalation=use_llm,
+                enable_nli_escalation=use_nli
             )
             
             # 4. Process Results
@@ -1041,3 +1059,206 @@ def run_ex_evaluation_suite(test_suite: dict,
     print(f"LLM Accuracy:         {llm_pass_count}/{llm_escalation_count} ({llm_accuracy:.2f}%)") 
     
     return evaluation_logs
+
+## --- 3. NON-TEXT ANSWERS ---
+
+## 3.1 Numeric answers (number, year)
+
+def _normalize_numeric_text(raw_answer:str):
+    """
+    Shared helper to clean and translate numeric or year strings 
+    for both player answers and gold dataset answers.
+    """
+    return str(raw_answer).lower().strip().replace("-", " ").replace(",", "")
+
+def _preprocess_numeric_player_ans(raw_player_ans:str, hard_cap:int = 1):
+    """
+    Sanitizes raw player text into a single integer.
+    Enforces an anti-hedging hard cap of 1.
+    Returns None if hedging is detected or no valid number is found.
+    """
+    # 1. normalize answer (strip white space, any 1000 comma separater)
+    ans_text = _normalize_numeric_text(raw_player_ans)
+
+    # 2. extract numbers from surrounding text -> e.g. "he was 32 years old" -> 32
+    matches = re.findall(r'\b\d+\b', ans_text)
+
+    # 3. check for hedging (ans: "32 or 33") 
+    if len(matches) == 1:
+        return int(matches[0])
+    if len(matches) > hard_cap:
+        return None 
+
+    # 5. check if the answer is written out in words using w2n
+    if not matches:    
+        try:
+            return int(w2n.word_to_num(ans_text))
+        except (ValueError, TypeError):
+            return None
+
+def _check_numeric_answer(player_answer_num: int | None,
+                         gold_answer: str) -> BaseEvalResults:
+    """
+    Evaluates a numeric Free Response question by comparing a preprocessed 
+    player integer against the extracted integer of the gold answer.
+    
+    Notes:
+        - Relies on an upstream preprocessor to convert player text into a single `int` or `None`.
+        - TODO (Phase 2): Upgrade to `float` and `math.isclose()` instead of `int` to 
+          safely handle decimal answers and prevent backend crashes during casting
+          for answers such as "platform 9 3/4".
+          
+    Args:
+        player_answer_num (int | None): The parsed numeric value from the player's input.
+        gold_answer (str): The raw string of the correct answer (e.g. "150" or "150 points").
+        
+    Returns:
+        BaseEvalResults: A standardized dataclass containing the boolean result 
+        and the specific resolution tier.
+    """
+    result = BaseEvalResults()
+    
+    # 1. process gold answer
+    clean_gold = _normalize_numeric_text(gold_answer)
+    gold_matches = re.findall(r'\b\d+\b', clean_gold)
+    if not gold_matches:
+        # failsafe: Prevent an IndexError if gold_answer contains no digits
+        result.is_correct = False
+        result.resolution_tier = 'numeric_exact_fail_invalid_gold'
+        return result
+
+    correct_answer = int(gold_matches[0])
+    
+    # 2. if the player answer did not have any numbers
+    if player_answer_num is None:
+        result.is_correct = False
+        result.resolution_tier = 'numeric_exact_fail_invalid_or_no_num'
+        return result
+    
+    # 3. check if the correct number is provided
+    if player_answer_num == correct_answer:
+        result.is_correct = True
+        result.resolution_tier = 'numeric_exact_pass'
+        return result
+    
+    # 4. catch all fail
+    result.is_correct = False
+    result.resolution_tier = 'numeric_exact_fail'
+    return result
+    
+## 3.2 Date-format answers
+
+def _normalize_date_text(raw_text: str) -> str:
+    """
+    Shared helper to clean and translate raw chronological strings 
+    for both player answers and gold dataset answers.
+    """
+    text = str(raw_text).lower().strip()
+    
+    # Strip parenthetical hedges (e.g., "halloween (or october 31st)")
+    text = re.sub(r'\(.*?\)', '', text)
+    
+    # Holiday translation pass
+    for holiday, date_str in HOLIDAY_MAP.items():
+        if holiday in text:
+            text = text.replace(holiday, date_str)
+            
+    return text
+
+def _preprocess_date_player_ans(raw_player_ans: str, hard_cap:int=1) -> date | None:
+    """
+    Sanitizes raw player text into a strict date format.
+    Includes a translation pass for named holidays
+    """
+    # 1. normalize answer (strip white space, any 1000 comma separater)
+    ans_text = _normalize_date_text(raw_player_ans)
+    
+    # 2. convert to date text to standardized date
+    found_dates = search_dates(ans_text, 
+        settings={'STRICT_PARSING': False, 'PREFER_DAY_OF_MONTH': 'first'})
+    
+    # 3. in case no dates are found:
+    if not found_dates:
+        return None
+    
+    # 4. check for hedging
+    if len(found_dates)>hard_cap:
+        return None
+    
+    # 5. extract and return single date object 
+    # search_dates returns a list of tuples: [('found string', datetime_obj)]
+    extracted_datetime = found_dates[0][1]
+    return extracted_datetime.date()
+            
+def _check_date_answer(player_ans_date: date | None, gold_answer: str)->BaseEvalResults:
+    """
+    Evaluates a date-type player answers by comparing preprocessed 
+    player dates against the parsed gold answer date.
+    """    
+    result = BaseEvalResults()
+    
+    # 1. process gold answer (convert into standard python datetime)
+    clean_gold = _normalize_date_text(gold_answer)
+    gold_matches = search_dates(clean_gold, 
+        settings={'STRICT_PARSING': False, 'PREFER_DAY_OF_MONTH': 'first'})
+    
+    if not gold_matches:
+        # failsafe: Prevent an IndexError if gold_answer contains no dates
+        result.is_correct = False
+        result.resolution_tier = 'date_exact_fail_invalid_gold'
+        return result
+    
+    correct_date = gold_matches[0][1].date()
+    
+    # 2. check if player didn't provide dates
+    if player_ans_date is None:
+        result.is_correct = False
+        result.resolution_tier = 'date_exact_fail_invalid_player_ans'
+        return result
+    
+    # 3. check if the correct date is provided
+    if player_ans_date == correct_date:
+        result.is_correct = True
+        result.resolution_tier = 'date_exact_pass'
+        return result
+    
+    # 4. catch all fail
+    result.is_correct = False
+    result.resolution_tier = 'date_exact_fail'
+    return result
+
+## --- 4. Router for evaluation ---
+
+## 4.1. subrouter for non-text answer evaluation
+
+def _route_nontext_eval(player_answer: str, 
+                        gold_answer: str, 
+                        answer_type: AnswerType) -> BaseEvalResults:
+    """
+    Sub-router handling all deterministic, strict-match non-textual answers
+    """
+    # --- 1. numeric or year answer ---
+    if answer_type in [AnswerType.NUMERIC, AnswerType.YEAR]:
+        # 1. preprocess the player answer
+        processed_player_num = _preprocess_numeric_player_ans(player_answer, hard_cap=1)
+        # 2. route to evaluator
+        return _check_numeric_answer(processed_player_num, gold_answer)
+    
+    # --- 2. date answer ---
+    elif answer_type == AnswerType.DATE:
+        # 1. preprocess the player answer
+        processed_player_date = _preprocess_date_player_ans(player_answer, hard_cap=1)
+        # 2. route to evaluator
+        return _check_date_answer(processed_player_date, gold_answer)
+    
+    # --- 3. catchall for unknown answer-type ---
+    result = BaseEvalResults()
+    result.is_correct = False
+    result.resolution_tier = 'routing_error_unknown_non_text'
+    return result
+
+def _route_text_eval():
+    pass
+
+def evaluation_router():
+    pass    
