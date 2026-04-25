@@ -267,13 +267,31 @@ This section captures the core assumptions the system relies on to remain correc
 |*Bronze*|*Raw*|Ingestion & Schema Check|`question_source`, `data_tier`|
 |*Silver*|*playable*|Logic, quality, & uniqueness|Cleaned strings, validated MCQ logic, deduplication, ground checks, **SBERT Question & Answer embeddings and model version**|
 |*Gold*|*Invariant SOT*|Immutable system anchor|`master_id` (Gold id), clean core game data (metadata stripped) **SBERT model metadata**|
-|*Production*|*feature-rich*|Runtime ready dataset|NER tags, Contextual Features, Descriptive Features|
+|*Production_Green*|*full, feature-rich*|Full-schema production dataset including dev and experimentation feature|NER tags, Contextual Features, Descriptive Features|
+|*Production_Blue*|*lean, feature-rich*|Stable, lean runtime ready dataset with only columns necessary for game handoff|Optimized subset of NER/Contextual features required for runtime.|
 
-**Architecture Note: The Silver-Gold Separation of Concerns**
+**Architecture Notes**: 
+The data-tiers are managed and gatekept using Pydantic v2 models with sequential inheritance from 
+BaseModel -> [Bronze_Legacy | Bronze_Synthetic] (parallel ingestion) -> Silver (convergence to playable standard) -> Gold (invariant system contract)-> {Production_Green | Production_Blue} (branching inheritance).
 
+**1.The Silver-Gold Separation of Concerns**
 To ensure low-latency handoffs to downstream systems while maintaining clear traceability of LLM-generated content, a strict separation of concerns will be enforced between the Silver and Gold tiers:
 - *Silver (audit ledger)*: An append-only historical log. It retains every LLM evaluation trace, pipeline margin score, and model version. If a generated question exhibits a flaw in production, it will be queried in the Silver ledger to trace the exact prompt, grounding source quote, and validation logic that allowed it to pass.
 - *Gold (system contract)*: The pristine, invariant Source of Truth (SOT). All heavy pipeline metadata and trace logs are stripped out. It contains only the strictly-typed, normalized data required to serve the game, ensuring the downstream Context Refinery is not bloated by upstream engineering logs.
+
+**2. Production Green (development) & Blue (stable) Separation of concerns**
+These datasets handle the handoff between the *Context Refinery* and the *Runtime Game* subsystems.
+- *Production_Green* dataset:  This is used for feature discovery and MLOps telemetry. It contains the full suite of features (e.g. token counts, keyword tokens, NLP metadata). This dataset is for experimentation, as well as assessment and fine-tuning of the answer checking evaluators and semantic thresholds, error analysis and debugging.
+- *Production_Blue* dataset: lean runtime for optimized performance (mirror of *Green* where unnecessary gametime columns are shed). This allows for stable version for the Docker container with focus on game performance and answer evaluation.
+The lifecycle will be managed as follows:
+- *Schema decoupling*: Both systems inherit from the Gold dataset, ensuring a singular source of truth for core trivia while allowing the refinery to branch for different use cases (development vs. stable runtime).
+- *Promotion workflow*: once a feature is vetted and finalized in the Green and is used in the game logic, it is promoted to the Blue schema.
+- *Live, symmetric tensor generation*: Both mirrors utilize static embeddings that are hydrated into live PyTorch tensors during the session warmup ensuring high-speed matrix operations during the answer evaluation.
+- *Central runtime router*: enables the game engine to toggle between Blue (stable mode) and Green (development / debug mode) without modifying the evaluation logic.
+
+**3. Object-oriented evaluation contract for the Answer Evaluators**: The pydantic schema is the interface for the runtime Answer Evaluators. So instead of passing dataframe rows parsed as dicts, the game instantiates them into a `Question` object.
+- *Allows for dot-notation*: This allows for the data to be accessed via strict predefined attributes based on the SOT Pydantic schema (eliminating KeyErrors or column mixups).
+- *Schema driven logic*: The `answer_type` Enum defined in the schema acts as the primary key for the `runtime_router` dispatch logic, ensuring the right data payload always hits the correct Answer Evaluator.
 
 ## P2 Key Decisions (ADRs)
 
