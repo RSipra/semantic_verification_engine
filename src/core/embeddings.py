@@ -45,7 +45,8 @@ def get_sbert_model() -> SentenceTransformer:
     """
     global _sbert_model_instance  # system wide global variable to hold the model instance     
     _sbert_model_instance = SentenceTransformer(sbert_settings.model_name,
-                                              device='cpu') # force CPU for compatibility with GCP Free Tier
+                                              device='cpu',   # force CPU for compatibility with GCP Free Tier
+                                              local_files_only=True)
         
     return _sbert_model_instance
  
@@ -57,5 +58,7 @@ def get_nli_model() -> CrossEncoder:
     """
     global _nli_model_instance  # system wide global variable to hold the model instance
       # Add device='cuda' or device='mps' here if you are using GPU/Mac Silicon
-    _nli_model_instance = CrossEncoder(nli_settings.model_name) 
+    _nli_model_instance = CrossEncoder(nli_settings.model_name,    
+                                       device='cpu',   # force CPU for compatibility with GCP Free Tier
+                                       local_files_only=True) 
     return _nli_model_instance

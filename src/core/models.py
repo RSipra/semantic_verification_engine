@@ -7,7 +7,7 @@ import json
 import hashlib
 import base64
 from typing import List, Optional, Self, Dict, Literal, TYPE_CHECKING, Any
-from pydantic import BaseModel, field_validator, Field, model_validator, ConfigDict
+from pydantic import BaseModel, field_validator, Field, model_validator, ConfigDict, ValidationInfo
 import numpy as np
 from ds_utils.ds_constants import QuestionType, QuestionSource, DataTier, AnswerType
 
@@ -454,6 +454,34 @@ class ProductionStandard_Green(GoldStandard):
     question_embeddings_tensor: Optional[Any] = None
     answer_embeddings_tensor: Optional[Any] = None
     answer_variations_embeddings_tensor_matrix:  Optional[Any] = None
+    
+    @field_validator(
+        "question_embeddings_tensor",
+        "answer_embeddings_tensor",
+        "answer_variations_embeddings_tensor_matrix",
+        mode="after"
+    )
+    @classmethod
+    def validate_runtime_tensors(cls, v: Any, info: ValidationInfo) -> Any:
+        """
+        Validates that tensors are present, are numpy arrays, 
+        and match the SBERT 384-dimension requirement.
+        """
+        # 1. Grab the field name or default to an empty string to keep type checkers happy
+        fname = info.field_name or ""
+
+        if v is None:
+            raise ValueError(f"CRITICAL: {fname} is missing.")
+
+        # 2. Use specific suffix checking
+        if fname.endswith("_matrix"):
+            if v.ndim != 2 or v.shape[1] != 384:
+                raise ValueError(f"Matrix {fname} must be (N, 384). Got {v.shape}")
+        else:
+            if v.shape != (384,):
+                raise ValueError(f"Vector {fname} must be (384,). Got {v.shape}")
+
+        return v
 
 # Context Refinery model (Gold + Context Features) - for development / experimentation
 class ProductionMCQ_Green(ProductionStandard_Green, MCQuestion):
