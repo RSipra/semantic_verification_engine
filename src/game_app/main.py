@@ -2,15 +2,22 @@
 ==================================================================
 HARRY POTTER TRIVA GAME 
 ==================================================================
-
-The runner module that executes the game.
-
+#
+# =================================================================
+# PHASE 1 STABLE VERSION - DO NOT REFACTOR IN THESE FILE
+# -----------------------------------------------------------------
+# This game version is synced to the Phase 1 GCP VM. 
+# For Phase 2 (FastAPI/Serverless) development, 
+# please work in the /HPtrivia_game_p2_refactor directory to avoid
+# overwriting the live demo via the VS Code Remote portal.
+# =================================================================
+#
 ------------------------------------------------------------------
 '''
 # Import game modules:
-from HPtrivia_game.game_controller import GameController
-from HPtrivia_game.trivia_manager  import Trivia
-from HPtrivia_game.constants import MVP_TRIVIA_CSV_NAME
+from game_app.game_controller import GameController
+from game_app.trivia_manager  import Trivia
+from game_app.constants import MVP_TRIVIA_CSV_NAME
 
 
 def main():

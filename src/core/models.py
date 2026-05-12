@@ -9,7 +9,7 @@ import base64
 from typing import List, Optional, Self, Dict, Literal, TYPE_CHECKING, Any
 from pydantic import BaseModel, field_validator, Field, model_validator, ConfigDict, ValidationInfo
 import numpy as np
-from ds_utils.ds_constants import QuestionType, QuestionSource, DataTier, AnswerType
+from notebook_support.ds_constants import QuestionType, QuestionSource, DataTier, AnswerType
 
 # Basic schema for all question types to inherit
 class BaseQuestion(BaseModel):

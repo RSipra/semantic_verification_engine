@@ -134,8 +134,8 @@ from scipy import stats
 from scipy.sparse import spmatrix
 
 # Import custom methods from project scripts
-from ds_utils import utils_paths as up
-from ds_utils import ds_constants as const
+from notebook_support import utils_paths as up
+from notebook_support import ds_constants as const
 
 #=============================#
 ##  A. HELPER FUNCTIONS       #

@@ -8,7 +8,7 @@ import pytest
 import pandas as pd
 from pandas.errors import ParserError
 import numpy as np
-from HPtrivia_game.trivia_manager import Trivia, Question
+from game_app.trivia_manager import Trivia, Question
 
 ## --- FIXTURES ---
 # Mocking and using fixture for repeated external dependencies

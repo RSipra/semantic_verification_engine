@@ -1,9 +1,9 @@
 """Unit tests for the Player class in the HPtrivia_game module."""
 
 import pytest
-from HPtrivia_game.player import Player
-from HPtrivia_game.constants import House
-import HPtrivia_game.constants as const
+from game_app.player import Player
+from game_app.constants import House
+import game_app.constants as const
 # pylint: disable=redefined-outer-name
 
 @pytest.fixture

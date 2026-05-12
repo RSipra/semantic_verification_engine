@@ -3,8 +3,8 @@ Unit tests for the eda_scripts methods used for dataset processing for the HPtri
 """
 # pylint: disable=redefined-outer-name, protected-access
 import pytest
-from ds_utils import eda_scripts as eda
-from ds_utils import ds_constants as const
+from notebook_support import eda_scripts as eda
+from notebook_support import ds_constants as const
 
 MONTH_NAMES = {
     'january', 'jan', 'february', 'feb', 'march', 'mar', 'april', 'apr',

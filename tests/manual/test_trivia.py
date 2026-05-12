@@ -4,9 +4,9 @@
 from dotenv import load_dotenv
 load_dotenv() 
 import pandas as pd
-from HPtrivia_game.trivia_manager import Trivia 
+from game_app.trivia_manager import Trivia 
 import utils.utils_paths as up
-import HPtrivia_game.constants as constants
+import game_app.constants as constants
 
 # 1. Define JUST the filename
 csv_name = constants.MVP_TRIVIA_CSV_NAME

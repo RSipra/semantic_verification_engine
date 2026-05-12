@@ -64,10 +64,10 @@ from rich.console import Console, RenderableType
 from rich.panel import Panel
 from rich.text import Text
 from rich.align import Align 
-from HPtrivia_game.player import Player
-from HPtrivia_game.trivia_manager import Question
-import HPtrivia_game.constants as const
-from HPtrivia_game.utils import utils_general as ut
+from game_app.player import Player
+from game_app.trivia_manager import Question
+import game_app.constants as const
+from game_app.utils import utils_general as ut
 
 #-----------------------------------------
         

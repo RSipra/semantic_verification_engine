@@ -2,8 +2,8 @@
 Configuration for offline pipelines
 '''
 
-import ds_utils.notebook_config as nb_cfg
-from ds_utils.schemas import StandardQuestion, MCQuestion
+import notebook_support.notebook_config as nb_cfg
+from notebook_support.schemas import StandardQuestion, MCQuestion
 
 # Predefined models for each question type (model-per-type based on experimentation)
 GENERATION_STRATEGY =[

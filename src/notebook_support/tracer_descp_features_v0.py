@@ -13,7 +13,7 @@ from matplotlib.axes import Axes
 import pandas as pd
 
 # Import custom methods from project scripts
-from ds_utils import ds_constants as const
+from notebook_support import ds_constants as const
 
 ## 1. Length Metrics
 

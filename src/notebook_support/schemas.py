@@ -8,7 +8,7 @@ Standardized Schemas for the Harry Potter Trivia Project.
 
 from typing import List
 from typing_extensions import TypedDict
-from ds_utils.ds_constants import QuestionType
+from notebook_support.ds_constants import QuestionType
 
 # Basic schema for all question types to inherit
 class BaseQuestion(TypedDict):

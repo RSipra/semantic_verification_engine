@@ -3,7 +3,7 @@ Unit tests for the Question class and its methods in the HPtrivia_game package.
 """
 from dataclasses import FrozenInstanceError
 import pytest
-from HPtrivia_game.trivia_manager import Question
+from game_app.trivia_manager import Question
 # pylint: disable=redefined-outer-name
 
 @pytest.fixture

@@ -116,9 +116,9 @@ from rich.console import Console
 from rich.markdown import Markdown
 # IMPORT PROJECT CONFIGURATION
 # Using the "Src Layout" (pip install -e .)
-from ds_utils.ds_constants import Book
+from notebook_support.ds_constants import Book
 from scripts.pipelines.generate_questions.prompts.pipeline_config import GENERATION_STRATEGY
-import ds_utils.notebook_config as nb_cfg
+import notebook_support.notebook_config as nb_cfg
 
 ## CONSTANTS
 

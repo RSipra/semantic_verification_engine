@@ -26,6 +26,7 @@ reports/
 scripts/
 src/ds_utils/
 tests/
+src/mvp_phase1
 
 # Documentation and Metadata
 config.env

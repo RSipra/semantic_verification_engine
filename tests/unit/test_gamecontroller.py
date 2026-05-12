@@ -6,10 +6,10 @@ Unit tests for the GameController class and its methods in the HPtrivia_game pac
 from unittest.mock import Mock, patch
 import pytest
 # import all modules for Controller
-from HPtrivia_game.game_controller import GameController
-from HPtrivia_game.player import Player
-from HPtrivia_game.trivia_manager import Question
-import HPtrivia_game.constants as const
+from game_app.game_controller import GameController
+from game_app.player import Player
+from game_app.trivia_manager import Question
+import game_app.constants as const
 
 # NOTE on Controller Testing & Mocks:
 # ------------------------------------

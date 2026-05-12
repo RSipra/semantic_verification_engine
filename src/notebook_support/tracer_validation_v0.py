@@ -22,8 +22,8 @@ import pyarrow as pa
 
 
 
-from ds_utils.ds_constants import QuestionType, QuestionSource, DataTier
-from ds_utils.text_processing import clean_text_fn
+from notebook_support.ds_constants import QuestionType, QuestionSource, DataTier
+from notebook_support.text_processing import clean_text_fn
 import core.models as pyd
 
 ## Configuration

@@ -7,7 +7,7 @@ CLI MVP (core logic) -> player module (model)
 
 ------------------------------------------------------------------
 '''
-import HPtrivia_game.constants as const
+import game_app.constants as const
 
 
 class Player:

@@ -23,6 +23,7 @@ notebooks/02_research/03_aces_generating_new_questions/.backup
 notebooks/02_research/03_aces_generating_new_questions/.drafts
 scripts/research/question_generation/llm_outputs/.backups
 notebooks/llm_configuration_for_ex.md
+src/mvp_phase1
 
 # Ignore token files or sensitive configs
 .env
@@ -42,11 +43,13 @@ src/.DS_Store
 tempCodeRunnerFile*.ipynb
 venv/
 hptrivia_game.egg-info
+src/harry_potter_trivia.egg-info
 
 # Ignore temporary Word files
 ~$*.docx
 ~$*.doc
 *.wbk
+
 
 # Ignore python cache files
 __pycache__/
@@ -54,6 +57,7 @@ src/ds_utils/__pycache__
 *.py[cod]
 *.so
 .pytest_cache
+*.egg-info/
 
 # Django stuff:
 *.log

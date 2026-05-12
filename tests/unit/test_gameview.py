@@ -11,10 +11,10 @@ import pytest
 from rich.panel import Panel
 from rich.align import Align
 from rich.console import Console
-from HPtrivia_game.game_controller import GameView
-from HPtrivia_game.player import Player
-from HPtrivia_game.trivia_manager import Question
-import HPtrivia_game.constants as const
+from game_app.game_controller import GameView
+from game_app.player import Player
+from game_app.trivia_manager import Question
+import game_app.constants as const
 
 # NOTE on testing:
 # ------------------

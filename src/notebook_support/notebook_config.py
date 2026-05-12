@@ -15,11 +15,11 @@ import sys
 # This try/except block makes the import robust. It will work
 # whether `pip install -e .` has been run or not.
 try:
-    from src.ds_utils.utils_paths import find_project_root
+    from src.notebook_support.utils_paths import find_project_root
 except ImportError:
     # Fallback if the package isn't installed in editable mode.
     sys.path.insert(0, str(Path(__file__).resolve().parent))
-    from ds_utils.utils_paths import find_project_root
+    from notebook_support.utils_paths import find_project_root
 
 # --- Path Definitions ---
 # Find the project root ONCE using utility function.

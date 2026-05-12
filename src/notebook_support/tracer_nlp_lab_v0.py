@@ -27,9 +27,9 @@ from core.models import (
     ProductionStandard_Green, ProductionMCQ_Green, 
     ProductionStandard_Blue, ProductionMCQ_Blue, 
     RUNTIME_REGISTRY)
-from ds_utils.tracer_descp_features_v0 import count_clean_words
-from ds_utils.ds_constants import AnswerType, QuestionType
-import ds_utils.tracer_validation_v0 as validation_pipeline
+from notebook_support.tracer_descp_features_v0 import count_clean_words
+from notebook_support.ds_constants import AnswerType, QuestionType
+import notebook_support.tracer_validation_v0 as validation_pipeline
 
 # --configure API for LLM judge for EX evaluator--
 load_dotenv(find_dotenv("config.env"), override=True)
