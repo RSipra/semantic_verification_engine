@@ -33,6 +33,8 @@ qtype_hierarchy_map = {'EX': 1, 'MCQ': 2, 'FR': 3}
 # composite similarity score for evaluation / comparison of questions within duplicate groups
 SIM_WEIGHTS = {'quote': 0.5,'answer': 0.4,'question': 0.1}
 SILVER_COMPLEX_COLS = ['generation_prompt_version', 'enrich_audit_flags']
+COLS_FOR_EMBEDDINGS = ['question', 'answer', 'source_quote','answer_variations','mcq_distractors']
+EMBEDDING_COL_NAMES = ['question_embeddings','answer_embeddings','source_quote_embeddings']
 
 ### General Helpers (shared across stages)
         
@@ -474,10 +476,10 @@ def _create_dedup_audit_df(duplicate_groups: List[List[str]],
         (ans_mat * SIM_WEIGHTS['answer']) 
     )
     # 5.5 Extract the parallel scores using NumPy advanced indexing (using .values for safety)
-    subset_df['rel_sq_sim'] = sq_mat[g_idx_np, t_idx_np]
-    subset_df['rel_q_sim']  = ques_mat[g_idx_np, t_idx_np]
-    subset_df['rel_a_sim']  = ans_mat[g_idx_np, t_idx_np]
-    subset_df['composite_sim'] = composite_sim[g_idx_np, t_idx_np]
+    subset_df['rel_sq_sim'] = np.round(sq_mat[g_idx_np, t_idx_np],4)
+    subset_df['rel_q_sim']  = np.round(ques_mat[g_idx_np, t_idx_np],4)
+    subset_df['rel_a_sim']  = np.round(ans_mat[g_idx_np, t_idx_np],4)
+    subset_df['composite_sim'] = np.round(composite_sim[g_idx_np, t_idx_np],4)
 
     # 7. Create view audit_df"
     column_order = [id_col_name, 'audit_cluster_id', 'question_type',
@@ -607,6 +609,84 @@ def group_duplicates(batch_df: pd.DataFrame,
     master_audit_df = pd.concat(batch_results, ignore_index=True)
     return master_audit_df
 
+# Main deduplication ORCHESTRATOR (across question types, same source material, within same synthetic batch)
+def deduplicate_synthetic_batch(synthetic_df: pd.DataFrame,
+                                sbert_model_instance: SentenceTransformer,
+                                generation_batches_dict: dict,
+                                syn_id_col_name: str = 'temp_qid',
+                                cols_to_embed: list = COLS_FOR_EMBEDDINGS,
+                                embedding_col_names: list = EMBEDDING_COL_NAMES,
+                                source_ref_col_name: str = 'source_reference',
+                                threshold_source_quote: float = 0.80,
+                                threshold_composite: float = 0.70,
+                                min_ans_sim: float = 0.80,
+                                second_pass_flag: bool = True,
+                                ) -> Tuple[pd.DataFrame, pd.DataFrame]:
+    """
+    Orchestrates the offline semantic deduplication pipeline for synthetic data batches.
+    
+    This function generates SBERT embeddings for structural columns, validates their 
+    integrity, and runs a two-pass semantic verification (Source Quote overlap followed 
+    by Composite Question/Answer overlap) to flag logically identical questions 
+    generated from the same source material.
+    
+    Args:
+        synthetic_df (pd.DataFrame): The raw generation batch dataframe.
+        sbert_model_instance (SentenceTransformer): The singleton SBERT model for invariant vector generation.
+        generation_batches_dict (dict): Configuration mapping for batch-level processing.
+        syn_id_col_name (str): The column name representing the unique synthetic question ID.
+        cols_to_embed (list): List of text columns that require SBERT embeddings.
+        embedding_col_names (list): List of expected output column names for the generated embeddings.
+        source_ref_col_name (str): The column name containing the source material reference.
+        threshold_source_quote (float): Cosine similarity threshold for the first-pass source quote check.
+        threshold_composite (float): Cosine similarity threshold for the second-pass Q&A composite check.
+        min_ans_sim (float): Minimum answer similarity required to flag a duplicate (safety guardrail).
+        second_pass_flag (bool): Whether to run the composite semantic check after the source quote check.
+        
+    Returns:
+        tuple[pd.DataFrame, pd.DataFrame]: A tuple containing:
+            - audit_df: The summary dataframe containing duplicate flags and grouping IDs.
+            - validated_embedding_df: The complete dataframe containing all generated and validated 
+              SBERT vectors, ready for downstream processing without needing to recompute.
+    
+    """
+    df = synthetic_df.copy()
+    
+    # 1. Create a new column with only MCQ distractors (without the answer) to generate separate embeddings for them
+    distractors_df = append_text_distractors(df)
+    
+    # 2. Add embeddings to df
+    #    create embeddings for all columns that need embeddings downstream in one go (not just for deduplication)
+    embedding_df = generate_embeddings(dataframe = distractors_df,
+                                       columns = cols_to_embed, 
+                                       model = sbert_model_instance
+                                      )
+    #   validated embeddings created correctly (will throw error and halt pipeline if any issues with embedding creation)
+    validated_embedding_df = audit_all_embeddings(df = embedding_df,
+                                                  text_columns = cols_to_embed,
+                                                  id_col = syn_id_col_name
+                                                  )
+    
+    # 3. create deduplication batches for the synthetic tracer using existing generation_batches dict
+    #    and generate similarity matrics for the embedding cols. Pass in the new df with embeddings (dedup_embedding_df)    
+    batch_sim_matrix_full = create_dedup_syn_batches(dedup_embedding_cols= embedding_col_names,
+                                                         dataframe = validated_embedding_df,  
+                                                         generation_batches_dict = generation_batches_dict,
+                                                         id_col_name= syn_id_col_name,
+                                                         source_ref_col_name=source_ref_col_name
+                                                         )
+    # 4. Flag duplicates in the df and review audit df
+    #    Run full two-pass semantic verification (Source Quote + Composite)
+    audit_df= group_duplicates(batch_df = validated_embedding_df,
+                               id_col_name= syn_id_col_name,
+                               batch_sim_matrix_dict= batch_sim_matrix_full,
+                               threshold_sq= threshold_source_quote,
+                               use_secondary_pass=second_pass_flag,
+                               threshold_composite=threshold_composite,
+                               min_ans_sim=min_ans_sim)
+    
+    return audit_df, validated_embedding_df    
+
 ### --- STAGE 3: ALIGNMENT ---
 
 # validate answer variations using embeddings similarity to the main answer (can be used for both legacy and synthetic data)
@@ -674,8 +754,8 @@ def validate_mcq_options(df: pd.DataFrame, rules: dict) -> pd.DataFrame:
     """
     # 1. fail fast: make sure margins are provided in rules. if missing, cannot proceed.
     try:
-        presence_min = rules['answer_presence_min']
-        margin_min = rules['distractor_similarity_min']
+        presence_min = rules['min_answer_presence']
+        margin_min = rules['min_distractor_delta']
     except KeyError as e:
         raise KeyError(f"Pipeline Config Error: Missing required MCQ threshold {e}") from e
 

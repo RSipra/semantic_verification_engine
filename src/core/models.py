@@ -184,7 +184,7 @@ class EnrichmentFlag(BaseModel):
     severity: Literal["error", "warning"]
     flag_notes: str
 
-# Audit mirror for Gold invariant (stores metadata for traceability)
+# Audit layer and system invariant (stores metadata for traceability)
 class SilverStandard(BaseQuestion, PipelineMetadata):
     """
     The Silver Tier schema for Standard (FR/EX) questions.
@@ -246,6 +246,20 @@ class SilverStandard(BaseQuestion, PipelineMetadata):
     dedupe_action: Optional[str] = None
     closest_legacy_id: Optional[int] = None
     max_similarity_score: Optional[float] = None
+    
+    @field_validator('enrich_audit_flags', mode='before')
+    @classmethod
+    def deserialize_audit_flags(cls, v):
+        """
+        Deserializes 'enrich_audit_flags' from a JSON string back to a list of dicts
+        after a Parquet round-trip. Pydantic then coerces each dict into an EnrichmentFlag object.
+        Passes through unchanged if already a list or None.
+        """
+        if isinstance(v, str):
+            return json.loads(v)
+        if isinstance(v, np.ndarray):
+            return json.loads(''.join(v.tolist()))
+        return v
 
     # check 2. check deterministic math of the master_id corresponds to question data
     @model_validator(mode='after')
@@ -327,17 +341,6 @@ class SilverStandard(BaseQuestion, PipelineMetadata):
             )
         return self
 
-    @field_validator('enrich_audit_flags', mode='before')
-    @classmethod
-    def deserialize_audit_flags(cls, v):
-        """
-        Deserializes 'enrich_audit_flags' from a JSON string back to a list of dicts
-        after a Parquet round-trip. Pydantic then coerces each dict into an EnrichmentFlag object.
-        Passes through unchanged if already a list or None.
-        """
-        if isinstance(v, str):
-            return json.loads(v)
-        return v
 
 class SilverMCQ(SilverStandard, MCQuestion):
     """
@@ -353,7 +356,7 @@ class SilverMCQ(SilverStandard, MCQuestion):
     mcq_margin_score: float
     mcq_closest_distractor: str
 
-# system invariant (canonical record)
+# runtime projection of Silver for handoff
 class GoldStandard(BaseQuestion):
     """ Final gold FR, EX schema """ 
     # ensure that shedded columns are dropped

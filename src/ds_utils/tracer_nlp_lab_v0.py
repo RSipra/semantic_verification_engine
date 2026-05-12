@@ -345,6 +345,43 @@ class LLMJudgeResponse(BaseModel):
     # The boolean comes LAST, after the logic is established
     is_correct: bool = Field(description="True ONLY if the reasoning proves absolute semantic and entity alignment.")
 
+# warmup function to mitigate cold start latency for the first few LLM calls in the evaluation loop
+def warmup_llm_connection(model_name: str = PRIMARY_MODEL, 
+                          system_prompt: str = SYSTEM_PROMPT_EX):
+    """
+    Standalone network ping to absorb the 6-second gRPC cold-start penalty.
+    Run this once before the main evaluation loop.
+    """
+    print(f"--- Initiating LLM Network Handshake ---")
+    print(f"Target: {model_name}")
+    start_time = time.time()
+    
+    try:
+        # 1. Initialize the model using your exact genai syntax 
+        #    System instructions for EX (most LLM calls) added upfront to avoid cold start penalty
+        #    on the first real evaluation call.
+        ping_model = genai.GenerativeModel(model_name=model_name,  # type: ignore
+                                           system_instruction=system_prompt)  
+        
+        # 2. Send the smallest possible payload to open the connection and 
+        #    compile the response schema (LLMJudgeResponse) to mitigate the 
+        #    cold start penalty for future calls.
+        _ = ping_model.generate_content(
+            "Return a dummy response",
+            generation_config=genai.GenerationConfig(  # type: ignore
+                response_mime_type="application/json",
+                response_schema=LLMJudgeResponse, 
+            )
+        )
+        
+        end_time = time.time()
+        print(f"✅ Connection established. Warmup time: {round(end_time - start_time, 2)} seconds.")
+        print("The network pipe is now open for _call_llm_judge.\n")
+        
+    except Exception as e:
+        print(f"⚠️ Warmup failed. The first call to _call_llm_judge will carry the cold-start penalty.")
+        print(f"Error Details: {str(e)}\n")
+
 # decorator for timing llm calls
 def track_eval_latency(func):
     """
@@ -408,7 +445,8 @@ def _call_llm_judge(question: str,
                     answer_variations: list,
                     source_quote: str,
                     explanation: str,
-                    system_prompt: str) -> tuple[LLMJudgeResponse, str]:
+                    system_prompt: str,
+                    delay_seconds: float = 6.0) -> tuple[LLMJudgeResponse, str]:
     """
     Generalized LLM caller that handles both EX (Logic) and FR (Entity) 
     evaluation based on the passed system_prompt.
@@ -444,7 +482,7 @@ def _call_llm_judge(question: str,
             end_time = time.time()
             print(f"LLM resolution time: {round(end_time - start_time, 2)} seconds")
             # 2. conservative rate Limiting (10 RPM / 6s buffer)
-            time.sleep(6.0)
+            time.sleep(delay_seconds)
             
             # clean markdown formatting before parsing
             raw_text = response.text.strip()

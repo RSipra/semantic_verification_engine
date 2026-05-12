@@ -55,4 +55,10 @@ LOGS_DIR = PIPELINE_LOGS_ROOT / "logs"
 # Generated Content
 GENERATED_QUESTIONS_DIR = DATA_DIR / "08_generated"
 
+# TRACER-specific paths
+# LLM runs
+TRACER_LLM_GENERATION_DIR = SCRIPTS_DIR / "research/question_generation/tracer_dataset_generation"
+TRACER_LLM_GEN_OUTPUTS_DIR = TRACER_LLM_GENERATION_DIR / "llm_outputs"
+TRACER_SYNTHETHETIC_LLM_JUDGEMENT_DIR = SCRIPTS_DIR / "research/qa_validation/synthetic"
+
 print("✅ Notebook config loaded.")
