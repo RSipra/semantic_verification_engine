@@ -265,19 +265,19 @@ This section captures the core assumptions the system relies on to remain correc
 |**Data Tier**|**State**|**Purpose**|**Key data added**|
 |-|-|-|-|
 |*Bronze*|*Raw*|Ingestion & Schema Check|`question_source`, `data_tier`|
-|*Silver*|*playable*|Logic, quality, & uniqueness|Cleaned strings, validated MCQ logic, deduplication, ground checks, **SBERT Question & Answer embeddings and model version**|
-|*Gold*|*Invariant SOT*|Immutable system anchor|`master_id` (Gold id), clean core game data (metadata stripped) **SBERT model metadata**|
+|*Silver* | system of record (invariant + traceable ledger) | truth layer for all validation + audit + lineage | cleaned strings, validated MCQ logic, deduplication flags, grounding checks, **`master_id`**, SBERT embeddings, model versions, full trace metadata |
+| *Gold* | *derived runtime contract (pruned projection of Silver)*| lean runtime mirror for game + Context Refinery handoff | minimal game-ready fields (metadata stripped) |
 |*Production_Green*|*full, feature-rich*|Full-schema production dataset including dev and experimentation feature|NER tags, Contextual Features, Descriptive Features|
 |*Production_Blue*|*lean, feature-rich*|Stable, lean runtime ready dataset with only columns necessary for game handoff|Optimized subset of NER/Contextual features required for runtime.|
 
 **Architecture Notes**: 
 The data-tiers are managed and gatekept using Pydantic v2 models with sequential inheritance from 
-BaseModel -> [Bronze_Legacy | Bronze_Synthetic] (parallel ingestion) -> Silver (convergence to playable standard) -> Gold (invariant system contract)-> {Production_Green | Production_Blue} (branching inheritance).
+BaseModel -> [Bronze_Legacy | Bronze_Synthetic] (parallel ingestion) -> Silver (system of record / invariant ledger) → Gold (derived runtime contract) → Production layers (feature views): {Production_Green | Production_Blue} (branching inheritance).
 
 **1.The Silver-Gold Separation of Concerns**
 To ensure low-latency handoffs to downstream systems while maintaining clear traceability of LLM-generated content, a strict separation of concerns will be enforced between the Silver and Gold tiers:
 - *Silver (audit ledger)*: An append-only historical log. It retains every LLM evaluation trace, pipeline margin score, and model version. If a generated question exhibits a flaw in production, it will be queried in the Silver ledger to trace the exact prompt, grounding source quote, and validation logic that allowed it to pass.
-- *Gold (system contract)*: The pristine, invariant Source of Truth (SOT). All heavy pipeline metadata and trace logs are stripped out. It contains only the strictly-typed, normalized data required to serve the game, ensuring the downstream Context Refinery is not bloated by upstream engineering logs.
+- *Gold (runtime contract)*: A derived, stripped projection of the Silver system-of-record. It contains only the fields required for runtime execution and downstream contextual enrichment.All heavy pipeline metadata and trace logs are stripped out. It contains only the strictly-typed, normalized data required to serve the game, ensuring the downstream Context Refinery is not bloated by upstream engineering logs.
 
 **2. Production Green (development) & Blue (stable) Separation of concerns**
 These datasets handle the handoff between the *Context Refinery* and the *Runtime Game* subsystems.
