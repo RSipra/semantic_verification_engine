@@ -2,16 +2,47 @@
 =======================================================================
 SEMANTIC VERIFICATION ENGINE (Ref implementaiton: Harry Potter Trivia)
 =======================================================================
-
+-----------------------------------------------------------------------
 CLI MVP (Tracer Build) -> Data Transfer Objects (DTOs)
+-----------------------------------------------------------------------
+This module defines internal data contracts used to represent evaluation
+outputs produced by the Evaluator layer.
 
-Data pydantic models for evaluation results and LLM response
+The DTOs in this module are not used for data ingestion or external parsing.
+They are constructed directly by Evaluator components as the final
+representation of computed evaluation state.
+
+Two categories of structures exist:
+
+1. Evaluation Result DTOs:
+   - BaseEvalResults
+   - MCQEvalResults
+   - FREvalResults
+   - EXEvalResults
+
+   These represent structured outputs of evaluator logic (e.g. similarity
+   scoring, rule-based decisions, and hybrid resolution logic).
+   They are internal evaluator-owned artifacts and are always constructed
+   in-code, not from external input.
+
+2. LLM Schema Contract:
+   - LLMJudgeResponse
+
+   This defines the structured output format used in LLM API calls during
+   inference-time evaluation. It is not an evaluation result itself, but a
+   generation-time contract that enforces consistent reasoning, classification,
+   and UX-facing responses from the model.
+
+Design principle:
+- DTOs represent evaluator-owned outputs only
+- No parsing, coercion, or input normalization occurs in this layer
+- Validation focuses strictly on structural integrity and type correctness
 -----------------------------------------------------------------------
 """
 
 from pydantic import BaseModel, Field, model_validator
 
-## LLM Response Schema
+## --- LLM Response Schema ---
 
 # LLM response pydantic model (EX, FR)
 class LLMJudgeResponse(BaseModel):
@@ -38,7 +69,7 @@ class LLMJudgeResponse(BaseModel):
             True only when semantic equivalence and entity alignment are satisfied.
     """
     # ordered to push model to think before assigning boolean
-    reasoning: str = Field(description=
+    evaluation_reasoning: str = Field(description=
                            "Step-by-step logical proof of why the answer fails or passes the strict criteria.")
     quiz_host_response: str = Field(description=
                              "A short, 1-sentence in-character reaction from the quiz host.")
@@ -47,7 +78,7 @@ class LLMJudgeResponse(BaseModel):
                              "True ONLY if the reasoning proves absolute semantic and entity alignment.")
 
 
-## Structured output: Answer Evaluation Results 
+## --- Structured output: Answer Evaluation Results ---
 # standardizing answer evaluation metrics into data classes
 
 class BaseEvalResults(BaseModel):
@@ -101,7 +132,7 @@ class MCQEvalResults(BaseEvalResults):
     sim_correct_ans : float = 0.0  # track semantic similarity score with gold / correct answer
     sim_distractor: float = 0.0    # track semantic similarity score with closest distractor
     margin: float = 0.0  # diff between player-gold similarity and player-distractor similarity for semantic tier,
-    matched_variation: bool = False  # whether the player answer matched a variation (shorthand) rather than the main gold answer (telemetry placeholder)
+    matched_answer_variation: bool = False  # whether the player answer matched a variation (shorthand) rather than the main gold answer (telemetry placeholder)
     execution_time_sec: float = 0.0
 
 ## FR
