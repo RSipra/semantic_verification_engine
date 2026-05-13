@@ -6,9 +6,14 @@ TODO (Full Dev): Move methods here for SOT for all downstream embedding uses.
 - embeddings methods (generation in qa_validation and processing from NLP lab) 
 - upfront tensor conversions at runtime NLP lab
 """
+import os
 from functools import lru_cache
 from sentence_transformers import SentenceTransformer, CrossEncoder
 from core.settings import sbert_settings, nli_settings
+
+# If HF_HOME exists (Docker), this is "/app/models"
+# If HF_HOME is unknown (Notebooks), this is None. No error is raised.
+MODEL_CACHE_PATH = os.getenv('HF_HOME')
 
 # singleton cache internal pointers to loaded model; starts empty.
 _sbert_model_instance = None
@@ -43,10 +48,12 @@ def get_sbert_model() -> SentenceTransformer:
        during full system development to ensure the system never hangs trying to download 
        weights from Hugging Face in a restricted production environment.
     """
+    is_docker = MODEL_CACHE_PATH is not None
     global _sbert_model_instance  # system wide global variable to hold the model instance     
     _sbert_model_instance = SentenceTransformer(sbert_settings.model_name,
-                                              device='cpu',   # force CPU for compatibility with GCP Free Tier
-                                              local_files_only=True)
+                                                device='cpu',   # force CPU for compatibility with GCP Free Tier
+                                                cache_folder=MODEL_CACHE_PATH, # Use the baked-in Docker path
+                                                local_files_only=is_docker)  # Force local-only to prevent runtime hangs
         
     return _sbert_model_instance
  
@@ -56,9 +63,11 @@ def get_nli_model() -> CrossEncoder:
     Singleton cache for the NLI Cross-Encoder.
     Guarantees the model is only loaded into memory once per session.
     """
+    is_docker = MODEL_CACHE_PATH is not None
     global _nli_model_instance  # system wide global variable to hold the model instance
       # Add device='cuda' or device='mps' here if you are using GPU/Mac Silicon
     _nli_model_instance = CrossEncoder(nli_settings.model_name,    
                                        device='cpu',   # force CPU for compatibility with GCP Free Tier
-                                       local_files_only=True) 
+                                       cache_folder=MODEL_CACHE_PATH,
+                                       local_files_only=is_docker) 
     return _nli_model_instance
