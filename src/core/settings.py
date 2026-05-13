@@ -2,6 +2,7 @@
 Project: SVE (ref implementation: Harry Potter Trivia)
 Project Settings (Phase 2+)
 """
+import os
 import torch
 from pydantic_settings import BaseSettings, SettingsConfigDict
 import numpy as np
@@ -70,3 +71,38 @@ class NLISettings(BaseSettings):
         case_sensitive=False 
     )
 nli_settings = NLISettings()    
+
+class PathSettings(BaseSettings):
+    """
+    Paths for data ingestion, ensuring stability across local and Docker environments.
+    """
+    # If HF_HOME exists in the environment, we know we are inside Docker
+    is_docker: bool = os.getenv('HF_HOME') is not None
+    
+    @property
+    def gold_trivia_path(self) -> str:
+        """
+        Resolves the active file path for the Gold Tier knowledge base.
+        
+        Dynamically adjusts the path based on the runtime environment to prevent
+        File I/O reference errors. Uses an absolute path in the Docker container 
+        and a relative path from the project root for local development. 
+        
+        NOTE: Currently locked to the 'tracer' dataset for Phase 2 validation.
+        
+        Returns:
+            str: The fully qualified path to the active Parquet dataset.
+        """
+        # TODO (Production transition): 
+        # Currently hardcoded to the 'tracer' dataset for Phase 2 testing.
+        # For full deployment, abstract this to a generic "production_gold.parquet"
+        # and handle the version swapping purely within the Dockerfile COPY command.
+        
+        if self.is_docker:
+            # The exact GPS coordinate inside the Docker container
+            return "/app/data/tracer_gold.parquet"
+        
+        # The exact path when running locally on your machine
+        return "data/05_final/tracer_dataset_v0.parquet"
+
+path_settings = PathSettings()
