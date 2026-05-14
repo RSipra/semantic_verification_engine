@@ -30,6 +30,9 @@ Design principles:
 Notes:
     - This module represents the "exact match / rule-based" evaluation layer
     - Semantic similarity evaluators operate in a separate pipeline stage
+    - TODO: Date parsing currently relies on heuristic extraction using `search_dates`.
+      This layer should be revisited for robustness and ambiguity handling
+      during future runtime development.
 
 """
 import re
