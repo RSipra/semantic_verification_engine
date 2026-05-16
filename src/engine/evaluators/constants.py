@@ -1,11 +1,14 @@
 """
-==================================================================
-HARRY POTTER TRIVA GAME 
-==================================================================
-Common constants used by the Answer Evaluators
+=======================================================================
+SEMANTIC VERIFICATION ENGINE (Ref implementaiton: Harry Potter Trivia)
+=======================================================================
+Common constants and thresholds used by the Answer Evaluators
 """
+from pydantic import BaseModel
 
-## constants and thresholds
+## 1: Structured evalautors
+
+# mapping for date evaluator
 HOLIDAY_MAP ={
     "halloween":"october 31",
     "valentines day": "february 14",
@@ -15,5 +18,21 @@ HOLIDAY_MAP ={
     "new years eve": "december 31",
     "new year's eve": "december 31"
 }
+## 2: Constants & Thresholds for semantic evaluators
 
+# COMMON setting (FR, MCQ only)
+FUZZY_THRESHOLD = 0.85
 
+# MCQ (Multiple Choice Questions)
+class MCQThresholdConfig(BaseModel):
+    """
+    Semantic thresholds for MCQ (Multiple Choice Question types) evaluation tiers.
+    Attributes:
+        fuzzy: normalized ratio (0-1) for character similarity (catches 1-2 letter typos), 
+        primary SBERT: cutoff for cosine similarity score between player and gold dataset
+            answer for a direct pass from SBERT tier.
+        distractor_delta: player answer comparison against distractors vs. correct answer
+    """
+    fuzzy_threshold: float = FUZZY_THRESHOLD
+    semantic_threshold: float = 0.75
+    distractor_delta: float = 0.30
