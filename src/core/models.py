@@ -6,11 +6,23 @@ import math
 import json
 import hashlib
 import base64
+from enum import Enum
 from typing import List, Optional, Self, Dict, Literal, TYPE_CHECKING, Any
 from pydantic import BaseModel, field_validator, Field, model_validator, ConfigDict, ValidationInfo
 import numpy as np
-from notebook_support.ds_constants import QuestionType, QuestionSource, DataTier, AnswerType
+from core.constants import QuestionType, QuestionSource, AnswerType
 
+class DataTier(str, Enum):
+    """
+    Enum class to distinguish between legacy and synthetic questions source.
+    """
+    BRONZE = "bronze"
+    SILVER = "silver"
+    GOLD = "gold"
+    PROD_GREEN = "production_green"
+    PROD_BLUE = "production_blue"
+    
+    
 # Basic schema for all question types to inherit
 class BaseQuestion(BaseModel):
     """
@@ -341,7 +353,6 @@ class SilverStandard(BaseQuestion, PipelineMetadata):
             )
         return self
 
-
 class SilverMCQ(SilverStandard, MCQuestion):
     """
     Core schema for Silver Multiple Choice (MCQ) questions.
@@ -356,7 +367,7 @@ class SilverMCQ(SilverStandard, MCQuestion):
     mcq_margin_score: float
     mcq_closest_distractor: str
 
-# runtime projection of Silver for handoff
+# Projection of Silver for handoff for enrichment layer
 class GoldStandard(BaseQuestion):
     """ Final gold FR, EX schema """ 
     # ensure that shedded columns are dropped
@@ -450,14 +461,47 @@ class ProductionStandard_Green(GoldStandard):
     
     # NER features to come
 
+# Context Refinery model (Gold + Context Features) - for development / experimentation
+class ProductionMCQ_Green(ProductionStandard_Green, GoldMCQ):
+    """
+    Pure schema composition layer.
+    No additional fields or behavior.
+    Represents the canonical MCQ storage contract for runtime handoff.
+    """
+    pass
+
+# stable serving model for runtime (lean, mirror version of Green dataset)
+class ProductionStandard_Blue(GoldStandard):
+    """
+    Runtime ready lean production FR, EX schema
+    (required Gold + context refinery features only)
+    """
+    question_length: int
+    answer_length: int
+    answer_type: AnswerType
+
+class ProductionMCQ_Blue(ProductionStandard_Blue, GoldMCQ):
+    """
+    Runtime ready lean production MCQ schema
+    (required Gold + context refinery features)
+    Pure schema composition layer.
+    No additional fields or behavior.
+    Represents the canonical MCQ storage contract for runtime handoff.
+    """ 
+    pass
+
+class RuntimeStandard_Green(ProductionStandard_Green):
+    """
+    At warmup, after tensor hydration
+    """ 
     # tensors calculated upfront during runtime warmup for session
     # NOTE: Type `Any` is used to bypass Pydantic's internal validation
     # checks for non-standard types (torch.Tensor), ensuring near-instant
     # `Question` object instantiation during the warmup loop.
-    question_embeddings_tensor: Optional[Any] = None
-    answer_embeddings_tensor: Optional[Any] = None
-    answer_variations_embeddings_tensor_matrix:  Optional[Any] = None
-    
+    question_embeddings_tensor: Any
+    answer_embeddings_tensor: Any
+    answer_variations_embeddings_tensor_matrix: Any
+
     @field_validator(
         "question_embeddings_tensor",
         "answer_embeddings_tensor",
@@ -486,46 +530,71 @@ class ProductionStandard_Green(GoldStandard):
 
         return v
 
-# Context Refinery model (Gold + Context Features) - for development / experimentation
-class ProductionMCQ_Green(ProductionStandard_Green, MCQuestion):
+class RuntimeMCQ_Green(RuntimeStandard_Green, ProductionMCQ_Green):
+    # tensors calculated upfront during runtime warmup for session
+    # NOTE: Type `Any` is used to bypass Pydantic's internal validation
+    # checks for non-standard types (torch.Tensor), ensuring near-instant
+    # `Question` object instantiation during the warmup loop.
+    mcq_distractors_embeddings_tensor_matrix : Any
+    
+    
+class RuntimeStandard_Blue(ProductionStandard_Blue):
     """
-    Full production MCQ schema with
-    feature experimentation
-    (Gold + context refinery features)
+    At warmup, after tensor hydration
     """ 
     # tensors calculated upfront during runtime warmup for session
     # NOTE: Type `Any` is used to bypass Pydantic's internal validation
     # checks for non-standard types (torch.Tensor), ensuring near-instant
     # `Question` object instantiation during the warmup loop.
-    mcq_distractors_embeddings_tensor_matrix : Optional[Any] = None
-    
-# stable serving model for runtime (lean, mirror version of Green dataset)
-class ProductionStandard_Blue(GoldStandard):
-    """
-    Runtime ready lean production FR, EX schema
-    (required Gold + context refinery features only)
-    """
-    question_length: int
-    answer_length: int
-    answer_type: AnswerType
-    
-    # tensors calculated upfront during runtime warmup for session
-    question_embeddings_tensor: Optional[Any] = None
-    answer_embeddings_tensor: Optional[Any] = None
-    answer_variations_embeddings_tensor_matrix:  Optional[Any] = None
+    question_embeddings_tensor: Any
+    answer_embeddings_tensor: Any
+    answer_variations_embeddings_tensor_matrix: Any
 
-class ProductionMCQ_Blue(ProductionStandard_Blue, MCQuestion):
+    @field_validator(
+        "question_embeddings_tensor",
+        "answer_embeddings_tensor",
+        "answer_variations_embeddings_tensor_matrix",
+        mode="after"
+    )
+    @classmethod
+    def validate_runtime_tensors(cls, v: Any, info: ValidationInfo) -> Any:
+        """
+        Validates that tensors are present, are numpy arrays, 
+        and match the SBERT 384-dimension requirement.
+        """
+        # 1. Grab the field name or default to an empty string to keep type checkers happy
+        fname = info.field_name or ""
+
+        if v is None:
+            raise ValueError(f"CRITICAL: {fname} is missing.")
+
+        # 2. Use specific suffix checking
+        if fname.endswith("_matrix"):
+            if v.ndim != 2 or v.shape[1] != 384:
+                raise ValueError(f"Matrix {fname} must be (N, 384). Got {v.shape}")
+        else:
+            if v.shape != (384,):
+                raise ValueError(f"Vector {fname} must be (384,). Got {v.shape}")
+
+        return v
+    
+# in-game hydration / validation with warmup tensors    
+class RuntimeMCQ_Blue(RuntimeStandard_Blue, ProductionMCQ_Blue):
     """
-    Runtime ready lean production MCQ schema
-    (required Gold + context refinery features)
+    At warmup, after tensor hydration
     """ 
     # tensors calculated upfront during runtime warmup for session
-    mcq_distractors_embeddings_tensor_matrix : Optional[Any] = None    
+    # NOTE: Type `Any` is used to bypass Pydantic's internal validation
+    # checks for non-standard types (torch.Tensor), ensuring near-instant
+    # `Question` object instantiation during the warmup loop.
+    mcq_distractors_embeddings_tensor_matrix : Any
 
 ## Model routing
 
+SchemeMap = Dict[QuestionType, type] 
+
 # routing for models at runtime (devlopment vs. stable modes)
-RUNTIME_REGISTRY = {
+OFFLINE_HANDOFF_REGISTRY: Dict[str, SchemeMap]  = {
     "dev": {
         QuestionType.EX : ProductionStandard_Green,
         QuestionType.FR : ProductionStandard_Green,
@@ -538,8 +607,22 @@ RUNTIME_REGISTRY = {
     }
 }
 
+# routing for models at runtime (devlopment vs. stable modes)
+RUNTIME_REGISTRY: Dict[str, SchemeMap]  = {
+    "dev": {
+        QuestionType.EX : RuntimeStandard_Green,
+        QuestionType.FR : RuntimeStandard_Green,
+        QuestionType.MCQ: RuntimeMCQ_Green
+    },
+    "stable":{
+        QuestionType.EX : RuntimeStandard_Blue,
+        QuestionType.FR : RuntimeStandard_Blue,
+        QuestionType.MCQ: RuntimeMCQ_Blue
+    }
+}
+
 # routing for the `qa_validation_pipeline` in Content Factory    
-VALIDATION_REGISTRY = { 
+VALIDATION_REGISTRY: Dict[QuestionSource, Dict[DataTier, SchemeMap]] = { 
     QuestionSource.LEGACY:{
         DataTier.BRONZE:{
             QuestionType.EX : LegacyStandard,
