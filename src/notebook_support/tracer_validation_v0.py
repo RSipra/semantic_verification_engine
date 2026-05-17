@@ -22,7 +22,8 @@ import pyarrow as pa
 
 
 
-from notebook_support.ds_constants import QuestionType, QuestionSource, DataTier
+from core.constants import QuestionType, QuestionSource
+from core.models import DataTier
 from notebook_support.text_processing import clean_text_fn
 import core.models as pyd
 
@@ -43,6 +44,8 @@ EMBEDDING_COL_NAMES = ['question_embeddings','answer_embeddings','source_quote_e
 
 ## step 1.1. Schema Checks with Pydantic V2
 # Gatekeepr - ensure correct quality of data is processed further
+
+# TODO: update pipeline to use core.enforce_schema.py for pydantic evals.
 
 # helper for retriveing schema from Pydantic model module
 def select_pydantic_scheme(question_source: QuestionSource,

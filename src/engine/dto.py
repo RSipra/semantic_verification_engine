@@ -24,6 +24,9 @@ Two categories of structures exist:
    scoring, rule-based decisions, and hybrid resolution logic).
    They are internal evaluator-owned artifacts and are always constructed
    in-code, not from external input.
+   NOTE: This evaluation DTO includes runtime and debug metadata for tracer visibility.
+   Some fields (e.g. execution_time_sec, model_used, reasoning) may be migrated
+   to a dedicated tracing layer in future iterations once observability is separated.
 
 2. LLM Schema Contract:
    - LLMJudgeResponse
