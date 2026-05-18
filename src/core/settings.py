@@ -34,8 +34,9 @@ class SBERTSettings(BaseSettings):
     model_config = SettingsConfigDict(
         env_file=".env", 
         env_prefix="SBERT_",
-        case_sensitive=False # Good for cross-platform (Windows/Mac) safety
-    )
+        case_sensitive=False, # Good for cross-platform (Windows/Mac) safety
+        extra="ignore"
+        )
 
 sbert_settings = SBERTSettings()
 
@@ -68,7 +69,8 @@ class NLISettings(BaseSettings):
     model_config = SettingsConfigDict(
         env_file=".env", 
         env_prefix="NLI_",
-        case_sensitive=False 
+        case_sensitive=False,
+        extra="ignore" 
     )
 nli_settings = NLISettings()    
 
