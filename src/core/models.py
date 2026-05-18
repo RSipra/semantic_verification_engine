@@ -494,6 +494,8 @@ class RuntimeStandard_Green(ProductionStandard_Green):
     """
     At warmup, after tensor hydration
     """ 
+    model_config = ConfigDict(extra="ignore", arbitrary_types_allowed=True,
+                              populate_by_name=True, validate_assignment=False)
     # tensors calculated upfront during runtime warmup for session
     # NOTE: Type `Any` is used to bypass Pydantic's internal validation
     # checks for non-standard types (torch.Tensor), ensuring near-instant
@@ -535,6 +537,7 @@ class RuntimeMCQ_Green(RuntimeStandard_Green, ProductionMCQ_Green):
     # NOTE: Type `Any` is used to bypass Pydantic's internal validation
     # checks for non-standard types (torch.Tensor), ensuring near-instant
     # `Question` object instantiation during the warmup loop.
+    
     mcq_distractors_embeddings_tensor_matrix : Any
     
     
@@ -542,6 +545,9 @@ class RuntimeStandard_Blue(ProductionStandard_Blue):
     """
     At warmup, after tensor hydration
     """ 
+    model_config = ConfigDict(extra="ignore", arbitrary_types_allowed=True,
+                              populate_by_name=True, validate_assignment=False)
+    
     # tensors calculated upfront during runtime warmup for session
     # NOTE: Type `Any` is used to bypass Pydantic's internal validation
     # checks for non-standard types (torch.Tensor), ensuring near-instant
@@ -550,12 +556,11 @@ class RuntimeStandard_Blue(ProductionStandard_Blue):
     answer_embeddings_tensor: Any
     answer_variations_embeddings_tensor_matrix: Any
 
-    @field_validator(
-        "question_embeddings_tensor",
-        "answer_embeddings_tensor",
-        "answer_variations_embeddings_tensor_matrix",
-        mode="after"
-    )
+    @field_validator("question_embeddings_tensor",
+                     "answer_embeddings_tensor",
+                     "answer_variations_embeddings_tensor_matrix",
+                     mode="after"
+                    )
     @classmethod
     def validate_runtime_tensors(cls, v: Any, info: ValidationInfo) -> Any:
         """

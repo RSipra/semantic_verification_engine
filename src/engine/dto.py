@@ -3,7 +3,8 @@
 SEMANTIC VERIFICATION ENGINE (Ref implementaiton: Harry Potter Trivia)
 =======================================================================
 -----------------------------------------------------------------------
-CLI MVP (Tracer Build) -> Data Transfer Objects (DTOs)
+CLI MVP (Tracer Build) -> Data Transfer Objects 
+                          Integration / Boundary DTOs
 -----------------------------------------------------------------------
 This module defines internal data contracts used to represent evaluation
 outputs produced by the Evaluator layer.
