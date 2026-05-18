@@ -36,7 +36,7 @@ import logging
 import torch
 from sentence_transformers import util
 
-from core.models import ProductionMCQ_Green, ProductionMCQ_Blue
+from core.models import RuntimeMCQ_Green, RuntimeMCQ_Blue
 from engine.services.llm_service import track_eval_latency
 from engine.dto import MCQEvalResults
 from engine.evaluators.constants import MCQThresholdConfig
@@ -52,7 +52,7 @@ logger = logging.getLogger(__name__)
 
 @track_eval_latency
 def check_mcq_answer(player_answer:str,
-                     q: ProductionMCQ_Green | ProductionMCQ_Blue,
+                     q: RuntimeMCQ_Green | RuntimeMCQ_Blue,
                      config: MCQThresholdConfig = MCQThresholdConfig()
                      ) -> MCQEvalResults:
     """
@@ -88,6 +88,16 @@ def check_mcq_answer(player_answer:str,
         MCQEvalResults: A strictly typed payload containing the verification results 
             and nested telemetry.
     """
+    # TODO(tracer): failure_reason taxonomy is simplified for MVP
+    # Currently all semantic failures are grouped under: "mcq_failed_semantic"
+    #
+    # Future improvement:
+    # - distinguish "low_similarity" (doesnt match correct answer or distractor)
+    #   vs "distractor_conflict" (player picked a distractor)
+    # - can capture within 'result.failure_reason: "low_similarity" | "distractor_conflict"'
+    # - add observability hooks for threshold tuning
+    
+    
     # unpack necessary attributes from the `q` Question object
     gold_answer = q.answer
     gold_ans_tensor = q.answer_embeddings_tensor
