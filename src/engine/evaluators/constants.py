@@ -36,3 +36,23 @@ class MCQThresholdConfig(BaseModel):
     fuzzy_threshold: float = FUZZY_THRESHOLD
     semantic_threshold: float = 0.75
     distractor_delta: float = 0.30
+    
+# FR (Factual Recall questions)
+class FRThresholdConfig(BaseModel):
+    """
+    Semantic thresholds for FR (Factual Recall type questions) evaluation tiers.
+    Attributes:
+        fuzzy: normalized ratio (0-1) for character similarity (catches 1-2 letter typos),
+        primary SBERT: cutoff for cosine similarity score between player and gold dataset
+            answer for a direct pass from SBERT tier. Also ceiling for ambiguous score region.
+        ambiguous_answer_floor: lower threshold for ambiguous similarity scores. Scores below
+            threshold fail SBERT tier.
+        entity_ref_match_boost: boost to apply if player answer contains a known entity reference / alias.
+        fr_ans_len_outlier_wc: word count cutoff for FR long answers, based on Legacy data FR answer length
+            distributon (Q3 + 1.5*IQR) = 6.
+    """
+    fuzzy_threshold: float = FUZZY_THRESHOLD
+    semantic_threshold: float = 0.80
+    ambiguous_answer_floor: float = 0.50
+    entity_ref_match_boost: float = 0.10
+    fr_ans_len_outlier_wc: int = 6 

@@ -41,12 +41,12 @@ from engine.services.llm_service import track_eval_latency
 from engine.dto import MCQEvalResults
 from engine.evaluators.constants import MCQThresholdConfig
 from engine.evaluators.helpers import (is_exact_match, compute_fuzzy_match, encode_player_answer,
-                                       check_semantic_variations)
+                                       check_semantic_variations, emit_eval_log)
 
 EVALUATOR_VERSION = "mcq_v1"
 logger = logging.getLogger(__name__)
 
-### 3.1 MCQ (multiple choice)
+### MCQ (multiple choice)
 
 # MCQ with a 'text' answer type (can be evaluated with fuzzy matching and semantic similarity)
 
@@ -105,7 +105,6 @@ def check_mcq_answer(player_answer:str,
     distractor_tensor_matrix = q.mcq_distractors_embeddings_tensor_matrix
 
     logger.debug("MCQ evaluation started", extra={"question_id": q.master_id})
-    trace_log = {"stages": []}
 
     # --Type checker & Tensor hydration--
     # -> since tensors are Optional in `q` because they are calculated at game warmup
@@ -139,7 +138,8 @@ def check_mcq_answer(player_answer:str,
         result.is_correct = True
         result.resolution_tier = 'mcq_exact'
         result.fuzzy_score = 1.00
-        trace_log["stages"].append({"stage": "exact_match","passed": result.is_correct})
+        # emit evaluation log
+        emit_eval_log(result, q.master_id, q.question_type,logger)
         return result
 
     # TIER 2: intermediate path (fuzzy match -> use case: typos, 
@@ -148,10 +148,8 @@ def check_mcq_answer(player_answer:str,
     if result.fuzzy_score >= config.fuzzy_threshold:
         result.is_correct = True
         result.resolution_tier = "mcq_fuzzy"
-        trace_log["stages"].append({"stage": "fuzzy_match",
-                                    "score": result.fuzzy_score,
-                                    "threshold": config.fuzzy_threshold,
-                                    "passed": result.is_correct})
+        # emit evaluation log
+        emit_eval_log(result, q.master_id, q.question_type,logger)
         return result
 
     # TIER 3: semantic logic (resolution path)
@@ -175,14 +173,6 @@ def check_mcq_answer(player_answer:str,
     result.sim_distractor = round(max_dist_score,4)
     result.margin =  round(margin, 4)
     result.matched_answer_variation =  matched_variation # True if a variation (likely shorthand used)
-    
-    trace_log["stages"].append({"stage": "semantic_similarity",
-                                "correct_score": result.sim_correct_ans,
-                                "distractor_score": result.sim_distractor,
-                                "margin": result.margin,
-                                "passed": correct_ans_score >= config.semantic_threshold
-                                          and margin >= config.distractor_delta
-                                          })
 
     if correct_ans_score >= config.semantic_threshold and margin >= config.distractor_delta:
         result.is_correct= True
@@ -192,13 +182,7 @@ def check_mcq_answer(player_answer:str,
         result.is_correct = False
         result.resolution_tier = "mcq_failed_semantic"
         
-    logger.info("MCQ evaluation completed",
-                extra={"question_id": q.master_id,
-                       "resolution_tier": result.resolution_tier,
-                       "is_correct": result.is_correct,
-                       "trace": trace_log,
-                       "evaluator_version":EVALUATOR_VERSION
-                       }
-               )
+    # emit evaluation log
+    emit_eval_log(result, q.master_id, q.question_type,logger)
 
     return result

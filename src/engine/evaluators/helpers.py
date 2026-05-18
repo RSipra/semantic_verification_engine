@@ -15,6 +15,23 @@ import torch
 from sentence_transformers import util
 from core.embeddings import get_sbert_model, sbert_settings
 
+## logging 
+# shared logging and result dto return abstraction across evaluators
+def emit_eval_log(result, question_id: str, question_type: str,logger):
+    """
+    Emits final structured evaluation log.
+        This is a terminal side-effect function:
+        - logs summary information
+        - attaches trace visibility
+        - does NOT modify control flow
+        - does NOT return a value
+    """
+    logger.info("{question_type} evaluation_complete",extra={"question_id": question_id,
+                                                             "question_type": question_type,
+                                                             "result": result.model_dump()})
+
+## Tier evaluation helpers
+
 # FOR MCQ & FR Only: quick direct answer check.    
 def is_exact_match(player_answer: str, correct_answer: str) -> bool:
     """ TIER 1: Exact match of player answer to Gold dataset correct answer for FR, MCQ"""
