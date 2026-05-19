@@ -63,7 +63,7 @@ def _normalize_numeric_text(raw_answer:str):
     
     return clean_text
 
-def _preprocess_numeric_player_ans(raw_player_ans:str,
+def preprocess_numeric_player_ans(raw_player_ans:str,
                                    answer_type:AnswerType, 
                                    hard_cap:int = 1):
     """
@@ -101,7 +101,7 @@ def _preprocess_numeric_player_ans(raw_player_ans:str,
         except (ValueError, TypeError):
             return None
 
-def _check_numeric_answer(player_answer_num: int | None,
+def check_numeric_answer(player_answer_num: int | None,
                           answer_type: AnswerType,
                           gold_answer: str) -> BaseEvalResults:
     """
@@ -125,7 +125,7 @@ def _check_numeric_answer(player_answer_num: int | None,
     result = BaseEvalResults()
     
     # 1. process gold answer
-    correct_answer = _preprocess_numeric_player_ans(gold_answer, answer_type=answer_type)
+    correct_answer = preprocess_numeric_player_ans(gold_answer, answer_type=answer_type)
     
     if correct_answer is None:
         # failsafe: Prevent an IndexError if gold_answer contains no digits
@@ -152,7 +152,7 @@ def _check_numeric_answer(player_answer_num: int | None,
     
 ## 2: Date-format answers
 
-def _normalize_date_text(raw_text: str) -> str:
+def normalize_date_text(raw_text: str) -> str:
     """
     Shared helper to clean and translate raw chronological strings 
     for both player answers and gold dataset answers.
@@ -172,7 +172,7 @@ def _normalize_date_text(raw_text: str) -> str:
             
     return text
 
-def _extract_date_entities(date_string: str) -> dict | None:
+def extract_date_entities(date_string: str) -> dict | None:
     """
     Parses a raw string into Day, Month, and Year entities.
     Accurately detects missing years and assigns them None.
@@ -180,7 +180,7 @@ def _extract_date_entities(date_string: str) -> dict | None:
     AI written (Gemini)
     """
     # 1. Clean the text (Assumes you added the ordinal regex patch from earlier)
-    clean_text = _normalize_date_text(date_string)
+    clean_text = normalize_date_text(date_string)
     
     base_1 = datetime(1900, 1, 1)
     base_2 = datetime(2000, 12, 31)
@@ -222,7 +222,7 @@ def _extract_date_entities(date_string: str) -> dict | None:
     
     return entities
             
-def _check_date_answer(player_entities: dict[str, int | None] | None, gold_answer: str)->BaseEvalResults:
+def check_date_answer(player_entities: dict[str, int | None] | None, gold_answer: str)->BaseEvalResults:
     """
     Evaluates a date-type player answers by comparing preprocessed 
     player dates against the parsed gold answer date.
@@ -230,8 +230,8 @@ def _check_date_answer(player_entities: dict[str, int | None] | None, gold_answe
     result = BaseEvalResults()
     
     # 1. process gold answer (convert into standard python datetime)
-    clean_gold = _normalize_date_text(gold_answer)
-    gold_entities = _extract_date_entities(clean_gold)
+    clean_gold = normalize_date_text(gold_answer)
+    gold_entities = extract_date_entities(clean_gold)
     
     if not gold_entities:
         # failsafe: Prevent an IndexError if gold_answer contains no dates
