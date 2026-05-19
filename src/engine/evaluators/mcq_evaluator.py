@@ -1,12 +1,12 @@
 """
 =======================================================================
-SEMANTIC VERIFICATION ENGINE (Ref implementaiton: Harry Potter Trivia)
+SEMANTIC VERIFICATION ENGINE (Ref implementation: Harry Potter Trivia)
 =======================================================================
 -----------------------------------------------------------------------
 CLI MVP (Tracer Build) ->  Semantic Evaluator for MCQ 
                            (Multiple-Choice Questions)
 -----------------------------------------------------------------------
-This module contains production runtime evaluators for question types routed 
+This module contains runtime evaluators for question types routed 
 through semantic verification pipelines.
 
 The evaluators operate on precomputed tensor artifacts hydrated during
@@ -16,7 +16,7 @@ results and runtime telemetry.
 The evaluators are designed to:
 - minimize unnecessary LLM escalation
 - maximize deterministic resolution paths
-- support runtime observability via structured trace logging
+- lightweight execution trace logging
 - operate on pre-hydrated tensor artifacts generated during warmup
 
 Tracer-phase features include:

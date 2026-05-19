@@ -55,4 +55,16 @@ class FRThresholdConfig(BaseModel):
     semantic_threshold: float = 0.80
     ambiguous_answer_floor: float = 0.50
     entity_ref_match_boost: float = 0.10
-    fr_ans_len_outlier_wc: int = 6 
+    fr_ans_len_outlier_wc: int = 6
+    
+class EXThresholdConfig(BaseModel):
+    """
+    Semantic thresholds for EX (Explanatory type questions) evaluation tiers.
+    Attributes:
+        fuzzy: normalized ratio (0-1) for character similarity (catches 1-2 letter typos), 
+        primary SBERT: cutoff for cosine similarity score between player and gold dataset 
+            answer for a direct pass from SBERT tier. Also ceiling for ambiguous score region.
+    """
+    fuzzy_threshold: float = 0.95
+    semantic_threshold: float = 0.80
+    ambiguous_answer_floor: float = 0.40 

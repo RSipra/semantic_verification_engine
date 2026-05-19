@@ -1,12 +1,12 @@
 """
 =======================================================================
-SEMANTIC VERIFICATION ENGINE (Ref implementaiton: Harry Potter Trivia)
+SEMANTIC VERIFICATION ENGINE (Ref implementation: Harry Potter Trivia)
 =======================================================================
 -----------------------------------------------------------------------
 CLI MVP (Tracer Build) ->  Semantic Evaluator for FR
                            (Factual Recall questions)
 -----------------------------------------------------------------------
-This module contains production runtime evaluators for question types routed 
+This module contains runtime evaluators for question types routed 
 through semantic verification pipelines.
 
 The evaluators operate on precomputed tensor artifacts hydrated during
@@ -16,7 +16,7 @@ results and runtime telemetry.
 The evaluators are designed to:
 - minimize unnecessary LLM escalation
 - maximize deterministic resolution paths
-- support runtime observability via structured trace logging
+- lightweight execution trace logging
 - operate on pre-hydrated tensor artifacts generated during warmup
 
 Logging in this module is strictly for runtime observability and debugging.
@@ -30,6 +30,15 @@ Tracer-phase features include:
 - latency tracking via decorator wrapping
 - structured DTO outputs
 
+Architecture Reference
+-------------------------------
+Evaluator workflow diagram for this module are documented in:
+    
+/assets/docs/phase2/fr_evaluator_logic.jpg
+
+The schematic represents the intended runtime routing logic
+for the tracer-phase semantic evaluation engine.
+
 NOTE:
 This module assumes upstream normalization and preprocessing
 has already been applied before evaluator routing.
@@ -38,7 +47,7 @@ has already been applied before evaluator routing.
 import logging
 import regex as re
 
-from core.models import RuntimeMCQ_Green, RuntimeMCQ_Blue
+from core.models import RuntimeStandard_Blue, RuntimeStandard_Green
 from core.preprocessing import count_clean_words
 from engine.services.llm_service import call_llm_judge, SYSTEM_PROMPT_FR_SPECIALIST
 from engine.services.llm_service import track_eval_latency
@@ -56,7 +65,7 @@ logger = logging.getLogger(__name__)
 
 @track_eval_latency
 def check_fr_answer(player_answer: str,
-                    q: RuntimeMCQ_Green | RuntimeMCQ_Blue,
+                    q: RuntimeStandard_Blue | RuntimeStandard_Green,
                     config: FRThresholdConfig = FRThresholdConfig()
                     ) -> FREvalResults:
     """
