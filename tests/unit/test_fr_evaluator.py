@@ -208,7 +208,7 @@ def test_fr_evaluator_with_incorrect_verbose_player_answer(mock_llm):
     fake_llm_response.evaluation_reasoning = "Player demonstrated insufficient conceptual understanding."
     
     # mock return from the LLM call
-    mock_llm.return_value= (fake_llm_response, "gemini-3.0-flash", 1.40,True)
+    mock_llm.return_value= (fake_llm_response, "gemini-3.0-flash", 1.40,True)  # True = LLM call was successful
    
     # Act
     test_result = check_fr_answer(player_answer, correct_q)
