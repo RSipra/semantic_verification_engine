@@ -1,7 +1,7 @@
 
 """
 =======================================================================
-SEMANTIC VERIFICATION ENGINE (Ref implementaiton: Harry Potter Trivia)
+SEMANTIC VERIFICATION ENGINE (Ref implementation: Harry Potter Trivia)
 =======================================================================
 -----------------------------------------------------------------------
 CLI MVP (Tracer Build) ->  Structured (rule-based) Evaluators 
