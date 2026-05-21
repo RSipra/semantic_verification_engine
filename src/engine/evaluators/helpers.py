@@ -17,7 +17,7 @@ from core.embeddings import get_sbert_model, sbert_settings
 
 ## logging 
 # shared logging and result dto return abstraction across evaluators
-def emit_eval_log(result, question_id: str, question_type: str,logger):
+def emit_eval_log(result, question_id: str, question_type: str, answer_type:str, logger):
     """
     Emits final structured evaluation log.
         This is a terminal side-effect function:
@@ -26,9 +26,14 @@ def emit_eval_log(result, question_id: str, question_type: str,logger):
         - does NOT modify control flow
         - does NOT return a value
     """
-    logger.info("{question_type} evaluation_complete",extra={"question_id": question_id,
-                                                             "question_type": question_type,
-                                                             "result": result.model_dump()})
+    evaluator = question_type if answer_type == "TEXT" else "structured"
+
+    logger.info("EVALUATION_COMPLETE",extra={"stage": "evaluator",
+                                             "evaluator" : evaluator,
+                                             "question_id": question_id,
+                                             "question_type": question_type,
+                                             "answer_type": answer_type,
+                                             "result": result.model_dump()})
 
 ## Tier evaluation helpers
 
