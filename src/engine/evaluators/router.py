@@ -106,12 +106,12 @@ def emit_dispatch_log(question_id: str,
         - does NOT modify control flow
         - does NOT return a value
     """
-    logger_obj.info("EVALUATOR_DISPATCH", extra={"question_id": question_id,
-                                             "question_type": question_type,
-                                             "answer_type": answer_type,
-                                             "evaluator": evaluator
-                                             }
-                )
+    logger_obj.info("EVALUATOR_DISPATCH", extra={"stage": "router",
+                                                 "evaluator": evaluator,
+                                                 "question_id": question_id,
+                                                 "question_type": question_type,
+                                                 "answer_type": answer_type
+                                                 })
 
 ## 1. subrouter for non-text answer evaluation
 

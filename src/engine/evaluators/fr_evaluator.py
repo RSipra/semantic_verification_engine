@@ -146,7 +146,7 @@ def check_fr_answer(player_answer: str,
         result.resolution_tier = 'fr_exact'
         result.fuzzy_score = 1.00
         # emit evaluation log
-        emit_eval_log(result, q.master_id, q.question_type,logger)
+        emit_eval_log(result, q.master_id, q.question_type,q.answer_type, logger)
         return result
 
     # TIER 2: intermediate path (fuzzy match -> use case: typos, spelling mistakes in short ans (FR, MCQ)
@@ -155,7 +155,7 @@ def check_fr_answer(player_answer: str,
         result.is_correct = True
         result.resolution_tier = "fr_fuzzy"
         # emit evaluation log
-        emit_eval_log(result, q.master_id, q.question_type,logger)
+        emit_eval_log(result, q.master_id, q.question_type,q.answer_type, logger)
         return result
 
     # TIER 3: Semantic matching (final resolution path)
@@ -199,7 +199,7 @@ def check_fr_answer(player_answer: str,
         result.quiz_host_response = llm_judgment.quiz_host_response
         result.evaluation_reasoning = llm_judgment.evaluation_reasoning
         # emit evaluation log
-        emit_eval_log(result, q.master_id, q.question_type,logger)
+        emit_eval_log(result, q.master_id, q.question_type,q.answer_type, logger)
         return result
             
     # Path B: player answer meets threshold immediatetly
@@ -209,7 +209,7 @@ def check_fr_answer(player_answer: str,
         # log telemetery for debugging
         
         # emit evaluation log
-        emit_eval_log(result, q.master_id, q.question_type,logger)
+        emit_eval_log(result, q.master_id, q.question_type,q.answer_type, logger)
         return result
 
     # Path C: ambiguous range (boost score if any term matches entity_refs)
@@ -242,7 +242,7 @@ def check_fr_answer(player_answer: str,
         result.final_boosted_score = round(updated_correct_ans_score,4)
 
         # emit evaluation log
-        emit_eval_log(result, q.master_id, q.question_type,logger)
+        emit_eval_log(result, q.master_id, q.question_type,q.answer_type, logger)
         return result
     
     # Path D: wrong answer (score below the ambiguous threshold)
@@ -251,5 +251,5 @@ def check_fr_answer(player_answer: str,
         result.resolution_tier = "fr_failed_primary_semantic"
 
         # emit evaluation log
-        emit_eval_log(result, q.master_id, q.question_type,logger)
+        emit_eval_log(result, q.master_id, q.question_type,q.answer_type, logger)
         return result

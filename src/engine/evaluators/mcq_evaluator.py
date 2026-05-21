@@ -139,7 +139,7 @@ def check_mcq_answer(player_answer:str,
         result.resolution_tier = 'mcq_exact'
         result.fuzzy_score = 1.00
         # emit evaluation log
-        emit_eval_log(result, q.master_id, q.question_type,logger)
+        emit_eval_log(result, q.master_id, q.question_type,q.answer_type, logger)
         return result
 
     # TIER 2: intermediate path (fuzzy match -> use case: typos, 
@@ -149,7 +149,7 @@ def check_mcq_answer(player_answer:str,
         result.is_correct = True
         result.resolution_tier = "mcq_fuzzy"
         # emit evaluation log
-        emit_eval_log(result, q.master_id, q.question_type,logger)
+        emit_eval_log(result, q.master_id, q.question_type,q.answer_type, logger)
         return result
 
     # TIER 3: semantic logic (resolution path)
@@ -183,6 +183,6 @@ def check_mcq_answer(player_answer:str,
         result.resolution_tier = "mcq_failed_semantic"
         
     # emit evaluation log
-    emit_eval_log(result, q.master_id, q.question_type,logger)
+    emit_eval_log(result, q.master_id, q.question_type,q.answer_type, logger)
 
     return result

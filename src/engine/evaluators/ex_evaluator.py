@@ -175,7 +175,7 @@ def check_ex_answer(player_answer: str,
         result.resolution_tier = 'ex_exact'
         result.fuzzy_score = 1.00
         # emit evaluation log
-        emit_eval_log(result, q.master_id, q.question_type,logger)
+        emit_eval_log(result, q.master_id, q.question_type,q.answer_type, logger)
         return result
     
     # TIER-2: fuzzy match, grab any O(1) wins
@@ -184,7 +184,7 @@ def check_ex_answer(player_answer: str,
         result.is_correct = True
         result.resolution_tier = "ex_fuzzy"
         # emit evaluation log
-        emit_eval_log(result, q.master_id, q.question_type,logger)
+        emit_eval_log(result, q.master_id, q.question_type,q.answer_type, logger)
         return result
 
     # TIER-3: semantic resolution (SBERT + NLI)
@@ -222,13 +222,13 @@ def check_ex_answer(player_answer: str,
             result.quiz_host_response = llm_judgment.quiz_host_response
             result.evaluation_reasoning = llm_judgment.evaluation_reasoning
             # emit evaluation log
-            emit_eval_log(result, q.master_id, q.question_type,logger)
+            emit_eval_log(result, q.master_id, q.question_type,q.answer_type, logger)
             return result
         else:
             result.is_correct = False
             result.resolution_tier = 'ex_primary_semantic_fail'
             # emit evaluation log
-            emit_eval_log(result, q.master_id, q.question_type,logger)
+            emit_eval_log(result, q.master_id, q.question_type,q.answer_type, logger)
             return result
         
     # Tier 3.2: NLI cross-encoder labelling /logic check (disabled in tracer phase)
@@ -248,7 +248,7 @@ def check_ex_answer(player_answer: str,
             result.is_correct = False
             result.resolution_tier = 'ex_nli_contradiction_fail'
             # emit evaluation log
-            emit_eval_log(result, q.master_id, q.question_type,logger)
+            emit_eval_log(result, q.master_id, q.question_type,q.answer_type, logger)
             return result
 
         # entailment pass (high vocab, high directional logic)
@@ -256,7 +256,7 @@ def check_ex_answer(player_answer: str,
             result.is_correct = True
             result.resolution_tier = 'ex_nli_entailment_pass'
             # emit evaluation log
-            emit_eval_log(result, q.master_id, q.question_type,logger)
+            emit_eval_log(result, q.master_id, q.question_type,q.answer_type, logger)
             return result
 
     # Tier 4: LLM resolution for remaining cases
@@ -285,5 +285,5 @@ def check_ex_answer(player_answer: str,
     result.quiz_host_response = llm_judgment.quiz_host_response
     result.evaluation_reasoning = llm_judgment.evaluation_reasoning  
     # emit evaluation log
-    emit_eval_log(result, q.master_id, q.question_type,logger)       
+    emit_eval_log(result, q.master_id, q.question_type,q.answer_type, logger)       
     return result
