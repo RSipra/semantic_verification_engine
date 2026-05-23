@@ -72,7 +72,7 @@ logger = logging.getLogger(__name__)
 ## 1: Models
 
 # LLM models to use for API calls
-PRIMARY_MODEL = "models/gemini-3.1-flash-lite-preview"
+PRIMARY_MODEL = "models/gemini-3.1-flash-lite"
 FALLBACK_MODEL = "models/gemini-flash-latest"
 
 TRANSIENT_BACKOFF = 10.0
@@ -156,13 +156,13 @@ def warmup_llm_connection(model_name: str = PRIMARY_MODEL,
                 "duration_sec": duration,
                 "error": None}
 
-    except Exception:   # intentionally broad for external API boundary
+    except Exception as e:   # intentionally broad for external API boundary
         logger.exception("LLM warmup failed for model=%s", model_name)   
         return {"event_type": "llm_warmup",
                 "success": False,
                 "model": model_name,
                 "duration_sec": None,
-                "error": "warmup_failed"}
+                "error": str(e)}
 
 # decorator for timing llm calls
 def track_eval_latency(func):
@@ -264,7 +264,7 @@ def _is_transient_error(e: Exception) -> bool:
         "429", "404", "503", "500","deadline", "timeout"
     ])
 
-def _call_llm_judge(question: str, 
+def call_llm_judge(question: str, 
                     gold_answer: str, 
                     player_answer: str,
                     answer_variations: list,

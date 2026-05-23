@@ -86,3 +86,7 @@ docs/designdoc_interview_reference_answers.md
 notebooks/02_research/0X-NER_implementation.ipynb
 notebooks/02_research/v0
 src/ds_utils/__pycache__
+# temp
+tests/fixtures/notes.md
+notebooks/02_research/09_nlp_lab_semantic_evaluators_v0.ipynb
+notebooks/02_research/10_nlp_lab_deterministic_evaluators_v0.ipynb
