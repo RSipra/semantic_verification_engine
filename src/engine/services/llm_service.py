@@ -115,6 +115,7 @@ In your `reasoning` field, first check for Proper Noun identity. If the specific
 ## 3: Helpers
 
 # warmup function to mitigate cold start latency for the first few LLM calls in the evaluation loop
+# TODO: warmup exception iterpreted as degraded vs. failed service for controller.
 def warmup_llm_connection(model_name: str = PRIMARY_MODEL, 
                           system_prompt: str = SYSTEM_PROMPT_EX):
     """
