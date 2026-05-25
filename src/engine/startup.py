@@ -35,6 +35,7 @@ This tracer assumes controlled, local execution with pre-validated inputs.
 import time
 from typing import List, Tuple
 import logging
+from prefect import runtime
 import pyarrow.parquet as pq
 import pandas as pd
 import numpy as np
@@ -150,6 +151,7 @@ def orchestrate_application_startup() ->Tuple[pd.DataFrame, dict]:
     Contract:
     ---------
     - SBERT + dataset + tensor pipeline must succeed (GO / NO-GO gate)
+    - Validation cannot quarantime the whole dataset (runtime_df is empty) (GO / NO-GO gate)
     - LLM warmup is a non-blocking readiness signal
     - Row-level schema issues are quarantined, not fatal
 
@@ -157,8 +159,8 @@ def orchestrate_application_startup() ->Tuple[pd.DataFrame, dict]:
     --------
     runtime_df : pd.DataFrame
         Fully validated runtime dataset (post-quarantine filtering)
-    warmup_outcome : dict
-        LLM warmup status and latency signal for downstream game controller
+    system_signals : dict
+        status and latency signal of services for downstream game controller
 
     TODO:
     -----
@@ -166,6 +168,8 @@ def orchestrate_application_startup() ->Tuple[pd.DataFrame, dict]:
     - Extract validation checks into standalone integrity validator
     - Introduce structured StartupResult TypedDict / DTO for cleaner contract
     - Optionally unify warmup + dataset status into single system health object
+    - validation should give signal runtime_df is operational sufficient for game session 
+      (has enough questions).
 
     """
     
@@ -179,12 +183,17 @@ def orchestrate_application_startup() ->Tuple[pd.DataFrame, dict]:
     except Exception:
         sbert_warmup_success = False
         logger.exception("SBERT_WARMUP_FAILED")
-        raise
+        raise RuntimeError("SBERT initialization failed")
     
     sbert_init_time = time.time() - t0
     
     # 2. read parquet as pyarrow table, convert to pd.dataframe, validate and hydrate with pydantic model
-    runtime_table =  pq.read_table(DATASET_PATH)
+    try:
+        runtime_table = pq.read_table(DATASET_PATH)
+    except Exception as e:
+        logger.exception("DATA_LOAD_FAILED")
+        raise RuntimeError("Dataset load failed") from e
+    
     unvalidated_runtime_df = runtime_table.to_pandas()
     
     # 3: hydrate tensors for the entire tracer dataset
@@ -214,8 +223,17 @@ def orchestrate_application_startup() ->Tuple[pd.DataFrame, dict]:
                                 "null_count": null_count})
             raise RuntimeError(f"Required tensor column has null values: {col}")
     
-    # 5. validate with Pyndantic model
+  # 5. validate with Pyndantic model
     runtime_df, runtime_flagged = enforce_schema_pipeline(df=unvalidated_runtime_df,mode="dev")
+    
+    # confirm validated df has records (controller will confirm if enough playable questions)
+    if runtime_df.empty:
+        logger.error("RUNTIME_VALIDATION_FAILED",
+                     extra={"stage": "startup",
+                            "sample": runtime_flagged[runtime_flagged["error_type"].notna()].head(),
+                            "error_type_count": runtime_flagged['error_type'].value_counts(),
+                            "error_distribution": runtime_flagged.groupby(["question_type", "error_type"]).size()})
+        raise RuntimeError("Validated runtime dataset is empty")
     
     # if runtime_flagged is not empty, log the number of flagged rows and sample master_ids for traceability
     if not runtime_flagged.empty:
@@ -228,8 +246,10 @@ def orchestrate_application_startup() ->Tuple[pd.DataFrame, dict]:
     # 6. Initialize game session LLM connection.
     
     # return warmup outcome as capability signal to controller
-    # TODO: add controller layer to classify warmup signal into:
-    # OK / DEGRADED / FAILED runtime state
+    # TODO: update soft-failure in LLM service (owns) / controller (handles response)
+    # LLM service → produces LLM health (OK / DEGRADED / FAILED) state /
+    # Startup → collects system states /
+    # Controller → applies game rules to states
     warmup_outcome = warmup_llm_connection()
     # session.log_event("warmup", warmup_outcome)
     
@@ -245,5 +265,12 @@ def orchestrate_application_startup() ->Tuple[pd.DataFrame, dict]:
                     "model":warmup_outcome['model'],
                     "duration_sec": warmup_outcome['duration_sec']
                 })
+    # clear system signals for the controller once startup successfully complete
+    system_signals = {"sbert": {"status": "OK", "latency": sbert_init_time},
+                      "dataset": {"status": "OK"},
+                     "tensor": {"status": "OK"},
+                     "validation": {"status": "OK"},
+                     "llm": warmup_outcome
+                     }
     
-    return runtime_df, warmup_outcome
+    return runtime_df, system_signals
