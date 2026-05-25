@@ -134,7 +134,6 @@ def test_build_prompt_context_happy_path_synthetic():
         assert v in prompt_context 
     assert "Explanation: harry is the protagonist of the Harry Potter series" in prompt_context
     assert 'Source Text Quote: "this is a quote from book 1"' in prompt_context
-    
         
 # edge case: empty answer variation list:
 
@@ -172,7 +171,7 @@ def test_call_llm_judge_happy_path(monkeypatch, sample_eval_request):
     )
 
    # Act
-    payload, model_used, _, success = llms._call_llm_judge(**sample_eval_request)
+    payload, model_used, _, success = llms.call_llm_judge(**sample_eval_request)
     
     assert payload.is_correct is True
     assert model_used == llms.PRIMARY_MODEL
@@ -198,7 +197,7 @@ def test_call_llm_judge_cascade_to_fallback_model_success(monkeypatch, sample_ev
     monkeypatch.setattr(llms.genai, "GenerativeModel", fake_constructor)
     
     # act
-    payload, model_used, _, success = llms._call_llm_judge(**sample_eval_request)
+    payload, model_used, _, success = llms.call_llm_judge(**sample_eval_request)
 
     assert success is True
     assert model_used == llms.FALLBACK_MODEL
@@ -224,7 +223,7 @@ def test_call_llm_judge_cascade_all_models_fail(monkeypatch, sample_eval_request
     monkeypatch.setattr(llms.genai, "GenerativeModel", fake_constructor)
     
     # act
-    payload, model_used, _, success = llms._call_llm_judge(**sample_eval_request)
+    payload, model_used, _, success = llms.call_llm_judge(**sample_eval_request)
 
     # confirm that the correct response after cascade fall is given
     assert success is False
@@ -244,7 +243,7 @@ def test_call_llm_judge_non_transient_fail_fast(monkeypatch, sample_eval_request
 
     monkeypatch.setattr(llms.genai, "GenerativeModel", fake_constructor)
 
-    payload, model_used, _, success = llms._call_llm_judge(**sample_eval_request)
+    payload, model_used, _, success = llms.call_llm_judge(**sample_eval_request)
 
     assert success is False
     assert model_used == llms.PRIMARY_MODEL
@@ -265,6 +264,11 @@ def test_warmup_calls_model(monkeypatch):
 
     # should only make one call
     assert fake_llm.call_count == 1
+    
+def test_signal_llm_health_mapping():
+    assert llms.signal_llm_health({"success": True}) == llms.llm_warmup_health.OK
+    assert llms.signal_llm_health({"success": False, "error": "timeout"}) == llms.llm_warmup_health.DEGRADED
+    assert llms.signal_llm_health({"success": False, "error": "boom"}) == llms.llm_warmup_health.FAILED    
     
 ## latency wrapper
 
@@ -296,4 +300,3 @@ def test_track_eval_latency_injects_execution_time():
     assert isinstance(result, DummyResult)
     assert result.execution_time_sec is not None
     assert result.execution_time_sec >= 0   
-    

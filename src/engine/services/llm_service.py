@@ -34,11 +34,14 @@ CONSUMERS:
 - Any future semantic evaluation pipelines requiring LLM judgment   
 
 """
+
 import time
 import logging
 from functools import wraps
 import pandas as pd
+from enum import Enum
 import google.generativeai as genai
+from regex import F
 from engine.dto import LLMJudgeResponse
 
 logger = logging.getLogger(__name__)
@@ -69,14 +72,26 @@ logger = logging.getLogger(__name__)
 # Any persistence, batching, or session reconstruction belongs above this layer.
 # =============================================================================
 
-## 1: Models
+## 1: Models, Constants, Configuration
 
-# LLM models to use for API calls
+# Main LLM API Call 
 PRIMARY_MODEL = "models/gemini-3.1-flash-lite"
 FALLBACK_MODEL = "models/gemini-flash-latest"
 
 TRANSIENT_BACKOFF = 10.0
 ERROR_COOLDOWN = 4.0 
+
+# llm warmup health signal 
+class llm_warmup_health(str, Enum):
+    """signal for LLM health from warmup ping at app startup"""
+    OK = "ok"
+    DEGRADED = "degraded"
+    FAILED = "failed"
+
+# error 429: resource exchausted (exceeded API usage limits rpm or rpd)
+# error 503: service unavailable (server temporarily overloaded, down)
+TRANSIENT_CODES = {"429", "503", "timeout", "deadline"}
+FAIL_FAST_CODES = {"404", "400", "401", "403"}    
 
 ## 2: Prompts
 
@@ -114,8 +129,24 @@ In your `reasoning` field, first check for Proper Noun identity. If the specific
 
 ## 3: Helpers
 
+# identify if exception is because of transient error
+def _is_transient_error(e: Exception | str | None) -> bool:
+    msg = str(e or "").lower()
+    return any(code in msg for code in TRANSIENT_CODES)
+
+# Raise warmup llm health signal for controller action
+def signal_llm_health(warmup_system_signals: dict):
+    """Translates the warmup outcome into a health signal for the controller."""
+
+    if warmup_system_signals.get('success'):
+        return llm_warmup_health.OK
+
+    if _is_transient_error(warmup_system_signals.get("error","")):
+        return llm_warmup_health.DEGRADED
+
+    return llm_warmup_health.FAILED
+
 # warmup function to mitigate cold start latency for the first few LLM calls in the evaluation loop
-# TODO: warmup exception iterpreted as degraded vs. failed service for controller.
 def warmup_llm_connection(model_name: str = PRIMARY_MODEL, 
                           system_prompt: str = SYSTEM_PROMPT_EX):
     """
@@ -148,23 +179,30 @@ def warmup_llm_connection(model_name: str = PRIMARY_MODEL,
         )
 
         duration = time.time() - start_time
-        logger.info("LLM warmup successful")
+        
+        system_signals = {"event_type": "llm_warmup",
+                          "success": True,  # warmup completed end-to-end, usable baseline established
+                          "model": model_name,
+                          "duration_sec": duration,
+                          "error": None}
+        system_signals['health'] = signal_llm_health(system_signals)
+        
+        logger.info("LLM warmup successful (model=%s)", model_name)
         logger.debug("Warmup duration: %.2f s", duration)
-
-        return {"event_type": "llm_warmup",
-                "success": True,
-                "model": model_name,
-                "duration_sec": duration,
-                "error": None}
+        return system_signals
 
     except Exception as e:   # intentionally broad for external API boundary
-        logger.exception("LLM warmup failed for model=%s", model_name)   
-        return {"event_type": "llm_warmup",
-                "success": False,
-                "model": model_name,
-                "duration_sec": None,
-                "error": str(e)}
-
+           
+        system_signals = {"event_type": "llm_warmup",
+                          "success": False,  #  warmup failed at any stage (init OR request OR parse)
+                          "model": model_name,
+                          "duration_sec": None,
+                          "error": str(e)}
+        
+        system_signals['health'] = signal_llm_health(system_signals)
+        logger.exception("LLM warmup failed for model=%s", model_name)
+        return system_signals
+    
 # decorator for timing llm calls
 def track_eval_latency(func):
     """
@@ -175,10 +213,10 @@ def track_eval_latency(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
         start_time = time.perf_counter()
-        
+
         # Execute the main function (this runs all your Tier 1-4 logic)
         result = func(*args, **kwargs)
-        
+
         # Calculate latency and inject it before returning to the Tracer loop
         latency = time.perf_counter() - start_time
         if result is not None:
@@ -257,13 +295,6 @@ def _build_prompt_context(gold_answer: str,
 #     def generate(...)
 # Note:
 # Must ensure no cross-contamination between evaluator modes.
-
-# identify if exception is because of transient error 
-def _is_transient_error(e: Exception) -> bool:
-    msg = str(e).lower()
-    return any(code in msg for code in [
-        "429", "404", "503", "500","deadline", "timeout"
-    ])
 
 def call_llm_judge(question: str, 
                     gold_answer: str, 
