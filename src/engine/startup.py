@@ -35,7 +35,6 @@ This tracer assumes controlled, local execution with pre-validated inputs.
 import time
 from typing import List, Tuple
 import logging
-from prefect import runtime
 import pyarrow.parquet as pq
 import pandas as pd
 import numpy as np
@@ -169,7 +168,7 @@ def orchestrate_application_startup() ->Tuple[pd.DataFrame, dict]:
     - Introduce structured StartupResult TypedDict / DTO for cleaner contract
     - Optionally unify warmup + dataset status into single system health object
     - validation should give signal runtime_df is operational sufficient for game session 
-      (has enough questions).
+      (has enough questions). 
 
     """
     
@@ -223,7 +222,17 @@ def orchestrate_application_startup() ->Tuple[pd.DataFrame, dict]:
                                 "null_count": null_count})
             raise RuntimeError(f"Required tensor column has null values: {col}")
     
-  # 5. validate with Pyndantic model
+    # safety check: make sure all questions in dataset are unique 
+    #               eventhough highly unlikely after offline validation
+    if unvalidated_runtime_df["master_id"].duplicated().any():
+        logger.error("DUPLICATE_MASTER_ID_RUNTIME_DETECTED",
+                     extra={
+                         "stage": "startup",
+                         "duplicate_count": int(unvalidated_runtime_df["master_id"].duplicated().sum())
+                         })
+        raise RuntimeError("Duplicate master_id detected in runtime dataset")    
+    
+    # 5. validate with Pyndantic model
     runtime_df, runtime_flagged = enforce_schema_pipeline(df=unvalidated_runtime_df,mode="dev")
     
     # confirm validated df has records (controller will confirm if enough playable questions)

@@ -1,4 +1,41 @@
-"""_summary_
+"""
+=======================================================================
+SEMANTIC VERIFICATION ENGINE (Ref implementation: Harry Potter Trivia)
+=======================================================================
+-----------------------------------------------------------------------
+CLI MVP (Tracer Build) ->  Game Warmup Orchestrator / Session Allocator
+-----------------------------------------------------------------------
+    
+This module is responsible for:
+- Session allocation (bounded selection of questions per game session)
+- Stable shuffling with optional seed control
+- Conversion of runtime dataframe rows into Question objects
+- Tracking remaining question pool size across sessions
+- Emitting session lifecycle state ("active" or "exhausted")
+
+Assumptions:
+------------
+Runtime dataframe is expected to be fully validated and structurally consistent by the 
+startup orchestrator:
+- Each row contains a valid, unique `master_id`
+- Required embedding/tensor fields are present and validated
+- No additional schema validation is performed at warmup layer
+
+Contract:
+---------
+Returns a session payload with one of the following states:
+
+ACTIVE:
+    - Returns exactly `session_size` Question objects
+    - Questions are derived from a shuffled master_id pool
+    - Remaining pool size is tracked after allocation
+
+EXHAUSTED:
+    - Returned when insufficient questions remain for a full session
+    - No session is allocated
+    - Questions field is None
+    - Remaining pool size is still reported
+
 """
 
 from typing import Any
@@ -42,7 +79,7 @@ def get_question_dict(df, target_master_id: str) -> dict:
     row_df = df[df['master_id'] == target_master_id]
     # 2. safety check
     if row_df.empty:
-        raise ValueError(f"CRITICAL: master_id '{target_master_id}' not found in DataFrame.")   
+        raise ValueError(f"CRITICAL: '{target_master_id}' master_id  not found in DataFrame.")   
     # 3. convert to dict
     row_dict = row_df.to_dict('records')[0]  # for flat dict without index
 
@@ -71,7 +108,6 @@ def question_factory(row_dict: dict, mode: str = "dev"):
             f"CRITICAL: Unrecognized question_type '{dict_q_type}'. Must be valid QuestionType."
             ) from exc
 
-
     # 3. Look up correct model from the 'runtime registery'
     pydantic_model_class = RUNTIME_REGISTRY[mode].get(q_type)
     if not pydantic_model_class:
@@ -86,7 +122,51 @@ def orchestrate_game_warmup(runtime_dataframe: pd.DataFrame,
                             random_seed: int | None,
                             session_size: int = NUM_QUESTIONS_PER_SESSION)-> dict[str,Any]:
     """
-    Game warmup sequence: session allocator and question pool manager
+    Game Warmup Orchestrator: session allocator and question pool manager.
+
+    Constructs a deterministic or pseudo-random game session by selecting a subset
+    of validated runtime questions and hydrating them into runtime Question objects.
+
+    Assumptions:
+    ------------
+    - Input dataframe is fully validated by the startup orchestrator
+    - Dataset is tensor-hydrated and schema-clean
+    - `master_id` is unique across all rows
+    - No further validation or sanitization occurs at this layer
+
+    Behavior:
+    ---------
+    1. Shuffles available question pool (deterministic if seed provided)
+    2. Selects up to `session_size` questions
+    3. Hydrates rows into Question objects via runtime factory
+    4. Tracks remaining pool size
+    5. Determines session lifecycle state
+
+    Session States:
+    ---------------
+    ACTIVE:
+        - Exactly `session_size` Question objects returned
+        - Questions drawn from shuffled pool
+        - Remaining pool reduced accordingly
+
+    EXHAUSTED:
+        - Insufficient questions to form a full session
+        - questions = None
+        - remaining_pool returned for controller decisioning
+
+    Determinism:
+    ------------
+    - If `random_seed` is provided → reproducible session allocation
+    - If None → non-deterministic but bounded selection
+
+    Returns:
+    --------
+    dict[str, Any]
+        {
+            "status": str,                # "active" | "exhausted"
+            "questions": list[Question] | None,
+            "remaining_pool": int
+        }
     """
     df = runtime_dataframe.copy()
     # convert df to dict using dict comp

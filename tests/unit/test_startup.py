@@ -23,6 +23,7 @@ Contract:
   2. return (runtime_df, system_signals)
 
 """
+from unittest import mock
 from unittest.mock import patch, Mock
 import pytest
 import pandas as pd
@@ -184,9 +185,9 @@ def test_startup_tensors_hard_failure_raises_error(mock_validation,
 @patch(TENSORS)
 @patch(VALIDATION)
 def test_startup_tensors_hard_failure_with_nulls_raises_error(mock_validation,
-                                                   mock_tensors, 
-                                                   mock_table, 
-                                                   mock_get_sbert_model):
+                                                              mock_tensors, 
+                                                              mock_table, 
+                                                              mock_get_sbert_model):
     """Startup must fail if required tensor columns have nulls after hydration"""
     # pass sbert
     mock_get_sbert_model.return_value = Mock()
@@ -206,7 +207,34 @@ def test_startup_tensors_hard_failure_with_nulls_raises_error(mock_validation,
     mock_table.assert_called_once()
     mock_tensors.assert_called_once()
     assert "Required tensor column has null values" in str(e.value)
-    mock_validation.assert_not_called()        
+    mock_validation.assert_not_called()
+    
+# duplicate master ids detected in the dataset
+@patch(SBERT)
+@patch(DATA)
+@patch(TENSORS)
+@patch(VALIDATION)
+def test_startup_duplicate_master_ids_raises_error(mock_validation,
+                                                   mock_tensors,
+                                                   mock_table,
+                                                   mock_get_sbert_model):
+    """Startup must fail during dataset integrity check if duplicate master_ids exist"""
+    mock_df = pd.DataFrame([test_sample, test_sample])  # duplicate master_id
+    # pass sbert
+    mock_get_sbert_model.return_value = Mock()
+    # pass reading data
+    mock_table.return_value.to_pandas.return_value = mock_df
+    # pass tensor hydration
+    mock_tensors.return_value = mock_df
+    
+    with pytest.raises(RuntimeError) as e:
+        orchestrate_application_startup()
+
+    mock_get_sbert_model.assert_called_once()
+    mock_table.assert_called_once()
+    mock_tensors.assert_called_once()
+    assert "Duplicate master_id detected" in str(e.value)
+    mock_validation.assert_not_called()     
 
 # Pydantic validation returns and empty runtime_df
 @patch(SBERT)

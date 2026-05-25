@@ -183,6 +183,11 @@ def enforce_schema_pipeline(df: pd.DataFrame,
                             source: Optional[QuestionSource] = None,
                             tier: Optional[DataTier] = None
                             )->Tuple[pd.DataFrame, pd.DataFrame]:
-    """convenience wrapper to select get scheme and enforce it in one step"""
+    """
+    - convenience wrapper to select get scheme and enforce it in one step.
+    - confirm records are unique in the dataset.
+    """
+    if df["master_id"].duplicated().any():
+        raise ValueError("Duplicate master_id detected in dataset")
     scheme = get_scheme(mode=mode, source=source, tier=tier)
     return enforce_schema(scheme, df)
