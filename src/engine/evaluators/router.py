@@ -72,6 +72,7 @@ from core.preprocessing import normalize_value
 from core.constants import AnswerType, QuestionType
 from core.models import (RuntimeStandard_Green, RuntimeMCQ_Green,
                          RuntimeStandard_Blue, RuntimeMCQ_Blue)
+from game_app.types import Question
 from engine.dto import BaseEvalResults
 from engine.evaluators.structured_evaluators import (preprocess_numeric_player_ans,
                                                      check_numeric_answer,
@@ -115,11 +116,7 @@ def emit_dispatch_log(question_id: str,
 
 ## 1. subrouter for non-text answer evaluation
 
-def _route_nontext_eval(player_answer: str,
-                        q: RuntimeStandard_Green | 
-                           RuntimeMCQ_Green |
-                           RuntimeStandard_Blue |
-                           RuntimeMCQ_Blue) -> BaseEvalResults:
+def _route_nontext_eval(player_answer: str, q: Question) -> BaseEvalResults:
     """
     Numeric subrouter:
     -----------------
@@ -146,7 +143,7 @@ def _route_nontext_eval(player_answer: str,
         # 2. route to evaluator
         emit_dispatch_log(q.master_id, q.question_type,q.answer_type,
                           "structured",logger)
-        return check_numeric_answer(processed_player_num, q.answer_type, q.answer)
+        return check_numeric_answer(processed_player_num, q)
 
     # 2. date answer
     elif q.answer_type == AnswerType.DATE:
@@ -157,18 +154,27 @@ def _route_nontext_eval(player_answer: str,
         # 2. route to evaluator
         emit_dispatch_log(q.master_id, q.question_type,q.answer_type,
                           "structured",logger)
-        return check_date_answer(extracted_date, q.answer)
+        return check_date_answer(extracted_date, q)
 
     # 3. catch-all for unknown answer-type
     raise RuntimeError(
         f"Invariant violation: invalid AnswerType reached non-text subrouter: {q.answer_type}")
 
 ## 5.2. Subrouter for TEXT type answers
-def _route_text_eval(player_answer: str, 
-                     q: RuntimeStandard_Green | 
-                        RuntimeMCQ_Green |
-                        RuntimeStandard_Blue |
-                        RuntimeMCQ_Blue):
+# NOTE (architecture):
+# Routing currently uses both:
+#   - runtime class identity (isinstance)
+#   - semantic type field (question_type enum)
+#
+# This is intentional for MVP robustness and traceability.
+# However, it introduces dual source-of-truth for question classification.
+#
+# Future improvement:
+# Collapse routing decision into a single mechanism
+# (either enum-driven dispatch or registry-based polymorphism),
+# removing redundant type checks.
+
+def _route_text_eval(player_answer: str, q: Question):
     """
     Semantic (text) subrouter:
     -------------------------
@@ -213,11 +219,7 @@ def _route_text_eval(player_answer: str,
 
 ## 5.3 Main router for answer checking
 
-def evaluation_router(raw_player_answer,
-                      q: RuntimeStandard_Green | 
-                         RuntimeMCQ_Green |
-                         RuntimeStandard_Blue |
-                         RuntimeMCQ_Blue) -> BaseEvalResults:
+def evaluation_router(raw_player_answer, q: Question) -> BaseEvalResults:
     """
     Main Evaluation Router: Entry point to the SVE Answer Evaluators. 
     Routes player answers to the appropriate sub-router based on AnswerType.
