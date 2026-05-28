@@ -37,7 +37,8 @@ EXHAUSTED:
     - Remaining pool size is still reported
 
 """
-
+import datetime
+import uuid
 from typing import Any
 import random
 import logging
@@ -46,11 +47,19 @@ import pandas as pd
 from core.constants import QuestionType
 from core.models import RUNTIME_REGISTRY
 from game_app.constants import NUM_QUESTIONS_PER_SESSION
+from game_app.types import Session, SessionStatus
 
 WARMUP_VERSION = "warmup_v1"
 logger = logging.getLogger(__name__)
 
 ## --- Helpers ---
+
+# Generate unique game id for traceability
+def generate_game_id() -> str:
+    """Generates a unique game ID using UTC timestamp and UUID """
+    ts = datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%dT%H%M%S")
+    uid = uuid.uuid4().hex[:6]
+    return f"{ts}_{uid}"
 
 # Question object to hold df row data
 def get_question_dict(df, target_master_id: str) -> dict:
@@ -118,9 +127,27 @@ def question_factory(row_dict: dict, mode: str = "dev"):
 
 ## --- Warmup Orchestration ---
 
-def orchestrate_game_warmup(runtime_dataframe: pd.DataFrame,
-                            random_seed: int | None,
-                            session_size: int = NUM_QUESTIONS_PER_SESSION)-> dict[str,Any]:
+
+def orchestrate_game_session_warmup(runtime_dataframe: pd.DataFrame,
+                                    random_seed: int | None) -> Session:
+    """ """
+    df = runtime_dataframe.copy()
+
+    # create game_id
+    game_id = generate_game_id()
+
+    # create shuffled list of questions to create and track session from
+    shuffled_master_ids = list(df['master_id'])
+    random.Random(random_seed).shuffle(shuffled_master_ids)
+
+    return Session(game_id=game_id, 
+                   remaining_pool=shuffled_master_ids,
+                   questions=None
+                   )
+
+def build_next_session(session: Session, 
+                   runtime_dataframe: pd.DataFrame,
+                   session_size: int = NUM_QUESTIONS_PER_SESSION)-> Session:
     """
     Game Warmup Orchestrator: session allocator and question pool manager.
 
@@ -172,16 +199,13 @@ def orchestrate_game_warmup(runtime_dataframe: pd.DataFrame,
     # convert df to dict using dict comp
     # O(1) row lookup with dict, maintains order for traceability
     row_map = {row['master_id']: row for row in df.to_dict(orient="records")}
+    
 
-    # 1. create shuffled list of questions to create and track session from
-    shuffled_master_ids = list(df['master_id'])
-    random.Random(random_seed).shuffle(shuffled_master_ids)
-
-    #2. create new session if enough questions remain
-    if len(shuffled_master_ids) >= session_size: 
+    # create new session if enough questions remain
+    if len(session.remaining_pool) >= session_size: 
 
         # pop top N indices for the session (tracer will use 10)
-        session_master_ids = [shuffled_master_ids.pop() for _ in range(session_size)]
+        session_master_ids = [session.remaining_pool.pop() for _ in range(session_size)]
 
         # prepare Question objects for a session
         session_questions = [question_factory(row_map[mid]) for mid in session_master_ids]
@@ -190,21 +214,22 @@ def orchestrate_game_warmup(runtime_dataframe: pd.DataFrame,
                     extra={"stage": "warmup",
                            "status": "active",
                            "session_size": session_size,
-                           "remaining_after": len(shuffled_master_ids),
+                           "remaining_after": len(session.remaining_pool),
                            "session_ids": session_master_ids})
 
-        return {"status": "active",
-                "questions": session_questions,
-                "remaining_pool": len(shuffled_master_ids)}
+        session.questions = session_questions
+        session.session_size = len(session_questions)
+        return session
 
-    # 3. otherwise return "exhausted" flag to controller
+    #  otherwise return "exhausted" flag to controller
     else:
         logger.info("WARMUP_SESSION_EXHAUSTED",
                     extra={"stage": "warmup",
                            "status": "exhausted",
                            "session_size": session_size,
-                           "remaining_after": len(shuffled_master_ids)})
+                           "remaining_after": len(session.remaining_pool)})
 
-        return {"status": "exhausted",
-                "questions": None,
-                "remaining_pool": len(shuffled_master_ids)}
+        session.questions = None
+        session.session_status = SessionStatus.EXHAUSTED
+
+        return session

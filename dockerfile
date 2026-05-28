@@ -45,6 +45,8 @@ COPY src/game_app/ /app/src/game_app/
 # Create the data directory in the container first
 RUN mkdir -p /app/data
 COPY data/05_final/tracer_production_green_v1.parquet /app/data/tracer_production_green_v1.parquet
+# create dir to store game session_reports
+RUN mkdir -p /app/runtime
 
 # 10. NETWORKING: Expose the port used by GoTTY
 EXPOSE 8080

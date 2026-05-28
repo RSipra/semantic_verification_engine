@@ -19,7 +19,10 @@ from rich.align import Align
 from game_app.player import Player
 from game_app.trivia_manager import Question
 import game_app.constants as const
+import game_app.utils_general as ut
 
+NUM_ATTEMPTS = 3
+DEFAULT_PLAYER_NAME = "wizard"
         
 ## GAMEPLAY VIEW MODULE
 class GameView:
@@ -319,16 +322,25 @@ class GameView:
     # Player details - a. get their name    
     def get_player_name(self) -> str:
         """Internal method to get player name"""
+        
         self.console.print("First, let's get to know you better!\n", style=self.THEME["intro"])
-        while True:
-            player_name = self.console.input(
+        player_name = ""
+        
+        for _ in range(NUM_ATTEMPTS):
+            candidate = self.console.input(
                 f"[{self.THEME['prompt']}]So what should I call you? Please enter your name: > [/]"
                 ).strip().title()
-            if player_name:
+            if candidate:
+                player_name = candidate
                 break
             self.console.print(
                 f"[{self.THEME['error']}]Oops! Please enter a valid, non-empty name.[/]"
                 )
+        # fallback if all attempts fail    
+        if not player_name:    
+            player_name = DEFAULT_PLAYER_NAME
+            self.console.print(
+                f"[{self.THEME['prompt']}]No worries — we'll call you Wizard! [/]")
             
         # EASTER EGG :D ... Fun acknowledgement for special names
         name_lower = player_name.lower()
@@ -395,18 +407,14 @@ class GameView:
         # Prompt player to choose own house if they don't like default
         while True:
             prompt = f"[{self.THEME['prompt']}]Which Hogwart's house do you choose? (Press Enter to stay in {suggested_house.value}): [/]"
-            raw_input = self.console.input(prompt)
+            player_input = self.console.input(prompt)
             # Check for empty input (Default choice) before cleaning
             # (cleaning might turn "   " into "" which is valid default behavior)
-            if not raw_input.strip():
+            if not player_input.strip():
                 player_house = suggested_house
                 break
-            player_house_input = ut.clean_input_string(raw_input).title()
-            
-            # If the user just hits Enter, input will be empty
-            if not player_house_input:
-                player_house = suggested_house  # Accept the suggestion
-                break
+            player_house_input = ut.clean_input_string(player_input).title()
+
             # Otherwise, validate and accept their choice
             try:
                 player_house = const.House(player_house_input)
@@ -656,7 +664,20 @@ class GameView:
 
     def display_generic_goodbye(self):
         """Displays a generic goodbye message when no player was created."""
-        self.console.print("\nThanks for playing! Mischief managed. ✨\n", style=self.THEME['goodbye'])
+        self.console.print("\nThanks for playing! Mischief managed. ✨\n", 
+                           style=self.THEME['goodbye'])
+
+    def display_session_exhausted_goodbye(self):
+        """
+        Displays a goodbye message when the dataset is exhausted and 
+        no more sessions available
+        """
+        message = ("That’s it for now, young wizard. "
+                   "You’ve reached the end of the available trivia study material!\n"
+                   "The enchanted curriculum has temporarily run dry....\n"
+                   "Return later when new questions have been added.\n")
+
+        self.console.print(message, style=self.THEME['goodbye'])
 
 ## VIEW Quit game 
     # check if user enters quit        

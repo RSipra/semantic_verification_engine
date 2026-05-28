@@ -1,6 +1,6 @@
 """
 =======================================================================
-SEMANTIC VERIFICATION ENGINER (Ref implementaiton: Harry Potter Trivia)
+SEMANTIC VERIFICATION ENGINER (Ref implementation: Harry Potter Trivia)
 =======================================================================
 
 CLI MVP (core logic) -> constants module (data)
@@ -14,13 +14,44 @@ from enum import Enum
 NUM_QUESTIONS_PER_SESSION = 10
 
 # Max number of questions allowed per session
-MAX_QUESTIONS_PER_SESSION = 50
-
-# Name of the trivia dataset csv to use to extract questions from
-MVP_TRIVIA_CSV_NAME = "trivia_dataset_v0.1.0_baseline.csv"
+MAX_QUESTIONS_PER_SESSION = 20
 
 # Number of chances a player gets every question session
 PLAYER_CHANCES = 3
+
+# Custom Exceptions (can later go in a separate module)
+class UserWantsToQuit(Exception):
+    """Custom exception raised when the user types 'quit' at any prompt."""
+    pass
+
+## ---  Enums --- 
+# TODO: shift to game_app/types.py
+
+class SessionStatus(str, Enum):
+    """ """
+    ACTIVE = "active"
+    EXHAUSTED = "exhausted"
+
+class GameStatus(str, Enum):
+    """
+    Represents the terminal state of a trivia game session.
+    This enum is used by the GameController to communicate the outcome
+    of a single session back to the main application orchestrator.
+    It then enables the main loop to make deterministic decisions about
+    session lifecycle transitions (e.g. replay, exit, or graceful shutdown)
+
+    Attributes:
+        COMPLETED:The session finished normally after all questions were processed.
+            The player may be prompted to replay.
+        QUIT:The player terminated the session early via an explicit quit action.
+        FAILED: The session terminated due to an unexpected runtime error or
+            unrecoverable system failure (e.g. evaluator crash, missing data).
+        LOST: The player exhuasted all chances causing the session to end.    
+    """
+    COMPLETED = "completed"
+    QUIT = "quit"
+    FAILED = "failed"
+    LOST = "lost"
 
 # The main HP houses for players to select from
 class House(str, Enum):
@@ -86,9 +117,3 @@ class Rank(str, Enum):
     EXPERT = "Expert"
     MASTER = "Master"
     UNKNOWN = "Unknown"
-    
-# Custom Exceptions (can later go in a separate module)
-class UserWantsToQuit(Exception):
-    """Custom exception raised when the user types 'quit' at any prompt."""
-    pass    
-    

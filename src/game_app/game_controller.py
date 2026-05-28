@@ -40,23 +40,21 @@ State 4. End the game:
     - "Thanks for playing!" End game or renew for another round.
     
 '''
-
+import time
+from dataclasses import dataclass
+from typing import Any, List
 from datetime import datetime
 from pathlib import Path
 import json
-from typing import List, Any, Dict#, Optional
-from pyfiglet import figlet_format  # to create ASCII art
-from rich.console import Console, RenderableType
-from rich.panel import Panel
-from rich.text import Text
-from rich.align import Align 
-from game_app.player import Player
-from game_app.trivia_manager import Question
-import game_app.constants as const
-import game_app.utils_general as ut
 
+from game_app.player import Player
+from game_app.constants import NUM_QUESTIONS_PER_SESSION, SessionStatus, GameStatus, UserWantsToQuit
+from game_app.types import Question, SessionReport, Session
+import game_app.utils_general as ut
+from game_app.warmup import orchestrate_game_warmup
 #-----------------------------------------
 
+## Game controller session report
 
 ## GAMEPLAY CONTROLLER: manage flow between the game states.
     
@@ -72,31 +70,29 @@ class GameController():
     """
     
     # Track current state of the game.
-    def __init__(self, trivia_session): 
-        self.player = None  # Instantiated by player during introduction
-        self.trivia_manager = trivia_session  # Trivia object from main; loads dataset + selects predefined num of questions
+    def __init__(self, system_signals, view): 
+        self.player = None  # set during introduction phase
+        self.player_initialized = False  # flipped to True after Introduction. Player is invariant after that
+        self.system_startup_signals = system_signals
         self.current_question_index = 0
         self.current_score = 0
         self.game_over = False
-        self.view = GameView()  # Persistent component  
+        self.view = view  # Persistent component  
         # print("DEBUG: GameController initialized.")
     
 ## CNTL: Initialization
 
     # Use trivia_manager to setup the questions for the session
-    def _setup_session(self, total_questions: int): # State 1
-        """Handles the entire data setup process for a new game session."""
-        # print("Preparing your questions...")
-        try:
-            # Tell the trivia_manager to load the data
-            self.trivia_manager.start(num_questions_to_load= total_questions)
-            # Get the list of questions from the public getter method
-            session_questions = self.trivia_manager.get_session_questions()
-            # Return the list so run_game can use it
-            return session_questions
-        except Exception as e:
-            self.view.display_error(f"Could not set up the trivia data. {e}")
-            return None   
+    # def _setup_session(self, total_questions: int): # State 1
+    #     """Handles the entire data setup process for a new game session."""
+    #     # print("Preparing your questions...")
+    #     try:
+    #         session_questions = self.trivia_manager.get_session_questions()
+    #         # Return the list so run_game can use it
+    #         return session_questions
+    #     except Exception as e:
+    #         self.view.display_error(f"Could not set up the trivia data. {e}")
+    #         return None   
     
 ## CNTL: Introduction 
 
@@ -168,14 +164,16 @@ class GameController():
         Returns True if the setup was successful, False otherwise.
         """
         # 0. Configuration
-        total_questions = const.NUM_QUESTIONS_PER_SESSION
+        total_questions = NUM_QUESTIONS_PER_SESSION
         # State 1: Introduction
         self._handle_introduction(total_questions)
-        
-        return self.player is not None
+        assert self.player is not None, "Player must be set during initialization"
+        self.player_initialized = True
+
+        return True
 
 ## CNTL: Run session     
-    def run_game(self) -> bool:
+    def run_game(self, session: Session) -> SessionReport:
         """
         Orchestrates a single, complete game session from introduction to end-game.
 
@@ -187,48 +185,71 @@ class GameController():
         play again and communicates their choice via its return value.
 
         Returns:
-            bool: `True` if the player chooses to play another round, otherwise
-                  `False`. This value is intended to be used by the main
-                   application loop in `main.py` to determine whether to
-                   start a new game or exit the program.
+            session_report : returns status report for session action in Main.
         """
+
+        start_time = time.time()
+        questions_answered = 0
+
+        # enforce controller initialization invariant
+        if self.player is None:
+            raise RuntimeError(
+                "GameController state invalid: player not initialized before run_game()")
+        player = self.player
+
+        session_report = SessionReport(
+            game_id = session.game_id,
+            total_questions = session.session_size,
+            player_name = player.name,
+            house = player.house
+            )
+
         try:
-            # 0. Configuration
-            total_questions = const.NUM_QUESTIONS_PER_SESSION
-            
-            # State 1: handled once only at start of game in main
-            
-            # Guard Clause: Check if player initialized successfully
-            if not self.player:
-                self.view.display_error("Cannot play a round without a player. Please start the game first.")
-                return False # Exit the round gracefully
-
-            # State 2: Data setup
-            session_questions = self._setup_session(total_questions)
             # Guard Clause: Check if questions were loaded successfully
-            if not session_questions:
+            if not session.questions:
+                # replace with Runtime error
                 self.view.display_error("Could not load questions for the session.")
-                return False
 
-            # State 3: Gameplay loop
+                session_report.game_status = GameStatus.FAILED
+                session_report.error = "Error loading questions for session by controller"
+                return session_report
+
+            # Gameplay loop
             # Reset the player's stats for the new round before the questions begin.
-            self.player.reset_stats()
+            player.reset_stats()
 
-            for question in session_questions:
+            for question in session.questions:
                 self._handle_turn(question)
-                # make sure they have chances left
-                if not self.player.has_chances_left():
+                questions_answered +=1
+
+                # make sure they have chances left or they lose
+                if not player.has_chances_left():
+
                     self.view.display_error("Uh oh! You've run out of chances! 🥺")
-                    break
+
+                    session_report.game_status = GameStatus.LOST
+                    session_report.score = player.score
+                    session_report.duration_sec = time.time() - start_time
+                    session_report.questions_answered = questions_answered
+                    return session_report
 
             # State 4: End game
-            return self._end_game(total_questions) # returns bool to main.py (T: another round, F: quit)
-        
+            session_report.game_status = GameStatus.COMPLETED
+            session_report.score = player.score
+            session_report.duration_sec = time.time() - start_time
+            session_report.questions_answered = questions_answered
+
+            return session_report
+
         # custom exception to quit if player enters 'quit' at any input and end game.
-        except const.UserWantsToQuit: 
-            self.view.display_quit_message() 
-            return False
-    
+        except UserWantsToQuit:
+            session_report.game_status = GameStatus.QUIT
+            session_report.duration_sec = time.time() - start_time
+            session_report.score = None  # score ommited for quit in MVP
+            session_report.questions_answered = questions_answered
+
+            return session_report
+
     # Handle a single turn with the Question object     
     def _handle_turn(self, question: Question) -> None: # state 3
         """
@@ -328,21 +349,25 @@ class GameController():
         return continue_game
     
     # wrapper for main to display final goodbye
-    def display_goodbye(self):
+    def display_goodbye(self, session_report: SessionReport):
         """
         Orchestrates the display of a final goodbye message to the player.
 
         This method is intended to be called by the main application runner
-        after the primary game loop has exited. It checks if a Player object
-        was successfully created during the session.
-
-        If a player exists, it delegates the task of printing a personalized
-        goodbye message to the View. If no player was created (e.g., the
-        user quit during the introduction), it handles a generic farewell.
+        after the primary game loop has exited. It routes exit messages
+        based on session and game status.
         """
-        if self.player:
-            player_name = self.player.name
-            self.view.display_goodbye(player_name)
-        else:
+
+        player_name = session_report.player_name
+        session_status = session_report.session_status
+        game_status = session_report.game_status
+
+        match game_status:
+            case GameStatus.COMPLETED | GameStatus.LOST:
+                # customized message with player name
+                self.view.display_goodbye(player_name)
+            case GameStatus.FAILED:
             # A generic goodbye if there was no player
-            self.view.display_generic_goodbye()
+                self.view.display_generic_goodbye()
+            case GameStatus.QUIT:
+                self.view.display_quit_message()
