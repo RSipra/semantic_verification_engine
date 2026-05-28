@@ -45,6 +45,7 @@ Design principle:
 """
 
 from pydantic import BaseModel, Field, model_validator
+from core.constants import QuestionType, AnswerType
 
 ## --- LLM Response Schema ---
 
@@ -189,3 +190,12 @@ class EXEvalResults(BaseEvalResults):
     quiz_host_response: str = ""
     evaluation_reasoning: str = ""
     execution_time_sec: float = 0.0 
+
+# Result wrapper for controller
+class TurnResult(BaseModel):
+    """Per question turn wrapper around Evaluation results to be
+    compiled for the session by the controller"""
+    question_id: str
+    question_type: QuestionType
+    answer_type: AnswerType
+    evaluation: BaseEvalResults 

@@ -7,11 +7,12 @@ CLI MVP (core logic) -> Types
 -----------------------------------------------------------------------
 """
 
-from typing import TypeAlias, Any
-from dataclasses import dataclass
+from typing import TypeAlias, Any, List
+from dataclasses import dataclass, field
 from core.models import (RuntimeStandard_Green, RuntimeMCQ_Green,
                          RuntimeStandard_Blue, RuntimeMCQ_Blue)
 
+from engine.dto import TurnResult
 from game_app.constants import GameStatus, SessionStatus, NUM_QUESTIONS_PER_SESSION, House
 
 # NOTE:
@@ -46,6 +47,7 @@ class SessionReport:
     # gameplay metrics
     score: int | None  = None                       # player score
     questions_answered: int | None  = None          # questions attempted by player 
+    all_turn_results : List[TurnResult]= field(default_factory=list) # List of all question turn reports
     # observability
     duration_sec: float | None = None               # time taken to complete given session
     error: str | None = None                        # report cause when session status != completed    

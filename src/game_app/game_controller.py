@@ -41,17 +41,16 @@ State 4. End the game:
     
 '''
 import time
-from dataclasses import dataclass
-from typing import Any, List
 from datetime import datetime
 from pathlib import Path
 import json
 
 from game_app.player import Player
-from game_app.constants import NUM_QUESTIONS_PER_SESSION, SessionStatus, GameStatus, UserWantsToQuit
+from game_app.constants import NUM_QUESTIONS_PER_SESSION, GameStatus, UserWantsToQuit
 from game_app.types import Question, SessionReport, Session
-import game_app.utils_general as ut
-from game_app.warmup import orchestrate_game_warmup
+from engine.dto import TurnResult
+from engine.evaluators.router import evaluation_router
+
 #-----------------------------------------
 
 ## Game controller session report
@@ -190,6 +189,7 @@ class GameController():
 
         start_time = time.time()
         questions_answered = 0
+        all_turn_results = []
 
         # enforce controller initialization invariant
         if self.player is None:
@@ -219,7 +219,10 @@ class GameController():
             player.reset_stats()
 
             for question in session.questions:
-                self._handle_turn(question)
+                
+                # single question presentation and evaluation
+                turn_result = self._handle_turn(question)
+                all_turn_results.append(turn_result)
                 questions_answered +=1
 
                 # make sure they have chances left or they lose
@@ -231,6 +234,7 @@ class GameController():
                     session_report.score = player.score
                     session_report.duration_sec = time.time() - start_time
                     session_report.questions_answered = questions_answered
+                    session_report.all_turn_results = all_turn_results
                     return session_report
 
             # State 4: End game
@@ -238,6 +242,7 @@ class GameController():
             session_report.score = player.score
             session_report.duration_sec = time.time() - start_time
             session_report.questions_answered = questions_answered
+            session_report.all_turn_results = all_turn_results
 
             return session_report
 
@@ -247,44 +252,63 @@ class GameController():
             session_report.duration_sec = time.time() - start_time
             session_report.score = None  # score ommited for quit in MVP
             session_report.questions_answered = questions_answered
+            session_report.all_turn_results = all_turn_results
 
             return session_report
 
     # Handle a single turn with the Question object     
-    def _handle_turn(self, question: Question) -> None: # state 3
+    def _handle_turn(self, question: Question) -> TurnResult: 
         """
-        One round of gameplay includes the following steps:
-        1. View asks the question to the player
-        2. Views gets the player's answer and passes to the Controller
-        3. Controller passes the player's answer through Question.check_answer(), method checks and provides boolean
-        4. Controller passes boolean to View 
-        5. View displays feedback (correct/incorrect)
-        6. Player score and state are updated
-        """
-        if not self.player:
-            self.view.display_error("Cannot handle turn because no player exists.")
-            return 
-        
+        Executes a single question turn.
+
+        Flow:
+        1. Display question to player via View
+        2. Collect player input
+        3. Route question + answer through evaluation_router
+        4. Build TurnResult containing:
+        - question metadata (id, type, answer type)
+        - evaluation output
+        5. Update Player state based on evaluation result
+        6. Provide feedback via View
+        7. Return TurnResult for session aggregation
+
+        Returns:
+            TurnResult: full record of the executed turn including evaluation outcome
+        """ 
+        assert self.player is not None
+        player = self.player
+
         #1. Ask the question
-        # ### UX IMPROVEMENT: Passing current score to the view for the header ###
-        self.view.display_question(question, self.player.score)
-        
+        # UX: pass current score to the view for the header
+        self.view.display_question(question, player.score)
+
         #2. Get the player's answer
         player_answer = self.view.get_player_answer()
-        
+
         #3. Check the answer & chances left
-        is_correct = question.check_answer(player_answer)
-        
+        result = evaluation_router(player_answer, question)
+
+        # evaluation report for controller
+        turn_report = TurnResult(
+            question_id = question.master_id,
+            question_type = question.question_type,
+            answer_type = question.answer_type,
+            evaluation = result
+        )
+
+        is_answer_correct = turn_report.evaluation.is_correct
+
         #4. update player score and state
-        if is_correct:
-            self.player.add_score()
+        if is_answer_correct is True:
+            player.add_score()
         else:
-            self.player.lose_chance()
-            
+            player.lose_chance()
+
         #5. Provide player feedback on answer
-        self.view.give_feedback(is_correct, 
-                                question.correct_answer, 
-                                chances_left= self.player.get_chances)
+        self.view.give_feedback(is_answer_correct,
+                                question.answer,
+                                chances_left= player.get_chances)
+        return turn_report
 
 ## CNTL: End session 
     
@@ -359,7 +383,6 @@ class GameController():
         """
 
         player_name = session_report.player_name
-        session_status = session_report.session_status
         game_status = session_report.game_status
 
         match game_status:
