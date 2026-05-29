@@ -6,44 +6,38 @@ SEMANTIC VERIFICATION ENGINE (Ref implementation: Harry Potter Trivia)
 CLI MVP ->  Game Controller Module
 -----------------------------------------------------------------------
 
-CLI MVP (core logic) -> game module (viewer and controller)
+Game orchestrator responsible for executing a single gameplay run for a
+player, including introduction, session execution, and end-game flow.
 
-Currently both View and Controller are included in the same module for the MVP. 
-Handled separately through classes. 
+Acts as the interface between:
+- main application loop (multi-session orchestration)
+- view layer (user interaction)
+- evaluation router (tiered hybrid semantic / structured evaluation system)
 
-** Separation into separate VIEW and CONTROLLER modules will be considered in the next phase **
-------------------------------------------------------------------
+Core responsibilities:
+- Handle player introduction and initialization
+- Execute a full game session via run_game(session)
+- Manage per-turn execution via _handle_turn()
+- Route answers through evaluation_router for structured evaluation
+- Update player state based on evaluation results
+- Aggregate turn-level results into SessionReport
+- Coordinate end-of-session flow and exit messaging
 
-Game Logic for Trivia Game (CLI MVP): phase 1.2
-
-State 1. Initialize the game:
-    - Load the dataset.
-    - Load the trivia questions.
-State 2. Introduction to the game and rules
-    - Title + brief acknowledgements  
-    - Welcome the player.
-    - Ask for player name and house - Initialize the player.
-    - Explain the rules of the game (allow to skip to player initialization in later versions )
-    - Explain how to play 
-    - Explain how to quit 
-    - Explain the scoring system and chances (* to be added in later)
-State 3. Start the game loop:
-    - Ask the player a question.
-    - Get the player's answer. check if they entered quit (if quit chosen -> end game)
-    - Check if the answer is correct and update score and chances left:
-        - If player answer is correct: add 1 point to the score.
-        - If player answer is incorrect:
-            - Reduce the player's chances by 1. If no chances left, end the game.
-    - load next question until end of trivia question set.
-State 4. End the game:
-    - Display the player's score and level.
-    - "Thanks for playing!" End game or renew for another round.
+Game flow (high-level):
+1. Introduction and player setup
+2. Session execution (question loop)
+   - Display question
+   - Collect input
+   - Evaluate answer via routed evaluators
+   - Update player state
+   - Return TurnResult
+3. Session finalization
+   - Aggregate SessionReport
+   - Handle quit / failure / completion states
+   - Delegate persistence to main layer
     
 '''
 import time
-from datetime import datetime
-from pathlib import Path
-import json
 
 from game_app.player import Player
 from game_app.constants import NUM_QUESTIONS_PER_SESSION, GameStatus, UserWantsToQuit
@@ -51,12 +45,8 @@ from game_app.types import Question, SessionReport, Session
 from engine.dto import TurnResult
 from engine.evaluators.router import evaluation_router
 
-#-----------------------------------------
-
-## Game controller session report
-
 ## GAMEPLAY CONTROLLER: manage flow between the game states.
-    
+
 class GameController():
     """
     Main game controller for the Trivia game.
@@ -67,35 +57,17 @@ class GameController():
         - Other methods could handle specific parts like _get_player_details(), _play_round(), 
             _display_results().r adding a new player,
     """
-    
+
     # Track current state of the game.
     def __init__(self, system_signals, view): 
         self.player = None  # set during introduction phase
         self.player_initialized = False  # flipped to True after Introduction. Player is invariant after that
         self.system_startup_signals = system_signals
-        self.current_question_index = 0
-        self.current_score = 0
-        self.game_over = False
-        self.view = view  # Persistent component  
-        # print("DEBUG: GameController initialized.")
-    
-## CNTL: Initialization
+        self.view = view  # Persistent component
 
-    # Use trivia_manager to setup the questions for the session
-    # def _setup_session(self, total_questions: int): # State 1
-    #     """Handles the entire data setup process for a new game session."""
-    #     # print("Preparing your questions...")
-    #     try:
-    #         session_questions = self.trivia_manager.get_session_questions()
-    #         # Return the list so run_game can use it
-    #         return session_questions
-    #     except Exception as e:
-    #         self.view.display_error(f"Could not set up the trivia data. {e}")
-    #         return None   
-    
-## CNTL: Introduction 
+## Game Introduction
 
-    def _handle_introduction(self, total_questions: int): # State 2
+    def _handle_introduction(self, total_questions: int):
         """
         Setup the game introduction to run the Introduction class functions.
         This will display:
@@ -105,54 +77,50 @@ class GameController():
         4. Retrieves the player details and initializes the Player
         5. Explains the game play that leads to the start of the game.
     
-        Updated for Better UX: Breaks the flow into distinct 'Screens'.
+        UX: Breaks the flow into distinct 'Screens'.
         """
-    
+
         # --- SCREEN 1: THE HOOK (Title & Greeting) ---
-        # 1. Game title (Your view already clears the screen here)
+        # 1. game title (view already clears the screen here)
         self.view.print_ascii_art(font_style='ogre')
-        
-        # 2. Greeting (Print it below the title)
+
+        # 2. greeting 
         self.view.print_greeting()
-        
-        # 3. PAUSE: Let them read before rushing to input
+
+        # 3. pause to let player read before next input
         self.view.console.print("\n[dim italic]Press Enter to enter the Great Hall...[/]\n")
-        self.view.console.input() 
-        
-        
+        self.view.console.input()
+
         # --- SCREEN 2: IDENTITY (Name & House) ---
-        self.view.console.clear() # <--- WIPE THE SLATE CLEAN
-        
-        # 4. Get Name
+        self.view.console.clear() # wipe screen
+
+        # 4. get name
         player_name = self.view.get_player_name()
-        
-        # 5. Get House 
-        # (We keep these on the same screen so it feels like filling out a form)
+
+        # 5. get house
         player_house = self.view.get_player_house(player_name)
-        
-        # Create Player Object
+
+        # create player object
         self.player = Player(player_name, player_house)
-        
-        
+
         # --- SCREEN 3: THE REVEAL (Welcome Panel) ---
-        self.view.console.clear() # <--- WIPE AGAIN
-        
-        # 6. Big Welcome Panel
+        self.view.console.clear()  #wipe screen
+
+        # 6. welcome panel
         self.view.print_personalized_player_welcome(self.player)
-        
-        # Pause to let them admire their house colors
+
+        # pause before next screen
         self.view.console.print("\n[dim italic]Press Enter to learn the rules...[/]")
         self.view.console.input()
 
-
         # --- SCREEN 4: THE RULES ---
-        self.view.console.clear() # <--- WIPE AGAIN
-        
-        # 7. Explain game play 
+        self.view.console.clear()  # clear screen
+
+        # 7. explain game play 
         # (This method has its own pauses, so it works well on a fresh screen)
         self.view.explain_gameplay(total_questions)
-        
-        # Final clear so the first question pops on a black background
+
+        # final clear so the first question pops on a black background
         self.view.console.clear()
 
     def start_game(self) -> bool:
@@ -162,16 +130,17 @@ class GameController():
         player wants to play multiple rounds.
         Returns True if the setup was successful, False otherwise.
         """
-        # 0. Configuration
+        # configuration
         total_questions = NUM_QUESTIONS_PER_SESSION
-        # State 1: Introduction
+        # interactive introduction
         self._handle_introduction(total_questions)
         assert self.player is not None, "Player must be set during initialization"
         self.player_initialized = True
 
         return True
 
-## CNTL: Run session     
+## Run Sessions
+
     def run_game(self, session: Session) -> SessionReport:
         """
         Orchestrates a single, complete game session from introduction to end-game.
@@ -182,19 +151,27 @@ class GameController():
 
         At the conclusion of the session, it prompts the user if they wish to
         play again and communicates their choice via its return value.
+        
+        TODO: consolidate report building into a helper to avoid repetition
 
         Returns:
             session_report : returns status report for session action in Main.
         """
 
-        start_time = time.time()
-        questions_answered = 0
-        all_turn_results = []
-
-        # enforce controller initialization invariant
+        # Guard clause: player initialized by controller at startup as invariant.
         if self.player is None:
             raise RuntimeError(
                 "GameController state invalid: player not initialized before run_game()")
+        # Guard clause: startup orchestration guarantees runtime question availability.
+        if not session.questions:
+            raise RuntimeError(
+                "Session initialized without questions. "
+                "Runtime invariant violated.")
+
+        # initialize
+        start_time = time.time()
+        questions_answered = 0
+        all_turn_results = []
         player = self.player
 
         session_report = SessionReport(
@@ -203,46 +180,43 @@ class GameController():
             player_name = player.name,
             house = player.house
             )
-
+        # Gameplay single session loop
         try:
-            # Guard Clause: Check if questions were loaded successfully
-            if not session.questions:
-                # replace with Runtime error
-                self.view.display_error("Could not load questions for the session.")
-
-                session_report.game_status = GameStatus.FAILED
-                session_report.error = "Error loading questions for session by controller"
-                return session_report
-
-            # Gameplay loop
             # Reset the player's stats for the new round before the questions begin.
             player.reset_stats()
 
             for question in session.questions:
-                
+
                 # single question presentation and evaluation
                 turn_result = self._handle_turn(question)
                 all_turn_results.append(turn_result)
                 questions_answered +=1
 
-                # make sure they have chances left or they lose
+                # game loss path
                 if not player.has_chances_left():
 
-                    self.view.display_error("Uh oh! You've run out of chances! 🥺")
-
+                    # populate report
                     session_report.game_status = GameStatus.LOST
                     session_report.score = player.score
                     session_report.duration_sec = time.time() - start_time
                     session_report.questions_answered = questions_answered
                     session_report.all_turn_results = all_turn_results
+
+                    # end game
+                    self.view.display_error("Uh oh! You've run out of chances! 🥺")
+                    self._render_session_summary(session_report)
+
                     return session_report
 
-            # State 4: End game
+            # populate report
             session_report.game_status = GameStatus.COMPLETED
             session_report.score = player.score
             session_report.duration_sec = time.time() - start_time
             session_report.questions_answered = questions_answered
             session_report.all_turn_results = all_turn_results
+
+            # game win: session completed
+            self._render_session_summary(session_report)
 
             return session_report
 
@@ -256,8 +230,8 @@ class GameController():
 
             return session_report
 
-    # Handle a single turn with the Question object     
-    def _handle_turn(self, question: Question) -> TurnResult: 
+    # handle a single turn with the Question object
+    def _handle_turn(self, question: Question) -> TurnResult:
         """
         Executes a single question turn.
 
@@ -274,18 +248,18 @@ class GameController():
 
         Returns:
             TurnResult: full record of the executed turn including evaluation outcome
-        """ 
+        """
         assert self.player is not None
         player = self.player
 
-        #1. Ask the question
+        # 1. ask the question
         # UX: pass current score to the view for the header
         self.view.display_question(question, player.score)
 
-        #2. Get the player's answer
+        #2. get player's answer
         player_answer = self.view.get_player_answer()
 
-        #3. Check the answer & chances left
+        #3. check the answer & chances left
         result = evaluation_router(player_answer, question)
 
         # evaluation report for controller
@@ -304,52 +278,22 @@ class GameController():
         else:
             player.lose_chance()
 
-        #5. Provide player feedback on answer
+        #5. provide player feedback on answer
         self.view.give_feedback(is_answer_correct,
                                 question.answer,
                                 chances_left= player.get_chances)
         return turn_report
 
-## CNTL: End session 
-    
-    # Generate trivia set report incase any errors are spotted in the dataset.
-    def _save_session_report(self):
-        """Gets session data from Trivia and saves it as a JSON report."""
-        # 1. Get the data from the trivia manager
-        report_data = self.trivia_manager.get_session_report_data()
+##  End Game
 
-        if not report_data:
-            print("DEBUG: No questions in session, skipping report.")
-            return
+    # End game sequence
+    def _render_session_summary(self, session_report: SessionReport) -> None: 
+        """Orchestrates the session end sequence by calling the View."""
 
-        # 2. Define a directory for reports and make sure it exists
-        reports_dir = Path("reports")
-        reports_dir.mkdir(exist_ok=True)
+        assert self.player is not None, "Player must be set during initialization"
 
-        # 3. Create a unique filename with a timestamp
-        timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-        filename = f"trivia_session_{timestamp}.json"
-        filepath = reports_dir / filename
-
-        # 4. Write the data to a JSON file
-        try:
-            with open(filepath, 'w', encoding='utf-8') as f:
-                json.dump(report_data, f, indent=4, ensure_ascii=False)
-            print(f"DEBUG: Session report saved to {filepath}")
-        except Exception as e:
-            # Use the view to display the error to the user
-            self.view.display_error(f"Could not save session report: {e}")
-                
-    # End game sequence    
-    def _end_game(self, total_questions: int) -> bool:  # State 4
-        """Orchestrates the entire end-game sequence by calling the View."""
-
-        # Guard clause incase player was not instantiated in Introduction 
-        if self.player is None:
-            self.view.display_error("No player data available to show a final score.")
-            # Since there's no player, we can't really ask them to play again.
-            return False
-
+        total_questions = session_report.total_questions
+        
         # 0. display game-over message
         self.view.display_game_over()
 
@@ -360,18 +304,10 @@ class GameController():
         # 2. Get player rank and display rank and roast! :D
         final_rank = self.player.find_player_wizard_rank(total_questions)
         self.view.display_player_rank(final_rank, self.player)
-        self.view.display_final_housepoints(final_score, self.player) 
-        
-        # 3. Ask the player if they want to save a report by calling the view.
-        if self.view.prompt_to_save_report():
-            # 2. If they say yes, then call the internal save method.
-            self._save_session_report()
-        
-        # 4. Offer another round otherwise quit game
-        continue_game = self.view.ask_game_renew()
-        
-        return continue_game
-    
+        self.view.display_final_housepoints(final_score, self.player)
+
+        return
+
     # wrapper for main to display final goodbye
     def display_goodbye(self, session_report: SessionReport):
         """
@@ -394,3 +330,4 @@ class GameController():
                 self.view.display_generic_goodbye()
             case GameStatus.QUIT:
                 self.view.display_quit_message()
+        return
