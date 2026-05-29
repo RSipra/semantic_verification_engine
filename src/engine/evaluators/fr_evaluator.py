@@ -42,6 +42,10 @@ for the tracer-phase semantic evaluation engine.
 NOTE:
 This module assumes upstream normalization and preprocessing
 has already been applied before evaluator routing.
+
+TODO:
+surface llm_success / llm availability into evaluation telemetry layer
+once runtime observability UI is implemented
 """
 
 import logging

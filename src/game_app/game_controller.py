@@ -35,7 +35,10 @@ Game flow (high-level):
    - Aggregate SessionReport
    - Handle quit / failure / completion states
    - Delegate persistence to main layer
-    
+
+TODO:
+system_signals (from startup) reserved for future runtime UX handling
+(e.g. degraded/free-tier latency warnings, temporary LLM disablement)    
 '''
 import time
 

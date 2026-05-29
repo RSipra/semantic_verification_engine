@@ -33,6 +33,10 @@ CONSUMERS:
 - FR Evaluator (factual recall checks)
 - Any future semantic evaluation pipelines requiring LLM judgment   
 
+TODO:
+integrate warmup health signals to optionally bypass
+LLM calls during known outage/degraded states
+
 """
 
 import time
