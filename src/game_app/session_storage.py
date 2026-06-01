@@ -11,7 +11,8 @@ from dataclasses import asdict
 from datetime import datetime
 import os
 
-REPORT_DIR = "/app/runtime"
+# REPORT_DIR = "/app/runtime"
+REPORT_DIR = "./storage"
 
 def generate_session_report_filename() -> str:
     """
@@ -52,5 +53,8 @@ def save_session_reports(reports, path=None):
     if path is None:
         path = generate_session_report_filename()
 
+    # Convert DTO to plain Python structures
+    serializable_reports = [r.model_dump() for r in reports]
+
     with open(path, "w", encoding="utf-8") as f:
-        json.dump([asdict(r) for r in reports], f, indent=2)
+        json.dump(serializable_reports, f, indent=2, ensure_ascii=False)

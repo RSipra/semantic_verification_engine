@@ -300,6 +300,7 @@ class GameController():
             question_master_id = question.master_id,
             question_type = question.question_type,
             answer_type = question.answer_type,
+            correct_answer = question.answer,
             player_answer = player_answer,
             evaluation = result)
 

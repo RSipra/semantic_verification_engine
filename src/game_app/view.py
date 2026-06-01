@@ -485,7 +485,7 @@ class GameView:
     def build_evaluating_lines(self, question: Question, hints_revealed: int) -> list[str]:
         """Console state while evaluation is running."""
         return self.build_hint_lines(question, hints_revealed) + [
-            "[yellow]> Evaluating...[/]"]
+            "/n[yellow]Evaluating answer (AI judge used for difficult cases)...[/]/n"]
 
     def build_result_lines(self, question: Question, hints_revealed: int,
                         turn_report: TurnResult, chances_left: int) -> list[str]:
@@ -499,16 +499,23 @@ class GameView:
         lines.append("")
 
         # 2. game feedback
-        feedback = random.choice(
+        feedback_text = random.choice(
             self.CORRECT_ANS_FEEDBACK if is_correct else self.WRONG_ANS_FEEDBACK)
+
+        feedback = (f"[bold green]{feedback_text}[/bold green]"
+                    if is_correct
+                    else f"[bold red]{feedback_text}[/bold red]")
+
         lines.append(feedback)
 
         # 3. explanation —> only if incorrect
         if not is_correct:
             lines.append("")
-            lines.append(f"[cyan]> Correct answer:[/] {question.answer}[/]")
+            lines.append(f"[cyan]> Correct answer:[/] {question.answer}")
+            lines.append("")
             lines.append(f"[dim]{question.explanation}[/]")
             if chances_left > 1:
+                lines.append("")
                 lines.append(f"Be careful! You have {chances_left} chances remaining.")
 
             elif chances_left == 1:
@@ -585,7 +592,12 @@ class GameView:
         self.console.print("\n")
 
         # --- CONSOLE PANEL ---
-        disclaimer = "[dim]⚠ Semantic evaluation may take a few seconds when LLM judging is required.[/dim]"
+        disclaimer = (
+            "\n"
+            "[bold yellow]⚠ AI Judge Evaluation[/bold yellow] may be used for some answers.\n\n"
+            "• Latency: ~1s to ~1min (free-tier API constraints)\n"
+            "• Intentional design tradeoff for MVP phase\n"
+        )
         console_content = disclaimer + "\n\n" + (
             "\n".join(console_lines) if console_lines else "[dim]Awaiting input...[/dim]"
         )

@@ -199,5 +199,6 @@ class TurnResult(BaseModel):
     question_master_id: str         # global question identifier
     question_type: QuestionType
     answer_type: AnswerType
+    correct_answer: str
     player_answer: str
     evaluation: BaseEvalResults 

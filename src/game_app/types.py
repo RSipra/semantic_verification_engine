@@ -9,6 +9,7 @@ CLI MVP (core logic) -> Types
 
 from typing import TypeAlias, Any, List
 from dataclasses import dataclass, field
+from pydantic import BaseModel, Field
 from core.models import (RuntimeStandard_Green, RuntimeMCQ_Green,
                          RuntimeStandard_Blue, RuntimeMCQ_Blue)
 
@@ -33,8 +34,7 @@ Question: TypeAlias = (
     RuntimeMCQ_Blue
 )
 
-@dataclass
-class SessionReport:
+class SessionReport(BaseModel):
     """Standard format for Game Controller status return to Main"""
     game_id : str                                   # unique game id
     total_questions: int                            # session size
@@ -47,15 +47,14 @@ class SessionReport:
     # gameplay metrics
     score: int | None  = None                       # player score
     questions_answered: int | None  = None          # questions attempted by player 
-    all_turn_results : List[TurnResult]= field(default_factory=list) # List of all question turn reports
+    all_turn_results: list[TurnResult] = Field(default_factory=list) # List of all question turn reports
     # observability
     duration_sec: float | None = None               # time taken to complete given session
     error: str | None = None                        # report cause when session status != completed    
     # extensibility
     metadata: dict[str, Any] | None = None
 
-@dataclass
-class Session:
+class Session(BaseModel):
     """Carries session states within a game"""
     game_id : str                                          
     remaining_pool: list[str]                              # questions available for next session allocation (order preserved)
