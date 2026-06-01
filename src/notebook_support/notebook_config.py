@@ -30,6 +30,7 @@ DATA_DIR = PROJECT_ROOT / "data"
 NOTEBOOKS_DIR = PROJECT_ROOT / "notebooks"
 SCRIPTS_DIR = PROJECT_ROOT / "scripts"
 SRC_DIR = PROJECT_ROOT / "src"
+TEST_DIR = PROJECT_ROOT / "tests"
 
 # Data sub-directories 
 RAW_DATA_DIR = DATA_DIR / "01_raw"

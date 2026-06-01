@@ -41,11 +41,11 @@ LLM calls during known outage/degraded states
 
 import time
 import logging
-from functools import wraps
-import pandas as pd
+import os
 from enum import Enum
+from dotenv import load_dotenv, find_dotenv
+from functools import wraps
 import google.generativeai as genai
-from regex import F
 from engine.dto import LLMJudgeResponse
 
 logger = logging.getLogger(__name__)
@@ -79,7 +79,7 @@ logger = logging.getLogger(__name__)
 ## 1: Models, Constants, Configuration
 
 # Main LLM API Call 
-PRIMARY_MODEL = "models/gemini-3.1-flash-lite"
+PRIMARY_MODEL =  "models/gemini-3.1-flash-lite"
 FALLBACK_MODEL = "models/gemini-flash-latest"
 
 TRANSIENT_BACKOFF = 10.0
@@ -95,7 +95,14 @@ class llm_warmup_health(str, Enum):
 # error 429: resource exchausted (exceeded API usage limits rpm or rpd)
 # error 503: service unavailable (server temporarily overloaded, down)
 TRANSIENT_CODES = {"429", "503", "timeout", "deadline"}
-FAIL_FAST_CODES = {"404", "400", "401", "403"}    
+FAIL_FAST_CODES = {"404", "400", "401", "403"}
+
+# --configure API for LLM judge for EX evaluator--
+load_dotenv(find_dotenv("config.env"), override=True)
+google_api_key = os.environ.get('GEMINI_API_KEY')
+if not google_api_key:
+    raise ValueError("Error: GOOGLE_API_KEY not found.")
+genai.configure(api_key=google_api_key)  # type: ignore    
 
 ## 2: Prompts
 

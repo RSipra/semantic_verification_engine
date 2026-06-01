@@ -1,6 +1,6 @@
 """
 =======================================================================
-SEMANTIC VERIFICATION ENGINE (Ref implementaiton: Harry Potter Trivia)
+SEMANTIC VERIFICATION ENGINE (Ref implementation: Harry Potter Trivia)
 =======================================================================
 -----------------------------------------------------------------------
 Behavioral contract tests for the EX Semantic Evaluator
