@@ -195,7 +195,9 @@ class EXEvalResults(BaseEvalResults):
 class TurnResult(BaseModel):
     """Per question turn wrapper around Evaluation results to be
     compiled for the session by the controller"""
-    question_id: str
+    question_idx: int               # sequence id
+    question_master_id: str         # global question identifier
     question_type: QuestionType
     answer_type: AnswerType
+    player_answer: str
     evaluation: BaseEvalResults 

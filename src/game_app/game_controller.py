@@ -188,10 +188,11 @@ class GameController():
             # Reset the player's stats for the new round before the questions begin.
             player.reset_stats()
 
-            for question in session.questions:
+            for idx, question in enumerate(session.questions):
 
                 # single question presentation and evaluation
-                turn_result = self._handle_turn(question)
+                turn_result = self._handle_turn(question=question, question_idx=idx)
+                
                 all_turn_results.append(turn_result)
                 questions_answered +=1
 
@@ -234,7 +235,7 @@ class GameController():
             return session_report
 
     # handle a single turn with the Question object
-    def _handle_turn(self, question: Question) -> TurnResult:
+    def _handle_turn(self, question: Question, question_idx: int) -> TurnResult:
         """
         Executes a single question turn.
 
@@ -254,37 +255,70 @@ class GameController():
         """
         assert self.player is not None
         player = self.player
+        hints_revealed = 0
+        console_lines = []
 
         # 1. ask the question
         # UX: pass current score to the view for the header
-        self.view.display_question(question, player.score)
+        self.view.display_question_screen(question, question_idx, console_lines, player.score)
 
-        #2. get player's answer
-        player_answer = self.view.get_player_answer()
+        #2. input loop — command routing
+        player_answer = None
+        while player_answer is None:
+            user_input = self.view.get_player_answer()
 
-        #3. check the answer & chances left
-        result = evaluation_router(player_answer, question)
+            match user_input.lower():
+                case "hint":
+                    if hints_revealed < 3:  # silently ignore if already at max 3
+                        hints_revealed += 1
+                        console_lines = self.view.build_hint_lines(question, hints_revealed)
+                    self.view.display_question_screen(question, question_idx, 
+                                                      console_lines, player.score)
 
-        # evaluation report for controller
+                case "reference":
+                    console_lines = self.view.build_reference_lines(question, hints_revealed)
+                    self.view.display_question_screen(question, question_idx,
+                                                      console_lines, player.score)
+
+                case "quit":
+                    raise UserWantsToQuit()
+
+                case _:
+                    player_answer = user_input
+
+        # 3. Render evaluating state
+        console_lines = self.view.build_evaluating_lines(question, hints_revealed)
+        self.view.display_question_screen(question, question_idx, console_lines, player.score)
+
+        # 4. Evaluate — spinner runs while router is working
+        with self.view.console.status("", spinner="dots"):
+            result = evaluation_router(player_answer, question)
+
+        # 5. build evaluation report for controller
         turn_report = TurnResult(
-            question_id = question.master_id,
+            question_idx = question_idx,
+            question_master_id = question.master_id,
             question_type = question.question_type,
             answer_type = question.answer_type,
-            evaluation = result
-        )
+            player_answer = player_answer,
+            evaluation = result)
 
         is_answer_correct = turn_report.evaluation.is_correct
 
-        #4. update player score and state
+        # 6. update player score and state
         if is_answer_correct is True:
             player.add_score()
         else:
             player.lose_chance()
 
-        #5. provide player feedback on answer
-        self.view.give_feedback(is_answer_correct,
-                                question.answer,
-                                chances_left= player.get_chances)
+        # 7. Render result
+        console_lines = self.view.build_result_lines(question, hints_revealed, 
+                                                     turn_report, player.get_chances)
+        self.view.display_question_screen(question, question_idx, console_lines, player.score)
+
+        # 8. Pause before next question
+        self.view.wait_for_continue()
+
         return turn_report
 
 ##  End Game

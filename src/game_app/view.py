@@ -10,16 +10,21 @@ CLI MVP ->  Game View Module
 
 import random
 import time
-from typing import List, Any, Dict#, Optional
+from typing import List, Any, Dict
+import json
+
 from pyfiglet import figlet_format  # to create ASCII art
 from rich.console import Console, RenderableType
 from rich.panel import Panel
 from rich.text import Text
 from rich.align import Align 
+
+from core.constants import QuestionType
 from game_app.player import Player
-from game_app.trivia_manager import Question
+from game_app.types import Question
 import game_app.constants as const
 import game_app.utils_general as ut
+from engine.dto import TurnResult
 
 NUM_ATTEMPTS = 3
 DEFAULT_PLAYER_NAME = "wizard"
@@ -250,20 +255,6 @@ class GameView:
         # Later, this is where you would make the text red with rich.
         self.console.print(f"\n {message}\n", style=self.THEME['error'])
 
-    # def get_latest_view(self) -> str:
-    #      """
-    #      Retrieves the recorded console output as an HTML string 
-    #      and clears the buffer for the next turn.
-    #      """
-    #      # 1. Export what has been printed to the buffer as HTML
-    #      # inline_styles=True ensures colors work without external CSS files
-    #      # html_content = self.console.export_html(inline_styles=True, code_format="<pre>{code}</pre>")
-
-    #      # 2. CLEAR the buffer so old text doesn't appear in the next turn
-    #      self.console.clear()
-
-    #      return html_content
-
 ## VIEW Introduction
     # Game title
     
@@ -461,6 +452,7 @@ class GameView:
         )
 
         # 2. Display the Rules Panel
+        self.console.print("\n") 
         self.console.print(Panel(
             rules_content,
             title="[bold gold1]GAME PLAN[/]",
@@ -479,65 +471,141 @@ class GameView:
         self.console.clear()
     
 ## VIEW Game play
-            
-    def display_question(self, question: Question, current_score: int):
-        """
-        Displays a single formatted question.
-        ### UX IMPROVEMENT: One question per screen ###
-        """
-        # 1. Clear the previous screen to remove clutter
-        self.console.clear()
-        
-        # 2. Print a sticky header so score is always visible
-        header_text = f"[bold purple]HARRY POTTER TRIVIA[/] | [bold]Score: [green]{current_score}[/]"
-        self.console.print(Align.center(header_text))
-        self.console.print("\n") # Breathing room
 
-        # 3. Put the question in a Panel to make it the focal point
-        question_panel = Panel(
-            f"[bold white]{question.question_text}[/]",
-            title=f"[cyan]Question {question.session_id}[/]",
-            border_style="bright_blue",
-            padding=(1, 2)
-        )
-        self.console.print(question_panel)
-        self.console.print("\n") # Space before input prompt
-        
-    def get_player_answer(self) -> str:
-        """Prompts the player for an answer and returns the input."""
-        player_answer = self._get_user_input(f"[{self.THEME['prompt']}]Your answer: > [/]")
-        return player_answer.strip()
-    
-    def give_feedback(self, is_correct: bool, correct_answer: str, chances_left: int) -> None:
-        """Displays feedback to the player after they answer."""
-        
-        # Initial spacing (Separate feedback from the user's input line)
-        self.console.print()
-        
-        if is_correct:
-            self.console.print(random.choice(self.CORRECT_ANS_FEEDBACK), style=self.THEME['success'])
-        else:
-            self.console.print(random.choice(self.WRONG_ANS_FEEDBACK), style=self.THEME['error'])
-            
-            self.console.print()
-            self.console.print(f"The correct answer is: {correct_answer}", style=self.THEME['feedback'])
-            
-            self.console.print()
+    def build_hint_lines(self, question: Question, hints_revealed: int) -> list[str]:
+        """Returns formatted hint lines for however many hints have been revealed (0-3)."""
+        hint_attrs = [question.hint_1, question.hint_2, question.hint_3]
+        return [f"[yellow]💡 Hint {i + 1}:[/] {hint_attrs[i]}"
+                for i in range(hints_revealed)]
+
+    def build_reference_lines(self, question: Question, hints_revealed: int) -> list[str]:
+        return self.build_hint_lines(question, hints_revealed) + [
+            f"[dim]📖 {question.source_reference}[/dim]"]    
+
+    def build_evaluating_lines(self, question: Question, hints_revealed: int) -> list[str]:
+        """Console state while evaluation is running."""
+        return self.build_hint_lines(question, hints_revealed) + [
+            "[yellow]> Evaluating...[/]"]
+
+    def build_result_lines(self, question: Question, hints_revealed: int,
+                        turn_report: TurnResult, chances_left: int) -> list[str]:
+        """Console state for the result phase."""
+        lines = self.build_hint_lines(question, hints_revealed)
+        is_correct = turn_report.evaluation.is_correct
+
+        # 1. status
+        lines.append(f"[cyan]> Your answer:[/] {turn_report.player_answer}")
+        lines.append("[bold green]✓ Correct![/]" if is_correct else "[bold red]✗ Incorrect[/]")
+        lines.append("")
+
+        # 2. game feedback
+        feedback = random.choice(
+            self.CORRECT_ANS_FEEDBACK if is_correct else self.WRONG_ANS_FEEDBACK)
+        lines.append(feedback)
+
+        # 3. explanation —> only if incorrect
+        if not is_correct:
+            lines.append("")
+            lines.append(f"[cyan]> Correct answer:[/] {question.answer}[/]")
+            lines.append(f"[dim]{question.explanation}[/]")
             if chances_left > 1:
-                self.console.print(f"Be careful! You have {chances_left} chances remaining.", style=self.THEME['feedback'])
+                lines.append(f"Be careful! You have {chances_left} chances remaining.")
+
             elif chances_left == 1:
-                self.console.print("Watch out, you have one chance left!", style=self.THEME['error'])
-            
+                lines.append("[bold red]Watch out, you have one chance left!")
             # can later add special messages: e.g.
             # 1. on a streak (3 questions in a row)
             # 2. relate it to answer keywords
             # 3. Maybe pick one professor / character to give responses through out game?
 
-        # ### UX IMPROVEMENT: Pacing ###
-        # Force the user to hit Enter so they can read the feedback before the screen clears
-        self.console.print("\n[dim italic]Press Enter to continue...[/]")
-        self.console.input()
+        # 4. evaluation summary — dispatched by answer type then question type
+        lines += self._build_eval_summary(turn_report)
+
+        return lines
+
+    # TODO stream evaluation tiers in real-time using `rich.live.Live`
+    # TODO Replace raw JSON dump with curated evaluation trace
+    def _build_eval_summary(self, turn_report: TurnResult) -> list[str]:
+        """ """
+        divider = "[dim]──────────────────────────[/]"
+        eval_dict = turn_report.evaluation.model_dump()
+        tier = turn_report.evaluation.resolution_tier
+
+        pretty = json.dumps(eval_dict, indent=2)
+        return [
+            "", divider,
+            "[bold]Evaluation Summary[/]",
+            divider,
+            f"[bold cyan]Resolved via: {tier}[/]",
+            divider,
+            f"[dim]{pretty}[/dim]",
+            divider,]
+
+    def display_question_screen(self, question: Question,
+                                question_idx: int,
+                                console_lines: list[str],
+                                current_score: int):
+        """
+        Master render function. Clears and repaints the full screen.
+        UX: one question per screen, static question panel, dynamic console panel.
+        """
         
+        self.console.clear()
+        display_index = question_idx + 1
+
+        # --- HEADER ---
+        self.console.print("\n")
+        header_text = (
+            f"[bold purple]HARRY POTTER TRIVIA[/]  |  "
+            f"Score: [bold green]{current_score}[/]\n"          
+            f'[dim]type: "hint" (get upto 3 clues)  |  '
+            f'"reference" (reveal source chapter/book)  |  '
+            f'"quit" (exit game)[/dim]'
+        )
+        self.console.print(Align.center(header_text))
+        self.console.print("\n")
+
+        # --- QUESTION PANEL ---
+        # append mcq options if MCQ
+        question_text = f"[bold white]{question.question}[/]"
+        options = getattr(question, "mcq_options", [])
+
+        if question.question_type == QuestionType.MCQ:
+            formatted_options = "\n\n" + "\n".join(
+            f"• {option}"for option in options)
+            question_text += formatted_options
+        # panel styling
+        question_panel = Panel(
+            f"[bold white]{question_text}[/]",
+            title=f"[cyan]Question {display_index}[/]",
+            border_style="bright_blue",
+            padding=(1, 2)
+        )
+        self.console.print(question_panel)
+        self.console.print("\n")
+
+        # --- CONSOLE PANEL ---
+        disclaimer = "[dim]⚠ Semantic evaluation may take a few seconds when LLM judging is required.[/dim]"
+        console_content = disclaimer + "\n\n" + (
+            "\n".join(console_lines) if console_lines else "[dim]Awaiting input...[/dim]"
+        )
+        console_panel = Panel(
+            console_content,
+            title="[dim]Console[/]",
+            border_style="dim",
+            padding=(1, 2)
+        )
+        self.console.print(console_panel)
+
+    def get_player_answer(self) -> str:
+        """Prompts the player for an answer and returns the input."""
+        player_answer = self._get_user_input(f"[{self.THEME['prompt']}]Your answer: > [/]")
+        return player_answer.strip()
+
+    def wait_for_continue(self):
+        """UX pacing, e.g. pause between questions"""
+        self.console.input("\n[dim italic]Press Enter to continue...[/]")
+
 ## VIEW Game end 
     def display_game_over(self) -> None:
         """Header to print game over before results"""
