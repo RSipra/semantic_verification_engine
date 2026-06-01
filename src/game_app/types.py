@@ -7,8 +7,7 @@ CLI MVP (core logic) -> Types
 -----------------------------------------------------------------------
 """
 
-from typing import TypeAlias, Any, List
-from dataclasses import dataclass, field
+from typing import TypeAlias, Any
 from pydantic import BaseModel, Field
 from core.models import (RuntimeStandard_Green, RuntimeMCQ_Green,
                          RuntimeStandard_Blue, RuntimeMCQ_Blue)

@@ -16,7 +16,8 @@ from game_app.constants import (GameStatus, SessionStatus,
 from game_app.session_storage import save_session_reports
 from engine.startup import orchestrate_application_startup
 
-RANDOM_SEED = 26
+# RANDOM_SEED = 26
+RANDOM_SEED = None  # set to None for non-deterministic session allocation
 
 logging.basicConfig(
     level=logging.INFO,  # change .DEBUG when troubleshooting.

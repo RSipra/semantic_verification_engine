@@ -260,7 +260,7 @@ class GameController():
 
         # 1. ask the question
         # UX: pass current score to the view for the header
-        self.view.display_question_screen(question, question_idx, console_lines, player.score)
+        self.view.display_question_screen(question, question_idx, console_lines, player.score, player.get_chances)
 
         #2. input loop — command routing
         player_answer = None
@@ -273,12 +273,12 @@ class GameController():
                         hints_revealed += 1
                         console_lines = self.view.build_hint_lines(question, hints_revealed)
                     self.view.display_question_screen(question, question_idx, 
-                                                      console_lines, player.score)
+                                                      console_lines, player.score, player.get_chances)
 
                 case "reference":
                     console_lines = self.view.build_reference_lines(question, hints_revealed)
                     self.view.display_question_screen(question, question_idx,
-                                                      console_lines, player.score)
+                                                      console_lines, player.score, player.get_chances)
 
                 case "quit":
                     raise UserWantsToQuit()
@@ -288,7 +288,7 @@ class GameController():
 
         # 3. Render evaluating state
         console_lines = self.view.build_evaluating_lines(question, hints_revealed)
-        self.view.display_question_screen(question, question_idx, console_lines, player.score)
+        self.view.display_question_screen(question, question_idx, console_lines, player.score, player.get_chances)
 
         # 4. Evaluate — spinner runs while router is working
         with self.view.console.status("", spinner="dots"):
@@ -315,7 +315,7 @@ class GameController():
         # 7. Render result
         console_lines = self.view.build_result_lines(question, hints_revealed, 
                                                      turn_report, player.get_chances)
-        self.view.display_question_screen(question, question_idx, console_lines, player.score)
+        self.view.display_question_screen(question, question_idx, console_lines, player.score, player.get_chances)
 
         # 8. Pause before next question
         self.view.wait_for_continue()

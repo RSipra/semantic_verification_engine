@@ -485,7 +485,7 @@ class GameView:
     def build_evaluating_lines(self, question: Question, hints_revealed: int) -> list[str]:
         """Console state while evaluation is running."""
         return self.build_hint_lines(question, hints_revealed) + [
-            "/n[yellow]Evaluating answer (AI judge used for difficult cases)...[/]/n"]
+            "/n [yellow]Evaluating answer (AI judge used for difficult cases)...[/] /n"]
 
     def build_result_lines(self, question: Question, hints_revealed: int,
                         turn_report: TurnResult, chances_left: int) -> list[str]:
@@ -551,7 +551,8 @@ class GameView:
     def display_question_screen(self, question: Question,
                                 question_idx: int,
                                 console_lines: list[str],
-                                current_score: int):
+                                current_score: int,
+                                chances_left: int):
         """
         Master render function. Clears and repaints the full screen.
         UX: one question per screen, static question panel, dynamic console panel.
@@ -561,10 +562,12 @@ class GameView:
         display_index = question_idx + 1
 
         # --- HEADER ---
+        # TODO: add chances left to header as well
         self.console.print("\n")
         header_text = (
             f"[bold purple]HARRY POTTER TRIVIA[/]  |  "
-            f"Score: [bold green]{current_score}[/]\n"          
+            f"Score: [bold green]{current_score}[/]  |  "
+            f"Chances left: [bold red]{chances_left}[/]\n"
             f'[dim]type: "hint" (get upto 3 clues)  |  '
             f'"reference" (reveal source chapter/book)  |  '
             f'"quit" (exit game)[/dim]'

@@ -1,0 +1,215 @@
+[
+  {
+    "game_id": "20260601T184746_f42543",
+    "total_questions": 10,
+    "player_name": "Pricess Sophia",
+    "house": "Hufflepuff",
+    "session_id": 0,
+    "session_status": "active",
+    "game_status": "lost",
+    "score": 2,
+    "questions_answered": 5,
+    "all_turn_results": [
+      {
+        "question_idx": 0,
+        "question_master_id": "TBpsXnjg",
+        "question_type": "FR",
+        "answer_type": "text",
+        "correct_answer": "uric the oddball",
+        "player_answer": "i have no idea",
+        "evaluation": {
+          "is_correct": false,
+          "resolution_tier": "fr_failed_primary_semantic",
+          "fuzzy_score": 0.5333
+        }
+      },
+      {
+        "question_idx": 1,
+        "question_master_id": "P-lCLusA",
+        "question_type": "EX",
+        "answer_type": "text",
+        "correct_answer": "his earmuffs were loose, so he heard the cry of the baby mandrake.",
+        "player_answer": "because his earmuffs slip and he hears the baby mandrakes scream",
+        "evaluation": {
+          "is_correct": true,
+          "resolution_tier": "ex_llm_judge_pass",
+          "fuzzy_score": 0.6308
+        }
+      },
+      {
+        "question_idx": 2,
+        "question_master_id": "t3Ds_Abd",
+        "question_type": "EX",
+        "answer_type": "text",
+        "correct_answer": "lucius malfoy secretly slipped the diary into her cauldron at flourish and blotts, hiding it among her school supplies.",
+        "player_answer": "lucius malfoy slipped it into her couldron before school started when they ran into each other at the bookstore",
+        "evaluation": {
+          "is_correct": true,
+          "resolution_tier": "ex_llm_judge_pass",
+          "fuzzy_score": 0.5913
+        }
+      },
+      {
+        "question_idx": 3,
+        "question_master_id": "sTn1jfG4",
+        "question_type": "EX",
+        "answer_type": "text",
+        "correct_answer": "hermione understood that nagini was lord voldemort's last remaining horcrux. she believed that destroying nagini was the ultimate goal and the only way to finally defeat voldemort and end the war.",
+        "player_answer": "to get rid of the last horocrux",
+        "evaluation": {
+          "is_correct": false,
+          "resolution_tier": "ex_primary_semantic_fail",
+          "fuzzy_score": 0.2203
+        },
+        "metadata": {
+          "edge_case": true,
+          "edge_reason": "semantic_borderline",
+          "score_bucket": "0.3-0.5",
+          "requires_review": true
+        }
+      },
+      {
+        "question_idx": 4,
+        "question_master_id": "AdAlz4gn",
+        "question_type": "EX",
+        "answer_type": "text",
+        "correct_answer": "dumbledore refused because he had learned that he could not be trusted with power. his experiences as a young man with grindelwald proved that power was his personal weakness and temptation.",
+        "player_answer": "he tried to avoid power after the accident with his sister Arianna and he blamed himself for it",
+        "evaluation": {
+          "is_correct": false,
+          "resolution_tier": "ex_primary_semantic_fail",
+          "fuzzy_score": 0.407
+        },
+        "metadata": {
+          "edge_case": true,
+          "edge_reason": "semantic_borderline",
+          "score_bucket": "0.3-0.5",
+          "requires_review": true
+        }
+      }
+    ],
+    "duration_sec": 461.195307970047,
+    "error": null,
+    "metadata": null
+  },
+  {
+    "game_id": "20260601T184746_f42543",
+    "total_questions": 10,
+    "player_name": "Pricess Sophia",
+    "house": "Hufflepuff",
+    "session_id": 0,
+    "session_status": "active",
+    "game_status": "lost",
+    "score": 5,
+    "questions_answered": 8,
+    "all_turn_results": [
+      {
+        "question_idx": 0,
+        "question_master_id": "t3RJeKSI",
+        "question_type": "FR",
+        "answer_type": "text",
+        "correct_answer": "golden snitch",
+        "player_answer": "the first snitch he ever caught bequeathed to him by dumbledore",
+        "evaluation": {
+          "is_correct": true,
+          "resolution_tier": "fr_llm_judge_pass",
+          "fuzzy_score": 0.2105
+        }
+      },
+      {
+        "question_idx": 1,
+        "question_master_id": "txOZUZVs",
+        "question_type": "MCQ",
+        "answer_type": "text",
+        "correct_answer": "helena ravenclaw",
+        "player_answer": "helena",
+        "evaluation": {
+          "is_correct": true,
+          "resolution_tier": "mcq_passed_semantic",
+          "fuzzy_score": 0.5455
+        }
+      },
+      {
+        "question_idx": 2,
+        "question_master_id": "AtnKZQYE",
+        "question_type": "EX",
+        "answer_type": "text",
+        "correct_answer": "because he was impressed by her exceptional magical talent, particularly her powerful bat-bogey hex",
+        "player_answer": "because he was impressed by her bat hex",
+        "evaluation": {
+          "is_correct": true,
+          "resolution_tier": "ex_llm_judge_pass",
+          "fuzzy_score": 0.5652
+        }
+      },
+      {
+        "question_idx": 3,
+        "question_master_id": "m_J-FAsV",
+        "question_type": "MCQ",
+        "answer_type": "text",
+        "correct_answer": "a curly tail",
+        "player_answer": "tial",
+        "evaluation": {
+          "is_correct": false,
+          "resolution_tier": "mcq_failed_semantic",
+          "fuzzy_score": 0.375
+        }
+      },
+      {
+        "question_idx": 4,
+        "question_master_id": "pGFZQDF_",
+        "question_type": "MCQ",
+        "answer_type": "text",
+        "correct_answer": "n.e.w.t.s",
+        "player_answer": "newts",
+        "evaluation": {
+          "is_correct": true,
+          "resolution_tier": "mcq_passed_semantic",
+          "fuzzy_score": 0.7143
+        }
+      },
+      {
+        "question_idx": 5,
+        "question_master_id": "6rNntS3I",
+        "question_type": "MCQ",
+        "answer_type": "text",
+        "correct_answer": "hue of the object",
+        "player_answer": "hue",
+        "evaluation": {
+          "is_correct": true,
+          "resolution_tier": "mcq_passed_semantic",
+          "fuzzy_score": 0.3
+        }
+      },
+      {
+        "question_idx": 6,
+        "question_master_id": "9q12XTQ0",
+        "question_type": "EX",
+        "answer_type": "text",
+        "correct_answer": "similarity in appearance",
+        "player_answer": "similar purpose",
+        "evaluation": {
+          "is_correct": false,
+          "resolution_tier": "ex_primary_semantic_fail",
+          "fuzzy_score": 0.5641
+        }
+      },
+      {
+        "question_idx": 7,
+        "question_master_id": "itCjwcHX",
+        "question_type": "FR",
+        "answer_type": "text",
+        "correct_answer": "115 years old",
+        "player_answer": "97",
+        "evaluation": {
+          "is_correct": false,
+          "resolution_tier": "fr_failed_semantic_boosted",
+          "fuzzy_score": 0.0
+        }
+      }
+    ],
+    "duration_sec": 211.93048906326294,
+    "error": null,
+    "metadata": null
+  }
+]

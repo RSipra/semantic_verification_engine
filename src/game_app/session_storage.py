@@ -7,12 +7,10 @@ CLI MVP ->  Game Session Report storage helper
 """
 
 import json
-from dataclasses import asdict
 from datetime import datetime
 import os
 
-# REPORT_DIR = "/app/runtime"
-REPORT_DIR = "./storage"
+REPORT_DIR = "/app/runtime"
 
 def generate_session_report_filename() -> str:
     """
