@@ -493,6 +493,23 @@ class ProductionMCQ_Blue(ProductionStandard_Blue, GoldMCQ):
 class RuntimeStandard_Green(ProductionStandard_Green):
     """
     At warmup, after tensor hydration
+    
+    Normalizes legacy numeric identifiers during runtime hydration.
+
+    Why this is needed:
+    -------------------
+    Upstream data originates from mixed Pandas + JSON pipelines where:
+    - Missing values may appear as None, NaN, or pd.NA
+    - Pandas promotes integer columns containing nulls to float dtype
+    - This causes valid integer IDs to be represented as floats (e.g. 12.0)
+
+    This validator ensures:
+    - NaN → None (canonical missing value)
+    - float IDs → int (lossless cast where safe)
+    - consistent downstream typing for evaluator contracts
+
+    This preserves strict runtime guarantees for evaluator routing logic,
+    which depends on deterministic identifier semantics.
     """ 
     model_config = ConfigDict(extra="ignore", arbitrary_types_allowed=True,
                               populate_by_name=True, validate_assignment=False)
@@ -531,6 +548,21 @@ class RuntimeStandard_Green(ProductionStandard_Green):
                 raise ValueError(f"Vector {fname} must be (384,). Got {v.shape}")
 
         return v
+    
+    # @field_validator("original_question_id", mode="before")
+    # def normalize_id(cls, v):
+    #     if v is None:
+    #         return None
+    #     return int(v)
+    
+    # @field_validator("mcq_options", mode="before")
+    # @classmethod
+    # def normalize_options(cls, v):
+    #     if v is None:
+    #         return []
+    #     if isinstance(v, float) and math.isnan(v):
+    #         return []
+    #     return v
 
 class RuntimeMCQ_Green(RuntimeStandard_Green, ProductionMCQ_Green):
     # tensors calculated upfront during runtime warmup for session
@@ -540,10 +572,27 @@ class RuntimeMCQ_Green(RuntimeStandard_Green, ProductionMCQ_Green):
     
     mcq_distractors_embeddings_tensor_matrix : Any
     
-    
 class RuntimeStandard_Blue(ProductionStandard_Blue):
     """
     At warmup, after tensor hydration
+    
+    Normalizes legacy numeric identifiers during runtime hydration.
+
+    Why this is needed:
+    -------------------
+    Upstream data originates from mixed Pandas + JSON pipelines where:
+    - Missing values may appear as None, NaN, or pd.NA
+    - Pandas promotes integer columns containing nulls to float dtype
+    - This causes valid integer IDs to be represented as floats (e.g. 12.0)
+
+    This validator ensures:
+    - NaN → None (canonical missing value)
+    - float IDs → int (lossless cast where safe)
+    - consistent downstream typing for evaluator contracts
+
+    This preserves strict runtime guarantees for evaluator routing logic,
+    which depends on deterministic identifier semantics.
+    
     """ 
     model_config = ConfigDict(extra="ignore", arbitrary_types_allowed=True,
                               populate_by_name=True, validate_assignment=False)
@@ -582,6 +631,21 @@ class RuntimeStandard_Blue(ProductionStandard_Blue):
                 raise ValueError(f"Vector {fname} must be (384,). Got {v.shape}")
 
         return v
+    
+    # @field_validator("original_question_id", mode="before")
+    # def normalize_id(cls, v):
+    #     if v is None:
+    #         return None
+    #     return int(v)
+    
+    # @field_validator("mcq_options", mode="before")
+    # @classmethod
+    # def normalize_options(cls, v):
+    #     if v is None:
+    #         return []
+    #     if isinstance(v, float) and math.isnan(v):
+    #         return []
+    #     return v
     
 # in-game hydration / validation with warmup tensors    
 class RuntimeMCQ_Blue(RuntimeStandard_Blue, ProductionMCQ_Blue):
