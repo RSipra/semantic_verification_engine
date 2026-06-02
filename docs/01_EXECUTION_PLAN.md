@@ -149,7 +149,7 @@ Use LLM to **enrich legacy questions without modifying their wording** by fillin
 - MCQs meet structural validity or are dropped
 - Invalid records dropped (no repair loops)
 
-### 2.1.4 Generate embeddings & validate (legacy) 
+### 2.1.4 Generate embeddings & validate (legacy) [Done]
 [Postponed to after synthetic gen and to be done with qa_validation pipeline logic]
 **Description:**  
 Generate SBERT embeddings required for **offline deduplication** and **runtime semantic validation**, with clearly separated responsibilities.
@@ -198,7 +198,7 @@ Sprint 2.1 is **DONE** when:
 ## Sprint Goal
 Demonstrate that the Content Factory can extend Gold safely without fragmenting schemas.
 
-### 2.2.1 Generate synthetic questions
+### 2.2.1 Generate synthetic questions [Done]
 
 **Scope:**
 - 1 book
@@ -214,7 +214,7 @@ Demonstrate that the Content Factory can extend Gold safely without fragmenting 
 - Non-trivial
 - FR / EX have meaningful answer variations
 
-### 2.2.2 Validate synthetic questions
+### 2.2.2 Validate synthetic questions [Done]
 
 **Scope:**
 - Remove semantic duplicates (within batch and vs Gold v0)
@@ -249,7 +249,7 @@ Sprint 2.2 is **DONE** when:
 > *This sprint proves extensibility — not semantic reasoning.*
 ---
 
-# 🟣 Sprint 2.3 — Context + Tiered Answer Checking (Intelligence) + deploy
+# 🟣 Sprint 2.3 — Context + Tiered Answer Checking (Intelligence) + deploy [Done]
 
 ## Sprint Goal
 Make semantic intelligence visible and undeniable in gameplay.
@@ -282,7 +282,7 @@ Implement validation tiers per question type.
 
 ---
 
-## Sprint 2.3 Exit Criteria
+## Sprint 2.3 Exit Criteria [Done]
 
 - Phase-1 failure succeeds via semantic logic
 - MCQs accept shorthand inputs (e.g. “sirius”)
@@ -303,7 +303,7 @@ Phase 2 is **DONE** when:
 
 ---
 
-# 🔹 Phase 3 — Runtime Intelligence Demo (MVP)
+# 🔹 Phase 3 — Runtime Intelligence Demo (MVP) [pending]
 
 ## Phase Goal
 > Demonstrate that the architecture extends cleanly to support runtime intelligence without rewriting Phase-2 foundations.
@@ -312,7 +312,6 @@ This phase answers:
 **“Does the design scale conceptually?”**
 
 ## Sprint 3.0 — Phase-3 Scope & Guardrails
-<!-- **Duration:** 1–2 days -->
 
 ### Objective
 Define Phase-3 strictly as a **capability addition**, not a system rewrite.
