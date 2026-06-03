@@ -5,10 +5,21 @@ Central embeddings generating and processing logic (Phase 2+)
 TODO (Full Dev): Move methods here for SOT for all downstream embedding uses.
 - embeddings methods (generation in qa_validation and processing from NLP lab) 
 - upfront tensor conversions at runtime NLP lab
+
+ARCHITECTURAL NOTE:
+-------------------
+The NLI CrossEncoder implementation is retained in commented form below
+for reference and future reintegration. It is intentionally disabled in
+the tracer build to prevent external model downloads and simplify runtime.
+
+When re-enabled, ensure:
+- lazy initialization (no module-level instantiation)
+- HF offline compatibility handling
+- evaluator-level feature flag gating
 """
 import os
 from functools import lru_cache
-from sentence_transformers import SentenceTransformer, CrossEncoder
+from sentence_transformers import SentenceTransformer #, CrossEncoder
 from core.settings import sbert_settings, nli_settings
 
 # If HF_HOME exists (Docker), this is "/app/models"
@@ -17,7 +28,7 @@ MODEL_CACHE_PATH = os.getenv('HF_HOME')
 
 # singleton cache internal pointers to loaded model; starts empty.
 _sbert_model_instance = None
-_nli_model_instance = None
+# _nli_model_instance = None
 
 def get_sbert_model() -> SentenceTransformer:
     """
@@ -58,19 +69,28 @@ def get_sbert_model() -> SentenceTransformer:
         
     return _sbert_model_instance
  
-def get_nli_model() -> CrossEncoder:
-    """
-    Singleton cache for the NLI Cross-Encoder.
-    Guarantees the model is only loaded into memory once per session.
-    """
-    global _nli_model_instance  # system wide global variable to hold the model instance
-      # Add device='cuda' or device='mps' here if you are using GPU/Mac Silicon
+# def get_nli_model() -> CrossEncoder:
+#     """
+#     Singleton cache for the NLI Cross-Encoder.
+#     Guarantees the model is only loaded into memory once per session.
+#     """
+    # global _nli_model_instance  # system wide global variable to hold the model instance
+    #   # Add device='cuda' or device='mps' here if you are using GPU/Mac Silicon
     
-    if _nli_model_instance is not None:
-        return _nli_model_instance
+    # if _nli_model_instance is not None:
+    #     return _nli_model_instance
         
-    _nli_model_instance = CrossEncoder(nli_settings.model_name,    
-                                       device='cpu',   # force CPU for compatibility with GCP Free Tier
-                                       cache_folder=MODEL_CACHE_PATH,
-                                       local_files_only=MODEL_CACHE_PATH is not None) 
-    return _nli_model_instance
+    # _nli_model_instance = CrossEncoder(nli_settings.model_name,    
+    #                                    device='cpu',   # force CPU for compatibility with GCP Free Tier
+    #                                    cache_folder=MODEL_CACHE_PATH,
+    #                                    local_files_only=MODEL_CACHE_PATH is not None) 
+    # return _nli_model_instance
+    
+    
+ ## NLI disabled for Tracer
+def get_nli_model():
+    raise RuntimeError(
+        "NLI is disabled in tracer build. "
+        "Enable by restoring CrossEncoder initialization."
+    )
+    

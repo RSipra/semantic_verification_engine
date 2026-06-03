@@ -42,9 +42,10 @@ for the tracer-phase semantic evaluation engine.
 NOTE:
 This module assumes upstream normalization and preprocessing
 has already been applied before evaluator routing.
+- NLI disabled for tracer until composite answer claims implemented.
 
 TODO:
-surface llm_success / llm availability into evaluation telemetry layer
+surface LM availability and execution status into evaluation telemetry
 once runtime observability UI is implemented
 """
 
@@ -52,7 +53,7 @@ import logging
 import numpy as np
 
 from core.models import RuntimeStandard_Blue, RuntimeStandard_Green
-from core.embeddings import get_nli_model, nli_settings
+from core.embeddings import nli_settings #, get_nli_model
 from core.preprocessing import count_clean_words
 from engine.services.llm_service import call_llm_judge, SYSTEM_PROMPT_EX
 from engine.services.llm_service import track_eval_latency
@@ -65,7 +66,7 @@ EVALUATOR_VERSION = "ex_v1"
 LLM_JUDGE_SYSTEM_PROMPT = SYSTEM_PROMPT_EX
 
 logger = logging.getLogger(__name__)
-nli_model = get_nli_model()
+# nli_model = get_nli_model()
 
 ## Helpers
 # nli evaluation of answer if sbert ambiguous
@@ -136,7 +137,8 @@ def check_ex_answer(player_answer: str,
         enable_llm_escalation (bool, optional): Toggle to activate/deactivate the Tier 4 
             LLM judge for A/B testing. Defaults to True.
         enable_nli_escalation (bool, optional): Toggle to activate/deactivate the Tier 3.2 
-            NLI logic gate. Defaults to False.
+            NLI logic gate. Defaults to False. NOTE: enable_nli_escalation currently reserved 
+            for future implementation. NLI execution is disabled in the Tracer build.
 
     Returns:
         EXEvalResults: A populated telemetry object containing the final boolean judgment 
@@ -237,11 +239,11 @@ def check_ex_answer(player_answer: str,
         
     # Tier 3.2: NLI cross-encoder labelling /logic check (disabled in tracer phase)
     # NOTE: retained for architecture parity with evaluator design
-    if enable_nli_escalation:
+    if False:# enable_nli_escalation:
         _, nli_label, nli_confidence = _check_nli_entailment(
                 premise=gold_answer,
                 hypothesis=player_answer,
-                nli_model_inst=nli_model
+                nli_model_inst=nli_model # type: ignore
             )
         # append NLI telemetry to your result object
         result.nli_label = nli_label

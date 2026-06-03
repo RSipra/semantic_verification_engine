@@ -90,3 +90,6 @@ src/ds_utils/__pycache__
 tests/fixtures/notes.md
 notebooks/02_research/09_nlp_lab_semantic_evaluators_v0.ipynb
 notebooks/02_research/10_nlp_lab_deterministic_evaluators_v0.ipynb
+storage/
+*.json
+.python-version

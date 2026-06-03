@@ -101,7 +101,7 @@ FAIL_FAST_CODES = {"404", "400", "401", "403"}
 load_dotenv(find_dotenv("config.env"), override=True)
 google_api_key = os.environ.get('GEMINI_API_KEY')
 if not google_api_key:
-    raise ValueError("Error: GOOGLE_API_KEY not found.")
+    raise ValueError("Error: GEMINI_API_KEY not found.")
 genai.configure(api_key=google_api_key)  # type: ignore    
 
 ## 2: Prompts

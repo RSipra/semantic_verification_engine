@@ -21,7 +21,7 @@ WORKDIR /app
 # 5. PYTHON DEPS: Install verified libraries from requirements.txt
 # This ignores requirements-dev.txt to save space
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt --progress-bar=on
 
 # 6. MODEL BAKE: Copy core logic and download weights during BUILD phase
 # Done BEFORE copying the rest of the app to leverage Docker layer caching

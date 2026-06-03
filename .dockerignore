@@ -3,6 +3,7 @@
 __pycache__/
 *.pyc
 venv/
+.venv/
 .DS_Store
 *.dvc
 
@@ -22,14 +23,14 @@ data/08_generated_questions/
 data/09_themes/
 docs/
 notebooks/
-reports/
 scripts/
-src/ds_utils/
 tests/
 src/mvp_phase1
+src/notebook_support
 
 # Documentation and Metadata
 config.env
+CHANGELOG.md
 CONTRIBUTING.md
 CODE_OF_CONDUCT.md
 DATA_SOURCES.md
@@ -58,3 +59,4 @@ README.md
 .gitignore
 .dvc/
 .pytest_cache/
+.dvcignore
