@@ -99,6 +99,7 @@ class BaseEvalResults(BaseModel):
     is_correct: bool = False
     resolution_tier: str = "unresolved" # track how many tiers of evaluation were needed to determine correctness
     fuzzy_score: float = 0.0
+    execution_time_sec: float = 0.0  # full evaluation latency
     
     # TODO: move float rounding into evaluator layer.
     # to keep DTOs as passive data contracts.
@@ -138,7 +139,7 @@ class MCQEvalResults(BaseEvalResults):
     sim_distractor: float = 0.0    # track semantic similarity score with closest distractor
     margin: float = 0.0  # diff between player-gold similarity and player-distractor similarity for semantic tier,
     matched_answer_variation: bool = False  # whether the player answer matched a variation (shorthand) rather than the main gold answer (telemetry placeholder)
-    execution_time_sec: float = 0.0
+    # execution_time_sec: float = 0.0
 
 ## FR
 class FREvalResults(BaseEvalResults):
@@ -166,7 +167,8 @@ class FREvalResults(BaseEvalResults):
     llm_model_used: str | None = None
     quiz_host_response: str = ""
     evaluation_reasoning: str = ""
-    execution_time_sec: float = 0.0
+    llm_eval_time_sec: float = 0.0
+    # execution_time_sec: float = 0.0
 
 ## EX
 class EXEvalResults(BaseEvalResults):
@@ -189,7 +191,8 @@ class EXEvalResults(BaseEvalResults):
     llm_model_used: str | None = None
     quiz_host_response: str = ""
     evaluation_reasoning: str = ""
-    execution_time_sec: float = 0.0 
+    llm_eval_time_sec: float = 0.0
+    # execution_time_sec: float = 0.0
 
 # Result wrapper for controller
 class TurnResult(BaseModel):

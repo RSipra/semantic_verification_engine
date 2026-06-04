@@ -183,7 +183,7 @@ def check_fr_answer(player_answer: str,
     is_disproportionate = (player_ans_wc >= 2 * gold_answer_word_count) and (player_ans_wc >= 8) 
         
     if is_outlier or is_disproportionate:
-        llm_judgment, executing_model, latency_time, is_success = call_llm_judge(question,
+        llm_judgment, executing_model, llm_t_sec, _ = call_llm_judge(question,
                                                                                  gold_answer, 
                                                                                  player_answer,
                                                                                  answer_variations,
@@ -202,6 +202,7 @@ def check_fr_answer(player_answer: str,
         result.llm_model_used = executing_model     
         result.quiz_host_response = llm_judgment.quiz_host_response
         result.evaluation_reasoning = llm_judgment.evaluation_reasoning
+        result.llm_eval_time_sec = llm_t_sec
         # emit evaluation log
         emit_eval_log(result, q.master_id, q.question_type,q.answer_type, logger)
         return result

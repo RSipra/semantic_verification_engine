@@ -5,15 +5,37 @@ SEMANTIC VERIFICATION ENGINER (Ref implementation: Harry Potter Trivia)
 
 CLI MVP (core logic) -> Types
 -----------------------------------------------------------------------
+TODO: Metrics Granularity Alignment (MVP STABILITY)
+
+There is currently ambiguity between:
+- Turn (atomic unit)
+- Session (batch of turns in one run)
+- Game (full CLI execution containing sessions)
+- Global (future cross-run aggregation)
+
+Current MVP definition:
+- TurnResult = primary source of truth for all metrics
+- Session = execution batch (grouping only, not analytical identity)
+- Game = full CLI run (structural container only)
+- Global = not implemented yet
+
+Action for post-MVP:
+- Align controller + metrics layer on a single granularity model
+- Decide whether SessionReport is UX-only or analytics input
+- Avoid introducing new ID systems or restructuring hierarchy during demo phase
+
+MVP constraint:
+- No refactors to identity model
+- Metrics must be derivable from existing TurnResult + SessionReport only
 """
 
-from typing import TypeAlias, Any
+from typing import TypeAlias, Any, Literal
 from pydantic import BaseModel, Field
 from core.models import (RuntimeStandard_Green, RuntimeMCQ_Green,
                          RuntimeStandard_Blue, RuntimeMCQ_Blue)
 
 from engine.dto import TurnResult
-from game_app.constants import GameStatus, SessionStatus, NUM_QUESTIONS_PER_SESSION, House
+from game_app.constants import GameStatus, SessionStatus, House
 
 # NOTE:
 # These Question type hints are only used to make function signatures clearer.
@@ -49,7 +71,7 @@ class SessionReport(BaseModel):
     all_turn_results: list[TurnResult] = Field(default_factory=list) # List of all question turn reports
     # observability
     duration_sec: float | None = None               # time taken to complete given session
-    error: str | None = None                        # report cause when session status != completed    
+    error: str | None = None                        # report cause when session status != completed
     # extensibility
     metadata: dict[str, Any] | None = None
 
@@ -60,3 +82,53 @@ class Session(BaseModel):
     questions: list[Question] | None                       # current session question batch
     session_status: SessionStatus = SessionStatus.ACTIVE   # Active | Exhausted
     session_size: int = 0
+
+class SessionAggregates(BaseModel):
+    """Raw and structured signals for generating session performance metrics"""
+    game_id: str
+    session_id: int
+    session_size: int
+
+    # latency
+    evaluation_latency_events: list[float] = Field(default_factory=list)  # list of evaluation times for questons in session
+    llm_call_latency_events: list[float] = Field(default_factory=list)    # list of only llm api call time when made
+
+    # evaluation outcomes
+    tier_distribution_by_evaluator: dict[str, dict[str, int]] = Field(default_factory=dict)  # e.g {FR: {'primary_semantic_match: count}}
+    overall_tier_distribution: dict[str, int] = Field(default_factory=dict)  # e.g {'sbert': count}
+    
+class PerformanceMetrics(BaseModel):
+    """
+    Derived performance metrics calculated from SessionAggregates.
+    Can be a single session, batch, or global aggregations. 
+    """
+    scope: Literal["session", "batch", "global"] 
+    scope_id: str    # e.g. session_id for session-level, 'all' for global
+    # aggregation metadata
+    num_sessions: int = 1
+
+    # latency (evaluation)
+    average_evaluation_latency: float 
+    p95_evaluation_latency: float
+    min_evaluation_latency: float 
+    max_evaluation_latency: float 
+
+    # latency (LLM calls only)
+    average_llm_call_latency: float
+    p95_llm_call_latency: float 
+    min_llm_call_latency: float 
+    max_llm_call_latency: float
+
+    # player outcomes
+    correct_answer_count: float
+    accuracy_rate: float    # correct_answer_count / total_turns
+
+    # resolution patterns
+    tier_distribution_by_evaluator: dict[str, dict[str, int]]
+    overall_tier_distribution: dict[str, int]
+    quit_rate: float | None = None      # (sessions where game_status == QUIT) / total sessions
+
+    # escalalation patterns
+    sbert_routing_share: float | None = None    # compute proxy
+    llm_routing_share: float | None = None      # latency proxy
+    shift_left_resolution_rate: float | None = None   # (exact + fuzzy + sbert) / total_turns -> non-LLM resolution

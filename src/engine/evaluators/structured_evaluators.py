@@ -45,6 +45,7 @@ from core.models import RuntimeStandard_Blue, RuntimeStandard_Green
 from engine.dto import BaseEvalResults
 from engine.evaluators.constants import HOLIDAY_MAP
 from engine.evaluators.helpers import emit_eval_log
+from engine.services.llm_service import track_eval_latency
 
 EVALUATOR_VERSION = "st_v1"
 logger = logging.getLogger(__name__)
@@ -109,6 +110,7 @@ def preprocess_numeric_player_ans(raw_player_ans:str,
     # if all steps fail
     return None    
 
+@track_eval_latency  
 def check_numeric_answer(player_answer_num: int | None,
                          q: RuntimeStandard_Green | RuntimeStandard_Blue
                          ) -> BaseEvalResults:
@@ -236,7 +238,8 @@ def extract_date_entities(date_string: str) -> dict | None:
     }
 
     return entities
-            
+
+@track_eval_latency             
 def check_date_answer(player_entities: dict[str, int | None] | None, 
                       q: RuntimeStandard_Green | RuntimeStandard_Blue)->BaseEvalResults:
     """

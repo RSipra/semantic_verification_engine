@@ -210,7 +210,7 @@ def check_ex_answer(player_answer: str,
     # verbosity bypass to the LLM
     if correct_ans_score < config.ambiguous_answer_floor:
         if len_ratio >= 2.0 :
-            llm_judgment, executing_model, _, _ = call_llm_judge(question,
+            llm_judgment, executing_model, llm_t_sec, _ = call_llm_judge(question,
                                                                  gold_answer, 
                                                                  player_answer,
                                                                  answer_variations,
@@ -227,6 +227,7 @@ def check_ex_answer(player_answer: str,
             result.llm_model_used=executing_model
             result.quiz_host_response = llm_judgment.quiz_host_response
             result.evaluation_reasoning = llm_judgment.evaluation_reasoning
+            result.llm_eval_time_sec = llm_t_sec
             # emit evaluation log
             emit_eval_log(result, q.master_id, q.question_type,q.answer_type, logger)
             return result
@@ -272,7 +273,7 @@ def check_ex_answer(player_answer: str,
     # High-similarity answers continue through NLI/LLM routing
     # to validate logical consistency and abstraction handling.
 
-    llm_judgment, executing_model, _, _ = call_llm_judge(question,
+    llm_judgment, executing_model, llm_t_sec, _ = call_llm_judge(question,
                                                          gold_answer, 
                                                          player_answer,
                                                          answer_variations, 
@@ -289,7 +290,8 @@ def check_ex_answer(player_answer: str,
     # update llm metrics
     result.llm_model_used = executing_model
     result.quiz_host_response = llm_judgment.quiz_host_response
-    result.evaluation_reasoning = llm_judgment.evaluation_reasoning  
+    result.evaluation_reasoning = llm_judgment.evaluation_reasoning
+    result.llm_eval_time_sec = llm_t_sec
     # emit evaluation log
     emit_eval_log(result, q.master_id, q.question_type,q.answer_type, logger)       
     return result
