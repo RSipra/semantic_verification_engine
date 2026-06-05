@@ -90,6 +90,8 @@ class SessionAggregates(BaseModel):
     session_size: int
     session_quit: bool = False   # whether player quit during this session (used for quit rate metric)
     correct_count: int = 0       # number of questions answered correctly in session (used for accuracy metric)
+    executed_question_count: int   # actual question count player answered by player (< session size if player uses up chances and loses)
+    unattempted_question_count: int  # questions remaining in session the player couldn't get to
 
     # latency
     evaluation_latency_events: list[float] = Field(default_factory=list)  # list of evaluation times for questons in session
@@ -108,6 +110,8 @@ class PerformanceMetrics(BaseModel):
     scope_id: str    # free-form run label / aggregation identifier e.g. 'July_202X_batch' or 'global_all_runs'
     # aggregation metadata
     total_questions: int
+    executed_questions: int
+    unattempted_questions: int
     num_sessions: int = 1
 
     # latency (evaluation)

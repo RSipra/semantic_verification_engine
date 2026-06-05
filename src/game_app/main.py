@@ -13,11 +13,13 @@ from game_app.view import GameView
 from game_app.warmup import build_next_session, orchestrate_game_session_warmup
 from game_app.constants import (GameStatus, SessionStatus,
                                 NUM_QUESTIONS_PER_SESSION as SESSION_SIZE)
-from game_app.session_storage import save_session_reports
+from game_app.session_storage import save_performance_metrics, save_session_reports
+from game_app.metrics_aggregator import aggregate_session_metrics, calculate_performance_metrics
 from engine.startup import orchestrate_application_startup
 
 # RANDOM_SEED = 26
 RANDOM_SEED = None  # set to None for non-deterministic session allocation
+SCOPE_ID="tracer_demo"
 
 logging.basicConfig(
     level=logging.INFO,  # change .DEBUG when troubleshooting.
@@ -31,6 +33,7 @@ def main():
     view = GameView()
     # log gameplay sessions only, not exhausted state
     all_session_reports = []
+    all_session_aggregates = []
 
     # dataset hydration & validation, sbert + llm warmup
     runtime_df, system_signals = orchestrate_application_startup()
@@ -60,7 +63,11 @@ def main():
 
         # gameplay
         session_report = controller.run_game(session)
+
+        # data handling - logging and aggregation
         all_session_reports.append(session_report)
+        session_aggregate = aggregate_session_metrics(session_report)
+        all_session_aggregates.append(session_aggregate)
 
         # End game if player wants to quit, dataset exhausted, or an error.
         if session_report.game_status in {GameStatus.QUIT,
@@ -75,8 +82,16 @@ def main():
             controller.display_goodbye(session_report)
             break
 
-    # save session reports to local dir in container    
-    save_session_reports(all_session_reports)
-        
+    # save session reports and aggregates to local dir in container    
+    save_session_reports(category="reports", data=all_session_reports)
+    save_session_reports(category="aggregates",data=all_session_aggregates)
+
+    # generate and save perfromance metrics
+    performance_metrics = calculate_performance_metrics(scope_id=SCOPE_ID,
+                                                       session_aggregates=all_session_aggregates, 
+                                                       scope="batch")
+    save_performance_metrics(scope_id=SCOPE_ID,
+                             metrics=performance_metrics,)
+
 if __name__ == "__main__":
     main()

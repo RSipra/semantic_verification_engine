@@ -10,8 +10,8 @@ Two roles (can be split into separate modules later):
 2. TODO: Presentation: provides a readable summary of metrics for reporting and analysis.
 """
 from typing import List, Literal
-import numpy as np
 from collections import defaultdict
+import numpy as np
 
 from engine.dto import TurnResult
 from game_app.constants import GameStatus
@@ -83,6 +83,8 @@ def aggregate_session_metrics(session_report: SessionReport) -> SessionAggregate
     tier_dist_by_evaluator, overall_tier_dist = aggregate_tier_distribution(
         session_report.all_turn_results)
 
+    actual_question_count = session_report.questions_answered if session_report.questions_answered else 0
+
     return SessionAggregates(
 
         game_id=session_report.game_id,
@@ -100,7 +102,10 @@ def aggregate_session_metrics(session_report: SessionReport) -> SessionAggregate
                                    if (t := get_llm_time(turn.evaluation)) is not None],
 
         tier_distribution_by_evaluator = tier_dist_by_evaluator,
-        overall_tier_distribution = overall_tier_dist)
+        overall_tier_distribution = overall_tier_dist,
+
+        executed_question_count = actual_question_count,
+        unattempted_question_count = session_report.total_questions - actual_question_count)
 
 # derive performance metrics from aggregated session data (can be extended to batch or global level)
 def calculate_performance_metrics(scope_id : str,
@@ -116,8 +121,11 @@ def calculate_performance_metrics(scope_id : str,
 
     num_sessions = len(session_aggregates)
     total_turns = sum(agg.session_size for agg in session_aggregates)
+    total_executed_questions = sum(agg.executed_question_count for agg in session_aggregates)
+    total_unattempted_questions = sum(agg.unattempted_question_count for agg in session_aggregates)
+    
     correct_answers = sum(agg.correct_count for agg in session_aggregates)
-    accuracy_rate = (correct_answers/total_turns)*100
+    accuracy_rate = (correct_answers/total_executed_questions)*100
     quit_rate = ((sum(agg.session_quit for agg in session_aggregates) / num_sessions) * 100
                  if num_sessions else 0)  # zero div error guard
 
@@ -136,11 +144,11 @@ def calculate_performance_metrics(scope_id : str,
                 global_by_eval[evaluator][tier] += count   
 
     # proxies
-    if total_turns:
-        sbert_usage = (global_tier_distribution.get('sbert',0)/total_turns)*100
-        llm_usage = (global_tier_distribution.get('llm',0)/total_turns)*100
+    if total_executed_questions:
+        sbert_usage = (global_tier_distribution.get('sbert',0)/total_executed_questions)*100
+        llm_usage = (global_tier_distribution.get('llm',0)/total_executed_questions)*100
         shift_left_usage =( sum(global_tier_distribution.get(tier, 0) for tier in SHIFT_LEFT_TIERS
-                                )/total_turns)*100
+                                )/total_executed_questions)*100
     else:
         accuracy_rate = sbert_usage = llm_usage = shift_left_usage = 0    
 
@@ -165,8 +173,10 @@ def calculate_performance_metrics(scope_id : str,
 
     return PerformanceMetrics(scope=scope,
                               scope_id=scope_id,
-                              total_questions=total_turns,
-                              num_sessions=num_sessions,
+                              total_questions = total_turns,
+                              executed_questions = total_executed_questions,
+                              unattempted_questions = total_unattempted_questions,
+                              num_sessions = num_sessions,
 
                               # latency (evaluation)
                               average_evaluation_latency= float(avg_eval), # convert from np.floating to python float
