@@ -485,7 +485,7 @@ class GameView:
     def build_evaluating_lines(self, question: Question, hints_revealed: int) -> list[str]:
         """Console state while evaluation is running."""
         return self.build_hint_lines(question, hints_revealed) + [
-            "/n [yellow]Evaluating answer (AI judge used for difficult cases)...[/] /n"]
+            "\n [yellow]Evaluating answer (AI judge used for difficult cases)...[/] \n"]
 
     def build_result_lines(self, question: Question, hints_revealed: int,
                         turn_report: TurnResult, chances_left: int) -> list[str]:

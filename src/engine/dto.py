@@ -43,7 +43,7 @@ Design principle:
 - Validation focuses strictly on structural integrity and type correctness
 -----------------------------------------------------------------------
 """
-
+from typing import Any
 from pydantic import BaseModel, Field, model_validator
 from core.constants import QuestionType, AnswerType
 
@@ -204,4 +204,4 @@ class TurnResult(BaseModel):
     answer_type: AnswerType
     correct_answer: str
     player_answer: str
-    evaluation: BaseEvalResults 
+    evaluation: Any

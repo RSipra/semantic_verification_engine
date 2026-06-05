@@ -14,6 +14,7 @@
 - [ ] Add latency metrics for evaluator tiers
 - [ ] Add AI judge usage metrics
 - [ ] Add session analytics reporting
+- [ ] Add JSONL/structured persistence layer for SessionReport / SessionAggregates
 
 #### (Future Phases)
 
