@@ -3,9 +3,11 @@ pydantic==2.12.0
 pyfiglet==1.0.2
 rich==14.0.0
 numpy==2.0.2
-torch>=2.2,<2.6
-sentence-transformers==5.1.2
-transformers>=4.41,<5
+
+# torch>=2.2,<2.6 (installed explicitly as cpu only in Dockerfile)
+# sentence-transformers==5.1.2 (installed explicitly in Dockerfile)
+# transformers>=4.41,<5 (installed explicitly in Dockerfile)
+
 rapidfuzz==3.14.3
 regex==2026.5.9
 word2number==1.1
@@ -15,4 +17,5 @@ pyarrow==19.0.0
 pydantic-settings==2.12.0
 python-dotenv==1.2.2
 protobuf==5.29.6
-sentencepiece
+
+# sentencepiece (older artifact)

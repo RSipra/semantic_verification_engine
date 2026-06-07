@@ -9,6 +9,11 @@ ENV HF_HOME=/app/models
 # Point Python to 'src' to find core, engine, and game_app
 ENV PYTHONPATH="/app/src"
 
+# manage torch download during docker build
+ENV PIP_NO_CACHE_DIR=1
+ENV TMPDIR=/var/tmp
+
+
 # 3. SYSTEM DEPS: Install curl/tar for GoTTY and clean up to keep image small
 RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
@@ -20,8 +25,34 @@ WORKDIR /app
 
 # 5. PYTHON DEPS: Install verified libraries from requirements.txt
 # This ignores requirements-dev.txt to save space
+# --------------------------------------------------------------------------------
+# Dependency installation strategy (iteratively refined during constrained VM builds)
+#
+# Initial builds were executed on a ~10GB VM where pip installs of ML packages
+# (torch, transformers, scipy, sklearn) caused transient disk exhaustion during
+# wheel unpacking and Docker layer writes.
+#
+# To ensure build stability, dependencies were split into staged installs:
+# 1. torch (CPU-only, isolated early to control large binary resolution)
+# 2. core ML stack (transformers / sentence-transformers / tokenizers)
+# 3. application dependencies
+#
+# The VM has since been upgraded to ~30GB disk, a single-pass requirements install 
+# is now technically viable. However, staged installation is retained as a 
+# robustness pattern for:
+# - reproducible builds across constrained environments
+# - easier isolation of heavy ML dependencies (torch / transformers)
+# - reduced risk of transient build spikes in CI or future deployments-----------------
+#    
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt --progress-bar=on
+# 5.1. torch (locked CPU)
+RUN pip install --no-cache-dir torch --index-url https://download.pytorch.org/whl/cpu
+# 5.2. ML core (no dependency explosion)
+RUN pip install --no-cache-dir \
+    sentence-transformers transformers tokenizers \
+    --no-deps
+# 5.3. remaining lightweight deps
+RUN pip install --no-cache-dir -r requirements.txt
 
 # 6. MODEL BAKE: Copy core logic and download weights during BUILD phase
 # Done BEFORE copying the rest of the app to leverage Docker layer caching
