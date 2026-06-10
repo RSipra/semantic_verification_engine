@@ -34,7 +34,11 @@
   - Generate clean production requirements.txt
   - Verify container builds using runtime dependencies only
 - [ ] Evaluate migration from CLI loop → FastAPI service layer
-- [ ] Separate evaluation engine into standalone service boundary
+- [ ] FastAPI service layer with startup caching + lazy loading
+  - Introduce service-level startup lifecycle (model + dataset preloading)
+  - Cache SBERT/LLM resources across sessions to eliminate cold-start latency
+  - Convert system_signals into persistent runtime state for readiness tracking (INIT → WARMING → READY)
+  - Decouple session warmup from application startup to enable non-blocking intro UX
 - [ ] Introduce event-based controller logging (optional future refactor)
 
 ---
@@ -43,6 +47,12 @@
 - [ ] SBERT cold start benchmarking
 - [ ] LLM warmup latency measurement in container
 - [ ] Evaluate caching strategy for repeated embeddings
+- [X] Optimize Dockerfile dependency resolution and layer bloat (Immediate Fix)
+  - Enforce --extra-index-url https://download.pytorch.org/whl/cpu on secondary requirements installation to prevent pip from pulling default GPU/CUDA binaries.
+  - Chain Hugging Face cache purging (rm -rf /root/.cache/huggingface) directly within the model-baking layer execution block to minimize disk image footprints and VM I/O thrashing.
+- [ ] Evaluate migration from PyTorch to ONNX Runtime + NumPy (Post-Demo Phase)
+  - Export SBERT (all-MiniLM-L6-v2) to ONNX format to drastically reduce initialization overhead.
+  - Convert runtime vector operations (player vs. correct answer similarity matrices) from PyTorch tensor calls to native NumPy dot products and vector norms, permitting the total removal of the torch dependency from the container environment.
 
 ---
 

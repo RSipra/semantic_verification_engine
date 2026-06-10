@@ -65,7 +65,7 @@ class GameController():
     def __init__(self, system_signals, view): 
         self.player = None  # set during introduction phase
         self.player_initialized = False  # flipped to True after Introduction. Player is invariant after that
-        self.system_startup_signals = system_signals
+        self.system_startup_signals = system_signals or {}
         self.view = view  # Persistent component
 
 ## Game Introduction

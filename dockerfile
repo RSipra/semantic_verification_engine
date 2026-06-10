@@ -2,9 +2,9 @@
 FROM python:3.11-slim
 
 # 2. LOGGING: Prevent Python from buffering stdout/stderr
-# This ensures real-time feedback in your Google Cloud Operations Suite logs
+#  ensures real-time feedback in Google Cloud Operations Suite logs
 ENV PYTHONUNBUFFERED=1
-# This is the "Master Pointer" for your SVE intelligence (local model storage)
+# Master Pointer for SVE intelligence (local model storage)
 ENV HF_HOME=/app/models
 # Point Python to 'src' to find core, engine, and game_app
 ENV PYTHONPATH="/app/src"
@@ -34,8 +34,7 @@ WORKDIR /app
 #
 # To ensure build stability, dependencies were split into staged installs:
 # 1. torch (CPU-only, isolated early to control large binary resolution)
-# 2. core ML stack (transformers / sentence-transformers / tokenizers)
-# 3. application dependencies
+# 2. application dependencies
 #
 # The VM has since been upgraded to ~30GB disk, a single-pass requirements install 
 # is now technically viable. However, staged installation is retained as a 
@@ -47,17 +46,14 @@ WORKDIR /app
 COPY requirements.txt .
 # 5.1. torch (locked CPU)
 RUN pip install --no-cache-dir torch --index-url https://download.pytorch.org/whl/cpu
-# 5.2. ML core (no dependency explosion)
-RUN pip install --no-cache-dir \
-    sentence-transformers transformers tokenizers \
-    --no-deps
-# 5.3. remaining lightweight deps
-RUN pip install --no-cache-dir -r requirements.txt
+# 5.2. remaining lightweight deps, ensure torch not overwritten by sentence transformers
+RUN pip install --no-cache-dir -r requirements.txt --extra-index-url https://download.pytorch.org/whl/cpu
 
 # 6. MODEL BAKE: Copy core logic and download weights during BUILD phase
 # Done BEFORE copying the rest of the app to leverage Docker layer caching
+# remove cache to not retain the heavy .tar files
 COPY src/core/ /app/src/core/
-RUN python -m core.download_models
+RUN python -m core.download_models && rm -rf /root/.cache/huggingface
 
 # 7. NETWORK ISOLATION: Disable Hugging Face API requests (safety net)
 # Ensures the container only uses the baked-in models and prevents runtime timeouts.

@@ -237,8 +237,8 @@ class GameView:
     
     def __init__(self):
         # record=True allows to capture the output later
-        # width=100 ensures consistent formatting on the web
-        self.console = Console(record=True, width=100)  # for using the 'rich' formatting in CLI
+        # force_terminal guarantees rich uses proper box-drawing characters
+        self.console = Console(record=True, force_terminal=True)  #, width=100)  # for using the 'rich' formatting in CLI
 
     def _create_centered_panel(self, content: RenderableType, style: str, title: str) -> Panel:
         """A helper method to create a styled, centered Panel."""
@@ -469,6 +469,18 @@ class GameView:
         
         # 5. Clear screen so Question 1 starts fresh
         self.console.clear()
+    
+    def show_loading_screen(self):
+        """UX buffer for game for startup delay after introduction"""
+        buffer_content=(
+            "[italic]A hush falls over the castle...[/]\n"
+            "[dim]Something is about to begin...[/]\n"
+            "[dim]Wits and wands at the ready...[/]"
+        )
+        self.console.clear()
+        self.console.print("\n") 
+        self.console.print(f"[purple]{buffer_content}[/purple]")
+        self.console.print("\n")
     
 ## VIEW Game play
 

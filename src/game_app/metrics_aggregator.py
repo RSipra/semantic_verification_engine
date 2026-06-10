@@ -26,9 +26,22 @@ Scope = Literal["session", "batch", "global"]
 def categorize_resolution_tier(resolution_tier) -> str:
     """Categorizes a turn result into a resolution tier."""
     tier = resolution_tier.lower()
-    for category in TIER_CATEGORIES:
-        if category in tier:
-            return category
+
+    # 1. Check for LLM execution first (most expensive)
+    if "llm" in tier:
+        return "llm"
+
+    # 2. Check for SBERT / Semantic routing
+    if "semantic" in tier or "sbert" in tier:
+        return "sbert"
+
+    # 3. Check for exact/fuzzy matches
+    if "exact" in tier:
+        return "exact"
+    if "fuzzy" in tier:
+        return "fuzzy"
+
+    # 4. Fallback (chances ran out or a module broke the naming convention)
     return "unresolved"
 
 # aggregate llm eval times from nested TurnResultList in SessionReport
@@ -80,6 +93,12 @@ def aggregate_session_metrics(session_report: SessionReport) -> SessionAggregate
     Extracts latency events and resolution-tier distributions
     for downstream performance analysis.
     """
+    llm_latencies = []
+    for turn in session_report.all_turn_results:
+        llm_time = get_llm_time(turn.evaluation)
+        if llm_time is not None and llm_time > 0.0:
+            llm_latencies.append(llm_time)
+
     tier_dist_by_evaluator, overall_tier_dist = aggregate_tier_distribution(
         session_report.all_turn_results)
 
@@ -98,9 +117,8 @@ def aggregate_session_metrics(session_report: SessionReport) -> SessionAggregate
                                    for turn in session_report.all_turn_results],
 
         # only EX and some FR turns have llm eval time, so filter for non null values
-        llm_call_latency_events = [t for turn in session_report.all_turn_results
-                                   if (t := get_llm_time(turn.evaluation)) is not None],
-
+        llm_call_latency_events = llm_latencies,
+        
         tier_distribution_by_evaluator = tier_dist_by_evaluator,
         overall_tier_distribution = overall_tier_dist,
 
@@ -125,7 +143,6 @@ def calculate_performance_metrics(scope_id : str,
     total_unattempted_questions = sum(agg.unattempted_question_count for agg in session_aggregates)
     
     correct_answers = sum(agg.correct_count for agg in session_aggregates)
-    accuracy_rate = (correct_answers/total_executed_questions)*100
     quit_rate = ((sum(agg.session_quit for agg in session_aggregates) / num_sessions) * 100
                  if num_sessions else 0)  # zero div error guard
 
@@ -145,6 +162,7 @@ def calculate_performance_metrics(scope_id : str,
 
     # proxies
     if total_executed_questions:
+        accuracy_rate = (correct_answers/total_executed_questions)*100
         sbert_usage = (global_tier_distribution.get('sbert',0)/total_executed_questions)*100
         llm_usage = (global_tier_distribution.get('llm',0)/total_executed_questions)*100
         shift_left_usage =( sum(global_tier_distribution.get(tier, 0) for tier in SHIFT_LEFT_TIERS

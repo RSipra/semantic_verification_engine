@@ -6,6 +6,7 @@ SEMANTIC VERIFICATION ENGINE (Ref implementation: Harry Potter Trivia)
 CLI MVP ->  Main game entry point
 """
 import logging
+import time
 
 # Import game modules:
 from game_app.game_controller import GameController
@@ -15,42 +16,63 @@ from game_app.constants import (GameStatus, SessionStatus,
                                 NUM_QUESTIONS_PER_SESSION as SESSION_SIZE)
 from game_app.session_storage import save_performance_metrics, save_session_reports
 from game_app.metrics_aggregator import aggregate_session_metrics, calculate_performance_metrics
-from engine.startup import orchestrate_application_startup
 
 # RANDOM_SEED = 26
 RANDOM_SEED = None  # set to None for non-deterministic session allocation
 SCOPE_ID="tracer_demo"
 
-logging.basicConfig(
-    level=logging.INFO,  # change .DEBUG when troubleshooting.
-    format="%(asctime)s | %(levelname)s | %(name)s | %(message)s")
+# TEMPORARILY MUTED FOR UI DEBUGGING
 
+logging.disable(logging.CRITICAL)
+
+# logging.basicConfig(
+#     level=logging.INFO,  # change .DEBUG when troubleshooting.
+#     format="%(asctime)s | %(levelname)s | %(name)s | %(message)s")
+
+# Suppress noisy third-party libraries so they don't break the CLI UI
+logging.getLogger("sentence_transformers").setLevel(logging.WARNING)
+logging.getLogger("transformers").setLevel(logging.WARNING)
+logging.getLogger("huggingface_hub").setLevel(logging.WARNING)
 
 def main():
     """Sets up and runs the main application loop for the game."""
+    
+    # Let GoTTY and the browser negotiate screen size before initializing UI
+    time.sleep(0.5)
 
     # 1. Initialize and setup the dependencies
     view = GameView()
     # log gameplay sessions only, not exhausted state
     all_session_reports = []
     all_session_aggregates = []
+    
+    # initialize controller with startup system signals
+    controller = GameController(None, view)
+    
+    # 2. Run the one-time introduction to the game immediately as 
+    #    as UX buffer for startup
+    success = controller.start_game()
+    
+    if not success:
+        return  # Exit if player setup fails or user quits
 
-    # dataset hydration & validation, sbert + llm warmup
+    # 3. load the waiting screen till startup finishes
+    view.show_loading_screen()
+    
+    # 4. startup execution (currently blocking; future: async/background): 
+    #    dataset hydration & validation, sbert + llm warmup
+    #    Lazy load to reduce lag at immediate startup
+    from engine.startup import orchestrate_application_startup 
     runtime_df, system_signals = orchestrate_application_startup()
 
     # session allocation logic (provides order list of dataset for building 
     # sequential session building within session object)
     session = orchestrate_game_session_warmup(runtime_df, RANDOM_SEED)
 
-    # initialize controller with startup system signals
-    controller = GameController(system_signals, view)
+    # Update controller with startup system signals
+    controller.system_startup_signals = system_signals
 
-    # 2. Run the one-time introduction to the game
-    success = controller.start_game()
-    if not success:
-        return  # Exit if player setup fails or user quits
-
-    # 3. Run question sessions until player quits or dataset exhausted.
+    # 5. Run question sessions until player quits or dataset exhausted.
     while True:
         # create new session
         session = build_next_session(session, runtime_df, SESSION_SIZE)

@@ -177,7 +177,7 @@ def orchestrate_application_startup() ->Tuple[pd.DataFrame, dict]:
     t0 = time.time()
     local_model = get_sbert_model()
     try:
-        local_model.encode("warmup")
+        local_model.encode("warmup", show_progress_bar=False)
         sbert_warmup_success = True
     except Exception:
         sbert_warmup_success = False
@@ -281,5 +281,13 @@ def orchestrate_application_startup() ->Tuple[pd.DataFrame, dict]:
                      "validation": {"status": "OK"},
                      "llm": warmup_outcome
                      }
+    
+    # startup status for main to decide to continue to session or buffer
+    # hard constraints: required for game to start (LLM is a soft constraint)
+    hard_ok = all(
+        system_signals[k]["status"] == "OK"
+        for k in ["sbert", "dataset", "tensor", "validation"]
+    )
+    system_signals["startup_ready"] = hard_ok
     
     return runtime_df, system_signals
