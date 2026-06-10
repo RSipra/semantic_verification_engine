@@ -1,87 +1,157 @@
-#  Semantic Verification Engine 
-### End-to-End system : &nbsp;&nbsp; Synthetic Data Generation → Context Layer → Runtime Application &nbsp;&nbsp;
-**Building smart Q&A systems that don't hallucinate** *(under active development)*
-
-![NLP](https://img.shields.io/badge/Advanced%20NLP-NER%20%7C%20SBERT-%236a0dad)
+![NLP](https://img.shields.io/badge/Advanced%20NLP-NLI%20%7C%20SBERT-%236a0dad)
 ![GenAI Integration](https://img.shields.io/badge/GenAI%20Integration-Gemini%20API%20-%236a0dad)
 ![MLOps](https://img.shields.io/badge/MLOps-Prefect%20%7C%20DVC%20%7C%20Docker%20%7C%20GCS%20%7CVM%20-%236a0dad)
 ![Modular OOP](https://img.shields.io/badge/Modular%20Design-OOP-%236a0dad)
 
-## What This Project Does
-This is a **semantic answer verification system** currently demonstrated through a *Harry Potter trivia game* 🪄. It demonstrates AI system design where **correctness, latency, and cost predictability** are the key drivers (e.g. medical Q&A, compliance training, or certification exams). 
+#  Semantic Verification Engine (SVE)
+#### Constrained AI architecture for accurate, low-latency semantic evaluation  
 
-**The Core Problem:** Standard LLMs can hallucinate and drift. When you need very high accuracy and low latency, you can't rely on real-time generation.
+## What is the SVE?
+Many interactive knowledge systems require intelligent behavior but their economics cannot justify continuous dependence on Large Language Models (LLMs). The challenge is to deliver accurate, engaging, and responsive experience while maintaining predictable cost, latency, and operational complexity. <br>
+⛯ *Use cases: knowledge retention and interactive learning tools (e.g. educational games, certification practice, employee training)*.
 
-**The Solution:** Separate heavy AI work (synthetic data generation, validation, enrichment) from runtime (answer verification). Generate high-quality content offline, serve it with CPU-only runtime optimized for fast, controlled interactions.
+These constraints led to a top-down architectural design defined by a **core concept**:
+>*Move expensive intelligence offline and compile into validated, reusable assets; the runtime system operates only on these assets, remaining lean, predictable, and reliable.*  
 
->#### ➡️ **Current State**:  Building a minimal end-to-end Phase 2 system, validating architecture and semantic logic as a working demo *(tracer build)*. 
 
-### 👉🏼 [Try the Phase 1 MVP Demo ✨](https://34.27.245.64.sslip.io/)
-**⚠️ Fair Warning:** This demo can be frustrating (scores were ~1~3 out of 10 in initial user testing despite correct knowledge). <br>
-The MVP from the discovery stage deliberately showcases what breaks with naive approaches. Some of the key issues that surfaced:<br>
+---
+► [✨**Live Demo**✨](https://34.27.245.64.sslip.io/) &nbsp;|&nbsp; [Tracer Implementation Walkthrough](notebooks/01_demos/01_tracer/README.md) &nbsp;|&nbsp; [Design Doc & ADRs](docs/00_DESIGN_DOC_AND_ARCHITECTURE.md) &nbsp;|&nbsp; [Execution Plan](docs/01_EXECUTION_PLAN.md) &nbsp; <br>⚠️ *Note:  the MVP demo can take ~30s to load transformer models at the start - appreciate your patience* 😄
 
-||**MVP issue**|**Root Cause**|**Solution**|**Phase 2 status**|
-|-|-|-|-|-|
-|1|*Frustrating UX with exact answer matching*|No semantic understanding|Tiered answer checking<br>*Direct → fuzzy → SBERT*|🚧 In progress (tracer implementation underway)|
-|2|*Obscure / low-quality questions*|56% of raw dataset failed quality checks (1279 → 559 baseline records)<br> *Example: "|Insufficient quality and low coverage of core books.<br>Manual curation doesn't scale | Automated question generation & enrichment (Gemini API)|1. ✅ Prompt eng. complete<br>2. 🚧 tracer implementation underway  <br>3.🚧 Prefect pipeline undergoing testing|
-|3|*Semantic duplicates bloat dataset*|Raw dataset had ~8% semantic near-duplicates (~100 questions)| Data quality issues in raw dataset (Hugging Face) discovered during EDA |Semi-automated cleanup script <br>(cosine similarity & graph analysis + golden record selection + manual review of ambiguous thresholds)| 1.  ✅ Legacy Baseline dataset (phase 1) cleaning complete <br>2. Tracer in progress 🚧 <br>(adapting Phase-1 script to SBERT for generated questions) |
+---
 
-**Examples from EDA and MVP:**
-- **Issue 1**: [MVP walkthrough video, (00:55-01:19)](https://youtu.be/XXNDTiEgJYU?t=53)
-- **Issue 2**: *Who lead the Gargoyle Strike? A group of wildcat Gargoyles.*
-- **Issue 3**: *"Ever the eccentric, Dumbledore has a scar above his left knee that is a perfect map of what?"* vs. *"Dumbledore has a scar above his left knee that is a perfect map of what?"*
+## Runtime Constraints (Tracer MVP)
 
-## ⭐️ The Semantic Verification Engine (SVE) Architecture
+The [Basis for Design (BoD)](docs/00_DESIGN_DOC_AND_ARCHITECTURE.md#15-basis-for-design) defines the problem space, i.e. the operational requirements and targets the architecture must satisfy.
+The Tracer CLI-MVP column reflects what actually emerged from meeting those requirements in
+practice: some constraints were anticipated, others surfaced through deployment.
 
-The platform is built around three core subsystems:
+*Constraints are iteratively refined using telemetry from the tracer implementation.*
 
-1. **Content Factory**: ingests raw text (Harry Potter books) and manufactures high-fidelity synthetic datasets using autonomous pipelines,
-2. **Context Refinery**: A semantic processing and feature engineering layer with  that enriches the dataset with descriptive and contextual, thematic features.
-3. **Runtime Environment**: an immutable (offline-capable) container that serves the game (and will later also host the local SLM).
+| Constraint |BoD Requirement |Tracer CLI-MVP |
+|-|-|-|
+| Economics | Minimum-cost operation and per-query API cost at runtime|GCP e2-micro (free-tier); zero runtime API cost.<br> Public demo HTTPS ~$11/month; security infrastructure cost emerged at deployment, within $20 contingency threshold |
+| Performance|Local inference < 500ms p95;<br> LLM escalation < 1–2s p95;<br> gameplay feels smooth |CPU-only Docker runtime on e2-micro (2 vCPUs, 1 GB RAM, 30GB storage);<br>local inference prioritised to minimise LLM dependency; ongoing collection of runtime latency|
+| Quality |No hallucinations at runtime;<br> evaluators correctly distinguishes correct from incorrect answers| Zero generation at runtime; pre-validated Parquet assets. <br>Evaluator accuracy ≥ 85% (85–93% observed in notebook testing; runtime measurement pending) |
+| Capacity |5–10 concurrent users within free-tier cost limits | GoTTY + Docker on GCP e2-micro; single-session in practice; GoTTY shares one terminal rather than managing independent sessions; 5–10 concurrent user target requires the planned FastAPI service layer|
+| Scalability|Unit cost constant or decreasing as content volume grows | Offline intelligence layer; marginal AI cost per query; <br> planned FastAPI service + containerised deployment enables horizontal scaling with load balancing; ceiling determined by SBERT CPU compute per VM, VM cost beyond free tier, and LLM API rate limits (~20 concurrent users estimated within free tier) |
+
+
+## The System Design
+
+> **Project Status**: **Phase 2 tracer build completed and runtime MVP deployed.** End to ends system validated across all three subsystems. Runtime performance and generation quality metrics are being actively collected.
+
+The full system design consists of three subsystems:
+
+1. **Content Factory (offline)**: ingests raw source text and produce structured, validated trivia content through
+Prefect-orchestrated pipelines. An adapted  medallion tier architecture enforces progressive quality gates before any content is passed on. 
+   - Tracer status: end-to-end logic confirmed in notebooks; Prefect automation in progress.
+2. **Context Refinery (offline)**: semantic processing and feature engineering layer that enriches the dataset with descriptive and contextual, thematic features. 
+    - Tracer status: descriptive feature logic confirmed; NER and other contextual features deferred to next stage.
+3. **Runtime environment (online)** A self-contained Docker container serving the game from validated, immutable Parquet assets. Evaluation is layered: exact match → structured rules → SBERT semantic similarity → LLM escalation. The container has no runtime dependency on upstream systems
+    - Tracer status: deployed and live.
 
 [![The core demo implementation (Phase 2)](assets/docs/phase2/phase2_dev_main.jpg)](assets/docs/phase2/phase2_dev_main.jpg)
 **Figure 1**: The main deployment specification. This schematic represents the backbone of the SVE project (click on figure for a closer view).
 
-- **Architecture**: See the [Design Doc](docs/00_DESIGN_DOC_AND_ARCHITECTURE.md) for detailed data flow schemes for the *Content Factory* and *Runtime Environment*. It also provides the Basis for Design, architectural details for the other phases, and ADRs. 
-- **Execution**: See the [Execution Plan](docs/01_EXECUTION_PLAN.md) for the Agile execution strategy for development.
+Refer to the [*Design Doc and ADRs*](/docs/00_DESIGN_DOC_AND_ARCHITECTURE.md) for further details on architecture.
 
-### Why this Architecture?
-| Design area | Typical failure mode | Design response in Project |
-|-|-|-|
-|Data Quality|Models can hallucinate or drift.|**Layered defenses**. Implemented a 3-tier quality strategy: *prevention* (schemas, prompts, grounding), *detection* (automated QA pipeline), and *correction* (adaptive acceptance sampling; user feedback at scale).<br>The QA pipeline enforces semantic deduplication, grounding checks to strictly gatekeep the *Gold* dataset |
-|Unit Economics|API costs scale linearly.|**Fixed-cost edge serving**. Fixed API calls are decoupled from runtime in made in limited batches; fixed-cost local CPU container.|
-|Reliability|LLMs represent probabilistic truth.|**Architectural decoupling & grounding.** <br>1. **Structural**: Decoupled runtime environment separates generation from consumption; Content Factory failures cannot crash the game.<br>2. **Semantic**: Content Factory logic forces strict source-text grounding, ensuring answers come from source books and not the model's training data.|
-|Compute|Reliance on expensive GPUs.|**CPU-optimized delivery**: viably run game (later with a quantized SLM) on standard free-tier hardware|
-|Operations|*Human-in-the-loop* needs slow scaling|**Autonomous ETL**.  Raw book text is automatically processed into high-quality structured JSON assets, removing the need for manual cleanup or curation.|
-|Integration|Complex dependencies break systems.|**Immutable runtime infrastructure**. runtime system is a self-contained Docker artifact.|
+#### Reference Implementation
+The SVE architecture is domain-agnostic. 
+The underlying system solves a generalizable problem: converting dense, static knowledge into accurate, interactive, and auditable delivery at low cost.
 
-## ⭐️  Key Differentiators
+- *Validation layer:*  The Harry Potter interface serves as the reference implementation and test surface. <br>
+- *Why?* The series was chosen because it is bounded knowledge domain, widely recognized, with well-defined scope that can be used to define objective validation criteria. It retains many of the language evaluation challenges from larger domains while remaining accessible and fun! 🧙🏼‍♂️. This makes it suitable for validating architecture without domain complexity obscuring the system complexity. 
+- *Generalization*: Applying SVE to a regulated domain, such as clinical Q&A, compliance training, or financial certification, would require stricter controls at specific layers. The requirements can be accommodated without structural redesign through configuration, further enhanced validation, and policy decisions.
 
-1. **The Content Factory**: The automated data generation and enrichment process has several benefits.
-    - **Strategic compute allocation**: GenAI is used only for high-value batch processing instead of expensive realtime queries.
-    - **Extensible enrichment framework**: The system is designed to support modular expansion without structural refactoring. New attributes, such as persona-driven hints or trivia fun facts, can be added incrementally to existing records with the proposed enrichment pipeline. All feature additions flow through a single, governed ingestion path to the Gold Dataset, preserving data integrity and semantic consistency as the system evolves.
-    - **Dual-product generation**: Creating the game content (trivia dataset) with the Content Factory can also be used to produce the *instruction-tuning corpus* for future SLM integration. Tone, persona, and response style are specified directly in the pipeline schemas and manifests. This enables zero-cost *style distillation* so the AI Persona tone naturally matches the content without separate labeling or post-processing.
-2. **Hybrid Intelligence Architecture**: 
-    - **High perceived intelligence / low compute**: in the final envisioned design (phase 3), the runtime decouples knowledge (dataset) from reasoning (SLM acting as both Persona and Judge). This uses knowledge distillation (Teacher-Student training) to ensure the small model mimics the wit and logic of a large LLM without the compute cost.
-    - **No hallucination at runtime**: by retrieving answers from disk rather than generating using GenAI API calls at runtime. This avoids cases where the model produces responses that *sound* correct but are factually wrong (e.g. a plausible-sounding but nonexistent Harry Potter question).
 
-## Real world applications
+## Preliminary Runtime Metrics
+>⚠️ First-pass results: single batch, 13 sessions. Tracer dataset was intentionally composed to stress system design (high Explanatory question share). Figures will shift as session diversity and batch count increase. Do not treat as a stable baseline.
 
-The architecture can be generalized from a trivia game to a domain-agnostic *semantic verification engine*. It solves the problem of last mile knowledge delivery by taking dense, static documentation (e.g. pdfs, wikis, manuals) and converting it into an interactive, gamified mastery tool. Some example use cases:
+### Evaluation tier routing
 
-Use Case|Input|Output|Why It Wins|
+|Resolution Tier| Questions | Share|Notes
 |-|-|-|-|
-|MCAT Prep|Medical textbooks|Quiz with verified answer keys|LLMs hallucinate drug dosages. This uses dataset lookups|
-|Safety Training|Company safety manuals|Certification quiz (offline-capable)|Deploys to 10,000 employees for fixed cost. No API charges.|
-|Product Training|Technical spec sheets|Sales team practice questions|Turn 50-page PDFs into interactive quizzes in hours|
+|Exact match|30|26%|-|
+|Fuzzy match|10|9%|-|
+|SBERT semantic|40|35%|-|
+|LLM escalation|35|30%|-|
+|Unresolved|1|<1%| empty submission|
 
-## Technical Deep-Dive
+*Local inference resolution rate*: **69% of questions resolved without an LLM call**. This validates the use of the tiered evaluation, routing, and offline preprocessing.
 
-### What's Already Working (Phase 1)
-✅ VM + Docker deployment — Live at https://34.27.245.64.sslip.io/<br>
-✅ Parquet Legacy knowledge base — verified, immutable artifact for next phase.<br>
-✅ MVC game architecture — modular Python code unit tested with pytest<br>
-✅ Exact string matching — Baseline logic (intentionally fragile)
+### Latency
+primarily determined by the LLM API call.
+|Path|Average|P95|Notes|
+|-|-|-|-|
+|Local inference with SBERT|0.062s|0.15s (150ms)|Meets local p95 < 500ms target|Fast path; min observed: 0ms|
+|LLM escalation|2.6s|7.1s|Above target; high EX question share inflates this, max: 33s|
+|Overall evaluation|2.6s|9.9s|LLM path driven; p95 above 5s UX fallback. LLM evaluations include a 6s cooldown to manage RPM limits| 
+
+- Free-tier penalty: shifting to paid-tier will shrink the required cooldown time needed between requests. Currently the free-tier requires 6s cool down, resulting in a evaluation latency of ~7s even if the LLM call itself took ~1~2s.
+
+### Compute
+- primarily determined by SBERT local inference.
+- Measured via `docker stats` over a single session (8min window) on a GCP e2-micro (0.25 vCPU baseline, 2 vCPU burst, 1GB RAM).
+- SBERT operates as a burst workload, near-zero CPU at idle with short spikes during inference. No CPU throttling observed at current volume.
+
+| Metric | Value |
+|---|---|
+| Idle CPU | 0.61% |
+| Inference CPU (mean) | 54.41% |
+| Inference CPU (max) | 83.55% |
+| Memory (idle) | ~367 MB |
+| Memory (loaded) | ~447 MB |
+
+### Bottlenecks Identified
+- Loading models in startup leads to 30s lag in game starting that cannot be handled even with breaking sequence up with SBERT loading and warmup handled after intorduction with a UX loading screen. Will be handled when shifting to Fast API - will have a singular startup with container and keep it warm to avoid coldstart with every game start.
+- Could not run on 10GB, docker build failed, not enough temporary cache for installation requirements. Shifted to 30GB VM.
+- LLM latency is highly variable. Generally within the required range but can jump to ~22 to ~35 seconds. Mitigations include shifting to paid-tier (less cool down to manage RPM usage limits) and can be managed with self-hosting a model as a service when scale justifies.
+- Explanatory answers contain  multiple implicit claims that SBERT similarity alone cannot reliably verify, routing them to the LLM judge by default. Primary driver of the 30% LLM routing share. Planned improvement: decompose long answers into atomic claims verifiable locally via SBERT / NLI, reducing LLM fallback and improving the shift-left resolution rate. NLI is implemented in evaluator but will come online with claims breakdown. 
+
+## Offline Data Generation & Validation Results (Tracer)
+
+#### Generation pipeline
+
+- A total of 50 questions were generated from 6 chapters.
+- Repeated runs over chapters for different question types generated: Factual Recall (FR) x 30 / Multiple choice (MCQ) x 30 / Explanatory (EX) x 30 questions.
+- Pipeline consists of one generation pass, two enrichment passes to augment core fields for in-game intelligence (hint, explanation, answer variations, semantic entity references, and core lore concepts).
+
+#### QA and Validation pipeline
+
+- *Yield:*  **35 out of 50 questions (70%)** were promoted to Silver tier.  
+- This pipeline also generates embeddings for core evaluation fields for questions that pass validation.
+- The table below shows the breakdown by pipeline stage:
+
+| Validation Check | Passed | Failed / Dropped |
+|---|---|---|
+| Structural validation against Silver schema (Pydantic) | 50 | 0 |
+| Intra-batch semantic deduplication (across question types) | 44 | 6 |
+| Contextual integrity (RAG-Triad): consistency check between source quote, question, answer | 42 | 2 |
+| Alignment of answer variations to core fields (question, answer) | 38 | 4 |
+| Alignment of MCQ options and LLM categorization to core fields| 36 | 2 |
+| Canonical semantic deduplication (of batch against main Silver dataset)|35|1|
+
+## How to review this Repository
+The repo is structured for progressive discovery. Start with the README and demo, then go deeper based on what you want to explore.
+
+1. **README** (this page): overview of architecture, constraints, validation results
+2. **[Live Demo](https://34.27.245.64.sslip.io/)**: the deployed system running on a free-tier VM
+3. **[Tracer Walkthrough Notebooks](/notebooks/01_demos/01_tracer/README.md)**: four notebooks that start at the runtime backend (anchored to the demo you just played). From there they step back to the beginning of the offline system and follows the generation and processing of a single synthetic question batch forward to the runtime handoff:
+    - Runtime → Generation → Validation → Context Enrichment with Runtime handoff
+4. **[Design Doc & ADRs](docs/00_DESIGN_DOC_AND_ARCHITECTURE.md)**: full 
+   architecture specification, trade-off rationale, and decision records
+5. **[Research Notebooks](/notebooks/02_research/)**: EDA, semantic deduplication, 
+   SBERT analysis, prompt engineering experiments *(DS / NLP path)*
+6. **[Pipeline Scripts](/scripts/pipelines/generate_questions/) + [Game Source](/src)** 
+   — Prefect orchestration structure (*work in progress*), MVC game architecture, evaluator registry *(ML / AI systems path)*.
+
+## Project Status
+This project follows an architecture-first development lifecycle outlined in the [Design Doc](/docs/00_DESIGN_DOC_AND_ARCHITECTURE.md).
+
+✅ **Phase 1: Data science discovery and game foundation** [COMPLETE]
+- Discover and explore problem space and surface failure modes.
+- Activities: EDA, baseline dataset construction, schema definition, MVC game architecture, and MVP deployment
+with exact-match evaluation.
 
 <details>
 <summary><i>Click to expand Phase 1 data science & MVP metrics</i></summary>
@@ -104,20 +174,11 @@ The raw dataset was manually curated and standardized to build the Baseline (v0)
 - **Vector drift**: The TF-IDF vectorizer struggled with the vocabulary shift introduced by new *explanatory* (EX) questions, directly motivating the switch to Sentence-BERT (SBERT) for Phase 2 deduplication.
 - **Question-type imbalance**: The baseline dataset was heavily skewed toward Factual Recall (78%). This imbalance drove the requirement for the Phase 2 *Content Factory* to synthetically generate complex "Why/How" questions. These type of questions are key differtiators for the game experience. It should also be able to generate the other question types to keep dataset in balance.
 
-#### Architecture emergence (Learnings)
-The Phase 2 Content Factory Medallion structure (Bronze / Silver / Gold) was not pre-planned; it emerged as a solution to the bottlenecks discovered during Phase 1:
-
-|Layer|Phase 1 Discovery (The Problem)|Phase 2 Solution|
-|-|-|-|
-|Bronze<br>(Generation)|Manual curation of raw dataset required deleting 57% of data due to quality issues (duplicates, errors)|LLM model (Gemini): add synthetic high-quality question generation via the `question_generation` pipeline, also allows balancing question type variety. Legacy data is enriched once with an LLM to match the defined Bronze schema.|
-|Silver<br>(Validation)|Simple string matching failed to catch semantic duplicates (phrasing variations) causing bloat.|Semantic gates (SBERT): Decoupled validation into a `qa_validation` pipeline using Sentence-BERT for semantic deduplication and hallucination checks.|
-|Gold<br>(Ingestion)|Validation and ingestion scripts were tightly coupled which would be difficult to manage as more validation logic is added.|Lightweight ingestion: Separated final commit logic into a `data_ingestion` pipeline, ensuring only "gold-grade" data is versioned (DVC) and transition point to the next subsystem (Context Refinery)|
-
 #### Phase-1 Visual Artifacts
 
-1. **Interrogative keyword distribution (100% coverage)** 
+1. Interrogative keyword distribution (100% coverage) 
     <details>
-    <summary><b>🔎 View the keyword distribution plot</b></summary>
+    <summary><i>🔎 View the keyword distribution plot</i></summary>
 
     [![Interrogative keyword distribution](assets/docs/phase1/p1_keyword_graph.png)](assets/docs/phase1/p1_keyword_graph.png)
     *(Click image to open full resolution)*
@@ -126,129 +187,75 @@ The Phase 2 Content Factory Medallion structure (Bronze / Silver / Gold) was not
 
 2. Baseline v.0 dataset status map 
     <details>
-    <summary><b>🔎 View Baseline v0 Status Map</b></summary>
+    <summary><i>🔎 View Baseline v0 Status Map</i></summary>
 
     [![Baseline Dashboard](assets/docs/phase1/p1_baseline_v0_statusmap.png)](assets/docs/phase1/p1_baseline_v0_statusmap.png)
     *(Click image to open full resolution)*
     </details>
+    <br>
 
-3. **Box plot of Answer Length vs. Question type (Baseline v.0 dataset)**
+3. *Box plot of Answer Length vs. Question type (Baseline v.0 dataset)*
     <details>
-    <summary><b>🔎 View the keyword distribution plot</b></summary>
+    <summary><i>🔎 View the keyword distribution plot</i></summary>
 
     [![Boxplot: Answer len vs. question type](assets/docs/phase1/p1_baseline_v0_boxplot_ans_len.png)](assets/docs/phase1/p1_baseline_v0_boxplot_ans_len.png)
     *(Click image to open full resolution)*
     </details>
 
-**Refer to [details section](#want-to-dive-further) to see key artifacts (EDA, deduplication notebooks)**
 </details>
 
-### What's Being Added (Phase 2)
+<br>
 
-#### 🚧 Automated Content Factory (in active development)
+🚧 **Phase 2: End-to-end core system validation** [TRACER COMPLETE]
+- **On-going**: metrics gathering;  
+- **Next:** stabilization, automation, and formalizing design.
+<details><summary><i>Expand to view status of milestones</i></summary>
 
-1. **Automated Prefect-orchestrated question generation pipeline** (undergoing testing): generates high-quality questions from Harry Potter source text.
+|Milestone|Status|
+|-|-|
+|Prompt engineering and generation quality validation|✅ Complete|
+|Tracer dataset (104 Legacy + 50 Synthetic across FR, EX, MCQ)|✅ Complete|
+|End-to-end tracer logic validaation (notebooks: generation → validation → enrichment → runtime)|✅ Complete|
+|Runtime container deployment (GCP VM, Docker, Tailscale)|✅ Complete|
+|Runtime performance metrics collection|🚧 In progress|
+|Prefect pipeline automation — generatio|🚧 In progress|
+|Prefect pipeline automation — validation|📋 Planned|
+|FastAPI service layer|📋 Planned|
 
-    **📓 Want to run this yourself?** A demo notebook (*coming soon*) will let you generate questions from a single Harry Potter chapter. Meanwhile, explore the [**full pipeline code**.](scripts/pipelines/generate_questions/generate_questions.py)
+Refer to [engineering backlog](/docs/03_engineering_backlog.md) for further details. 
+</details>
 
-2. **Quality Gates (Pydantic V2):**
-Questions must pass strict schema validation before it is upgraded to the next data tier (example code snippet):
-    ```python
-    # Base schema — all question types inherit core fields
-    class BaseQuestion(BaseModel):
-    """
-    The foundational schema defining fields common to all trivia question types.
-    
-    All specific question formats (Standard, MCQ) inherit from this structure
-    to ensure core data is always present.
-    """
-    question_type: QuestionType
-    question_source: QuestionSource
-    question: str = Field(..., min_length=1)  # ensure not empty str
-    answer: str = Field(..., min_length=1)
-    answer_variations: List[str]  # acceptable alternative phrasings
-    hint_1: str = Field(..., min_length=1)
-    hint_2: str
-    hint_3: str
-    explanation: str = Field(..., min_length=1)
-    semantic_entity_refs: List[str]
-    semantic_lore_concepts: List[str]
 
-    # Schema registry — routes validation by data origin and data tier
-    # e.g. VALIDATION_REGISTRY[QuestionSource.SYNTHETIC][DataTier.BRONZE] → SyntheticBronzeQuestion
-    VALIDATION_REGISTRY = {
-        QuestionSource.LEGACY:{DataTier.BRONZE:{...}, DataTier.SILVER:{...}, DataTier.GOLD:{...}},
-        QuestionSource.SYNTHETIC:{
-            DataTier.BRONZE:{
-                QuestionType.EX : SyntheticStandard,
-                QuestionType.FR : SyntheticStandard,
-                QuestionType.MCQ: SyntheticMCQ
-            },
-            DataTier.SILVER:{...},
-            DataTier.GOLD:{...}
-            }
-    }
+## Tech Stack
 
-    # Validation router — selects correct schema for source + tier combination
-    def select_pydantic_scheme(question_source: QuestionSource, data_tier: DataTier) -> dict:
-        """Routes to the correct schema based on data origin and medallion tier"""
-        return pyd.VALIDATION_REGISTRY.get(question_source,{}).get(data_tier,{})
-    ```
-## Why this project?
-This project is a learning accelerator. I compressed multiple skill domains (DS, MLOps, System design) into one system to see how they interact.
-
-**The meta-goal**: Coming from a chemical engineering background, I have seen the value of rigorous upfront design in high-risk systems, but I am also aware of its limitations (rigidity, slow feedback). This project deliberately plays with that tension to demonstrate how disciplined systems thinking can *support* fast, iterative delivery rather than compete with it.
-
-### Want to dive further?
-| | Data Scientists | ML Engineers |
-|-|-|-|
-| **Start** |[EDA Notebook](notebooks/02_research/01_cleaning_and_eda.ipynb) — cleaning, n-gram analysis, patterns<br> [Deduplication & Processing](notebooks/02_research/02_eda_and_deduplication.ipynb) - semantic similarity, feature engineering| [Design Doc](docs/00_DESIGN_DOC_AND_ARCHITECTURE.md) — architecture, ADRs, trade-offs |
-| **Then** |[Prompt engineering experiments](notebooks/02_research/03_aces_generating_new_questions/) - strategy, LLM selection, model parameter and token assessments|[Pipeline scripts](scripts/pipelines/) — Prefect orchestration|
-| **Deep dive** |[Data Validation Notebook](notebooks/02_research/07_qa_validation_v0.ipynb) - SBERT for grounding and duplicate checks |[Game source code](src/HPtrivia_game/) — modular Python, MVC, pytest|
-
-## 🛠️ Project Status
-
-This project follows a data-centric AI lifecycle. Development is currently in Phase 2 (adding semantic intelligence), having completed phase 1 (discovery and foundation). Refer to [workflow](docs/01_EXECUTION_PLAN.md) for the sprint breakdown.
-
-**✅ Phase 1: Data Science Discovery & Game Foundation &nbsp;&nbsp;&nbsp;[COMPLETE]**<br>
-Completed EDA, schema definition, and CLI-MVP development. 
-
-**🚧 Phase 2: Operationalize core design &nbsp;&nbsp;&nbsp;[ACTIVE]**<br>
-Create the design operational backbone (all three subsystems: Content Factory, Context Refinery, Runtime Environment) leveraging phase 1 components and learning.
- Building a minimal end-to-end system across all three subsystems. Key progress:
-
-- ✅ Prompt engineering complete (validated generation quality) 
-- 🚧 Tracer build in progress (end-to-end skeleton connecting all subsystems):
-    - ✅ Tracer sample dataset complete  (strategically sampled to stress system design: 104 Legacy + 50 Synthetic [FR, EX, MCQ]).
-    - 🚧 Validation logic in development.
-    - 📋 Semantic answer matching (SBERT) — pending.
-- 🚧 Prefect `question_generation` pipeline testing.
-
-## 🛠️ Tech Stack
-The following stack represents the technology used in active development. 
-- **Runtime**: Python 3.12 (game), Google Cloud VM with TailScale, Parquet (data).
-- **AI & Semantics**: Google Gemini 2.5 Flash, SBERT, NLTK
-- **MLOps**: Docker, Prefect, Pydantic, DVC (Data Version Control)
+<details><summary>Expand to view details</summary>
+|Layer|Technologies|
+|-|-|
+|Language & Runtime|Python 3.12, Parquet|
+|AI & Semantics| Google Gemini 2.5 Flash, Sentence-BERT (SBERT), NLTK|
+|Validation|Pydantic V2|
+|MLOps & Orchestration| Prefect, DVC, Docker|
+|Infrastructure|Google Cloud VM, Google Cloud Storage, Tailscale, GoTTY|
+|Testing|pytest|
 
 See [requirements.txt](requirements.txt) for packages required to run the game, and [requirements-dev.txt](requirements-dev.txt) for the complete list of tools used in the game as well as notebooks, data processing, and advanced NLP work.
+</details> 
 
-💡 **Development Note**:  This project was built with LLM support (Gemini/ChatGPT) acting as thought partners for system design reviews, documentation refinement, and technical guidance. 
+## Data Sources & License
 
-## ℹ️ Data Sources
+See [Data_Sources.md](DATA_SOURCES.md) for all dataset provenance and usage documentation. <br>
+This project's code is licensed under the [MIT License](LICENSE-MIT).
 
-For more information on the datasets and all other data types used, please refer to the [Data_Sources.md](DATA_SOURCES.md).
-
-## ℹ️ License
-
-This project's code is licensed under the [MIT License](LICENSE-MIT). See the [MIT License](LICENSE-MIT) file for details.
 
 <details>
-<summary><b>Data usage</b></summary>
+<summary>Data usage note</summary>
 
 - *Raw Inputs*: The original raw trivia data used for Phase 1 baseline testing is documented in [Data_Sources.md](DATA_SOURCES.md) and is not redistributed in this repository.
 - *Gold Dataset*: The runtime database is a hybrid asset. It consists of the original source data (cleaned, normalized, and validated) augmented with synthetic content and metadata generated via the Content Factory. To respect original copyrights, the full gold dataset is not included in this repository.
 
 </details>
 
-## ℹ️ Disclaimer:
-This project is an unofficial fan tribute to the Harry Potter series and is not endorsed by or affiliated with J.K. Rowling, Warner Bros., or any related parties. It is a passion and learning project created solely for educational and non-commercial purposes.
+<br>
+
+---
+*Disclaimer: this project is an unofficial educational fan tribute to the Harry Potter series. Not affiliated with or endorsed by J.K. Rowling, Warner Bros., or any related parties.*
