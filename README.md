@@ -151,43 +151,11 @@ The repo is structured for progressive discovery. Start with the README and demo
 
 ## A note on the design approach
 
-I come from process engineering, where the discipline is to design 
-against real constraints, validate before scaling, and measure what 
-actually happens. This project applies that instinct to ML systems: 
-enough upfront design to build confidently, enough pragmatism to ship something real and learn from it. The result is iterative development with design rigour.
+I come from process engineering, where the discipline is to design against real constraints, validate before scaling, and measure what actually happens. This project applies that instinct to ML systems: enough upfront design to build confidently, enough pragmatism to ship something real and learn from it. *The result is iterative development with design rigour.*
 
-<!-- 
-NARRATIVE TO INTEGRATE (origin / discovery-design loop):
+In practice that meant the architecture grew as problems revealed themselves, each limitation pointing to a specific solution. Brittle exact-matching led to semantic answer-checking; a small, inconsistent dataset led to automated generation and validation. 
 
-This started as a trivia game. Each limitation in the discovery phase pulled me 
-to the next problem — brittle exact matching → semantic matching → dataset quality 
-→ deduplication → manual curation didn't scale → synthetic generation → generation 
-needed guardrails → validation. But it wasn't purely reactive: at each step I'd 
-zoom out, see how the pieces fit the larger problem space, and apply top-down design 
-(from my engineering training) to plan the response before implementing. 
-
-The architecture emerged from that LOOP — bottom-up discovery surfacing what needed 
-solving, top-down design shaping how it got solved, the next limitation validating 
-or correcting the design. This is the FEL-meets-Agile tension the project set out 
-to explore (design doc 1.2): upfront design discipline and iterative discovery 
-working together, not competing.
-
-Along the way: developed a concrete feel for what this tech costs to build and run 
-(cloud, API, infra, free-tier limits) — intuition that's hard to get without paying 
-real deployment bills.
-
-KEY POINTS:
-- BOTH modes: discovery (bottom-up) + structured design (top-down), in a loop
-- not "emerged from chaos" (undersells design) nor "planned upfront" (untrue)
-- the loop IS the FEL/Agile thesis the project explores — tie to 1.2
-- depth earned through the loop, not imposed → dissolves "over-engineered"
-- cost intuition as a named takeaway
-
-- CLOSING LINE ALREADY WRITTEN: "The result is iterative development with design 
-  rigour." — the narrative above should BUILD TO this line. It's the loop compressed: 
-  iterative = bottom-up discovery, design rigour = top-down discipline, "with" = the 
-  loop joining them. Integrate narrative so the line reads as earned conclusion.
--->
+These responses were designed deliberately, assessed in context, so the pieces were built into a coherent architecture. Discovery surfaced what to solve, design decided how, and both were aimed at a defined outcome → a system that holds up now and has a clear path to scale.
 
 ## Project Status
 This project follows an architecture-first, iterative development lifecycle outlined in the [Design Doc](/docs/00_DESIGN_DOC_AND_ARCHITECTURE.md).
