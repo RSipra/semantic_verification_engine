@@ -1,6 +1,6 @@
 # Design Doc & Architectural Decision Records 
 
-**Project: Semantic Verification Engine (Intelligent Trivia Platform)**<br>
+**Project: Semantic Verification Engine**<br>
 **Author: Reema Sipra**<br>
 **Status: Living Document** (design frozen per Phase)<br>
 
@@ -13,7 +13,7 @@ This document outlines the architectural evolution of the Semantic Verification 
      Rules-based logic, MVC patterned game, standalone container.
     - **[Phase 2: System + Semantic Intelligence](#phase-2-end-to-end-system--semantic-intelligence)**
      Automated question generation, contextual feature enrichment, and semantic answer checking using Sentence-BERT.
-    - **[Phase 3: Model-Assisted Game Master](#phase-3-model-assisted-game-master)**
+    - **[Phase 3: Optional Runtime Enhancement](#phase-3-optional-runtime-enhancements)**
        Runtime upgrade with an edge-served small language model (SLM) to maintain host persona and tie-breaker when Sentence-BERT similarity scores are ambiguous.
 3. [**System thinking analysis**](#3-system-thinking-analysis-case-study): A high-level, conceptual exercise to holistically and dynamically assess the architecture and its design implications as part of the project case study.
 4. [**Architectural mapping**](#4-mapping-to-industry-equivalent-patterns) of the project design to industrial patterns to validate and inform decisions.
@@ -37,7 +37,7 @@ This document outlines the architectural evolution of the Semantic Verification 
     The architecture guides implementation, ensuring design decisions are validated against actual performance. 
 
 ## 1.2: Design Approach
-This project intentionally applies rigorous system design to a constrained domain. It serves two parallel goals: validating the idea of speed through rigour and accelerating my own learning through practice. As a result the project combines several learning objectives into a single end-to-end system to see how they interact:
+This project applies rigorous system design to a constrained domain, with the architecture emerging iteratively as discovery surfaced new constraints. It serves two parallel goals: validating the idea of speed through rigour and accelerating my own learning through practice. As a result the project combines several learning objectives into a single end-to-end system to see how they interact:
 
 1. **Data Science (the core)**: exploratory data analysis (EDA), contextual feature engineering, semantic similarity evaluation, and select fit-for-purpose NLP techniques.
 2. **System Design (the blueprint)**: Translating the data science insights into architectural constraints and viable trade-offs.
@@ -72,15 +72,15 @@ The design of the project is grounded from the start by looking at the project l
 3. **Systematic evolution**: As the project progresses, requirements will inevitably change. Components evolve systematically, with reusable, extensible, and feedback-driven design.
 4. **Swiss cheese approach**: layered defensive strategy (prevention, detection, correction) for data quality assurance.
 
-
 ## 1.5: Basis for Design
+Design constraints are iteratively refined using telemetry from the system tracer, which provides empirical feedback on runtime performance, routing behavior, and LLM dependency patterns.
 
 Constraints and target boundaries:
 
 ||**Constraint**|**Requirement**|**Target**|**Safety margin /**<br>**Contingency**|
 |-|-|-|-|-|
-|1|**Economics**|**Zero-cost operation**.The project demo must not incur any costs during development and be able to operate indefinitely without any operational costs|$0 fixed monthly cost|Apply hard budget alerts with a circuit-breaker set at $5.00/month|
-|2|**Performance**|**Low-latency**. Gameplay interactions need to feel instantaneous to maintain user immersion|< 500ms latency (p90)|Apply UX fallbacks to remain within acceptable UX limit (< 5s).|
+|1|**Economics**|**minimum-cost operation**.The project demo must not incur any costs during development and be able to operate indefinitely without any operational costs|$0 -$5 fixed monthly cost|Apply hard budget alerts with a circuit-breaker set at $20.00/month|
+|2|**Performance**|**Low-latency**. Gameplay interactions need to feel instantaneous to maintain user immersion|local inference < 500ms latency (p95)<br> llm path < 1~2s (p95)|Apply UX fallbacks to remain within acceptable UX limit (< 5s). Optimize resolution with local inference where possible. |
 |3|**Quality**|**Domain authenticity**. Content must be tonally consistent and canonically accurate to satisfy fan base (tweens to adults)|100% Verifiable (books 1-7, movies, Rowling's supportive works)|Swiss cheese logic (multi-layered validation)|
 |4|**Capacity**|**Demo scale**. System needs to be sized to handle expected concurrent users within cost (free) limits.|5 - 10 concurrent users|Graceful Degradation. Implement load shedding or request queuing rather than crashing or incurring unplanned costs.|
 |5|**Scalability**|**Future-Proof economics**. Design should demonstrate viable path to scale where growth doesn't erode margins (capex vs. opex)|Constant or decreasing unit cost|Prototype & projection. Use "tracer bullet" experiments to empirically validate assumptions before committing to the architectural pattern|
@@ -92,7 +92,7 @@ Build a smart, domain-centric trivia game demo that prioritizes correctness, low
 
 # 2: Architectural Schemes & ADRs
 
-The project has **three** design stages. T
+The project has **three** design stages. 
 
 Phase|Link|Function| Risk Mitigated|ADR Summary|
 |-|-|-|-|-|
@@ -204,26 +204,23 @@ The original CLI-MVP (v0) came across as a *wall of text* which hindered immersi
 
 This marks a major shift in the project. Phase 2 intentionally concentrates architectural complexity offline so that runtime and gameplay remain simple, fast, and deterministic. It moves from data science experimentation to MLOps infrastructure development and lays the architectural groundwork.
 
-The key value-add here is the introduction of *semantic intelligence* at the interaction level. Players are no longer required to match exact wording when answering questions; the game can recognize differently phrased but equivalent answers, making interaction feel more natural and less rigid. This does not involve live GenAI reasoning or control at runtime.
+The key value-add here is the introduction of *semantic intelligence* at the interaction level. Players are no longer required to match exact wording when answering questions; the game can recognize differently phrased but equivalent answers, making interaction feel more natural and less rigid.
 
 The figure below shows the overall architecture. The dark purple components (baseline trivia dataset v0 and the game application code) are inherited from phase 1. 
 
 ![Phase 2 development scheme](../assets/docs/phase2/phase2_dev_main.jpg)
 **Figure 4.** High-level phase 2 system architecture.
 
-The system is split into three main regions. The first is the *Content factory* is responsible for the data generation and maintenance following a *Medallion pattern*, creates a gold-level dataset. Refer to the [Content Factory in-depth](#p2-content-factory-architecture-in-depth)  section for further details  
+The system is split into three main regions. The first is the *Content factory* is responsible for the data generation and maintenance following a *Medallion pattern*, creates a handoff gold-level dataset. Refer to the [Content Factory in-depth](#p2-content-factory-architecture-in-depth)  section for further details  
 
 The dataset then passes to the second **Context Refinery** subsystem. Here the data is processed for contextual enrichment (e.g NER tags, difficulty labels). The feature logic is developed and validated interactively using notebooks. The new features are added to the `Production` dataset offline keeping the runtime interface stable. 
-The game will have a tiered, hybrid answer-checking approach to balance speed, determinism, and robustness:
-1. Exact match
-2. Fuzzy match
-3. Semantic similarity (Sentence-BERT)
-The SBERT model's primary purpose is semantic answer checking at runtime but it also enables offline capabilities. Using a *single-producer, multi-consumer pattern* → the model is generated once and consumed by multiple independent components: the Content Factory (for validation), the runtime (for answer checking), and the production dataset (as reference embeddings).
 
-The design of Context Refinery mirrors the industry Feature Store pattern  where all the feature addition is decoupled from other subsystems to create an offline store (refer to [section 4](#4-technical-architecture--pattern-mapping)). 
+#### Context enrichment layer
+
+The Context Refinery is a decoupled offline enrichment layer. Feature engineering happens here, separated from the Content Factory and the runtime. This approach aligns with the offline portion of the Feature Store pattern (see [section 4](#4-technical-architecture--pattern-mapping)), though it deliberately stops short of a full feature store; no serving layer, no online parity.
 
 <details>
-<summary><strong>Expand for design note: How Context Refinery was refined using the Feature Store pattern</strong></summary>
+<summary><i>Expand for design note: how Context Refinery was refined using the Feature Store pattern</i></summary>
 
 ### How the Feature Store lens refined the Context Refinery
 
@@ -241,22 +238,59 @@ This shift did not change the system’s behavior, but it clarified responsibili
 A natural next step is to automate parts of this workflow so new features can be added without relying on notebooks. In its simplest form, this would not require a full Feature Store service. A lightweight interaction layer (e.g. script with structured inputs) would be enough to trigger feature generation using the same validated logic already in place. This would make feature addition faster and more consistent, while keeping the system lean and aligned with the existing design.
 
 </details>
+
+#### Multiple use of SBERT across the system
+
+The SBERT model's primary purpose is semantic answer checking at runtime but it also enables offline capabilities. Using a *single-producer, multi-consumer pattern* → the model is generated once and consumed by multiple independent components: the Content Factory (for validation), the runtime (for answer checking), and the production dataset (as reference embeddings).
+
+#### Player Answer Evaluation
+The game uses tiered, hybrid answer-checking to balance speed and determinism with correctness. Evaluation splits at two levels.
+
+*Main router*: diverts by text and non-text answers (date, year, numeric).
+A non-text answer subrouter delivers the payload to structured evaluators. A text answer subrouter dispatches to semantic evaluators based question type.
+
+*Structured evalautors*: non-text player answers go directly to deterministic, rule-based evaluators against split on answer type ; no semantic or model inference involved.
+
+*Semantic evaluators*: the text answer subrouter than dispatches to an evaluator based on question type (MCQ, EX, FR). Tiers are ordered to resolve as early as possible:
+1. Exact match (local inference)
+2. Fuzzy match (local inference)
+3. Semantic similarity (Sentence-BERT; local inference)
+4. NLI verification (local inference, logic integrated; activates with planned claim-decomposition)
+5. LLM escalation (bounded last-resort judge)
+
+<details>
+<summary><i>Evaluator decision logic — FR and EX flow diagrams</i></summary>
 <br>
 
-Finally the dataset is ready for *production* (in-game use). It is also used to fine-tune a SentenceBERT model. This is then deployed back into the system to the `qa_validation` pipeline, as well as to add reference embedding vectors to the production dataset to provide static basis for in-game answer checking, and to the game itself for processing the player answer.
+**FR (Factual Recall) evaluator**: Tiered with early exits at each stage. The verbosity bypass routes 
+over-long answers directly to LLM.
+![FR evaluator logic](/assets/docs/phase2/fr_evaluator_logic.jpg)
+
+<br>
+
+**EX (Explanatory) evaluator**: SBERT acts as a filter, not a resolver. The wide ambiguous band (between semantic threshold and ambiguous cutoff) are all passed to LLM for final resoultion in the tracer. NLI is implemented but proved ineffective without decomposing the answers into atomic claims. Disabled for Tracer till claims are implemented.
+![EX evaluator logic](/assets/docs/phase2/ex_evaluator_logic_v0-1.jpg)
+
+</details>
+
+<br>
+
+MCQ types are the simplest and can be resolved with the first three tiers. FR (short 1-3 words) are also largely handled locally . Long answers (verbose player answers or outlier dataset answer lengths) bypass SBERT and are escalated directly to LLM, since sentence-level similarity is unreliable here. The explanatory (EX) answers that are long, multi-component, and vary largely require all evaluation tiers.
+
+The tiered structure emerged through iterative evaluator development during the tracer build. SBERT alone capped at ~60% accuracy on long Explanatory answers, which carry multiple implicit claims that sentence-level similarity cannot reliably verify. Adding a bounded LLM judge as the final tier raised evaluator accuracy to 85–93%. The LLM is the last-resort tier. Tracer telemetry shows ~69% of questions resolve locally without an LLM call.
 
 ### Phase 2 Architectural Invariants
 This section captures the core assumptions the system relies on to remain correct and predictable. These invariants define ownership, data flow direction, and consistency rules that shape the SVE system behavior. Making them explicit helps guide future changes and prevents accidental violations as the system evolves
 
 | Invariant | Description | Enforced by |
 |---------|------------|------------|
-| **Single semantic source of truth** | The Gold dataset is the authoritative source for semantic data. Semantic embeddings are generated in the `qa_validation` pipeline and owned by the Gold dataset. Semantic comparison rules are defined in [ADR-P2-013](#p2-key-decisions-adrs). | Content Factory pipelines |
-| **Single active SBERT model** | At any point in time, exactly one SBERT model version is active across offline pipelines and runtime. Model versioning and upgrade rules are defined in [ADR-P2-013](#p2-key-decisions-adrs). | NLP Lab + pipeline validation |
-|**Embedding-Schema coherence**|Every Gold record must contain a Question and Answer embedding generated by the currently active SBERT model, see [ADR-P2-013](#p2-key-decisions-adrs)|Pydantic `Silver` schema|
-| **Gold dataset immutability** | Gold datasets are treated as immutable artifacts. All updates produce a new version rather than mutating data in place. | DVC + publishing pipeline |
+| **Single semantic source of truth** | Embeddings and semantic comparison rules have exactly one authoritative origin.|qa_validation pipeline ([ADR-P2-013](#p2-key-decisions-adrs)). |
+| **Single active SBERT model** | Exactly one SBERT model version is active across all offline pipelines and runtime at any time. | NLP Lab + pipeline validation ([ADR-P2-013](#p2-key-decisions-adrs)).|
+|**Embedding-Schema coherence**|No record advances a tier without a valid embedding from the active model.| Pydantic schema gate|
+| **Append-only system of record** | The audit ledger is never mutated in place; corrections are new entries.|DVC + publishing pipeline|
 | **Stateless runtime** | The runtime does not generate or mutate data. It only consumes production-ready artifacts. | Runtime architecture |
 | **Offline-first intelligence** | Expensive or high-volume intelligence is performed offline. Runtime logic is optimized for latency and responsiveness. | Phase 2 design |
-| **Gold → Production only** | Data flows unidirectionally from Gold to Production. Production datasets are regenerated artifacts and are not used as inputs to Content Factory pipelines. | Publishing pipeline |
+| **Unidirectional flow** | Data flows unidirectionally from content factory to context refinery. Production datasets are regenerated artifacts and are not used as inputs to Content Factory pipelines. | Publishing pipeline |
 
 **Design note**: Evaluating DVC surfaced an open boundary decision around how much generation metadata to retain for traceability versus shed for a lean runtime dataset. This boundary will be validated after observing real generation → validation → enrichment pipeline runs.
 
@@ -273,6 +307,9 @@ This section captures the core assumptions the system relies on to remain correc
 **Architecture Notes**: 
 The data-tiers are managed and gatekept using Pydantic v2 models with sequential inheritance from 
 BaseModel -> [Bronze_Legacy | Bronze_Synthetic] (parallel ingestion) -> Silver (system of record / invariant ledger) → Gold (derived runtime contract) → Production layers (feature views): {Production_Green | Production_Blue} (branching inheritance).
+
+<details><summary><i>Expand to view further discussion and explanation</i></summary>
+
 
 **1.The Silver-Gold Separation of Concerns**
 To ensure low-latency handoffs to downstream systems while maintaining clear traceability of LLM-generated content, a strict separation of concerns will be enforced between the Silver and Gold tiers:
@@ -291,7 +328,9 @@ The lifecycle will be managed as follows:
 
 **3. Object-oriented evaluation contract for the Answer Evaluators**: The pydantic schema is the interface for the runtime Answer Evaluators. So instead of passing dataframe rows parsed as dicts, the game instantiates them into a `Question` object.
 - *Allows for dot-notation*: This allows for the data to be accessed via strict predefined attributes based on the SOT Pydantic schema (eliminating KeyErrors or column mixups).
-- *Schema driven logic*: The `answer_type` Enum defined in the schema acts as the primary key for the `runtime_router` dispatch logic, ensuring the right data payload always hits the correct Answer Evaluator.
+- *Schema driven logic*: The `answer_type` Enum defined in the schema is the first dispatch key in the `runtime_router`, splitting answers into text and non-text paths. Text answers route to the semantic subrouter, which dispatches on question_type (FR, EX, MCQ). Non-text answers route to the structured subrouter, which dispatches on the specific answer_type (date, numeric, year) to the matching deterministic evaluator.
+
+</details>
 
 ## P2 Key Decisions (ADRs)
 
@@ -303,7 +342,7 @@ The lifecycle will be managed as follows:
 | **[ADR-P2-003](adrs/ADR-P2-003.md)** | **Context Refinery Pattern** | ✅ Accepted | Move descriptive feature generation out of the Content Factory. Context Refinery operates as an offline feature store. |
 | **[ADR-P2-004](adrs/ADR-P2-004.md)** | **Generative Model (Gemini)** | ✅ Accepted | Standardize on **Google Gemini** for synthetic data generation due to superior cost-performance ratio and native integration with the GCP stack. |
 |[ADR-P2-005](adrs/ADR-P2-005.md)|**Tiered semantic answer-checking strategy**|✅ Accepted<br>(retroactive)|Use a tiered approach to balance latency and correctness: (1) direct match, (2) fuzzy match, (3) semantic similarity using Sentence-BERT|
-| **[ADR-P2-013](adrs/ADR-P2-013.md)** | **Centralized Semantic Validation Strategy** | ✅ Accepted | Establishes the Gold dataset as the single source of truth for semantic embeddings and standardizes semantic validation using a single SBERT model across the system.|
+| **[ADR-P2-013](adrs/ADR-P2-013.md)** | **Centralized Semantic Validation Strategy** | ✅ Accepted | Establishes the Silver dataset as the single source of truth for semantic embeddings and standardizes semantic validation using a single SBERT model across the system.|
 |**[ADR-P2-017](adrs/ADR-P2-017.md)**| Serverless Deployment | ✅ Accepted | Move to a managed container service to enable automatic scaling, reduce operational maintenance, and support a multi-user FastAPI backend.|
 <br>
 
@@ -365,13 +404,15 @@ The system-thinking approach asks you walkthrough your design an understand how 
 ![ACES architecture](../assets/docs/phase2/phase2_dev_aces.jpg)
 **Figure 5.** Phase 2 Content Factory architecture (final iteration).<br>
 
-The Gold dataset is initialized by passing the curated legacy questions through the same `qa_validation` pipeline used for synthetic question generation. This ensures that Gold is always materialized through the same single, validation path rather than being treated as a special case at the start.
+The Silver dataset is initialized by passing the curated legacy questions through the same `qa_validation` pipeline used for synthetic question generation. This ensures that Silver is always materialized through the same single, validation path rather than being treated as a special case at the start.
 
-Once Gold is established, all newly generated questions are validated and deduplicated against the existing Gold dataset. This ordering is intentional; it prevents curated legacy questions from being incorrectly flagged as duplicates of later synthetic content and guarantees that all semantic comparisons are performed using the same logic and thresholds.
+Once Silver is established, all newly generated questions are validated and deduplicated against the existing Silver dataset. This ordering is intentional; it prevents curated legacy questions from being incorrectly flagged as duplicates of later synthetic content and guarantees that all semantic comparisons are performed using the same logic and thresholds.
 
-Semantic embeddings are generated as part of dataset materialization. All embedding generation occurs within the `qa_validation` pipeline, making the Gold dataset the single semantic source of truth for deduplication and validation across the system.
+Semantic embeddings are generated as part of dataset materialization. All embedding generation occurs within the `qa_validation` pipeline, making the Silver dataset the single semantic source of truth for deduplication and validation across the system.
 
-The system initially uses a vanilla SBERT model for sentence similarity. Fine-tuning is deliberately deferred until contextual features, NER outputs, and generated question–answer variations are sufficiently mature to support meaningful training, avoiding premature optimization and rework.
+Gold is then derived from Silver as a schema-gated projection, a lean runtime mirror with audit and trace metadata stripped, handed off to the Context Refinery. Gold carries the embeddings needed for runtime but does not own them; Silver remains the authoritative source.
+
+The system uses an off-the-shelf SBERT model for sentence similarity. Whether to fine-tune remains an open, deferred decision; the ambiguous cases fine-tuning would target (long, multi-claim Explanatory answers) are better handled by the LLM/SLM judge tier, so fine-tuning is currently a lower-value investment. See [ADR-P2-013](../docs/adrs/ADR-P2-013.md) for the full rationale.
 
 ### Design evolution
 
@@ -381,13 +422,14 @@ The system initially uses a vanilla SBERT model for sentence similarity. Fine-tu
 |**2**|Integrate verified baseline data|Two ingestion paths into Bronze layer (synthetic + curated)|Gold dataset could not be safely extended without overwriting or ad-hoc patching|[Diagram: Iteration 2](../assets/docs/phase2/p2_content_factory_iterations/p2_cf_iteration_2.jpg)|
 |**3**|Enable safe, repeatable dataset evolution|Replace ad-hoc update scripts with a unified enrichment pipeline supporting multiple execution modes (update, correction, feature addition)|Enrichment pipeline overhead not justified by the expected frequency of change / updates to trivia dataset|[Diagram: Iteration 3](../assets/docs/phase2/p2_content_factory_iterations/p2_cf_iteration_3.jpg)|
 |**4**| Improve validation and correction controls|1. SBERT decoupled into index for deduplication<br> 2. manual correction mechanism (Kill list + SOP + modular validation)<br>3. Bootstrap-and-shed enrichment: legacy data updated once via notebook, then shed; shared logic hardened into a enrichment pipeline.|Semantic behavior existed but was not clearly owned or enforced, making consistency across pipelines and runtime ambiguous|[Diagram: Iteration 4](../assets/docs/phase2/p2_content_factory_iterations/p2_cf_iteration_4.jpg)|
-|**5**|Semantic ownership & consistency|Semantic validation logic was centralized. Semantic embeddings are treated as durable Gold-owned data and semantic comparison is standardized across deduplication and validation workflows. A single SBERT model version is enforced across offline pipelines and runtime. Detailed rules and invariants are defined in [ADR-P2-013](#p2-key-decisions-adrs)|-|[Figure 5](#p2-content-factory-architecture-in-depth)|
+|**5**|Semantic ownership & consistency|Semantic validation logic was centralized. Semantic embeddings are treated as durable Gold-owned data and semantic comparison is standardized across deduplication and validation workflows. A single SBERT model version is enforced across offline pipelines and runtime. Detailed rules and invariants are defined in [ADR-P2-013](#p2-key-decisions-adrs)|Semantic authority and runtime contract were conflated in Gold. Gold held embeddings, metadata, and traceability (authority role) and also the lean runtime handoff (contract role). Minor, awkward differences between Silver's validation state and Gold's authority state revealed that ownership belonged upstream, adjacent to where deduplication actually occurs|[Diagram: Iteration 5](../assets/docs/phase2/p2_content_factory_iterations/phase2_dev_aces_iteration_5.jpg)|
+|**6**|Consolidate semantic authority at Silver; reduce Gold to a derived mirror|Silver promoted to system-of-record: `master_id` assignment and embedding/metadata ownership moved to Silver (adjacent to `qa_validation` where deduplication occurs). Publisher pipeline removed; Gold becomes a derived handoff mirror (schema-gated projection of Silver) rather than a promoted artifact. Fine-tuned SBERT commitment relaxed (SLM/LLM judge tier addresses the ambiguous cases fine-tuning would have targeted).|- (terminal). Architecture converged; stabilization and automation follow|[Figure 5](#p2-content-factory-architecture-in-depth)|
 
 **Future consideration (deferred):**
 Adding a third path for manually entered questions was considered but postponed. For now manual input is handled as controlled corrections rather than a full ingestion flow.
 
 ### Schema evolution & safe change
-The core value produced by the Content Factory is the trivia dataset. To keep data quality consistent across new generation batches and updates, a centralized schema is needed. This schema is enforced in the `qa_validation` pipeline as a gatekeeper to the `Silver` dataset. The schema is implemented using Pydantic classes, where:
+The core value produced by the Content Factory is the dataset. To keep data quality consistent across new generation batches and updates, a centralized schema is needed. This schema is enforced in the `qa_validation` pipeline as a gatekeeper to the `Silver` dataset. The schema is implemented using Pydantic classes, where:
 
 - New features are introduced as `Optional` fields.
 - Backfills are executed using the same enrichment logic as new data, once that logic is promoted from the notebook into a pipeline (second swim lane).
@@ -400,7 +442,7 @@ This approach allows the system to safely upgrade historical data over time, wit
 The Content Factory treats data changes and outcomes as four distinct cases:
 
 1. **Creation**: automated synthetic question generation using LLMs.
-2. **Validation (filtering)**: automated checks in the `qa_validation` pipeline. Records that fail early checks never enter `Silver`; Semantic checks and embedding generation occur during the qa_validation pipeline as part of Silver validation, with embeddings owned by the resulting Gold dataset upon publication. Semantic embeddings are generated exclusively within the `qa_validation` pipeline during Gold dataset materialization. The NLP lab supplies the embedding model, but never writes directly to the datasets.
+2. **Validation (filtering)**: automated checks in the `qa_validation` pipeline. Records that fail early checks never enter `Silver`; Semantic checks and embedding generation occur during the `qa_validation` pipeline as part of Silver validation. Semantic embeddings are generated exclusively within the `qa_validation` pipeline during Silver dataset materialization. 
 3. **Correction**: manual fixes applied through clear SOPs when accepted data is later found to be wrong.
 4. **Removal**: explicit blocking of questions from the `Bronze` data with `kill lists` to prevent known-bad items from re-entering the `Gold` dataset.
 
@@ -415,11 +457,22 @@ To keep Phase 2 focused and avoid premature infrastructure complexity, the follo
 - No online learning or user-driven correction loops
 
 ## P2 Runtime Environment
-![Phase 2 CLI-MVP deployment scheme](../assets/docs/phase2/phase2_dev_runtime.jpg)
-**Figure 6.** Phase 2 CLI-MVP demo deployed as a container on a serverless cloud platform with logging and github automation.
+The architecture below is the anticipated Phase 2 runtime design. The tracer is currently deployed on the Phase 1 GoTTY/VM setup for quick end-to-end results; the full runtime upgrade is staggered (see below). Figure 6 shows the target design, not the current tracer deployment.
 
+![Phase 2 CLI-MVP deployment scheme](../assets/docs/phase2/phase2_dev_runtime.jpg)
+**Figure 6.** Phase 2 CLI-MVP demo target architecture deployed as a container on a serverless cloud platform with logging and github automation.
+
+### Staggered runtime upgrade
+The runtime upgrade is deliberately staggered rather than implemented all at once:
+
+1. **Tracer (current)**: Phase 1 GoTTY/VM deployment, reused for speed. It let the end-to-end logic be validated without runtime refactoring.
+2. **Next — FastAPI service layer**: the priority upgrade, addressing the two limitations the tracer surfaced, single-session concurrency (GoTTY shares one terminal) and cold-start lag (~30s model load). A FastAPI service enables concurrent sessions and a single warm startup.
+3. **Deferred — full operational tooling:** CI/CD automation and cloud logging are deferred until justified by usage. Manual session reports cover observability needs at current demo scale; the added complexity only pays off at meaningful user volume.
+
+### Deferred anticipated upgrades
+Detail on the operational tooling deferred in step 3 above:
 - **Demo-level CI/CD**: The container extends the Phase 1 implementation with automated docker builds triggered by Git events (e.g. updates to container or application files with Google Cloud Build).
-- **Logging and tracking**: The runtime system maintains simple logging for basic visibility. The logs are reviewed periodically in batches. More advanced monitoring and human review workflows are intentionally deferred to Phase 3 and will **only** be added if user activity reaches a meaningful level (e.g. ~ 100+ users / month), where the added complexity becomes worthwhile.
+- **Logging and tracking**: Currently manual session reports reviewed periodically in batches. Advanced monitoring and human review workflows are intentionally deferred to Phase 3 and will **only** be added if user activity reaches a meaningful level (e.g. ~ 100+ users / month), where the added complexity becomes worthwhile.
 
 ### Setup a data refresh policy
 Since the question runs are batched and infrequent from a contained source (HP books), a policy for rebuilding the container is needed to prevent unnecessary build churn. A new deployment is only triggered when significant value is added:
@@ -427,69 +480,44 @@ Since the question runs are batched and infrequent from a contained source (HP b
 - Schema evolution: Immediate rebuilds for structural changes (new features/columns).
 - Critical patching: Ad-hoc rebuilds are permitted only for severe correctness fixes.
 
-## PHASE 3: Model-Assisted Game Master (Optional)
-**Objective**: Improve game perceived intelligence and experience by edge serving an SLM model.
+## PHASE 3: Optional Runtime Enhancements
+**Objective**: Improve perceived game intelligence through optional, controlled use of an SLM or LLM.
 
-### P3 Overall development
+Phase 3 is an optional enhancement that adds value by enabling more natural-feeling interactions in the game. This is achieved by introducing GenAI further in a controlled, guided manner and continue keeping the game itself deterministic. The system is modular and integration can be managed at interfaces.
 
-Phase 3 is an optional enhancement that adds value by enabling more natural-feeling interactions in the game. This is achieved by introducing GenAI in a controlled, guided manner while keeping the game itself deterministic.
+### Options to consider
 
-![Phase 3 development scheme](../assets/docs/phase2/phase3_dev_main.jpg)
-**Figure 9.** High-level phase 3 system architecture update.
+Because integration is managed at stable interfaces, the optoins are not mutually exclusive. The system can start with the lowest-burden option and migrate as requirements justify, without re-architecting the runtime.
 
-The system is extended with lightweight, player-perceived intelligence at runtime through a small language model (SLM) that supports well-defined behaviors. The SLM augments interaction quality but is never authoritative over game state, scoring, or dataset truth. The system remains fully functional using SBERT-based semantic checking alone with the SLM upgrade providing improved ambiguity handling of answers and interaction quality. 
+1. **Distributed microservice** (LLM, SBERT, database as services): when concurrency/scale demands independent scaling.
+2. **Isolated edge containers** (local models, upgraded VMs): when data sensitivity prohibits external calls (patented/confidential), or fixed-cost self-containment is needed. This is the path that makes the architecture viable for regulated domains where external APIs are not permitted.
+3. **Provider-agnostic API interfacing**: lowest operational burden; LLM interface abstracted from any single provider (not tied to Google), provider becomes a swappable configuration. Viable when data can leave the boundary and per-query cost is acceptable/offset.
 
-The expensive, high-volume intelligence tasks continue to be executed offline in well-defined, limited batches. And the runtime remains focused on user experience and responsiveness. 
+### Deciding factors
+1. **Primary**: demonstrated need for scale + user interest (is the enhancement even wanted?)
+2. **Constraint:** data sensitivity (may rule out external APIs entirely)
+3. **Economic**: cost, unless offset by revenue/subscription.
 
-During offline dataset generation, the LLM acts as a teacher in shaping the Production dataset so it is suitable for training a student SLM model. The SLM is fine-tuned to adopt a game master persona / tone (for hints, feedback, fun facts etc) and act as a fourth-tier answer judge when SBERT-based checks are ambiguous.
-
-By embedding the fine-tuned SLM directly into the runtime, the system avoids external API calls. This preserves a self-contained deployment model and prevents unbounded operational costs if traffic exceeds free-tier limits.
-
-To remain cost-free at the demo stage and feasible within a containerized runtime, the SLM is heavily quantized and constrained to a small set of well-defined behaviours. The model is not used for open-ended reasoning or dialogue. Instead, it performs short, bounded inference tasks such as answer adjudication when similarity checks are ambiguous and generating lightweight, responsive interactions between questions. Pre-authored hints and fun facts are already available in the container dataset, further limiting runtime computation.
-
-The NLP lab and NER feature logic remain notebook-based at this stage, as these transformations are exploratory and low-frequency. They are intended to be hardened into pipelines only once they stabilize.
-
-### P3 Key Decisions (ADRs)
-
-| ID | Title | Status | Summary |
-| :--- | :--- | :--- | :--- |
-|[ADR-P3-001](adrs/ADR-P3-001.md)|Local SLM runtime & offline knowledge distillation|✅ Accepted |Edge serving SLM that is trained using Content Factory outputs for persona and judge behaviour|
-|[ADR-P3-002](adrs/ADR-P3-002.md)| Single GameController-Managed SLM|✅ Accepted |Use a single internal SLM to switch roles (Judge, Persona) via hidden system prompts injected by the Controller, ensuring user input is treated only as data|
-||
-
-### P3 Runtime Environment
-![Phase 3 game deployment architecture](../assets/docs/phase2/phase3_dev_runtime.jpg)
-**Figure 10.** Phase 3 updates to the game cloud deployment (local SLM).
-
-The runtime SLM operates as a lightweight, local behavioral layer within the container. It does not select questions, define ground truth, or replace deterministic scoring. Questions and answers remain sourced from the Production dataset, with SBERT providing the primary semantic similarity checks. The SLM is invoked only to handle interaction-level behavior—such as feedback phrasing, transitions, hint framing, and tie-breaking judgment when SBERT results are ambiguous—allowing perceived intelligence without compromising determinism. All models and data are co-located intentionally: the container size was considered and accepted as a trade-off for predictable cost, dependency-free execution, and deployment simplicity under free-tier constraints.
-
-**Optional logging and tracking**: GC Operating Suite captures structured logs and system metrics, enabling basic performance monitoring and a user feedback signal for dataset corrections **only if** sufficient stable number of player per month can justify the complexity. 
-
-<!--  ⚠️ Architectural Note on Free-Tier Constraints
-
-To remain within the Cloud Run Free Tier (360,000 GiB-seconds/month), the Phase 3 container is strictly sized to 2GB RAM.
-- Model Selection: We utilize a 4-bit quantized SLM (e.g., Qwen 2.5 1.5B via llama.cpp), which requires ~1.2GB VRAM, leaving ~800MB for application overhead.
-- Concurrency Strategy: The service is configured with min-instances: 0 (Scale-to-Zero). This incurs a "Cold Start" penalty (3–5s) on the first request of a session but ensures zero cost during idle periods.
-- Budget Cap: A hard billing cap is configured at $5.00/month to prevent runaway costs from "warm" instance configurations or denial-of-service traffic spikes. -->
 
 <a name="4-technical-architecture--pattern-mapping"></a>
 
 # 4: Technical Architecture & Pattern Mapping
 
-The architecture of this project was not pre-designed; it evolved iteratively. Since the design is solving issues and bottlenecks commonly seen in data and AI applications (latency, hallucination, cost), the system naturally converged on established industry patterns.
+The architecture evolved iteratively. Since the design is solving issues and bottlenecks commonly seen in data and AI applications (latency, hallucination, cost), mapping the resulting design against established industry patterns serves two purposes:
+- *Validation:* The pattern represents recurring system constraints with well-developed solutions.  Arriving at a similar pattern organically confirms the design is heading in the right direction. 
+- *Learning*: by identifying the named patterns and where they appear at scale.
 
-### The Core Architecture: Decoupled Inference (CQRS)
-The fundamental design decision was to separate the *generation* of intelligence from the *consumption* of it. This follows the same idea as **CQRS (Command Query Responsibility Segregation)** where expensive work happens offline or upstream so that runtime paths stay simple and predictable.
+## Core idea: offline computation, lean runtime
+The core concept for this project is to separate the generation of intelligence from its consumption. Expensive work, generation, validation, and enrichment, happen offline and upstream. The runtime serves precomputed, validated results.
 
-## Mapping to industry equivalent patterns
-The table below maps these organic design choices to their industry equivalents, demonstrating how the project aligns with standard engineering principles.
+The pattern appears in the table below in specific forms: batch inference (offline generation), materialized views (precomputed serving), feature stores (offline enrichment) — but they share one root idea -> compute ahead of time, serve cheaply at runtime.
 
 | Component | Design Pattern | Industry Parallels | Why the Design Converged Here |
 | :--- | :--- | :--- | :--- |
-| **Content Factory** | **Batch Inference**<br>(Offline ETL) [[1]](#references) | **Netflix / Spotify**<br>*(Offline generation of recommendations)* | **Shared Constraint: Latency.**<br>ITP pre-computes questions to ensure instant gameplay. This mirrors how **Netflix** pre-generates *Discover Weekly* playlists overnight so users never wait for inference when hitting *play* [[2]](#references). |
-| **Context Refinery** | **Feature Store**<br>(Enrichment) [[3]](#references) | **Uber / Airbnb**<br>*(Data enrichment pipelines)* | **Shared Constraint: Context as Features**<br>The Context Refinery adds a layer of intelligence by tagging content with semantic features (like themes) in advance. By saving these pre-computed tags to the dataset offline (the offline feature store), runtime remains fast because the heavy lifting is already done. This mirrors the concept behind Uber's Michelangelo (offline portion of the Palette Store)  which turns raw GPS pings into high-level signals, adding context like *driver behavior history* or *historical demand patterns* offline, so the app can make split-second dispatch decisions [[4]](#references).|
-| **Runtime Container** | **Read-Write Decoupling**<br>(Stateless Read / Pre-materialization) [[5]](#references) | **High-Scale Web Apps**<br>*(Twitter/X timelines)* | **Shared Constraint: Reliability.**<br>By pre-materializing the dataset, ITP isolates the game (Reader) from the generator (Writer). This mirrors **Twitter's** architecture, where the "Timeline View" is isolated from the "Tweet Ingestion" service to prevent crashes during high traffic [[6]](#references).|
-| **Prefect Workflow** | **DAG Orchestration** [[7]](#references) | **Modern Data Stacks**<br>*(Lyft/DoorDash logistics)* | **Shared Constraint: Data Integrity.**<br>ITP uses DAGs to enforce a **Medallion Architecture** (Bronze $\rightarrow$ Silver $\rightarrow$ Gold). This mirrors **DoorDash's** ETL pipelines: if the "Bronze" validation fails, the data is quarantined, preventing corrupt logic from reaching the user. |
+| **Content Factory** | **Batch Inference**<br>(Offline ETL) [[1]](#references) | **Netflix / Spotify**<br>*(Offline generation of recommendations)* | **Shared Constraint: Latency.**<br>SVE pre-computes questions so gameplay is instant. This mirrors how Netflix pre-generates *Discover Weekly* overnight, so users never wait for inference at play time [[2]](#references).  |
+| **Context Refinery** | **Feature Store**<br>(offline portion only) [[3]](#references)| **Uber Michelangelo**<br>*(offline Palette Store)* | **Shared Constraint: Context as Features**<br>TThe Context Refinery tags content with semantic features (themes, entities) ahead of time so the runtime inherits precomputed signals rather than computing them live. This aligns with the *offline portion* of a feature store, it stops short of a full feature store (no online serving layer or registry). The parallel is Uber's Palette Store, which turns raw signals into reusable features offline so dispatch decisions stay fast [[4]](#references). |
+| **Runtime Container** | **RImmutable Artifact**<br>(Stateless Read / Pre-materialization) [[5]](#references) | **Static prebuilt websites**| **Shared Constraint: Reliability.**<br>The runtime serves a static, versioned, immutable dataset produced upstream. Isolating the read path from the generation path means upstream failures cannot affect the running game. This is the same idea behind serving pre-built static content on websites. |
+| **Prefect Workflow** | **DAG Orchestration** [[6]](#references) | **Modern Data Stacks**<br>*(Lyft/DoorDash logistics)* | **Shared Constraint: Data Integrity.**<br>SVE uses DAGs to enforce a tiered, medallion-inspired data flow (Bronze → Silver → Gold → Production). Validation gates promote data between tiers; failures are quarantined before reaching the runtime. This mirrors production ETL pipelines like DoorDash's, where failed validation quarantines records before they propagate downstream. |
 
 ---
 
@@ -500,7 +528,6 @@ The table below maps these organic design choices to their industry equivalents,
 3. Qwak, “Feature store architecture,” Qwak Blog, 2023. [Online]. Available: https://www.qwak.com/post/feature-store-architecture. See *Offline Store* section.
 4. J.-H. Chen, A. Chow, J. Faleiro, Y. Liu, and A. Narayan, “Michelangelo: Uber’s machine learning platform,” InfoQ Presentations, 2017. [Online]. Available: https://www.infoq.com/presentations/michelangelo-palette-uber/
 5. C. Richardson, “Materialized view pattern,” Medium – Design Microservices Architecture with Patterns, 2019. [Online]. Available: https://medium.com/design-microservices-architecture-with-patterns/materialized-view-pattern-f29ea249f8f8.
-6. T. Nale, “Twitter timeline architecture,” Medium, 2017. [Online]. Available: https://medium.com/@tnale/twitter-timeline-architecture-e1c299646dc7.
-7. M. E. Inzaugarat, “What is a DAG? A practical guide with examples,” DataCamp Blog, 2024. [Online]. Available: https://www.datacamp.com/blog/what-is-a-dag.
+6. M. E. Inzaugarat, “What is a DAG? A practical guide with examples,” DataCamp Blog, 2024. [Online]. Available: https://www.datacamp.com/blog/what-is-a-dag.
 
 ---

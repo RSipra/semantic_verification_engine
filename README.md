@@ -7,13 +7,15 @@
 #### Constrained AI architecture for accurate, low-latency semantic evaluation  
 
 ## What is the SVE?
-Many interactive knowledge systems require intelligent behavior but their economics cannot justify continuous dependence on Large Language Models (LLMs). The challenge is to deliver accurate, engaging, and responsive experience while maintaining predictable cost, latency, and operational complexity. <br>
+
+Many interactive knowledge systems require intelligent behavior but their economics cannot justify continuous dependence on Large Language Models (LLMs). The challenge is to stay accurate and responsive while keeping cost and latency predictable.
+<br>
+
 ⛯ *Use cases: knowledge retention and interactive learning tools (e.g. educational games, certification practice, employee training)*.
 
 These constraints led to a top-down architectural design defined by a **core concept**:
->*Move expensive intelligence offline and compile into validated, reusable assets; the runtime system operates only on these assets, remaining lean, predictable, and reliable.*  
 
-
+>*Move the expensive LLM work offline and compile it into validated, reusable assets. The runtime only serves those assets so it can stay lean, fast, and predictable*
 ---
 ► [✨**Live Demo**✨](https://34.27.245.64.sslip.io/) &nbsp;|&nbsp; [Tracer Implementation Walkthrough](notebooks/01_demos/01_tracer/README.md) &nbsp;|&nbsp; [Design Doc & ADRs](docs/00_DESIGN_DOC_AND_ARCHITECTURE.md) &nbsp;|&nbsp; [Execution Plan](docs/01_EXECUTION_PLAN.md) &nbsp; <br>⚠️ *Note:  the MVP demo can take ~30s to load transformer models at the start - appreciate your patience* 😄
 
@@ -21,19 +23,21 @@ These constraints led to a top-down architectural design defined by a **core con
 
 ## Runtime Constraints (Tracer MVP)
 
-The [Basis for Design (BoD)](docs/00_DESIGN_DOC_AND_ARCHITECTURE.md#15-basis-for-design) defines the problem space, i.e. the operational requirements and targets the architecture must satisfy.
-The Tracer CLI-MVP column reflects what actually emerged from meeting those requirements in
-practice: some constraints were anticipated, others surfaced through deployment.
+The runtime environment has the tightest constraints that drive system design. The [Basis for Design (BoD)](docs/00_DESIGN_DOC_AND_ARCHITECTURE.md#15-basis-for-design) formalizes these constraints into boundaries the system must operate within and targets it should meet.
 
-*Constraints are iteratively refined using telemetry from the tracer implementation.*
+A tracer (minimum end-to-end build that exercises each subsystem) confrimed the logic and architecture work before automation is added.
+
+The Tracer CLI-MVP column reflects what actually emerged from meeting those requirements in practice: some constraints were anticipated, others surfaced through deployment.
+
+The constraints are iteratively refined as the telemetry from the tracer is collected.
 
 | Constraint |BoD Requirement |Tracer CLI-MVP |
 |-|-|-|
-| Economics | Minimum-cost operation and per-query API cost at runtime|GCP e2-micro (free-tier); zero runtime API cost.<br> Public demo HTTPS ~$11/month; security infrastructure cost emerged at deployment, within $20 contingency threshold |
+| Economics | Minimum-cost operation and minimize per-query API cost at runtime (near-zero)|GCP e2-micro (free-tier); zero runtime API cost.<br> Public demo HTTPS ~$11/month; security infrastructure cost emerged at deployment, within $20 contingency threshold |
 | Performance|Local inference < 500ms p95;<br> LLM escalation < 1–2s p95;<br> gameplay feels smooth |CPU-only Docker runtime on e2-micro (2 vCPUs, 1 GB RAM, 30GB storage);<br>local inference prioritised to minimise LLM dependency; ongoing collection of runtime latency|
 | Quality |No hallucinations at runtime;<br> evaluators correctly distinguishes correct from incorrect answers| Zero generation at runtime; pre-validated Parquet assets. <br>Evaluator accuracy ≥ 85% (85–93% observed in notebook testing; runtime measurement pending) |
 | Capacity |5–10 concurrent users within free-tier cost limits | GoTTY + Docker on GCP e2-micro; single-session in practice; GoTTY shares one terminal rather than managing independent sessions; 5–10 concurrent user target requires the planned FastAPI service layer|
-| Scalability|Unit cost constant or decreasing as content volume grows | Offline intelligence layer; marginal AI cost per query; <br> planned FastAPI service + containerised deployment enables horizontal scaling with load balancing; ceiling determined by SBERT CPU compute per VM, VM cost beyond free tier, and LLM API rate limits (~20 concurrent users estimated within free tier) |
+| Scalability|Unit cost constant or decreasing as content volume grows | Offline intelligence layer; minimal AI cost per query; <br> planned FastAPI service + containerised deployment enables horizontal scaling with load balancing; ceiling determined by SBERT CPU compute ceiling, VM cost beyond free tier, and LLM API rate limits |
 
 
 ## The System Design
@@ -42,12 +46,12 @@ practice: some constraints were anticipated, others surfaced through deployment.
 
 The full system design consists of three subsystems:
 
-1. **Content Factory (offline)**: ingests raw source text and produce structured, validated trivia content through
-Prefect-orchestrated pipelines. An adapted  medallion tier architecture enforces progressive quality gates before any content is passed on. 
+1. **Content Factory (offline)**: ingests raw source text and produces structured, validated trivia content through
+Prefect-orchestrated pipelines. An adapted medallion-tier architecture enforces progressive quality gates before any content is passed on. 
    - Tracer status: end-to-end logic confirmed in notebooks; Prefect automation in progress.
-2. **Context Refinery (offline)**: semantic processing and feature engineering layer that enriches the dataset with descriptive and contextual, thematic features. 
+2. **Context Refinery (offline)**: semantic processing and feature engineering layer that enriches the dataset with descriptive, contextual, and thematic features. 
     - Tracer status: descriptive feature logic confirmed; NER and other contextual features deferred to next stage.
-3. **Runtime environment (online)** A self-contained Docker container serving the game from validated, immutable Parquet assets. Evaluation is layered: exact match → structured rules → SBERT semantic similarity → LLM escalation. The container has no runtime dependency on upstream systems
+3. **Runtime environment (online)**: A self-contained Docker container serving the game from validated, immutable Parquet assets. Evaluation is layered: exact match → structured rules → SBERT semantic similarity → LLM escalation. The container has no runtime dependency on upstream systems.
     - Tracer status: deployed and live.
 
 [![The core demo implementation (Phase 2)](assets/docs/phase2/phase2_dev_main.jpg)](assets/docs/phase2/phase2_dev_main.jpg)
@@ -60,8 +64,8 @@ The SVE architecture is domain-agnostic.
 The underlying system solves a generalizable problem: converting dense, static knowledge into accurate, interactive, and auditable delivery at low cost.
 
 - *Validation layer:*  The Harry Potter interface serves as the reference implementation and test surface. <br>
-- *Why?* The series was chosen because it is bounded knowledge domain, widely recognized, with well-defined scope that can be used to define objective validation criteria. It retains many of the language evaluation challenges from larger domains while remaining accessible and fun! 🧙🏼‍♂️. This makes it suitable for validating architecture without domain complexity obscuring the system complexity. 
-- *Generalization*: Applying SVE to a regulated domain, such as clinical Q&A, compliance training, or financial certification, would require stricter controls at specific layers. The requirements can be accommodated without structural redesign through configuration, further enhanced validation, and policy decisions.
+- *Why?* The series was chosen because it is a bounded knowledge domain, widely recognized, with well-defined scope that can be used to define objective validation criteria. It retains many of the language evaluation challenges from larger domains while remaining accessible and fun! 🧙🏼‍♂️. This makes it suitable for validating architecture without domain complexity obscuring the system behaviour. 
+- *Generalization*: Applying SVE to a regulated domain, such as clinical Q&A, compliance training, or financial certification, would require stricter controls at specific layers. The requirements can be accommodated without structural redesign through configuration, enhanced validation, and policy controls.
 
 
 ## Preliminary Runtime Metrics
@@ -87,7 +91,7 @@ primarily determined by the LLM API call.
 |LLM escalation|2.6s|7.1s|Above target; high EX question share inflates this, max: 33s|
 |Overall evaluation|2.6s|9.9s|LLM path driven; p95 above 5s UX fallback. LLM evaluations include a 6s cooldown to manage RPM limits| 
 
-- Free-tier penalty: shifting to paid-tier will shrink the required cooldown time needed between requests. Currently the free-tier requires 6s cool down, resulting in a evaluation latency of ~7s even if the LLM call itself took ~1~2s.
+- Free-tier penalty: shifting to paid-tier will shrink the required cooldown time needed between requests. Currently the free-tier requires 6s cool down, resulting in a evaluation latency of ~7s even if the LLM call itself took ~1 to ~2s.
 
 ### Compute
 - primarily determined by SBERT local inference.
@@ -103,8 +107,8 @@ primarily determined by the LLM API call.
 | Memory (loaded) | ~447 MB |
 
 ### Bottlenecks Identified
-- Loading models in startup leads to 30s lag in game starting that cannot be handled even with breaking sequence up with SBERT loading and warmup handled after intorduction with a UX loading screen. Will be handled when shifting to Fast API - will have a singular startup with container and keep it warm to avoid coldstart with every game start.
-- Could not run on 10GB, docker build failed, not enough temporary cache for installation requirements. Shifted to 30GB VM.
+- Loading models in startup leads to 30s lag before gameplay begins that cannot be handled even even when the initialization sequence is broken up with SBERT loading and warmup handled after introduction with a UX loading screen. Will be handled when shifting to Fast API - will have a singular startup with container and keep it warm to avoid coldstart with every game start.
+- Could not run on 10GB, docker build failed, not enough temporary cache for installation requirements. Increased VM storage to 30 GB.
 - LLM latency is highly variable. Generally within the required range but can jump to ~22 to ~35 seconds. Mitigations include shifting to paid-tier (less cool down to manage RPM usage limits) and can be managed with self-hosting a model as a service when scale justifies.
 - Explanatory answers contain  multiple implicit claims that SBERT similarity alone cannot reliably verify, routing them to the LLM judge by default. Primary driver of the 30% LLM routing share. Planned improvement: decompose long answers into atomic claims verifiable locally via SBERT / NLI, reducing LLM fallback and improving the shift-left resolution rate. NLI is implemented in evaluator but will come online with claims breakdown. 
 
@@ -143,10 +147,50 @@ The repo is structured for progressive discovery. Start with the README and demo
 5. **[Research Notebooks](/notebooks/02_research/)**: EDA, semantic deduplication, 
    SBERT analysis, prompt engineering experiments *(DS / NLP path)*
 6. **[Pipeline Scripts](/scripts/pipelines/generate_questions/) + [Game Source](/src)** 
-   — Prefect orchestration structure (*work in progress*), MVC game architecture, evaluator registry *(ML / AI systems path)*.
+   — Prefect orchestration structure (*work in progress*), MVC (Model-View-Controller) architecture, evaluator router *(ML / AI systems path)*.
+
+## A note on the design approach
+
+I come from process engineering, where the discipline is to design 
+against real constraints, validate before scaling, and measure what 
+actually happens. This project applies that instinct to ML systems: 
+enough upfront design to build confidently, enough pragmatism to ship something real and learn from it. The result is iterative development with design rigour.
+
+<!-- 
+NARRATIVE TO INTEGRATE (origin / discovery-design loop):
+
+This started as a trivia game. Each limitation in the discovery phase pulled me 
+to the next problem — brittle exact matching → semantic matching → dataset quality 
+→ deduplication → manual curation didn't scale → synthetic generation → generation 
+needed guardrails → validation. But it wasn't purely reactive: at each step I'd 
+zoom out, see how the pieces fit the larger problem space, and apply top-down design 
+(from my engineering training) to plan the response before implementing. 
+
+The architecture emerged from that LOOP — bottom-up discovery surfacing what needed 
+solving, top-down design shaping how it got solved, the next limitation validating 
+or correcting the design. This is the FEL-meets-Agile tension the project set out 
+to explore (design doc 1.2): upfront design discipline and iterative discovery 
+working together, not competing.
+
+Along the way: developed a concrete feel for what this tech costs to build and run 
+(cloud, API, infra, free-tier limits) — intuition that's hard to get without paying 
+real deployment bills.
+
+KEY POINTS:
+- BOTH modes: discovery (bottom-up) + structured design (top-down), in a loop
+- not "emerged from chaos" (undersells design) nor "planned upfront" (untrue)
+- the loop IS the FEL/Agile thesis the project explores — tie to 1.2
+- depth earned through the loop, not imposed → dissolves "over-engineered"
+- cost intuition as a named takeaway
+
+- CLOSING LINE ALREADY WRITTEN: "The result is iterative development with design 
+  rigour." — the narrative above should BUILD TO this line. It's the loop compressed: 
+  iterative = bottom-up discovery, design rigour = top-down discipline, "with" = the 
+  loop joining them. Integrate narrative so the line reads as earned conclusion.
+-->
 
 ## Project Status
-This project follows an architecture-first development lifecycle outlined in the [Design Doc](/docs/00_DESIGN_DOC_AND_ARCHITECTURE.md).
+This project follows an architecture-first, iterative development lifecycle outlined in the [Design Doc](/docs/00_DESIGN_DOC_AND_ARCHITECTURE.md).
 
 ✅ **Phase 1: Data science discovery and game foundation** [COMPLETE]
 - Discover and explore problem space and surface failure modes.
@@ -169,7 +213,7 @@ The raw dataset was manually curated and standardized to build the Baseline (v0)
 |Game Core|	MVP	|Python MVC (Model-View-Controller) Architecture w/ pytest coverage|
 
 #### Key Analytical Insights
-* **Linguistic fingerprint:** Answer length can be used to distinguish between Explanatory (EX) from other short-answer types (FR, MCQ, YN). The [boxplot analysis](#c-box-plot-of-answer-length-vs-question-type-baseline-v0-dataset) shows the the interquartile range for EX answers (8-22 words) does not overlap with FR, MCQ, or YN.
+* **Linguistic fingerprint:** Answer length can be used to distinguish between Explanatory (EX) from other short-answer types (FR, MCQ, YN). The [boxplot analysis (item 3 below)](#phase-1-visual-artifacts) shows the the interquartile range for EX answers (8-22 words) does not overlap with FR, MCQ, or YN.
     * *Architectural Implication:* Phase 2 monitors answer-shape patterns as the dataset grows to preserve consistency across question types. See [ADR-P2-014](docs/adrs/ADR-P2-014.md) for the full rationale and monitoring approach.
 - **Vector drift**: The TF-IDF vectorizer struggled with the vocabulary shift introduced by new *explanatory* (EX) questions, directly motivating the switch to Sentence-BERT (SBERT) for Phase 2 deduplication.
 - **Question-type imbalance**: The baseline dataset was heavily skewed toward Factual Recall (78%). This imbalance drove the requirement for the Phase 2 *Content Factory* to synthetically generate complex "Why/How" questions. These type of questions are key differtiators for the game experience. It should also be able to generate the other question types to keep dataset in balance.
@@ -208,17 +252,17 @@ The raw dataset was manually curated and standardized to build the Baseline (v0)
 
 🚧 **Phase 2: End-to-end core system validation** [TRACER COMPLETE]
 - **On-going**: metrics gathering;  
-- **Next:** stabilization, automation, and formalizing design.
+- **Next:** stabilizing based on tracer findings, layering automation on confirmed logic, and updating the design to reflect what the tracer lessons learnt.
 <details><summary><i>Expand to view status of milestones</i></summary>
 
 |Milestone|Status|
 |-|-|
 |Prompt engineering and generation quality validation|✅ Complete|
 |Tracer dataset (104 Legacy + 50 Synthetic across FR, EX, MCQ)|✅ Complete|
-|End-to-end tracer logic validaation (notebooks: generation → validation → enrichment → runtime)|✅ Complete|
+|End-to-end tracer logic validation (notebooks: generation → validation → enrichment → runtime)|✅ Complete|
 |Runtime container deployment (GCP VM, Docker, Tailscale)|✅ Complete|
 |Runtime performance metrics collection|🚧 In progress|
-|Prefect pipeline automation — generatio|🚧 In progress|
+|Prefect pipeline automation — generation|🚧 In progress|
 |Prefect pipeline automation — validation|📋 Planned|
 |FastAPI service layer|📋 Planned|
 
@@ -229,6 +273,7 @@ Refer to [engineering backlog](/docs/03_engineering_backlog.md) for further deta
 ## Tech Stack
 
 <details><summary>Expand to view details</summary>
+
 |Layer|Technologies|
 |-|-|
 |Language & Runtime|Python 3.12, Parquet|
