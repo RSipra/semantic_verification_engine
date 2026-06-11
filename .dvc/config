@@ -1,4 +1,4 @@
 [core]
     remote = myremote
 ['remote "myremote"']
-    url = ***REMOVED***
+    url = gs://hp-trivia-data-lake-v1
