@@ -78,6 +78,9 @@ scripts/init_memory.py
 scripts/update_memory.py
 scripts/system_memory_v0.md
 scripts/system_memory_v1.md
+CHANGELOG.md
+CODE_OF_CONDUCT.md
+LICENSE-APACHE2
 
 scripts/research/data_lifecycle_contract.json
 docs/designdoc_interview_questions.md
@@ -93,3 +96,5 @@ notebooks/02_research/10_nlp_lab_deterministic_evaluators_v0.ipynb
 storage/
 *.json
 .python-version
+phase2_tracer_deploy
+.dv/config.local

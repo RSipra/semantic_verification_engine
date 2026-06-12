@@ -8,14 +8,19 @@
 
 ## What is the SVE?
 
+The **Semantic Verification Engine (SVE)** is an architecture for building low-cost, knowledge-driven applications that evaluate user responses against validated references.
+
 Many interactive knowledge systems require intelligent behavior but their economics cannot justify continuous dependence on Large Language Models (LLMs). The challenge is to stay accurate and responsive while keeping cost and latency predictable.
 <br>
 
-⛯ *Use cases: knowledge retention and interactive learning tools (e.g. educational games, certification practice, employee training)*.
+⛯ *Example use cases: educational games, certification practice, employee training, and other knowledge-retention systems*.
 
 These constraints led to a top-down architectural design defined by a **core concept**:
 
 >*Move the expensive LLM work offline and compile it into validated, reusable assets. The runtime only serves those assets so it can stay lean, fast, and predictable*
+
+As a result, at runtime, SVE acts as a semantic evaluation layer, checking whether a user's answer is correct with progressively more sophisticated verification methods. The intelligence needed to support that evaluation is prepared offline through data generation, validation, and enrichment workflows.
+
 ---
 ► [✨**Live Demo**✨](https://34.27.245.64.sslip.io/) &nbsp;|&nbsp; [Tracer Implementation Walkthrough](notebooks/01_demos/01_tracer/README.md) &nbsp;|&nbsp; [Design Doc & ADRs](docs/00_DESIGN_DOC_AND_ARCHITECTURE.md) &nbsp;|&nbsp; [Execution Plan](docs/01_EXECUTION_PLAN.md) &nbsp; <br>⚠️ *Note:  the MVP demo can take ~30s to load transformer models at the start - appreciate your patience* 😄
 
@@ -107,7 +112,7 @@ primarily determined by the LLM API call.
 | Memory (loaded) | ~447 MB |
 
 ### Bottlenecks Identified
-- Loading models in startup leads to 30s lag before gameplay begins that cannot be handled even even when the initialization sequence is broken up with SBERT loading and warmup handled after introduction with a UX loading screen. Will be handled when shifting to Fast API - will have a singular startup with container and keep it warm to avoid coldstart with every game start.
+- Loading models in startup leads to a 30s lag before gameplay begins. This persists even after the initialization sequence was broken up and SBERT loading and its warmup are handled after introduction with a UX loading screen. Will be handled when shifting to Fast API - will have a singular startup with container and keep it warm to avoid coldstart with every game start.
 - Could not run on 10GB, docker build failed, not enough temporary cache for installation requirements. Increased VM storage to 30 GB.
 - LLM latency is highly variable. Generally within the required range but can jump to ~22 to ~35 seconds. Mitigations include shifting to paid-tier (less cool down to manage RPM usage limits) and can be managed with self-hosting a model as a service when scale justifies.
 - Explanatory answers contain  multiple implicit claims that SBERT similarity alone cannot reliably verify, routing them to the LLM judge by default. Primary driver of the 30% LLM routing share. Planned improvement: decompose long answers into atomic claims verifiable locally via SBERT / NLI, reducing LLM fallback and improving the shift-left resolution rate. NLI is implemented in evaluator but will come online with claims breakdown. 
