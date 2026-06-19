@@ -11,11 +11,11 @@ This document tracks the datasets used in this project, their sources, and any m
   - Cleaned the data by merging train and test datasets and removing the `text` column and duplicate entries.
   - Tokenized the questions and answers for Natural Language Processing (NLP) tasks into keywords.
   - **Planned Future Modifications:** Assigning difficulty levels based on token complexity and adding a column for Named Entity Recognition (NER) predictions to use for categorization.
-- **License:** Believed to be under the [Apache License 2.0](LICENSE-APACHE2) (see the `LICENSE-APACHE2` file for the full text).
-- **Note:** A local copy of the original dataset is being used for this project due to the original source being temporarily or permanently unavailable. 
+- **License:** Believed to be under the Apache License 2.0.
+- **Note:** A local copy of the original dataset is being used for this project since the original source is now unavailable. 
 
 ---
-## 📌 2. Harry Potter Book Corpus
+## 📌 2. Harry Potter Corpus
 - **Source**: R package on GitHub
 - **URL**: [https://github.com/bradleyboehmke/harrypotter]https://github.com/bradleyboehmke/harrypotter)
 - **Description**: A collection of the full text of the seven main Harry Potter books, originally packaged for R in .rda format. These files were read into Python using the pyreadr library.
@@ -36,7 +36,7 @@ This document tracks the datasets used in this project, their sources, and any m
 - **Usage**: Game backgrounds, logo, and illustrations for major trivia themes and the MC persona.
 
 ---
-## 📌 5. Sound Effects & Background Music  
+<!---## 📌 5. Sound Effects & Background Music  
 - **Source**: Free Sound Effects Library (Placeholder)
 - **URL**: [xx](xx)  
 - **Description**: Collection of magical sound effects for game feedback.  
