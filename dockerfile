@@ -45,7 +45,7 @@ WORKDIR /app
 #    
 COPY requirements.txt .
 # 5.1. torch (locked CPU)
-RUN pip install --no-cache-dir torch --index-url https://download.pytorch.org/whl/cpu
+RUN pip install --no-cache-dir torch torch==2.10.0 --index-url https://download.pytorch.org/whl/cpu
 # 5.2. remaining lightweight deps, ensure torch not overwritten by sentence transformers
 RUN pip install --no-cache-dir -r requirements.txt --extra-index-url https://download.pytorch.org/whl/cpu
 
