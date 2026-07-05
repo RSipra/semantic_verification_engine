@@ -198,7 +198,7 @@ ptyprocess==0.7.0
 pure_eval==0.2.3
 py-key-value-aio==0.3.0
 py-key-value-shared==0.3.0
-pyarrow==19.0.0
+pyarrow==24.0.0
 pyasn1==0.6.3
 pyasn1_modules==0.4.2
 pycparser==2.23

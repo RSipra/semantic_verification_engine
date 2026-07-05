@@ -11,7 +11,9 @@ regex==2026.5.9
 word2number==1.1
 dateparser==1.2.2
 google-generativeai==0.8.5
-pyarrow==19.0.0
+pyarrow==24.0.0  # startup.py reads production parquet via pq.read_table() → df →
+                 # pydantic hydration. Bumped from 19.0.0 for Arrow C++ IPC CVE
+                 # (not exploitable — we use parquet reader, not the vulnerable IPC path).
 pydantic-settings==2.12.0
 python-dotenv==1.2.2
 protobuf==5.29.6
