@@ -88,6 +88,9 @@ def get_sbert_model() -> SentenceTransformer:
     
     
  ## NLI disabled for Tracer
+ # When re-enabling: first NLI run on transformers 5.3.0 — validate CrossEncoder
+ # output against a known pair before trusting it (bumped from 4.57.6 during dep work).
+ 
 def get_nli_model():
     raise RuntimeError(
         "NLI is disabled in tracer build. "
