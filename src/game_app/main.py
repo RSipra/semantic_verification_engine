@@ -8,7 +8,7 @@ CLI MVP ->  Main game entry point
 
 # Interim startup notice — shown before heavy imports (~53s ML-stack load per
 # GoTTY connection). Removed once FastAPI warm-start lands (single boot).
-print("⚡ Loading Harry Potter Trivia... This usually takes about 60 seconds. "
+print("\n\n⚡ Loading Harry Potter Trivia... This usually takes about 60 seconds. "
       "The game is loading normally, so please don't close the window. Hang tight! 😁",
       flush=True)
 
