@@ -5,6 +5,13 @@ SEMANTIC VERIFICATION ENGINE (Ref implementation: Harry Potter Trivia)
 -----------------------------------------------------------------------
 CLI MVP ->  Main game entry point
 """
+
+# Interim startup notice — shown before heavy imports (~53s ML-stack load per
+# GoTTY connection). Removed once FastAPI warm-start lands (single boot).
+print("⚡ Loading Harry Potter Trivia... This usually takes about 60 seconds. "
+      "The game is loading normally, so please don't close the window. Hang tight! 😁",
+      flush=True)
+
 import logging
 import time
 
@@ -36,7 +43,7 @@ logging.getLogger("huggingface_hub").setLevel(logging.WARNING)
 
 def main():
     """Sets up and runs the main application loop for the game."""
-    
+
     # Let GoTTY and the browser negotiate screen size before initializing UI
     time.sleep(0.5)
 
@@ -45,20 +52,20 @@ def main():
     # log gameplay sessions only, not exhausted state
     all_session_reports = []
     all_session_aggregates = []
-    
+
     # initialize controller with startup system signals
     controller = GameController(None, view)
-    
+
     # 2. Run the one-time introduction to the game immediately as 
     #    as UX buffer for startup
     success = controller.start_game()
-    
+
     if not success:
         return  # Exit if player setup fails or user quits
 
     # 3. load the waiting screen till startup finishes
     view.show_loading_screen()
-    
+
     # 4. startup execution (currently blocking; future: async/background): 
     #    dataset hydration & validation, sbert + llm warmup
     #    Lazy load to reduce lag at immediate startup
