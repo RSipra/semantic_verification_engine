@@ -1,0 +1,6 @@
+outs:
+- md5: 777848624dcd9f6962f400db493e394e.dir
+  size: 407577
+  nfiles: 24
+  hash: md5
+  path: 11_runtime_session_reports_metrics
