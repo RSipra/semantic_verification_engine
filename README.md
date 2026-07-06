@@ -146,10 +146,13 @@ Primarily determined by the LLM API call.
 | Memory (loaded) | ~447 MB |
 
 ### Bottlenecks Identified
-- Loading models in startup leads to a 30s lag before gameplay begins. This persists even after the initialization sequence was broken up and SBERT loading and its warmup are handled after introduction with a UX loading screen. Will be handled when shifting to Fast API - will have a singular startup with container and keep it warm to avoid coldstart with every game start. <!--Likely caused by the pydantic validation upfront after tensor addition - but need to test-->
-- Could not run on 10GB, docker build failed, not enough temporary cache for installation requirements. Increased VM storage to 30 GB.
-- LLM latency is highly variable. Generally within the required range but can jump to ~22 to ~35 seconds. Mitigations include reducing LLM fallback with improved local inference, shifting to paid-tier (less cool down to manage RPM usage limits) and can be managed with self-hosting a model as a service if / when scale justifies.
-- Explanatory answers contain  multiple implicit claims that SBERT similarity alone cannot reliably verify, routing them to the LLM judge by default. Primary driver of the 30% LLM routing share. Planned improvement: decompose long answers into atomic claims verifiable locally via SBERT / NLI, reducing LLM fallback and improving the shift-left resolution rate. NLI is implemented in evaluator but will come online with claims breakdown. 
+- **Cold-start latency (~60s upfront).** GoTTY spawns a fresh process per browser connection, so full startup re-runs on every connect. This creates negative UX, making the app look like it is hanging.
+    - Instrumenting `main.py` measured ~63s: **~53s of ML-library imports** (dominant) + ~10s orchestrate (SBERT warmup + tensor hydration + dataset validation + LLM warmup). 
+    - The ~53s is **disk-I/O bound** (not compute). A cold-start resource capture showed memory at ~46% and CPU at 20–37%, while disk reads climbed ~600MB, indicating slow loading of the ML stack off the constrained VM's disk. 
+    - *Fix*: An interim UX startup notice to set expectations.  FastAPI migration is the structural fix (allows for startup to run once per container instance instead of every connection as is now).  See [ADR-P2-017](docs/adrs/ADR-P2-017.md) for the breakdown and trade-off.
+- **VM storage limitation**: Could not run on 10GB, docker build failed, not enough temporary cache for installation requirements. Increased VM storage to 30 GB (can accommodate telemetry storage as well).
+- **LLM latency** is highly variable. Generally within the required range but can jump to ~22 to ~35 seconds. *Mitigations* include reducing LLM fallback with improved local inference, shifting to paid-tier (less cool down to manage RPM usage limits) and can be managed with self-hosting a model as a service if / when scale justifies.
+- **Explanatory LLM escalation**: Explanatory answers contain  multiple implicit claims that SBERT similarity alone cannot reliably verify, routing them to the LLM judge by default. Primary driver of the 30% LLM routing share. *Planned improvement*: decompose long answers into atomic claims verifiable locally via SBERT / NLI, reducing LLM fallback and improving the shift-left resolution rate. NLI is implemented in evaluator but will come online with claims breakdown. 
 
 ## Offline Data Generation & Validation Results (Tracer)
 
