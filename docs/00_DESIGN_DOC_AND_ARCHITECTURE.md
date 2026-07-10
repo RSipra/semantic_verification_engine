@@ -139,10 +139,13 @@ Constraints and target boundaries:
 ||**Constraint**|**Requirement**|**Target**|**Safety margin /**<br>**Contingency**|
 |-|-|-|-|-|
 |1|**Economics**|**minimum-cost operation**.The project demo must not incur any costs during development and be able to operate indefinitely without any operational costs|$0 -$5 fixed monthly cost|Apply hard budget alerts with a circuit-breaker set at $20.00/month|
-|2|**Performance**|**Low-latency**. Gameplay interactions need to feel instantaneous to maintain user immersion|local inference < 500ms latency (p95)<br> llm path < 1~2s (p95)|Apply UX fallbacks to remain within acceptable UX limit (< 5s). Optimize resolution with local inference where possible. |
+|2a|**Performance**<br>*(hard)*|**Low-latency local inference**. Gameplay interactions need to feel instantaneous to maintain user immersion|local inference < 500ms latency (p95)|Optimize resolution with local inference where possible. |
+|2b|**Performance**<br> *(soft target- updated)*|**LLM path latency**. Escalated evaluations should resolve quickly enough to preserve immersionn| llm path < 1~2s (p95) <br>*not achievable on free-tier; see note*|Apply UX fallbacks to remain within acceptable UX limit (< 5s)|
 |3|**Quality**|**Domain authenticity**. Content must be tonally consistent and canonically accurate to satisfy fan base (tweens to adults)|100% Verifiable (books 1-7, movies, Rowling's supportive works)|Swiss cheese logic (multi-layered validation)|
 |4|**Capacity**|**Demo scale**. System needs to be sized to handle expected concurrent users within cost (free) limits.|5 - 10 concurrent users|Graceful Degradation. Implement load shedding or request queuing rather than crashing or incurring unplanned costs.|
 |5|**Scalability**|**Future-Proof economics**. Design should demonstrate viable path to scale where growth doesn't erode margins (capex vs. opex)|Constant or decreasing unit cost|Prototype & projection. Use "tracer bullet" experiments to empirically validate assumptions before committing to the architectural pattern|
+
+**Note**: LLM latency target (updated from tracer telemetry). The < 1–2s p95 target reflects a production-grade standard. Tracer measurement showed it is inherently limited on free-tier by provider-side API latency; the LLM path tail is the external API round-trip and not because of local processing. Meeting this target would require dedicated or provisioned inference capacity. It is therefore reclassified as a soft performance target, optimized toward and managed through UX accommodation. Local inference latency (< 500ms p95) remains a hard requirement and is met.
 
 ### Objective
 Build a smart, domain-centric trivia game demo that prioritizes correctness, low latency, and a smooth game experience with minimal cost.

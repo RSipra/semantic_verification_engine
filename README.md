@@ -17,9 +17,9 @@
 > **The payoff**: game responses are faster, more predictable. The system is cheaper to scale; it can add more runtime copies as demand grows while the LLM usage remains deliberate and controlled (reducing potential for runaway API costs).
 >
 >- **Built end-to-end by a single developer**: data generation, validation, NLP, evaluation, the live game app, and containerized cloud deployment.
->- **Stack:** &nbsp;&nbsp; Python · SBERT · NLI · Gemini · Pydantic · Prefect · Docker · Google Cloud
+>- **Stack:** &nbsp;&nbsp; Python · SBERT · Gemini · Pydantic · Prefect · Docker · Google Cloud
 >
-> **[▶ ✨Play the live demo ✨](https://34.27.245.64.sslip.io/)** → the fastest way to see it work *(best played on desktop, game load is ~30s while models warm up)*.
+> **[▶ ✨Play the live demo ✨](https://34.27.245.64.sslip.io/)** → the fastest way to see it work *(best played on desktop, game load is ~60s while models warm up)*.
 >
 
 
@@ -40,9 +40,24 @@ So the design approach is to understand the key requirements and then fit the se
 At runtime, SVE acts as a semantic evaluation layer, checking whether a user's answer is correct with progressively more sophisticated verification methods. The intelligence needed to support that evaluation is prepared offline through data generation, validation, and enrichment workflows.
 
 ---
-► [✨**Live Demo**✨](https://34.27.245.64.sslip.io/) &nbsp;|&nbsp; [Tracer Implementation Walkthrough](notebooks/01_demos/01_tracer/README.md) &nbsp;|&nbsp; [Design Doc & ADRs](docs/00_DESIGN_DOC_AND_ARCHITECTURE.md) &nbsp;|&nbsp; [Execution Plan](docs/01_EXECUTION_PLAN.md) &nbsp; <br>⚠️ *Note:  the MVP demo can take ~30s to load transformer models at the start - appreciate your patience* 😄
+► [✨**Live Demo**✨](https://34.27.245.64.sslip.io/) &nbsp;|&nbsp; [Tracer Implementation Walkthrough](notebooks/01_demos/01_tracer/README.md) &nbsp;|&nbsp; [Design Doc & ADRs](docs/00_DESIGN_DOC_AND_ARCHITECTURE.md) &nbsp;|&nbsp; [Execution Plan](docs/01_EXECUTION_PLAN.md) &nbsp; <br>⚠️ *Note:  the MVP demo can take ~60s to load transformer models at the start - appreciate your patience* 😄
 
 ---
+
+### Example: in-game evaluation of a free-form answer
+
+[![Game snapshot](/assets/docs/phase2/game_screenshots/Example%201.png)](/assets/docs/phase2/game_screenshots/Example%201.png)  
+**Figure 1:** A live evaluation screenshot, resolved at the LLM tier *(click image to open full resolution)*. 
+
+|||
+|-|-|
+|**Source answer**|*"Voldemort mistakenly believed that because Snape had killed Albus Dumbledore, Snape was the true master of the Elder Wand. To fully control the wand's power, Voldemort thought he needed to defeat Snape."*|
+|**Player answer**|*"he thought that would get him the elder wands alliegence"*|
+|**Evaluation challenge**| The player answer is misspelled (*"alliegence"*), relies on vague pronouns (*"he/him"* instead of Voldemort), and collapses the source's three-step causal chain into one word → **allegiance**. Correct core idea but almost no surface overlap.|
+
+**The cascade:** Exact match fails. Fuzzy scores 0.31 (the strings barely overlap). SBERT lands at 0.53 (related but not close enough to call; inconclusive). This is the ambiguous middle that escalates to the LLM Judge.
+
+**The resolution:** The LLM judge confirms it is correct and its reasoning shows the work: *"the logical intent is perfectly aligned with the ground truth"*.
 
 ## Runtime Constraints (Tracer MVP)
 
@@ -57,8 +72,9 @@ The constraints are iteratively refined as the telemetry from the tracer is coll
 | Constraint |BoD Requirement |Tracer CLI-MVP |
 |-|-|-|
 | Economics | Minimum-cost operation and minimize per-query API cost at runtime (near-zero)|GCP e2-micro (free-tier); zero runtime API cost (free-tier).<br> Public demo HTTPS ~$11/month; security infrastructure cost emerged at deployment, within $20 contingency threshold |
-| Performance|Local inference < 500ms p95;<br> LLM escalation < 1–2s p95;<br> gameplay feels smooth |CPU-only Docker runtime on e2-micro (2 vCPUs, 1 GB RAM, 30GB storage);<br>local inference prioritized to minimize LLM dependency; ongoing collection of runtime latency|
-| Quality |No hallucinations at runtime;<br> evaluators correctly distinguishes correct from incorrect answers| Zero generation at runtime; pre-validated Parquet assets. <br>Evaluator accuracy ≥ 85% (85–93% observed in notebook testing; runtime measurement pending) |
+| Performance|Local inference < 500ms p95 |CPU-only Docker runtime on e2-micro (2 vCPUs, 1 GB RAM, 30GB storage);<br>local inference prioritized to minimize LLM dependency; tracer latency within target|
+| |LLM escalation < 1–2s p95 (*updated to soft target*);<br> gameplay feels smooth |  Observed average and p95 exceed the < 1–2s target (see [Latency](#latency) results below).<br> *Update*: Tracer data shows this is a production-grade standard inherently limited on free-tier by provider-side API latency; meeting it requires dedicated/provisioned inference. Reclassified as a soft performance target, not a hard runtime constraint.|
+| Quality |No hallucinations at runtime;<br> evaluators correctly distinguish correct from incorrect answers| Zero generation at runtime; pre-validated Parquet assets. <br>Evaluator accuracy ≥ 85% (85–93% observed in notebook testing; runtime measurement pending) |
 | Capacity |5–10 concurrent users within free-tier cost limits | GoTTY + Docker on GCP e2-micro; single-session in practice; GoTTY shares one terminal rather than managing independent sessions; 5–10 concurrent user target requires the planned FastAPI service layer|
 | Scalability|Unit cost constant or decreasing as content volume grows | Offline intelligence layer; minimal AI cost per query; <br> planned FastAPI service + containerised deployment enables horizontal scaling with load balancing; ceiling determined by SBERT CPU compute ceiling, VM cost beyond free tier, and LLM API rate limits |
 
@@ -66,11 +82,13 @@ The constraints are iteratively refined as the telemetry from the tracer is coll
 
 > **Project Status**: **Phase 2 tracer build completed and runtime MVP deployed.** End-to-end flow validated across all three subsystems. Runtime performance and generation quality metrics are being actively collected.
 
+SVE's architecture evolved from the requirements of the problem. Along the way, it converged on some techniques common in modern RAG systems, including semantic similarity and LLM judge with RAG-triad, applied to answer verification rather than document retrieval.
+
 The full system design consists of three subsystems:
 
 1. **Content generation (offline)**: Prefect-orchestrated pipelines ingest raw source text and produce structured, validated trivia content. Questions are generated by LLM-based multi-prompt enrichment grounded in the source text.
 
-    The validation pipeline then checks generated records for structural and contextual correctness (e.g. LLM judge with RAG-Triad). The pipeline also precomputes SBERT embeddings for core fields to support offline semantic deduplication and runtime evaluation. Tiered Pydantic gates enforce progressive quality checks: Bronze (staging), Silver (validated system of record), and Gold (curated projection for downstream subsystems).
+    The validation pipeline then checks generated records for structural and contextual correctness (e.g. LLM judge with RAG-Triad). The pipeline also precomputes SBERT embeddings for core fields to support offline semantic deduplication (weighted similarity + graph) and runtime evaluation. Tiered Pydantic gates enforce progressive quality checks: Bronze (staging), Silver (validated system of record), and Gold (curated projection for downstream subsystems).
 
     The two pipelines work in tandem. Generation is creative and diverse, while validation stays strict. Validation removes questions that still fall short, protecting the quality of the Silver dataset, and in turn the runtime, to preserve user trust and game reputation.
    - **Tracer status**: end-to-end logic confirmed in notebooks; Prefect automation in progress.
@@ -78,11 +96,10 @@ The full system design consists of three subsystems:
     - **Tracer status**: descriptive feature logic confirmed; NER and other contextual features deferred to next stage.
 3. **Runtime environment (online)**: A Docker container serving the game from validated, immutable Parquet assets. Evaluation is layered: exact match → fuzzy match / structured rules → SBERT semantic similarity → LLM escalation. The container has no runtime dependency on the upstream systems.
 
-    The offline precomputation keeps runtime work minimal. SBERT embeddings are computed ahead of time and tensors are hydrated at startup, so during live play only the player's answer needs embedding.
-    - **Tracer status**: deployed and live.   
+    The offline precomputation keeps runtime work minimal. SBERT embeddings are computed ahead of time and tensors are hydrated at startup, so during live play only the player's answer needs embedding. Different models are assigned by role across the system (generation, judging, runtime evaluation), each tiered to the task's requirements.
 
 [![The core demo implementation (Phase 2)](assets/docs/phase2/phase2_dev_main.jpg)](assets/docs/phase2/phase2_dev_main.jpg)
-**Figure 1**: Design overview. This schematic represents the backbone of the SVE project (click on figure for a closer view).
+**Figure 2**: Design overview. This schematic represents the backbone of the SVE project (click on figure for a closer view).
 
 Refer to the [*Design Doc and ADRs*](/docs/00_DESIGN_DOC_AND_ARCHITECTURE.md) for further details on architecture.
 
@@ -103,34 +120,37 @@ The runtime is modular Python in [src/](/src/).  Notebooks are used for research
 The [tracer walkthrough demos](/notebooks/01_demos/01_tracer/) run against these modules to validate the end-to-end system behaviour.
 
 ## Preliminary Runtime Metrics
->⚠️ First-pass results: single batch, 13 sessions. Tracer dataset was intentionally composed to stress system design (high Explanatory question share). Figures will shift as session diversity and batch count increase. Do not treat as a stable baseline.
+>⚠️ First-pass results: Initial user batch, 80 sessions (10 users, ages 12 - 60 to diversify answer phrasing, collected over 2.5 weeks). Tracer dataset was intentionally composed to stress system design (high Explanatory question share). Figures will shift as session diversity and batch count increase. Do not treat as a stable baseline.
 
 ### Evaluation tier routing
 
 |Resolution Tier| Questions Presented* | Share|Notes
 |-|-|-|-|
-|Exact match|30|26%|-|
-|Fuzzy match|10|9%|-|
-|SBERT semantic|40|35%|-|
-|LLM escalation|35|30%|-|
-|Unresolved|1|<1%| empty submission|
+|Exact match|167|28%|-|
+|Fuzzy match|45|8%|-|
+|SBERT semantic|196|33%|-|
+|LLM escalation|173|29%|-|
+|Unresolved|11|2%|empty submission (player pressed enter without answering); expected|
 
-- *Note*: Sessions can end early if a player runs out of chances, so not all session questions are presented.
+- *Note*: Sessions can end early when players exhaust their chances before all 10 questions are presented, so the count reflects questions actually presented, not questions available.
 
-*Local inference resolution rate*: **69% of questions resolved without an LLM call**. The tiered cascade working as designed with significant portion of answers settled with local checks.
+*Local inference resolution rate*: **69% of questions resolved without an LLM call**. The tiered cascade is working as designed with significant portion of answers settled with local checks.
 
 ### Latency
-The offline/online split delivers on the fast path: local inference averages 62ms (150ms p95), comfortably under target. The slower tail is LLM-driven by design — isolated to the hard answers, not the common case.
+The runtime latency is primarily determined by the LLM API call.
+The offline/online split delivers on the fast path (local inference averages 62ms, 150ms p95, comfortably under target) and the slower tail is LLM-escalation path concentrated on the hard answers.
 
-Primarily determined by the LLM API call.
 |Path|Average|P95|Notes|
 |-|-|-|-|
-|Local inference with SBERT|0.062s|0.15s (150ms)|Meets local p95 < 500ms target|Fast path; min observed: 0ms|
-|LLM escalation|2.6s|7.1s|Above target; high EX question share inflates this, max: 33s|
-|Overall evaluation|2.6s|9.9s|LLM path driven; p95 above 5s UX fallback. LLM evaluations include a 6s cooldown to manage RPM limits| 
+|Local inference with SBERT|0.062s|0.15s (150ms)|Meets local p95 < 500ms target. Fast path.|
+|LLM escalation|2.4s|9.1s|Provider-side API round-trip; free-tier shared infra; max: 34s|
+|Overall evaluation|2.6s|8.5s|Below LLM p95 since local tiers dominate. Includes 6s free-tier cooldown on LLM calls| 
 
-- **Free-tier penalty**: shifting to paid-tier will shrink the required cooldown time needed between requests. Currently the free-tier requires 6s cool down, resulting in an evaluation latency of ~7s even if the LLM call itself took ~1 to ~2s. Game play is still smooth because player reading evaluations and moving to the next question absorbs cool down time. Can consider dynamic cooldown within Controller.
-<!--- optimizations for later stages.-->
+- **Local inference meets target**: near-instantaneous, meeting the 500ms target (human reaction time).
+- **LLM calls dominate the latency profile even if only 29% of questions**: overall evaluation latency (avg 2.6s, p95 8.5s) tracks closely to the LLM path (avg 2.4s, p95 9.1s), because the LLM tier is far slower than the near-instant local tiers. The local majority keeps overall latency slightly below the LLM path, but does not mask it.
+- **Felt latency is lower than p95 suggests**: LLM-routed (explanatory) questions are a minority of any session. A player sees roughly 2-5 per game, with the rest resolving instantly. These turns are signposted (loading spinner, a note that evaluation may take a few seconds) and return richer, generated feedback, so the wait is infrequent, expected, and earns something. The p95 reflects the LLM tail, not the typical turn or the felt experience.
+- **Free-tier cooldown**: LLM calls carry a 6s client-side cooldown to respect free-tier RPM limits, reflected in overall eval latency. Paid-tier access would shrink it. Gameplay stays smooth because reading time absorbs the cooldown; a dynamic cooldown in the Controller is a candidate optimization.
+- **LLM latency target**: to revisit, not a hard constraint. The < 1–2s p95 target was set before measurement and is too aggressive for LLM inference on free-tier shared API — that latency class requires dedicated/provisioned capacity. The LLM tail is the external API round-trip (timed in isolation), i.e. provider-side variability, not local processing.
 
 ### Compute
 - primarily determined by SBERT local inference.
