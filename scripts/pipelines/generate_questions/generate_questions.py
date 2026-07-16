@@ -297,7 +297,7 @@ def get_chapters(target_books: list[Book],
                                   Defaults to "06_books".
         chapter_filter (List[int], optional): Allows for optional filtering of content by 
                                   chapter number (e.g. [1, 5]).
-        limit: Maximum number of chapters to return.
+        chapter_limit: Maximum number of chapters to return.
 
     Returns:
         List[Path]: A list of pathlib.Path objects for every matching text file,
@@ -309,6 +309,7 @@ def get_chapters(target_books: list[Book],
 
     # find all the chapter files by book name (prefix in the filename)
     relevant_file_paths = [p for p in books_dir.iterdir() if p.name.startswith(prefixes)]
+    selected_chapter_paths = relevant_file_paths  # default to all if no filter applied
 
     # filter by chapter only when requested
     if chapter_filter:
@@ -320,10 +321,16 @@ def get_chapters(target_books: list[Book],
                 num = int(p.stem.split("_")[-1])
                 if num in chapter_filter:
                     filtered_files.append(p)
-            except ValueError:
-                pass
-
-    selected_chapter_paths = filtered_files
+            except ValueError: # if a single file fails
+                get_run_logger().warning(
+                    "⚠️ Skipping file with non-standard name (can't parse chapter number): %s", p.name)
+                continue
+        if not filtered_files:  # incase no chapters matched the filter, log a warning
+            raise ValueError(
+                f"No chapters matched the filter {chapter_filter} in {target_books}. "
+                f"Check chapter numbers and naming convention.")
+        selected_chapter_paths = filtered_files
+  
    # 3. Sort
     sorted_files = sorted(selected_chapter_paths)
 
@@ -907,7 +914,7 @@ def generate_questions_pipeline(target_books: List[Book],
     chapter_file_paths = get_chapters(target_books,
                                       target_book_folder=target_folder,
                                       chapter_filter=target_chapters,
-                                      limit=chapter_limit)
+                                      chapter_limit=chapter_limit)
     # A.6.2: Check if the run is on full_book or partial_pilot 
     run_scope =  get_run_scope(chapter_limit, target_chapters)
     # A.6.3: log special case if chapter limits applied (e.g. demo, troubleshooting)
