@@ -525,8 +525,13 @@ def make_api_call(final_prompt:str, config: dict):
         max_output_tokens=config.get('max_output_tokens', 12000),
         candidate_count=config.get('candidate_count', 1),
         response_mime_type="application/json",
-        response_schema = config.get("json_response_schema")
+        # rresponse_schema removed — see note
     )
+    # NOTE: response_schema intentionally omitted — the validated tracer script
+    # ran without one and produced reliable JSON. Passing the TypedDict schema
+    # (notebook_support.schemas) produced incomplete/skeletal records.
+    # Proper Pydantic-derived schemas land with DraftQuestion — see ADR-P2-023.
+    
     # 3. Call API
     try:
         response = model.generate_content(final_prompt, generation_config=gen_config)
