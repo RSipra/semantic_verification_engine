@@ -20,7 +20,7 @@ experiments:
     - deathly_hallows Chapter 30
     - deathly_hallows Chapter 31
     output_files:
-    - /Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/scripts/research/question_generation/tracer_dataset_generation/llm_outputs/phase2_tracer_v0_synthetic_generation_FR_deathly_hallows_ch30_31_candidate_1.json
+    - /Harry_Potter_Trivia/scripts/research/question_generation/tracer_dataset_generation/llm_outputs/phase2_tracer_v0_synthetic_generation_FR_deathly_hallows_ch30_31_candidate_1.json
     model_parameters:
       temperature: 0.7
     metrics:
@@ -47,7 +47,7 @@ experiments:
     - deathly_hallows Chapter 32
     - deathly_hallows Chapter 33
     output_files:
-    - /Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/scripts/research/question_generation/tracer_dataset_generation/llm_outputs/phase2_tracer_v0_synthetic_generation_FR_deathly_hallows_ch32_33_candidate_1.json
+    - /Harry_Potter_Trivia/scripts/research/question_generation/tracer_dataset_generation/llm_outputs/phase2_tracer_v0_synthetic_generation_FR_deathly_hallows_ch32_33_candidate_1.json
     model_parameters:
       temperature: 0.7
     metrics:
@@ -74,7 +74,7 @@ experiments:
     - deathly_hallows Chapter 34
     - deathly_hallows Chapter 35
     output_files:
-    - /Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/scripts/research/question_generation/tracer_dataset_generation/llm_outputs/phase2_tracer_v0_synthetic_generation_FR_deathly_hallows_ch34_35_candidate_1.json
+    - /Harry_Potter_Trivia/scripts/research/question_generation/tracer_dataset_generation/llm_outputs/phase2_tracer_v0_synthetic_generation_FR_deathly_hallows_ch34_35_candidate_1.json
     model_parameters:
       temperature: 0.7
     metrics:
@@ -101,7 +101,7 @@ experiments:
     - deathly_hallows Chapter 30
     - deathly_hallows Chapter 31
     output_files:
-    - /Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/scripts/research/question_generation/tracer_dataset_generation/llm_outputs/phase2_tracer_v0_synthetic_generation_EX_deathly_hallows_ch30_31_candidate_1.json
+    - /Harry_Potter_Trivia/scripts/research/question_generation/tracer_dataset_generation/llm_outputs/phase2_tracer_v0_synthetic_generation_EX_deathly_hallows_ch30_31_candidate_1.json
     model_parameters:
       temperature: 0.7
     metrics:
@@ -128,7 +128,7 @@ experiments:
     - deathly_hallows Chapter 32
     - deathly_hallows Chapter 33
     output_files:
-    - /Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/scripts/research/question_generation/tracer_dataset_generation/llm_outputs/phase2_tracer_v0_synthetic_generation_EX_deathly_hallows_ch32_33_candidate_1.json
+    - /Harry_Potter_Trivia/scripts/research/question_generation/tracer_dataset_generation/llm_outputs/phase2_tracer_v0_synthetic_generation_EX_deathly_hallows_ch32_33_candidate_1.json
     model_parameters:
       temperature: 0.7
     metrics:
@@ -155,7 +155,7 @@ experiments:
     - deathly_hallows Chapter 34
     - deathly_hallows Chapter 35
     output_files:
-    - /Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/scripts/research/question_generation/tracer_dataset_generation/llm_outputs/phase2_tracer_v0_synthetic_generation_EX_deathly_hallows_ch34_35_candidate_1.json
+    - /Harry_Potter_Trivia/scripts/research/question_generation/tracer_dataset_generation/llm_outputs/phase2_tracer_v0_synthetic_generation_EX_deathly_hallows_ch34_35_candidate_1.json
     model_parameters:
       temperature: 0.7
     metrics:
@@ -182,7 +182,7 @@ experiments:
     - deathly_hallows Chapter 30
     - deathly_hallows Chapter 31
     output_files:
-    - /Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/scripts/research/question_generation/tracer_dataset_generation/llm_outputs/phase2_tracer_v0_synthetic_generation_MCQ_deathly_hallows_ch30_31_candidate_1.json
+    - /Harry_Potter_Trivia/scripts/research/question_generation/tracer_dataset_generation/llm_outputs/phase2_tracer_v0_synthetic_generation_MCQ_deathly_hallows_ch30_31_candidate_1.json
     model_parameters:
       temperature: 0.7
     metrics:
@@ -211,7 +211,7 @@ experiments:
     - deathly_hallows Chapter 32
     - deathly_hallows Chapter 33
     output_files:
-    - /Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/scripts/research/question_generation/tracer_dataset_generation/llm_outputs/phase2_tracer_v0_synthetic_generation_MCQ_deathly_hallows_ch32_33_candidate_1.json
+    - /Harry_Potter_Trivia/scripts/research/question_generation/tracer_dataset_generation/llm_outputs/phase2_tracer_v0_synthetic_generation_MCQ_deathly_hallows_ch32_33_candidate_1.json
     model_parameters:
       temperature: 0.7
     metrics:
@@ -240,7 +240,7 @@ experiments:
     - deathly_hallows Chapter 34
     - deathly_hallows Chapter 35
     output_files:
-    - /Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/scripts/research/question_generation/tracer_dataset_generation/llm_outputs/phase2_tracer_v0_synthetic_generation_MCQ_deathly_hallows_ch34_35_candidate_1.json
+    - /Harry_Potter_Trivia/scripts/research/question_generation/tracer_dataset_generation/llm_outputs/phase2_tracer_v0_synthetic_generation_MCQ_deathly_hallows_ch34_35_candidate_1.json
     model_parameters:
       temperature: 0.7
     metrics:

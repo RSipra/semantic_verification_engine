@@ -23,7 +23,7 @@ experiments:
     prompt_file: scripts/research/legacy_update/legacy_enrichment_prompt_master.txt
     data_file: scripts/research/question_generation/tracer_dataset_generation/llm_outputs/01_batches_for_enrich/phase2_tracer_v0_synthetic_staging_EX_batch_01.json
     output_files:
-    - /Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/scripts/research/question_generation/tracer_dataset_generation/llm_outputs/02_enrichmed_lex/phase2_tracer_v0_synthetic_enrichment_lex_EX_batch_01_candidate_1.json
+    - /Harry_Potter_Trivia/scripts/research/question_generation/tracer_dataset_generation/llm_outputs/02_enrichmed_lex/phase2_tracer_v0_synthetic_enrichment_lex_EX_batch_01_candidate_1.json
     metrics:
       response_time_seconds: 85.93
       finish_reason: STOP
@@ -42,7 +42,7 @@ experiments:
     prompt_file: scripts/research/legacy_update/legacy_enrichment_prompt_master.txt
     data_file: scripts/research/question_generation/tracer_dataset_generation/llm_outputs/01_batches_for_enrich/phase2_tracer_v0_synthetic_staging_FR_batch_02.json
     output_files:
-    - /Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/scripts/research/question_generation/tracer_dataset_generation/llm_outputs/02_enrichmed_lex/phase2_tracer_v0_synthetic_enrichment_lex_FR_batch_02_candidate_1.json
+    - /Harry_Potter_Trivia/scripts/research/question_generation/tracer_dataset_generation/llm_outputs/02_enrichmed_lex/phase2_tracer_v0_synthetic_enrichment_lex_FR_batch_02_candidate_1.json
     metrics:
       response_time_seconds: 32.01
       finish_reason: STOP
@@ -61,7 +61,7 @@ experiments:
     prompt_file: scripts/research/legacy_update/legacy_enrichment_prompt_master.txt
     data_file: scripts/research/question_generation/tracer_dataset_generation/llm_outputs/01_batches_for_enrich/phase2_tracer_v0_synthetic_staging_MCQ_batch_03.json
     output_files:
-    - /Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/scripts/research/question_generation/tracer_dataset_generation/llm_outputs/02_enrichmed_lex/phase2_tracer_v0_synthetic_enrichment_lex_MCQ_batch_03_candidate_1.json
+    - /Harry_Potter_Trivia/scripts/research/question_generation/tracer_dataset_generation/llm_outputs/02_enrichmed_lex/phase2_tracer_v0_synthetic_enrichment_lex_MCQ_batch_03_candidate_1.json
     metrics:
       response_time_seconds: 43.89
       finish_reason: STOP
