@@ -23,7 +23,7 @@ experiments:
     prompt_file: scripts/research/legacy_update/legacy_enrichment_prompt_master.txt
     data_file: scripts/research/legacy_update/tracer_batches/batch_1.json
     output_files:
-    - /Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/scripts/research/legacy_update/tracer_llm_responses/phase2_tracer_v0_enrichment_batch_1_candidate_1.json
+    - /Harry_Potter_Trivia/scripts/research/legacy_update/tracer_llm_responses/phase2_tracer_v0_enrichment_batch_1_candidate_1.json
     metrics:
       response_time_seconds: 28.46
       finish_reason: STOP
@@ -42,7 +42,7 @@ experiments:
     prompt_file: scripts/research/legacy_update/legacy_enrichment_prompt_master.txt
     data_file: scripts/research/legacy_update/tracer_batches/batch_2.json
     output_files:
-    - /Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/scripts/research/legacy_update/tracer_llm_responses/phase2_tracer_v0_enrichment_batch_2_candidate_1.json
+    - /Harry_Potter_Trivia/scripts/research/legacy_update/tracer_llm_responses/phase2_tracer_v0_enrichment_batch_2_candidate_1.json
     metrics:
       response_time_seconds: 33.04
       finish_reason: STOP
@@ -61,7 +61,7 @@ experiments:
     prompt_file: scripts/research/legacy_update/legacy_enrichment_prompt_master.txt
     data_file: scripts/research/legacy_update/tracer_batches/batch_3.json
     output_files:
-    - /Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/scripts/research/legacy_update/tracer_llm_responses/phase2_tracer_v0_enrichment_batch_3_candidate_1.json
+    - /Harry_Potter_Trivia/scripts/research/legacy_update/tracer_llm_responses/phase2_tracer_v0_enrichment_batch_3_candidate_1.json
     metrics:
       response_time_seconds: 54.75
       finish_reason: STOP
@@ -80,7 +80,7 @@ experiments:
     prompt_file: scripts/research/legacy_update/legacy_enrichment_prompt_master.txt
     data_file: scripts/research/legacy_update/tracer_batches/batch_4.json
     output_files:
-    - /Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/scripts/research/legacy_update/tracer_llm_responses/phase2_tracer_v0_enrichment_batch_4_candidate_1.json
+    - /Harry_Potter_Trivia/scripts/research/legacy_update/tracer_llm_responses/phase2_tracer_v0_enrichment_batch_4_candidate_1.json
     metrics:
       response_time_seconds: 27.27
       finish_reason: STOP
@@ -99,7 +99,7 @@ experiments:
     prompt_file: scripts/research/legacy_update/legacy_enrichment_prompt_master.txt
     data_file: scripts/research/legacy_update/tracer_batches/batch_5.json
     output_files:
-    - /Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/scripts/research/legacy_update/tracer_llm_responses/phase2_tracer_v0_enrichment_batch_5_candidate_1.json
+    - /Harry_Potter_Trivia/scripts/research/legacy_update/tracer_llm_responses/phase2_tracer_v0_enrichment_batch_5_candidate_1.json
     metrics:
       response_time_seconds: 22.69
       finish_reason: STOP
@@ -118,7 +118,7 @@ experiments:
     prompt_file: scripts/research/legacy_update/legacy_enrichment_prompt_master.txt
     data_file: scripts/research/legacy_update/tracer_batches/batch_6.json
     output_files:
-    - /Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/scripts/research/legacy_update/tracer_llm_responses/phase2_tracer_v0_enrichment_batch_6_candidate_1.json
+    - /Harry_Potter_Trivia/scripts/research/legacy_update/tracer_llm_responses/phase2_tracer_v0_enrichment_batch_6_candidate_1.json
     metrics:
       response_time_seconds: 26.26
       finish_reason: STOP
@@ -137,7 +137,7 @@ experiments:
     prompt_file: scripts/research/legacy_update/legacy_enrichment_prompt_master.txt
     data_file: scripts/research/legacy_update/tracer_batches/batch_7.json
     output_files:
-    - /Users/reemasipra/Documents/GitHub_Repos/Harry_Potter_Trivia/scripts/research/legacy_update/tracer_llm_responses/phase2_tracer_v0_enrichment_batch_7_candidate_1.json
+    - /Harry_Potter_Trivia/scripts/research/legacy_update/tracer_llm_responses/phase2_tracer_v0_enrichment_batch_7_candidate_1.json
     metrics:
       response_time_seconds: 32.19
       finish_reason: STOP
