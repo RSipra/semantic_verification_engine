@@ -858,7 +858,7 @@ def create_run_report(run_id: str, run_timestamp: str, run_stats: dict, output_r
 | **Questions Created** | **{run_stats['total_questions']}** |
 
 ## 📂 Output Artifacts
-Files are saved in: `{rel}/{run_id}/`
+Files are saved in: `{rel}/ (filenames include run_id: `*_{run_id}.jsonl`)`
 """
     # 4.1. Create Prefect Artificat for dashboard
     create_markdown_artifact(
@@ -984,7 +984,16 @@ def generate_questions_pipeline(target_books: List[Book],
         ## C. CHAPTER LOOP (JOB LEVEL)
         #     job = one API call over a chapter-chunk.
         #     Loop through batch_size number of chapters per loop (default = 2)
-        for chapter_batch in chunk_list(chapter_file_paths, batch_size):
+        for i, chapter_batch in enumerate(chunk_list(chapter_file_paths, batch_size)):
+            # C.0: pacing (safe time delay for RPM limits) - sleep before each call except the first
+            # TODO (pacing): only paces WITHIN a strategy — `i` resets per question type,
+            # so the first job of each strategy fires straight after the previous
+            # strategy's last call (with measure_template_tokens in that gap too).
+            # Limits are per-key across all calls: loop position ≠ time since last call.
+            # Proper fix: elapsed-time pacing at every call site. Low priority at 10 RPM.
+            if i>0:
+                delay = config.get('rate_limit_delay', 10)
+                time.sleep(delay)
 
             # C.1: Safety check: abort run if consecutive failures reaches limit
             # Counts as a failure (cost spent, nothing saved) if: 
@@ -1041,10 +1050,6 @@ def generate_questions_pipeline(target_books: List[Book],
                 run_stats["total_billed"] += (tokens_in + tokens_out)
                 logger.error("Error on %s: %s", first_chap, e)
                 continue
-
-            # C.8: pacing (safe time delay for RPM limits)
-            delay = config.get('rate_limit_delay', 10)
-            time.sleep(delay)
 
     ## D: WRAP-UP
     # D.1: list of model used converted to json compatible format (set -> list)
