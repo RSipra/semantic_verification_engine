@@ -520,7 +520,6 @@ def make_api_call(final_prompt:str, config: dict):
         raise e
 
 # helper to parse the json output from the API response object
-@task
 def extract_json_from_response(text: str) -> Optional[List[Dict[str, Any]]]:
     """
     Attempts to parse JSON from a string, handling potential Markdown wrapping.
@@ -581,7 +580,7 @@ def create_strategy_batch_metadata(pipeline_run_id: str,  # Level 1 (pipeline ru
     }
 
 # response processing helper: check if api call accepted by model and response present
-def check_safety_and_feedback(response, full_metadata: Dict[str, Any], job_id: str, logger) -> bool:
+def check_safety_and_feedback(response, full_metadata: Dict[str, Any], job_id: str, logger_obj) -> bool:
     """
     response processing layer 1: forensics, if successful returns True,
     updates metadata with API status (prompt_feedback, finish_reason),
@@ -600,12 +599,12 @@ def check_safety_and_feedback(response, full_metadata: Dict[str, Any], job_id: s
 
     # 1. Safety Block Check
     if finish_reason == "SAFETY":
-        logger.error("⛔ [job id: %s] Safety Block triggered. Feedback: %s", job_id, prompt_feedback)
+        logger_obj.error("⛔ [job id: %s] Safety Block triggered. Feedback: %s", job_id, prompt_feedback)
         return False 
 
     # 2. Empty/Malformed Response Check
     if not hasattr(response, 'candidates') or not response.candidates:
-        logger.error("[job id: %s] No candidates found in response object.", job_id)
+        logger_obj.error("[job id: %s] No candidates found in response object.", job_id)
         return False
 
     return True
@@ -724,22 +723,24 @@ def parse_and_save(run_id:str, batch_id: str, job_id: str, response, output_file
 
     # initialize variablest
     saved_count, t_in, t_out = 0, 0, 0
-    
+
     # Step 2: accounting (token counts from helper)
-    total_billed, t_in, t_out = calculate_token_metrics(response, full_metadata, template_token_count)
-    
+    total_billed, t_in, t_out = calculate_token_metrics(response, full_metadata, 
+                                                        template_token_count)
+
     # check if api call was blocked before proceeding (SAFETY, or other reason response is empty) 
     if not is_safe:
         # Return 0 saved, but still track the cost
         return 0, total_billed, t_in, t_out
 
     # Step 3: core logic
-    saved_count = process_and_save_candidates(run_id, batch_id, job_id, response, output_file, full_metadata, logger)
+    saved_count = process_and_save_candidates(run_id, batch_id, job_id, 
+                                              response, output_file, full_metadata, logger)
 
     if saved_count > 0:
         logger.info("✅ [job id: %s] Saved %s questions. Total tokens: %s",
                     job_id, saved_count, total_billed)
-    
+
     else: # explicitly log the zero question failure event + the cost incurred 
           # (call not blocked, but no questions to parse e.g. missing '[' delimiters], 
           # MAX_TOKENS hit in middle of first question, etc)
@@ -862,13 +863,14 @@ def generate_questions_pipeline(target_books: List[Book],
                                 chapter_limit: Optional[int] = None,
                                 batch_size: int =2):
     """
-   Orchestrates the full generation lifecycle: Initialization -> Manifest -> Batched Execution -> Reporting.
+   Orchestrates the full generation lifecycle: Initialization -> Manifest -> Batched 
+   Execution -> Reporting.
 
     Args:
         target_books (List[Book]): The specific books to process.
         target_chapters (List[int], optional): Specific chapter numbers to target (e.g., `[1, 5]`).
-        tasks_to_run (List[str], optional): Specific strategies to execute (e.g., `["MCQ_Generation"]`). 
-            Defaults to ALL strategies if None.
+        tasks_to_run (List[str], optional): Specific strategies to execute (e.g. 
+            `["MCQ_Generation"]`). Defaults to ALL strategies if None.
         chapter_limit (int, optional): Caps the number of chapters processed (useful for pilots).
         batch_size (int, default=2): Files processed per API call. 
             * **Default (2):** Optimized for full chapters (balances context vs. output limits).
@@ -903,7 +905,7 @@ def generate_questions_pipeline(target_books: List[Book],
 
     # A.4: configure the pipeline API
     configure_api(CONFIG_PATH)
-    
+
     # A.5: distinguish between a book vs. thematic run
     target_folder = determine_target_folder(target_books)
     if "themes" in target_folder:
@@ -930,7 +932,7 @@ def generate_questions_pipeline(target_books: List[Book],
                       chapter_file_paths,
                       run_timestamp,
                       run_scope)
-    
+
     # A.8: Initialize the run_stats dict (tracking batches, job metadata)
     run_stats = init_run_stats()
 
@@ -943,45 +945,52 @@ def generate_questions_pipeline(target_books: List[Book],
         safe_task_name = task_name.replace(" ", "_").strip()
         batch_id = f"batch_{safe_task_name}_{short_uuid()}"
         logger.info("\n--- Starting Strategy: %s ---", task_name)
-        
+
         # input token count for prompt template without formatting
         template_token_count = measure_template_tokens(config['model_name'],
                                                            config['prompt_file'])
         # update run_stats dict
         run_stats["models_used"].add(config['model_name'])
-    
-        # Initialize count for consecutive failures (circuit breaker)
+
+        # CIRCUIT BREAKER: abort this strategy (q type) if too many jobs fail in a row
+        # Scope: counter is per-strategy (resets between question types) and resets
+        # on any successful job. 
+        # > Initialize count for consecutive failures
         consecutive_failures = 0
-        
+
         ## C. CHAPTER LOOP (JOB LEVEL)
-        # Loop through batch_size number of chapters per loop (default = 2)
+        #     job = one API call over a chapter-chunk.
+        #     Loop through batch_size number of chapters per loop (default = 2)
         for chapter_batch in chunk_list(chapter_file_paths, batch_size):
-                    
-            # C.1: Safety check: abort run if consecutive failures exceed limit
+
+            # C.1: Safety check: abort run if consecutive failures reaches limit
+            # Counts as a failure (cost spent, nothing saved) if: 
+            #   (i) the API call raises, or (ii) 0 questions are parsed from the response.
+            # Note: Malformed-but-present answers are validation pipeline scope not this breaker's
             if consecutive_failures >= MAX_FAILURES:
                 logger.error("🚨 Aborting %s due to %s consecutive failures.",
                              task_name, MAX_FAILURES)
                 break
-            
+
             # C.2: Initialize 
             job_id = f"job_{short_uuid()}"
             # Extract names for metadata (since chapter_batch is a list of Paths)
             batch_names = [p.stem for p in chapter_batch]
             tokens_in = 0
             tokens_out = 0
-            
+
             # C.3: prepare prompt (fill in template)
             final_prompt = prepare_prompt(chapter_batch,config['prompt_file'])
-            
+
             try:
                 # C.4: Make the API call
                 response = make_api_call(final_prompt, config)
-                
+
                 # C.5: generate the full meta_data dict for job
                 full_metadata = create_strategy_batch_metadata(run_id, batch_id, 
                                                                job_id, run_timestamp,
                                                                config, batch_names)
-                
+
                 # C.6: save the response into a jsonl
                 # C.6.1: construct output filename
                 first_chap = chapter_batch[0].stem  # chapter ref in filename
@@ -989,7 +998,7 @@ def generate_questions_pipeline(target_books: List[Book],
                 # C.6.2: parse and save as jsonl with Task
                 q_count, total_tokens, tokens_in, tokens_out = parse_and_save(run_id, batch_id,
                     job_id, response, output_file, full_metadata, template_token_count)
-                
+
                 # C.7: Assess if run was a failure (no questions generated)
                 # if successful update run_stats else update failure counter
                 if  q_count> 0:
@@ -1013,11 +1022,11 @@ def generate_questions_pipeline(target_books: List[Book],
             # C.8: pacing (safe time delay for RPM limits)
             delay = config.get('rate_limit_delay', 10)
             time.sleep(delay)
-    
+
     ## D: WRAP-UP
     # D.1: list of model used converted to json compatible format (set -> list)
     run_stats["models_used"] = list(run_stats["models_used"])
-    
+
     # D.2: save log run and creates a summary report for Prefect UI or Terminal
     create_run_report(run_id, run_timestamp, run_stats, OUTPUT_DIR)
     # save actual metrics of run for traceability (run "reciept")
@@ -1057,7 +1066,7 @@ if __name__ == "__main__":
         help="Specific chapter numbers to run (e.g. 1 5 10). Default are all chapters in book.",
         default=None
     )
-    
+
     parser.add_argument(
         "--batch-size", 
         type=int, 
@@ -1087,5 +1096,5 @@ if __name__ == "__main__":
     except Exception as e:  # pylint: disable=broad-exception-caught
         # This catches crashes
         logger = logging.getLogger("prefect")
-        logger.error(f"\n💥 Pipeline crashed with critical error: {e}")
-        sys.exit(1)    
+        logger.error("\n💥 Pipeline crashed with critical error: %s", e)
+        sys.exit(1)
