@@ -144,6 +144,17 @@ MAX_FAILURES = 5
 # GENERATION_STRATEGY: Predefined models for each question type (model-per-type based 
 # on experimentation) imported from src/ds_utils/ds_constants
 
+class RunIDFilter(logging.Filter):
+    """Injects a default run_id on any log record missing one, so the
+    file formatter's %(run_id)s never KeyErrors on Prefect's own logs."""
+    def __init__(self, run_id: str):
+        super().__init__()
+        self.run_id = run_id
+    def filter(self, record):
+        if not hasattr(record, "run_id"):
+            record.run_id = self.run_id
+        return True
+
 ## TASKS AND HELPERS
 
 def init_run_stats() -> dict:
@@ -217,8 +228,13 @@ def configure_file_logging(run_id: str):
     fh.setLevel(logging.INFO)
 
     # Create formatter: Define Format (Time | Level | Message)
-    formatter = logging.Formatter('%(asctime)s | TRACE:%(run_id)s | %(levelname)s | %(message)s')
+    formatter = logging.Formatter(
+        '%(asctime)s | TRACE:%(run_id)s | %(levelname)s | %(message)s'
+    )
     fh.setFormatter(formatter)
+
+    # Filter guarantees run_id exists on every record
+    fh.addFilter(RunIDFilter(run_id))
 
     # Add handler to logger (to send a copy to this local file handler as well)
     logger.addHandler(fh)
@@ -807,6 +823,8 @@ def create_run_report(run_id: str, run_timestamp: str, run_stats: dict, output_r
     """
     Generates a Markdown summary of the run and publishes it to the Prefect UI.
     """
+    # create relative path for output artifacts in the report (for clarity)
+    rel = output_root.relative_to(nb_cfg.PROJECT_ROOT)
     # 1. Get (placeholder) Cost
     # add step for cost estimation when needed
 
@@ -835,11 +853,11 @@ def create_run_report(run_id: str, run_timestamp: str, run_stats: dict, output_r
 | **Questions Created** | **{run_stats['total_questions']}** |
 
 ## 📂 Output Artifacts
-Files are saved in: `{output_root}/{run_id}/`
+Files are saved in: `{rel}/{run_id}/`
 """
     # 4.1. Create Prefect Artificat for dashboard
     create_markdown_artifact(
-        key=f"report-{run_id}",
+        key=f"report-{run_id}".replace("_", "-").lower(),
         markdown=report,
         description=f"Run Summary: {run_id}"
     )
