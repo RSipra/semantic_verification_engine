@@ -2,13 +2,14 @@
 Project: SVE (ref implementation: Harry Potter Trivia)
 Pydantic Schemas (Phase 2+)
 """
+
 import math
 import json
 import hashlib
 import base64
 from enum import Enum
 from typing import List, Optional, Self, Dict, Literal, TYPE_CHECKING, Any
-from pydantic import BaseModel, field_validator, Field, model_validator, ConfigDict, ValidationInfo
+from pydantic import BaseModel, field_validator, Field, model_validator, ConfigDict, ValidationInfo, create_model
 import numpy as np
 from core.constants import QuestionType, QuestionSource, AnswerType
 
@@ -168,6 +169,22 @@ class SyntheticMCQ(MCQuestion, SyntheticStandard):
     columns from Synthetic standard.
     """
     pass
+
+# Draft Question model for upstream generation 
+# (soft, defrived version of SyntheticMCQ -> it has all fields needed for drafting)
+def create_draft_question_model() -> type[BaseModel]:
+    """
+    Creates a draft question model based on the SyntheticMCQ schema for the
+    generation pipeline. All fields are optional to allow for partial drafts 
+    while populating the record through multiple LLM passes. 
+    SyntheticMCQ has all the fields need for drafting so used as base.
+    Validation is done by Bronze gate 
+    """
+    new_fields = {}
+    for field_name, field in SyntheticMCQ.model_fields.items():
+        new_fields[field_name] = (Optional[field.annotation], None)
+
+    return create_model("DraftQuestion", **new_fields)
 
 class LegacyStandard(BaseQuestion, PipelineMetadata):
     """

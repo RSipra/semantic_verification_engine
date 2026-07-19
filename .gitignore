@@ -98,3 +98,4 @@ storage/
 .python-version
 phase2_tracer_deploy
 .dv/config.local
+scratchpad.py
