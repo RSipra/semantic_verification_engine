@@ -17,18 +17,19 @@ For each question, follow this process:
      - The **three** other "distractor" choices must be plausible and thematically related, but **unambiguously incorrect**.
      - The correct answer's position in the array should be randomized.     
 5. Assess and assign a difficulty from this list: ['Easy', 'Medium', 'Hard'].
-5. [VALID SOURCE OPTIONS] You MUST select the one correct source for your question from the following list: {valid_source_list}
-6. [SOURCE QUOTE] You MUST extract the exact, verbatim sentence(s) from the ---SOURCE TEXT--- that serve as the ground truth. DO NOT rephrase. DO NOT summarize. DO NOT write your own text.
+6. [VALID SOURCE OPTIONS] You MUST select the one correct source for your question from the following list: {valid_source_list}
+7. [SOURCE QUOTE] You MUST extract the exact, verbatim sentence(s) from the ---SOURCE TEXT--- that serve as the ground truth. DO NOT rephrase. DO NOT summarize. DO NOT write your own text.
 
 **Output Format:**
 
 Provide the output as a single, valid JSON array. Each object must contain:
 - "question_type": This should always be "MCQ".
-- "category": The category you chose in Step 1.
+- "llm_predicted_category": The category you chose in Step 1.
+- "llm_predicted_difficulty": The difficulty you assigned in Step 5.
 - "question": The well-phrased question from Step 3 (e.g., "What type of core is in Harry Potter's wand?").
-- "options": The array of 4 string options from Step 4 (e.g., ["Dragon heartstring", "Unicorn hair", "Phoenix feather", "Thestral tail hair"]).
+- "mcq_options": The array of 4 string options from Step 4 (e.g., ["Dragon heartstring", "Unicorn hair", "Phoenix feather", "Thestral tail hair"]).
 - "answer": The correct answer string, which must exactly match one of the items in the options array.
-- "difficulty": The difficulty you assigned in Step 6.
+- "llm_predicted_difficulty": The difficulty you assigned in Step 6.
 - "source_reference": "[The single, exact string you chose from the VALID SOURCE OPTIONS list]"
 - "source_quote": "[The exact sentences from the --SOURCE TEXT-- used as the ground truth to create the question]
 
@@ -36,7 +37,8 @@ Provide the output as a single, valid JSON array. Each object must contain:
 [
  {{
     "question_type": "MCQ",
-    "category": "Character Detail",
+    "llm_predicted_category": "Character Detail",
+    "llm_predicted_difficulty": "Medium",
     "question": "When did Lily Evans first meet Severus Snape?", 
     "options": ["On the Hogwarts Express during their first journey to school", "As children in a park near their homes before they attended Hogwarts", "During the Sorting Ceremony of their first year", "In their first Potions class, taught by Professor Slughorn"],
     "answer": "As children in a park near their homes before they attended Hogwarts",
@@ -45,9 +47,10 @@ Provide the output as a single, valid JSON array. Each object must contain:
     }},
  {{
   "question_type": "MCQ",
-  "category": "Object/Potion",
+  "llm_predicted_category": "Object/Potion",
+  "llm_predicted_difficulty": "Easy",
   "question": "What type of core is in Harry Potter's wand?",
-  "options": [Dragon heartstring", "Unicorn hair", "Phoenix feather", "Thestral tail hair"],
+  "mcq_options": [Dragon heartstring", "Unicorn hair", "Phoenix feather", "Thestral tail hair"],
   "answer": "Phoenix feather",
   "source_reference": "Philosopher's Stone, Chapter 5",
   "source_quote": "Harry took the wand. He felt a sudden warmth in his fingers... 'Eleven inches. Holly. And phoenix feather. Nice and supple.",
@@ -55,9 +58,10 @@ Provide the output as a single, valid JSON array. Each object must contain:
 
  {{
     "question_type": "MCQ",
-    "category": "Character Detail",
+    "llm_predicted_category": "Character Detail",
+    "llm_predicted_difficulty": "Medium",
     "question": "Albus Dumbledore is famous for discovering how many uses of dragon's blood?"
-    "options": ["7", "10", "12", "15"]
+    "mcq_options": ["7", "10", "12", "15"]
     "answer" : "12",
     "source_reference": "Philosopher's Stone, Chapter 6"
     "source_quote": "Albus Dumbledore... is particularly famous for... the discovery of the twelve uses of dragon's blood, and his work on alchemy with his partner, Nicolas Flamel."

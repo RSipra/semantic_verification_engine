@@ -74,9 +74,12 @@ class PipelineMetadata(BaseModel):
     Present at Bronze and Silver, shed at Gold.
     """
     generation_model: str
-    generation_prompt_version: Optional[Dict[str, str]] = Field(default=None)
+    generation_prompt_version: str
     lex_enrich_prompt_version: str
     semantic_enrich_prompt_version: str
+    timestamp: str
+    generation_pipeline_id: str
+    generation_strategy_version: str
     
     @field_validator('generation_prompt_version', mode='before')
     @classmethod
@@ -184,7 +187,9 @@ def create_draft_question_model() -> type[BaseModel]:
     for field_name, field in SyntheticMCQ.model_fields.items():
         new_fields[field_name] = (Optional[field.annotation], None)
 
-    return create_model("DraftQuestion", **new_fields)
+    return create_model("DraftQuestion",
+                        __config__=ConfigDict(use_enum_values=True),
+                        **new_fields,)
 
 class LegacyStandard(BaseQuestion, PipelineMetadata):
     """

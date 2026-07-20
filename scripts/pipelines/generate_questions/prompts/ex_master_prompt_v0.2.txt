@@ -26,8 +26,8 @@ For each question, follow this process:
 
 Provide the output as a single, valid JSON array. Each object in the array must contain:
 - "question_type": This should always be "EX".
-- "category": The category you chose in Step 1.
-- "difficulty": The difficulty you assigned in Step 7.
+- "llm_predicted_category": The category you chose in Step 1.
+- "llm_predicted_difficulty": The difficulty you assigned in Step 5.
 - "question": The well-phrased standalone question from Step 3.
 - "answer": A **succinct and clear** explanation, **typically 1-3 sentences**, that fully answers the question.
 - "source_reference": "[The single, exact string you chose from the VALID SOURCE OPTIONS list]"
@@ -37,8 +37,8 @@ Provide the output as a single, valid JSON array. Each object in the array must 
 [
   {{
     "question_type": "EX",
-    "category": "Character Arc/Motive",
-    "difficulty": "Hard",
+    "llm_predicted_category": "Character Arc/Motive",
+    "llm_predicted_difficulty": "Hard",
     "question": "Why did Albus Dumbledore put on Marvolo Gaunt’s ring even though he suspected it was cursed?",
     "answer": "Because the ring contained the Resurrection Stone, and he was overcome with the desire to see his lost family again, especially his sister, Ariana.",
     "source_reference": "Deathly Hallows, Chapter 35",
@@ -46,8 +46,8 @@ Provide the output as a single, valid JSON array. Each object in the array must 
   }},
   {{
     "question_type": "EX",
-    "category": "Social & Systemic",
-    "difficulty": "Medium",
+    "llm_predicted_category": "Social & Systemic",
+    "llm_predicted_difficulty": "Medium",
     "question": "Why were the Muggle police and doctors baffled by the cause of the Riddle family's deaths?",
     "answer": "They were baffled because the Riddles were killed by the Killing Curse, which leaves no physical marks. The official coroner's report, in a state of bewilderment, concluded the bodies were in perfect health, apart from being dead.",
     "source_reference": "Goblet of Fire, Chapter 1",

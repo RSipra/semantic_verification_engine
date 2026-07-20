@@ -83,8 +83,7 @@ BEST PRACTICES & CONSTRAINTS:
         (e.g., `--batch-size 10`) so they are all loaded into one prompt context.
 ------------------------------------------------------------------------------------
 Author: Reema Sipra
-Date: November 2025
-License: MIT 
+Date: November 2025 (updated Jul 2026)
 
 Attribution:
     This pipeline architecture and strategy (key components listed such as model-per-task,
@@ -108,17 +107,21 @@ from pathlib import Path
 from typing import List, Optional, Dict, Any, Tuple
 import json
 import uuid
+from asyncssh import PIPE
 from dotenv import load_dotenv
 import google.generativeai as genai
 from prefect import flow, task, get_run_logger #pipeline orchestrator
 from prefect.artifacts import create_markdown_artifact
 from rich.console import Console
 from rich.markdown import Markdown
+from sqlalchemy import all_
+
 # IMPORT PROJECT CONFIGURATION
 # Using the "Src Layout" (pip install -e .)
-from notebook_support.ds_constants import Book
-from scripts.pipelines.generate_questions.prompts.pipeline_config import GENERATION_STRATEGY
+from core.constants import Book, QuestionSource
+from scripts.pipelines.generate_questions.prompts.pipeline_config import GENERATION_STRATEGY, GEN_STRATEGY_VERSION
 import notebook_support.notebook_config as nb_cfg
+from core.models import create_draft_question_model
 
 ## CONSTANTS
 
@@ -154,6 +157,12 @@ class RunIDFilter(logging.Filter):
         if not hasattr(record, "run_id"):
             record.run_id = self.run_id
         return True
+
+## DATA TRANSFER OBJECTS (DTOs)
+# DraftQuestion model for upstream generation (soft, derived version of SyntheticMCQ)
+# for LLM schema + DTO for generation pipeline.
+
+DraftQuestion = create_draft_question_model()
 
 ## TASKS AND HELPERS
 
@@ -580,13 +589,14 @@ def create_strategy_batch_metadata(pipeline_run_id: str,  # Level 1 (pipeline ru
     """
     return{
         "identifiers": {
-            "pipeline name" : PIPELINE_ID,
+            "pipeline_name" : PIPELINE_ID,
             "pipeline_run_id": pipeline_run_id,     # Run: [parent] full script run
             "batch_id": batch_id,                   # Strategy: [group] question type batch 
             "job_id": job_id                        # Job: [child] specific API call
         },
         "timestamp": run_timestamp,                 # pipeline run timestamp
         # context
+        "generation_strategy_version": GEN_STRATEGY_VERSION,  # static config version
         "source_files": ", ".join(source_filenames),   # job level
         "task_type": strategy.get('task_name'),
         "prompt_template": strategy['prompt_file'].name,   # w/o file ext
@@ -658,17 +668,27 @@ def calculate_token_metrics(response, full_metadata: dict,
     }
     return api_total_billed, api_total_input, api_output
 
+# Convert LLM response candidates into DraftQuestion objects
+# NOTE: DraftQuestion is generated at runtime (see ADR-P2-023); Pylance can't resolve
+# a variable in a type expression, annotation is documentation only.
+def convert_question_to_dto(question_data: Dict[str, Any]) -> DraftQuestion:  # type: ignore
+    """
+    Converts a raw question dictionary into a DraftQuestion DTO.
+    """
+    return DraftQuestion(**question_data)
+
 # response output helper: parse output and json output from the API call (helper)
 def process_and_save_candidates(run_id: str, batch_id: str, job_id: str, response, output_file: Path,
-                               full_metadata: Dict[str,Any], logger) -> int:
+                               full_metadata: Dict[str,Any], logger) -> Tuple[int, List[DraftQuestion]]:  # type: ignore
     """
     response processing layer 3: core logic. Loops candidates, parses JSON
     enriches data, and saves to disk.
     
-    Returns the count of successfully saved questions.
+    Returns the count of successfully saved questions and the list of draft questions.
     """
     # counter for candidates
     total_saved = 0
+    draft_questions = []
 
     for i, candidate in enumerate(response.candidates):
         try:
@@ -688,17 +708,27 @@ def process_and_save_candidates(run_id: str, batch_id: str, job_id: str, respons
                     # write question data with full metadata to file (make sure they are standalone)
                     for q_idx, question_data in enumerate(parsed_questions):
                         # 0. Generate Deterministic ID
-                        # Format: {run_id}_{job_id}_{candidate_index}_{question_index}
+                        # Format: {run_id}_{batch_id}_{job_id}_{candidate_index}_{question_index}
                         # Example: "run20251224_x9z_batch_MCQ_Generation_a7b2_job_e5f6_0_0" <- long for data quality tracking
                         unique_id = f"{run_id}_{batch_id}_{job_id}_{i}_{q_idx}"
-                        question_data['question_id'] = unique_id
+                        
                         # 1. Identity: track exactly where the question came from
-                        question_data['candidate_index'] = i
-                        question_data['question_index'] = q_idx
+                        question_data['temp_qid'] = unique_id
+                        question_data['question_source'] = QuestionSource.SYNTHETIC.value
+                        
                         # 2. Context: inject the full run/job metadata
-                        question_data['batch_generation_info'] = full_metadata
+                        question_data['generation_model'] = full_metadata.get('model_name')
+                        question_data['timestamp'] = full_metadata.get('timestamp')
+                        question_data['generation_prompt_version'] = full_metadata.get('prompt_template')
+                        question_data['generation_pipeline_id'] = full_metadata['identifiers'].get('pipeline_name')
+                        question_data['generation_strategy_version'] = full_metadata.get('generation_strategy_version')
+                        
                         # 3. Persistence: Write to JSONL
                         f.write(json.dumps(question_data) + "\n")
+                        
+                        # 4. Create DTO
+                        draft_question = convert_question_to_dto(question_data)
+                        draft_questions.append(draft_question)
 
                 total_saved += len(parsed_questions)
 
@@ -720,55 +750,60 @@ def process_and_save_candidates(run_id: str, batch_id: str, job_id: str, respons
                          job_id, i, e)
             continue
 
-    return total_saved
+    return total_saved, draft_questions
 
 # Process and save questions from candidates as individual entries in jsonl file
 @task
 def parse_and_save(run_id:str, batch_id: str, job_id: str, response, output_file: Path, full_metadata: Dict[str,Any], 
-                   template_token_count: int) -> Tuple[int, int, int, int]:
+                   template_token_count: int) -> Tuple[Dict[str, int], List[DraftQuestion]]:  # type: ignore
     """
     Orchestrator task for the ETL processing of model response. it uses helper methods to:
     1. Checks safety (forensics) - was API call suceessful or blocked
     2. Calculates token counts (accounting) for the job (all candidates) 
     3. Parses individual questions_data dict and saves the data as jsonl (core logic)
     
-    Returns: Tuple of (saved_count, input_tokens, output_tokens), where:
-    saved_count : number of questions generated and saved
-    input_tokens: total input tokens for the job (prompt template + chapters)
-    output_tokens: output token counts (single candidate if run has mulitple)
+    Returns: Tuple of (job_tokens dict, list of DraftQuestion DTOs). Job tokens dict 
+    contains (saved_count, input_tokens, output_tokens), where:
+        saved_count : number of questions generated and saved
+        input_tokens: total input tokens for the job (prompt template + chapters)
+        output_tokens: output token counts (single candidate if run has mulitple)
     """
     logger = get_run_logger()
 
     # Step 1: forensics
     is_safe = check_safety_and_feedback(response, full_metadata, job_id, logger)
 
-    # initialize variablest
-    saved_count, t_in, t_out = 0, 0, 0
-
     # Step 2: accounting (token counts from helper)
     total_billed, t_in, t_out = calculate_token_metrics(response, full_metadata, 
                                                         template_token_count)
-
+    # intialize job token counts and with the total billed cost (even if no questions saved)
+    job_tokens= {
+        "saved_count": 0,
+        "total_billed": total_billed,
+        "input_tokens": t_in,
+        "output_tokens": t_out
+        }
     # check if api call was blocked before proceeding (SAFETY, or other reason response is empty) 
     if not is_safe:
         # Return 0 saved, but still track the cost
-        return 0, total_billed, t_in, t_out
+        return job_tokens, []
 
     # Step 3: core logic
-    saved_count = process_and_save_candidates(run_id, batch_id, job_id, 
+    saved_count, draft_questions = process_and_save_candidates(run_id, batch_id, job_id, 
                                               response, output_file, full_metadata, logger)
 
     if saved_count > 0:
         logger.info("✅ [job id: %s] Saved %s questions. Total tokens: %s",
                     job_id, saved_count, total_billed)
-
+        job_tokens["saved_count"] = saved_count
+        
     else: # explicitly log the zero question failure event + the cost incurred 
           # (call not blocked, but no questions to parse e.g. missing '[' delimiters], 
           # MAX_TOKENS hit in middle of first question, etc)
         logger.warning("⚠️ [job id: %s] 0 questions saved. Tokens wasted: %s", 
                        job_id, total_billed)    
 
-    return saved_count, total_billed, t_in, t_out
+    return job_tokens, draft_questions
 
 # placeholder for cost esmtimate helper if needed for later dataset expansion
 def estimate_run_cost(total_input: int, total_output: int, models_used: list) -> float:  
@@ -879,7 +914,7 @@ Files are saved in: `{rel}/ (filenames include run_id: `*_{run_id}.jsonl`)`
 
 ## ORCHESTRATOR
 
-@flow(name="Harry Potter Question Generation")
+@flow(name="Automated Question Generation")
 def generate_questions_pipeline(target_books: List[Book],
                                 target_chapters: Optional[List[int]] = None,
                                 tasks_to_run: Optional[List[str]] = None,
@@ -958,7 +993,10 @@ def generate_questions_pipeline(target_books: List[Book],
 
     # A.8: Initialize the run_stats dict (tracking batches, job metadata)
     run_stats = init_run_stats()
+    #   initialize DTO list for all questions generated in this run
+    all_draft_questions: List[DraftQuestion] = [] #type: ignore  
 
+    
     ## B. GENERATION STRATEGY LOOP (BATCH LEVEL):
     #  B.1: Loop through the selected question types from active strategy:
     for config in active_strategy:
@@ -1008,8 +1046,8 @@ def generate_questions_pipeline(target_books: List[Book],
             job_id = f"job_{short_uuid()}"
             # Extract names for metadata (since chapter_batch is a list of Paths)
             batch_names = [p.stem for p in chapter_batch]
-            tokens_in = 0
-            tokens_out = 0
+            job_tokens = {"saved_count": 0, "total_billed": 0, "input_tokens": 0, "output_tokens": 0}
+            first_chap = chapter_batch[0].stem  # chapter ref in output filename and logging
 
             # C.3: prepare prompt (fill in template)
             final_prompt = prepare_prompt(chapter_batch,config['prompt_file'])
@@ -1025,20 +1063,21 @@ def generate_questions_pipeline(target_books: List[Book],
 
                 # C.6: save the response into a jsonl
                 # C.6.1: construct output filename
-                first_chap = chapter_batch[0].stem  # chapter ref in filename
                 output_file = OUTPUT_DIR / f"{config['file_prefix']}_{first_chap}_{run_id}.jsonl"
                 # C.6.2: parse and save as jsonl with Task
-                q_count, total_tokens, tokens_in, tokens_out = parse_and_save(run_id, batch_id,
+                job_tokens, draft_questions = parse_and_save(run_id, batch_id,
                     job_id, response, output_file, full_metadata, template_token_count)
+                # collect draft questions from the job into run-level list
+                all_draft_questions.extend(draft_questions)
 
                 # C.7: Assess if run was a failure (no questions generated)
                 # if successful update run_stats else update failure counter
-                if  q_count> 0:
+                if  len(draft_questions) > 0:
                     consecutive_failures = 0
-                    run_stats["total_questions"] += q_count
-                    run_stats["total_input"] += tokens_in
-                    run_stats["total_output"] += tokens_out
-                    run_stats["total_billed"] += (total_tokens)
+                    run_stats["total_questions"] += len(draft_questions)
+                    run_stats["total_input"] += job_tokens["input_tokens"]
+                    run_stats["total_output"] += job_tokens["output_tokens"]
+                    run_stats["total_billed"] += (job_tokens["total_billed"])
                     # counter for actual chapters processed (increment by batch len)
                     run_stats["chapters_processed"] += len(chapter_batch) 
                 else:
@@ -1047,7 +1086,7 @@ def generate_questions_pipeline(target_books: List[Book],
             except Exception as e:  # pylint: disable=broad-exception-caught
                 consecutive_failures += 1
                 # even a failed run can have billed token counts
-                run_stats["total_billed"] += (tokens_in + tokens_out)
+                run_stats["total_billed"] += (job_tokens["input_tokens"] + job_tokens["output_tokens"])
                 logger.error("Error on %s: %s", first_chap, e)
                 continue
 
@@ -1061,6 +1100,8 @@ def generate_questions_pipeline(target_books: List[Book],
     save_run_completion(run_id, run_stats)
     # completion update
     logger.info("🏁 Pipeline Finished: %s",run_id)
+    
+    return run_stats, all_draft_questions  # return for testing and validation
 
 if __name__ == "__main__":
     # 1. Setup the Argument Parser

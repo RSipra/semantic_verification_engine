@@ -44,7 +44,7 @@
 ---
 
 ## 4. Performance
-- [ ] SBERT cold start benchmarking
+- [X ] SBERT cold start benchmarking
 - [ ] LLM warmup latency measurement in container
 - [ ] Evaluate caching strategy for repeated embeddings
 - [X] Optimize Dockerfile dependency resolution and layer bloat (Immediate Fix)
@@ -72,3 +72,20 @@
 
 ## 7. Deferred / Exploration
 - [ ] Consider streaming evaluation via FastAPI WebSocket
+
+---
+
+## 8. Generation Pipeline (Phase 2)
+
+### Open decisions
+- [ ] **Prompt + strategy versioning mechanism** — blocks `generation_prompt_version`and `generation_strategy_version` fields on the record. Currently only a filename (`fr_master_prompt._v0.2.txt`); no registry or archive. Options: manual version constants in config (git as archive), content hash (self-verifying), or both. Same mechanism should cover prompts and strategy config. Likely warrants an ADR.
+- [ ] **ADR-P2-024 second nested field** — a further nested field in the enrichment/validation schemas is suspected to benefit from flattening; not yet identified. ADR left open to accumulate instances.
+- [ ] **`PipelineMetadata` required-vs-Optional ordering** — `lex_enrich_prompt_version` and `semantic_enrich_prompt_version` are required but only knowable post-enrichment; `generation_prompt_version` is Optional but knowable at generation. Backwards relative to pipeline sequence. Confirms why DraftQuestion needs all-Optional.
+
+### Artifact storage
+- [ ] **Directory layout** — move to per-run folder for operational artifacts: `07_pipeline_logs/runs/{run_id}/` holding manifest, log, receipt. Generated questions stay in `08_generated/` (data vs. metadata have different lifecycles; logs may be pruned, data is consumed downstream).
+- [ ] **Job-level log** (new feature, deferred) — one row per API call: `job_id`, `batch_id`, `run_id`, model, versions, token breakdown, `finish_reason`, hyperparameters, timestamp, question count. Fills the missing middle grain between manifest/receipt (run-level) and JSONL (question-level). Enables cost/drift analysis at correct granularity — job-level token counts on question rows would be denormalized and easy to misuse. Data already computed in `parse_and_save`. If added: single appended CSV at top level, not per-run files (avoids globbing and the append-to-Parquet problem). Skip a separate runs index — most run metrics are derivable by aggregating jobs, and the receipt JSON covers per-run human reading.
+
+### Code TODOs
+- [ ] **Cross-strategy pacing gap** — rate-limit delay only paces within a strategy (`i` resets per question type), so the first job of each strategy fires immediately after the previous strategy's last call. Limits are per-key across all calls: loop position ≠ time since last call. Proper fix: elapsed-time pacing at every call site. Low priority at 10 RPM. (TODO also in `generate_questions.py`)
+- [ ] Rename `fr_master_prompt._v0.2.txt` — stray dot before `_v0.2`
