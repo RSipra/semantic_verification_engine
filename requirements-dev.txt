@@ -85,7 +85,7 @@ funcy==2.0
 gcsfs==2024.9.0.post1
 git-filter-repo==2.47.0
 gitdb==4.0.12
-GitPython==3.1.50
+GitPython==3.1.52
 google-ai-generativelanguage==0.6.15
 google-api-core==2.28.1
 google-api-python-client==2.184.0
@@ -182,7 +182,7 @@ pendulum==3.1.0
 pexpect==4.9.0
 pfzy==0.3.4
 pickleshare==0.7.5
-pillow==12.2.0
+pillow==12.3.0
 pipreqs==0.5.0
 platformdirs==4.3.6
 plotly==6.0.1
@@ -199,7 +199,7 @@ pure_eval==0.2.3
 py-key-value-aio==0.3.0
 py-key-value-shared==0.3.0
 pyarrow==24.0.0
-pyasn1==0.6.3
+pyasn1==0.6.4
 pyasn1_modules==0.4.2
 pycparser==2.23
 pydantic==2.12.0
@@ -246,7 +246,7 @@ scmrepo==3.5.6
 seaborn==0.13.2
 semver==3.0.4
 sentence-transformers==5.6.0
-setuptools==80.9.0
+setuptools==83.0.0
 shellingham==1.5.4
 shortuuid==1.0.13
 shtab==1.8.0
