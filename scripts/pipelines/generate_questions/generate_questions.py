@@ -1,5 +1,6 @@
 """
-HARRY POTTER TRIVA GAME - Automated Question Generation Pipeline using PREFECT.
+Project: SVE (ref implementation: Harry Potter Trivia)
+Automated Question Generation Pipeline using PREFECT.
 ===================================================================================
 
 This module orchestrates the end-to-end flow of generating trivia questions using
@@ -95,6 +96,39 @@ Attribution:
     programmer for code refinement, troubleshooting complex logic, and iterative 
     design of MLOps best practices.
 -----------------------------------------------------------------------------------
+## TODO: preserve raw LLM response on quarantine
+
+**Problem**
+Quarantine currently records the failure reason but not the raw LLM response.
+When a record fails to construct, the jsonl checkpoint is dumped from the DTO —
+so a failed record leaves no trace of what the LLM actually returned. Diagnosing
+a bad pass means seeing "3 records quarantined, missing `hint`" with no way to
+inspect the response that caused it.
+
+**Fix**
+On quarantine write, include the raw response text for the failing record
+alongside the existing fields:
+
+- `syn_id`
+- `batch_key` — (book, chapter, type, chunk)
+- `reason` — parse failure / missing syn_id / construction failure + field
+- `raw_response` — the LLM output for this record, unmodified
+- `pass` — lexical / semantic / generation
+- `timestamp`
+
+Successes don't need this; the DTO dump is faithful for those. Quarantine +
+checkpoint together are the complete picture.
+
+**Scope**
+- [ ] Enrichment pipeline — build in from the start, quarantine write is new code
+- [ ] Generation pipeline — confirm current behaviour, close the same gap if raw
+      response is discarded on failure
+
+**Notes**
+Where the record failed to parse at all (no valid JSON), `raw_response` may be
+the whole batch response rather than a per-record slice. Acceptable — record
+which it is in `reason`.
+
 """
 ## SETUP
 import os
@@ -107,21 +141,19 @@ from pathlib import Path
 from typing import List, Optional, Dict, Any, Tuple
 import json
 import uuid
-from asyncssh import PIPE
 from dotenv import load_dotenv
 import google.generativeai as genai
 from prefect import flow, task, get_run_logger #pipeline orchestrator
 from prefect.artifacts import create_markdown_artifact
 from rich.console import Console
 from rich.markdown import Markdown
-from sqlalchemy import all_
 
 # IMPORT PROJECT CONFIGURATION
 # Using the "Src Layout" (pip install -e .)
 from core.constants import Book, QuestionSource
+from core.models import DraftQuestion
 from scripts.pipelines.generate_questions.prompts.pipeline_config import GENERATION_STRATEGY, GEN_STRATEGY_VERSION
 import notebook_support.notebook_config as nb_cfg
-from core.models import create_draft_question_model
 
 ## CONSTANTS
 
@@ -157,12 +189,6 @@ class RunIDFilter(logging.Filter):
         if not hasattr(record, "run_id"):
             record.run_id = self.run_id
         return True
-
-## DATA TRANSFER OBJECTS (DTOs)
-# DraftQuestion model for upstream generation (soft, derived version of SyntheticMCQ)
-# for LLM schema + DTO for generation pipeline.
-
-DraftQuestion = create_draft_question_model()
 
 ## TASKS AND HELPERS
 
@@ -713,7 +739,7 @@ def process_and_save_candidates(run_id: str, batch_id: str, job_id: str, respons
                         unique_id = f"{run_id}_{batch_id}_{job_id}_{i}_{q_idx}"
                         
                         # 1. Identity: track exactly where the question came from
-                        question_data['temp_qid'] = unique_id
+                        question_data['syn_id'] = unique_id
                         question_data['question_source'] = QuestionSource.SYNTHETIC.value
                         
                         # 2. Context: inject the full run/job metadata

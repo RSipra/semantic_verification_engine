@@ -1,6 +1,38 @@
 """"
 Project: SVE (ref implementation: Harry Potter Trivia)
 Pydantic Schemas (Phase 2+)
+
+Schema chain follows the generation pipeline; each class adds the fields its
+stage produces. Legacy and synthetic share the same enrichment passes and
+differ only by source-conditional validators on DraftQuestion (legacy enters
+at pass 2, carrying a 'legacy' sentinel for generation_prompt_version).
+
+    GenPipelineMetadata          run metadata (model, timestamp, pipeline id)
+      └─ DraftQuestion           + generation pass: core Q/A, grounding, syn_id
+           └─ LexDraftQuestion   + pass 2 (lexical): hints, explanation, answer variations
+                └─ BaseQuestion  + pass 3 (semantic): entity refs, lore concepts
+
+Tier schemas branch from BaseQuestion:
+    BaseQuestion
+      ├─ SyntheticStandard / LegacyStandard   Bronze gate (currently identical)
+      ├─ SilverStandard                       audit ledger: embeddings, judge traces
+      ├─ GoldStandard                         lean runtime projection (metadata shed)
+      ├─ ProductionStandard_Green / _Blue     Context Refinery features (dev / stable)
+      └─ RuntimeStandard_Green / _Blue        warmup tensors hydrated
+
+MCQ variants compose each tier with the MCQuestion mixin (tier class first,
+mixin second for consistent MRO). Routing via VALIDATION_REGISTRY,
+OFFLINE_HANDOFF_REGISTRY, RUNTIME_REGISTRY at the bottom of the module.
+
+TODO: reconcile MCQ and Standard into one - impacts runtime (separate refactor)
+TODO: LegacyStandard / SyntheticStandard are now identical (both `pass` over
+      BaseQuestion) - source-specific requirements moved into DraftQuestion
+      validators. Retained only as VALIDATION_REGISTRY keys. Collapse alongside
+      the validation pipeline refactor.
+TODO: BaseQuestion is no longer a base - it's the enriched terminal of the
+      generation chain and the tier branch point. Name predates the DTO
+      restructure. Rename (e.g. EnrichedQuestion) when touching the tiers
+      to avoid confusion / misinterpretation.      
 """
 
 import math
@@ -9,7 +41,8 @@ import hashlib
 import base64
 from enum import Enum
 from typing import List, Optional, Self, Dict, Literal, TYPE_CHECKING, Any
-from pydantic import BaseModel, field_validator, Field, model_validator, ConfigDict, ValidationInfo, create_model
+from pydantic import (BaseModel, field_validator, Field, model_validator, 
+                      ConfigDict, ValidationInfo)
 import numpy as np
 from core.constants import QuestionType, QuestionSource, AnswerType
 
@@ -22,31 +55,82 @@ class DataTier(str, Enum):
     GOLD = "gold"
     PROD_GREEN = "production_green"
     PROD_BLUE = "production_blue"
-    
-    
-# Basic schema for all question types to inherit
-class BaseQuestion(BaseModel):
+
+class GenPipelineMetadata(BaseModel):
     """
-    The foundational schema defining fields common to all trivia question types.
-    
-    All specific question formats (Standard, MCQ) inherit from this structure
-    to ensure core metadata (category, difficulty, sources) is always present.
+    Fields that track how a question was generated.
+    Present at Bronze and Silver, shed at Gold.
     """
-    # makes enums serialize as their values
+    generation_model: str
+    timestamp: str
+    generation_pipeline_id: str
+    generation_strategy_version: str
+
+class DraftQuestion(GenPipelineMetadata):
+    """Core fields  """
     model_config = ConfigDict(use_enum_values=True)
 
+    original_question_id: Optional[int] = Field(
+        default=None,
+        description="Traceable id for legacy question to originating legacy dataset"
+        )
+    syn_id: Optional[str] = Field(
+        default=None, 
+        description="Traceable id for synthetic types(Run/Batch/Job/Candidate/QID)")
+    generation_prompt_version: str = Field(
+        description=("Prompt for generation, required for Synthetic question types"
+                     "Not required by legacy questions; adds 'legacy' sentinel value")
+    )
     question_type: QuestionType
     question_source: QuestionSource
     question: str
     answer: str
+    llm_predicted_category: Optional[str] = Field(
+        default=None, description = "Required for synthetic, None for legacy")
+    llm_predicted_difficulty: Optional[str] = Field(
+        default=None, description = "Required for synthetic, None for legacy")
+    source_reference: Optional[str] = Field(
+        default=None, description = "Required for synthetic, None for legacy")
+    source_quote: Optional[str] = Field(
+        default=None, description = "Required for synthetic, None for legacy")
+
+    @model_validator(mode='before')
+    @classmethod
+    def set_legacy_prompt_version(cls, data):
+        """Add a sentinel (standin) value for legacy - it will not have a generating prompt
+           since it the core fields are from the phase 1 legacy dataset"""
+        if isinstance(data, dict) and data.get('question_source') == 'legacy':
+            data.setdefault('generation_prompt_version', 'legacy')
+        return data
+
+    @model_validator(mode='after')
+    def validate_source_metadata(self):
+        """Make sure required source meta data is present
+        """
+        if self.question_source == "legacy" and self.original_question_id is None:
+            raise ValueError("Legacy Record missing `original_question_id`.")
+        if self.question_source == "synthetic" and self.syn_id is None:
+            raise ValueError("Synthetic Record missing `syn_id`.")
+        if self.question_source == "synthetic" and self.source_reference is None:
+            raise ValueError("Record is missing its grounding source_reference \
+                             entry required for deduplication")
+        if self.question_source == "synthetic" and self.source_quote is None:
+            raise ValueError("Record is missing its grounding source_quote entry \
+                required for deduplication")
+        return self
+
+class LexDraftQuestion(DraftQuestion):
+    """
+    Fields added by the Lexical enrichment (second) LLM pass 
+    in the generation pipeline for both legacy and synthetic questions
+    """
+    lex_enrich_prompt_version: str
     answer_variations: List[str]
     hint_1: str
     hint_2: str
     hint_3: str
     explanation: str
-    semantic_entity_refs: List[str]
-    semantic_lore_concepts: List[str]
-    
+
     @field_validator('*', mode='before')
     @classmethod
     def convert_numpy_arrays(cls, v):
@@ -67,30 +151,15 @@ class BaseQuestion(BaseModel):
         if q_type == QuestionType.EX and len(ans_var)>3 :
             raise ValueError('EX questions must have at most 3 answer variations')
         return self
-
-class PipelineMetadata(BaseModel):
-    """
-    Fields that track how a question was generated.
-    Present at Bronze and Silver, shed at Gold.
-    """
-    generation_model: str
-    generation_prompt_version: str
-    lex_enrich_prompt_version: str
-    semantic_enrich_prompt_version: str
-    timestamp: str
-    generation_pipeline_id: str
-    generation_strategy_version: str
     
-    @field_validator('generation_prompt_version', mode='before')
-    @classmethod
-    def deserialize_prompt_version(cls, v):
-        """
-        Parquet round-trip stores this as a JSON string.
-        Deserialize back to dict on load.
-        """
-        if isinstance(v, str):
-            return json.loads(v)
-        return v  # already a dict or None, pass through
+# Basic schema for all question types to inherit
+class BaseQuestion(LexDraftQuestion):
+    """
+    Semantic enrichment pass 
+    """
+    semantic_enrich_prompt_version: str
+    semantic_entity_refs: List[str]
+    semantic_lore_concepts: List[str]
 
 # MCQ mixing to be added to MCQ classes along with BaseQuestion to decouple 
 # core fields so GoldMCQ doesn't indirectly inherit Silver audit fields that were shed.
@@ -128,76 +197,29 @@ class MCQuestion(BaseModel):
             raise ValueError(f"Correct answer '{self.answer}' must be one of the options.")
         return self
 
-class SyntheticStandard(BaseQuestion, PipelineMetadata):
+class SyntheticStandard(BaseQuestion):
     """
     STRICT schema for new FR/EX questions. 
     Enforces 'source_reference' and 'source_quote' to ensure
     high-quality grounding and prevent duplicates in the Content Factory.
     """
-    # TODO (full dev): rename to `syn_id`
-    temp_qid: str = Field(
-        description="Notebook tracer artifact. In main dev, the generation pipeline "
-                    "should emit this as 'syn_id' (Run/Batch/Job/QID) natively to avoid "
-                    "schema transitions between Bronze and Silver."
-    )
-    llm_predicted_category: str
-    llm_predicted_difficulty: str
-    source_reference: str
-    source_quote: str
+    pass
 
-    @model_validator(mode='after')
-    def validate_source_metadata(self):
-        """Make sure required source meta data is present
-        """
-        if self.source_reference is None:
-            raise ValueError("Record is missing its grounding source_reference \
-                             entry required for deduplication")
-        if self.source_quote is None:
-            raise ValueError("Record is missing its grounding source_quote entry \
-                required for deduplication")
-        return self
-
-    @model_validator(mode='after')
-    def validate_synthetic_lineage(self):
-        """Confirm the synthetic questions have the generation prompt version included"""
-        if self.question_source == "synthetic" and self.generation_prompt_version is None:
-            raise ValueError(
-                "Synthetic questions must include a generation_prompt_version dictionary.")
-        return self
-
-class SyntheticMCQ(MCQuestion, SyntheticStandard):
+class SyntheticMCQ(SyntheticStandard, MCQuestion):
     """
     STRICT schema for new multiple-choice questions (MCQ). 
     Inerits MCQ behavior from MCQ_question and full Synthetic
     columns from Synthetic standard.
     """
-    pass
+    pass      
 
-# Draft Question model for upstream generation 
-# (soft, defrived version of SyntheticMCQ -> it has all fields needed for drafting)
-def create_draft_question_model() -> type[BaseModel]:
-    """
-    Creates a draft question model based on the SyntheticMCQ schema for the
-    generation pipeline. All fields are optional to allow for partial drafts 
-    while populating the record through multiple LLM passes. 
-    SyntheticMCQ has all the fields need for drafting so used as base.
-    Validation is done by Bronze gate 
-    """
-    new_fields = {}
-    for field_name, field in SyntheticMCQ.model_fields.items():
-        new_fields[field_name] = (Optional[field.annotation], None)
-
-    return create_model("DraftQuestion",
-                        __config__=ConfigDict(use_enum_values=True),
-                        **new_fields,)
-
-class LegacyStandard(BaseQuestion, PipelineMetadata):
+class LegacyStandard(BaseQuestion):
     """
     Inherits base question and adds legacy identifier
     """
-    original_question_id: int
+    pass
 
-class LegacyMCQ(MCQuestion, LegacyStandard):
+class LegacyMCQ(LegacyStandard, MCQuestion):
     """
     STRICT schema for new multiple-choice questions (MCQ). 
     Inerits MCQ behavior from MCQ_question and full Legacy
@@ -219,7 +241,7 @@ class EnrichmentFlag(BaseModel):
     flag_notes: str
 
 # Audit layer and system invariant (stores metadata for traceability)
-class SilverStandard(BaseQuestion, PipelineMetadata):
+class SilverStandard(BaseQuestion):
     """
     The Silver Tier schema for Standard (FR/EX) questions.
     Captures full audit traces, embeddings, and model lineage.
@@ -431,7 +453,7 @@ class GoldStandard(BaseQuestion):
             # Drop it if it is None or a Pandas NaN (float nan).
             if v is not None and not (isinstance(v, float) and math.isnan(v)):
                 clean_data[k] = v
-                
+  
         return clean_data
     
     # check 2. check deterministic math of the master_id corresponds to question data
