@@ -107,13 +107,11 @@ grpcio-status==1.71.2
 gto==1.9.0
 h11==0.16.0
 h2==4.3.0
--e git+ssh://git@github.com/RSipra/semantic_verification_engine@cbcccfacf02cf17256aa441dcca97ebb8512c826#egg=harry_potter_trivia
 hf-xet==1.5.0
 hf_transfer==0.1.9
 hpack==4.1.0
--e git+ssh://git@github.com/RSipra/semantic_verification_engine@cbcccfacf02cf17256aa441dcca97ebb8512c826#egg=hptrivia_game
 httpcore==1.0.9
-httplib2==0.31.0
+httplib2==0.32.0
 httpx==0.28.1
 huggingface_hub==0.36.2
 humanize==4.14.0
