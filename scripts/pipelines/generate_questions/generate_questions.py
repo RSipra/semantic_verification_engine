@@ -500,13 +500,14 @@ def prepare_prompt(chapter_path: List[Path], prompt_path:Path) -> str:
     # Integrity checks for the prompt template from unit testing
     #1. incase the prompt template is empty
     if not prompt_template or prompt_template.isspace():
-        raise ValueError(f"Prompt template file is empty: {prompt_path}")
+        raise ValueError(f"Prompt template file is empty: {prompt_path.name}")
     #2. if the prompt template doesn't have a placeholder for the chapters (source text)    
     if "{source_text}" not in prompt_template:
         raise ValueError("Prompt template is missing the required '{source_text}' placeholder.")
     #3. if the prompt template doesn't have a placeholder for the source info (references)    
     if "{valid_source_list}" not in prompt_template:
-        raise ValueError(f"Prompt template {prompt_path} is missing the required '{{valid_source_list}}' placeholder.")
+        raise ValueError(
+            f"Prompt template {prompt_path.name} is missing the required '{{valid_source_list}}' placeholder.")
 
     # Read and combine the two source text / chapter files
     source_texts = []
@@ -559,14 +560,9 @@ def make_api_call(final_prompt:str, config: dict):
         top_p=config.get('top_p', 0.95),
         max_output_tokens=config.get('max_output_tokens', 12000),
         candidate_count=config.get('candidate_count', 1),
-        response_mime_type="application/json",
-        # rresponse_schema removed — see note
+        response_mime_type="application/json"
     )
-    # NOTE: response_schema intentionally omitted — the validated tracer script
-    # ran without one and produced reliable JSON. Passing the TypedDict schema
-    # (notebook_support.schemas) produced incomplete/skeletal records.
-    # Proper Pydantic-derived schemas land with DraftQuestion — see ADR-P2-023.
-    
+  
     # 3. Call API
     try:
         response = model.generate_content(final_prompt, generation_config=gen_config)

@@ -1,0 +1,60 @@
+You are generating in-universe semantic context for Harry Potter trivia answers to support a high-precision SBERT Answer Refinery.
+
+### Core Intent
+Contextual variations are NOT lexical rephrasings (synonyms). They are lore-grounded identifiers, aliases, and narrative roles that a knowledgeable fan would use to describe the same truth.
+
+### Instructions (Surgical Precision Rules)
+
+1. **The Anchor-First Rule:** Every entry in `entity_refs` MUST be a direct substitute for the answer itself. 
+   - DO NOT include victims, bystanders, or contextual characters from the question. 
+   - *Example:* If the answer is "Bellatrix Lestrange," do NOT include "Sirius Black" or "Harry Potter" as variants.
+
+2. **The "Non-Generic" Lore Rule:** Lore concepts must be DISCRIMINATIVE. 
+   - Avoid generic categories like "Wizarding school," "Magical plants," or "Spells."
+   - Include only concepts that explain the specific truth or mechanics of the answer (e.g., "Wand Allegiance," "Secret-Keeper," "Blood Pact").
+
+3. **The Alias Cap:** - Max 2 aliases per entity. 
+   - Prioritize the most common canonical alias (e.g., "Voldemort" ↔ "Tom Riddle").
+
+4. **MCQ Strictness:** - Variations for MCQ must uniquely identify the correct option. 
+   - If an alias overlaps with a distractor (e.g., using "Marauder" when both Sirius and Lupin are options), discard it.
+
+### Output Schema
+{
+  "original_question_id": int,
+  "semantic_entity_refs": ["List of people, objects, or creatures"],
+  "semantic_lore_concepts": ["List of specific magical events, statuses, or properties"]
+}
+
+---EXAMPLES---
+INPUT
+{
+   "original_question_id": 1357,
+   "question_type": "EX",
+   "question": "Who had Severus Snape’s true allegiance, and why?",
+   "answer": "Albus Dumbledore: Snape's allegiance was to him because of his enduring love for Lily Potter."
+},
+{
+   "original_question_id": 1345
+   "question_type": "EX",
+   "question": What was the second true prophecy made by Professor Trelawney that occurs in Harry Potter and the Prisoner of Azkaban?
+   "answer": "That the Dark Lord would rise again, and his servant would break free and return to him — referring to Peter Pettigrew escaping to rejoin Voldemort."
+}
+
+OUTPUT
+{
+  "original_question_id": 1357,
+  "semantic_entity_refs": ["Albus Dumbledore", "Headmaster of Hogwarts"],
+  "semantic_lore_concepts": ["Unrequited love", "Protecting the son", "Atonement", "Double agent", "Always"]
+},
+{
+  "original_question_id": 1345,
+  "semantic_entity_refs": ["Peter Pettigrew", "Wormtail", "Lord Voldemort", "The Dark Lord"],
+  "semantic_lore_concepts": [ "Servant breaking free",  "Return of the Dark Lord",  "Trelawney's Second Prophecy", "Rejoining the master"]
+}
+
+---END EXAMPLES---
+
+---QUESTIONS DICTIONARY---
+{question_batch}
+---END QUESTIONS DICTIONARY---

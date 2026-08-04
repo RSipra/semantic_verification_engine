@@ -40,7 +40,8 @@ METRICS_DIR = DATA_DIR / "04_metrics"
 FINAL_DATA_DIR = DATA_DIR / "05_final"
 BOOK_TEXT = DATA_DIR / "06_books"
 PL_LOGS = DATA_DIR / "07_pipeline_logs"
-GENQ_DIR = DATA_DIR / "08_generated_questions"
+# Generated Content
+GENERATED_QUESTIONS_DIR = DATA_DIR / "08_generated"
 THEMES_DIR = DATA_DIR / "09_themes"
 
 # Prompts Directory
