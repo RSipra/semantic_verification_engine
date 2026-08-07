@@ -3,8 +3,7 @@ Configuration for offline pipelines
 '''
 
 from core.constants import QuestionType
-from core.models import LexDraftQuestion, SyntheticStandard, SyntheticMCQ
-from game_app.types import Question
+from core.models import LexDraftQuestion, SyntheticStandard, SyntheticMCQ, DraftQuestion
 import notebook_support.notebook_config as nb_cfg
 from notebook_support.schemas import StandardQuestion, MCQuestion
 
@@ -63,6 +62,7 @@ ENRICHMENT_STRATEGY={
         "prompt_id": "lex_enrich_v0",
         "prompt_file": nb_cfg.PROMPTS_DIR / "lex_enrichment_prompt_master_v0.txt",
         "file_prefix": "lex_enriched_questions",
+        "input_dto": DraftQuestion,
         "output_dto": {
             QuestionType.EX: LexDraftQuestion,
             QuestionType.MCQ: LexDraftQuestion,
@@ -81,6 +81,7 @@ ENRICHMENT_STRATEGY={
         "prompt_id": "semantic_enrich_v0",
         "prompt_file": nb_cfg.PROMPTS_DIR / "semantic_enrichment_prompt_master_v0.txt",
         "file_prefix": "semantic_enriched_questions",
+        "input_dto": LexDraftQuestion,
         "output_dto": {
             QuestionType.EX: SyntheticStandard,
             QuestionType.MCQ: SyntheticMCQ,
