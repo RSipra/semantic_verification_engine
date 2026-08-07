@@ -85,6 +85,12 @@ class DraftQuestion(GenPipelineMetadata):
     question_source: QuestionSource
     question: str
     answer: str
+    # mcq_options is Optional (unlike validation pipeline gates). The enrichment passes never
+    # read this field (transient) so a validator that requires it for MCQ questions is enough.
+    # A separate class (following the mixin pattern) would mean maintaining two parallel chains for a field nothing uses.
+    mcq_options: Optional[List[str]] = Field(
+        default=None,
+        description="Required for MCQ questions, None for other question types")
     llm_predicted_category: Optional[str] = Field(
         default=None, description = "Required for synthetic, None for legacy")
     llm_predicted_difficulty: Optional[str] = Field(
@@ -117,6 +123,16 @@ class DraftQuestion(GenPipelineMetadata):
         if self.question_source == "synthetic" and self.source_quote is None:
             raise ValueError("Record is missing its grounding source_quote entry \
                 required for deduplication")
+        return self
+    
+    @model_validator(mode='after')
+    def check_mcq_options(self):
+        """Ensure that MCQ questions have exactly 4 options and that the answer is one of them"""
+        if self.question_type == QuestionType.MCQ:
+            if self.mcq_options is None or len(self.mcq_options) != 4:
+                raise ValueError("MCQ questions must have exactly 4 options.")
+            if self.answer not in self.mcq_options:
+                raise ValueError("The answer must be one of the MCQ options.")
         return self
 
 class LexDraftQuestion(DraftQuestion):

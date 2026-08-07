@@ -2,7 +2,9 @@
 Configuration for offline pipelines
 '''
 
-from core.models import LexDraftQuestion
+from core.constants import QuestionType
+from core.models import LexDraftQuestion, SyntheticStandard, SyntheticMCQ
+from game_app.types import Question
 import notebook_support.notebook_config as nb_cfg
 from notebook_support.schemas import StandardQuestion, MCQuestion
 
@@ -61,7 +63,12 @@ ENRICHMENT_STRATEGY={
         "prompt_id": "lex_enrich_v0",
         "prompt_file": nb_cfg.PROMPTS_DIR / "lex_enrichment_prompt_master_v0.txt",
         "file_prefix": "lex_enriched_questions",
-        "json_response_schema": list[LexDraftQuestion],  # standardized schema
+        "output_dto": {
+            QuestionType.EX: LexDraftQuestion,
+            QuestionType.MCQ: LexDraftQuestion,
+            QuestionType.FR: LexDraftQuestion},  # standardized schema for all question types
+        "enrichment_prompt_version_field_name": "lex_enrich_prompt_version", 
+        "enrichment_fields": {"hint_1", "hint_2", "hint_3", "explanation", "answer_variations"},
         "rate_limit_delay": 10,
         "temperature": 0.7,
         "max_output_tokens": 12000,
@@ -73,8 +80,14 @@ ENRICHMENT_STRATEGY={
         "model_name": MODEL,
         "prompt_id": "semantic_enrich_v0",
         "prompt_file": nb_cfg.PROMPTS_DIR / "semantic_enrichment_prompt_master_v0.txt",
-        "file_prefix": "lex_enriched_questions",
-        "json_response_schema": list[LexDraftQuestion],  # standardized schema
+        "file_prefix": "semantic_enriched_questions",
+        "output_dto": {
+            QuestionType.EX: SyntheticStandard,
+            QuestionType.MCQ: SyntheticMCQ,
+            QuestionType.FR: SyntheticStandard
+        },
+        "enrichment_prompt_version_field_name": "semantic_enrich_prompt_version",
+        "enrichment_fields": {"semantic_entity_refs","semantic_lore_concepts"},
         "rate_limit_delay": 10,
         "temperature": 0.7,
         "max_output_tokens": 12000,

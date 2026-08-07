@@ -20,38 +20,38 @@ Contextual variations are NOT lexical rephrasings (synonyms). They are lore-grou
    - If an alias overlaps with a distractor (e.g., using "Marauder" when both Sirius and Lupin are options), discard it.
 
 ### Output Schema
-{
-  "original_question_id": int,
+{{
+  "question_id": int,
   "semantic_entity_refs": ["List of people, objects, or creatures"],
   "semantic_lore_concepts": ["List of specific magical events, statuses, or properties"]
-}
+}}
 
 ---EXAMPLES---
 INPUT
-{
-   "original_question_id": 1357,
+{{
+   "question_id": 1357,
    "question_type": "EX",
    "question": "Who had Severus Snape’s true allegiance, and why?",
    "answer": "Albus Dumbledore: Snape's allegiance was to him because of his enduring love for Lily Potter."
-},
-{
-   "original_question_id": 1345
+}},
+{{
+   "question_id": 1345
    "question_type": "EX",
    "question": What was the second true prophecy made by Professor Trelawney that occurs in Harry Potter and the Prisoner of Azkaban?
    "answer": "That the Dark Lord would rise again, and his servant would break free and return to him — referring to Peter Pettigrew escaping to rejoin Voldemort."
-}
+}}
 
 OUTPUT
-{
-  "original_question_id": 1357,
+{{
+  "question_id": 1357,
   "semantic_entity_refs": ["Albus Dumbledore", "Headmaster of Hogwarts"],
   "semantic_lore_concepts": ["Unrequited love", "Protecting the son", "Atonement", "Double agent", "Always"]
-},
-{
-  "original_question_id": 1345,
+}},
+{{
+  "question_id": 1345,
   "semantic_entity_refs": ["Peter Pettigrew", "Wormtail", "Lord Voldemort", "The Dark Lord"],
   "semantic_lore_concepts": [ "Servant breaking free",  "Return of the Dark Lord",  "Trelawney's Second Prophecy", "Rejoining the master"]
-}
+}}
 
 ---END EXAMPLES---
 

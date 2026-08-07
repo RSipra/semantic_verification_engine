@@ -40,51 +40,33 @@ the validation pipeline; this module owns structural contract only.
 
 >> Uses helpers from generate for now; refactor to common module after smoke test.
 
--- OUTLINE: (wip reference - to be removed once module structure in place)
-
-- Define static dicts of cols for lexical prompt with instruction / description + format hints
-- create LexDraftQuestion with factory
-- prompt construction helper for new columns dict as SOT with assert on what is populated - used to 
-  dynamically update the prompt and to define the requied fields for the LexDraftQuestion DTO.
-- Take DraftQuestion DTO List and filter by question type and create batches x3 (DTO lists)
-For each question type, batch number of questions:
-- prepare prompt for first pass - passing only relelvant cols
-- Make Api call x batches (use LLM service from src.engine.llm_service - if works will refactor 
-  generate and move service to core)
-- add new pass metadata (prompt version, model (if different from gen), etc)
-- save responses as jsonl and construct LexQuestion DTO 
-- assert all ids from DraftQuestion are in the LexQuestion
-Next API call prep
-- use DTOs to extract necessary cols for each batch for prompt prep - passing only relevant cols
-- prepare prompt for second pass
-- Make API call x batches
-- save responses as jsonl and populate existing DTO
-- Bronze pydantic gate validation before saving to staging pool GC or passing to validation pipeline directly as dto
-
-- go through logic to handle failure modes. And batching logic - what is successful vs. not. 
-~I have an adr for this.
-
+NOTE Timestamps: enrichment passes deliberately carry no timestamp of their own.
+The record's `timestamp` is set at ingestion — generation for synthetic,
+preprocessing for legacy — so both paths satisfy the model without a
+source-conditional validator. Revisit only if enrichment becomes decoupled
+from ingestion (e.g. backfilling a new field across existing records).
 """
 ## Setup
 import json
 from collections import defaultdict
 from pathlib import Path
 from prefect import flow, task, get_run_logger
+from collections.abc import Sequence
 
-from core.models import DraftQuestion, LexDraftQuestion, SyntheticMCQ
-from scripts.pipelines.generate_questions.generate_questions import configure_api, make_api_call, convert_question_to_dto, CONFIG_PATH
+from core.models import DraftQuestion, LexDraftQuestion
+from scripts.pipelines.generate_questions.generate_questions import configure_api, make_api_call, CONFIG_PATH
 from scripts.pipelines.generate_questions.prompts.pipeline_config import ENRICHMENT_STRATEGY
 import notebook_support.notebook_config as nb_cfg
 
 ## 1. CONSTANTS, DTOs & CONFIGS
- 
-LEX_PROMPT_FIELDS = {'syn_id','question_type','question','answer','mcq_options'}
-LEXICAL_FIELDS = {"hint_1", "hint_2", "hint_3", "explanation", "answer_variations"}
+OUTPUT_DIR = nb_cfg.GENERATED_QUESTIONS_DIR
+CORE_PROMPT_FIELDS = {'syn_id','question_type','question','answer','mcq_options'}
 
 CHUNK_SIZE = 20     # number of questions per API call
 LEX_PROMPT_PATH = nb_cfg.PROMPTS_DIR / "lex_enrichment_prompt_master_v0.txt"
-config = ENRICHMENT_STRATEGY["lex_enrichment"]
-OUTPUT_DIR = nb_cfg.GENERATED_QUESTIONS_DIR
+lex_config = ENRICHMENT_STRATEGY["lex_enrichment"]
+SEMANTIC_PROMPT_PATH = nb_cfg.PROMPTS_DIR / "semantic_enrichment_prompt_master_v0.txt"
+semantic_config = ENRICHMENT_STRATEGY["semantic_enrichment"]
 
 test_path = OUTPUT_DIR / "fr_questions_prisoner_of_azkaban_chapter_01_run20260724_9882e5b1.jsonl"
 
@@ -94,10 +76,9 @@ test_path = OUTPUT_DIR / "fr_questions_prisoner_of_azkaban_chapter_01_run2026072
 def retrive_dto_from_jsonl_file(file_path: Path):
     """"""
     with open(file_path, "r", encoding="utf-8") as f:
-        return [DraftQuestion.model_validate_json(line) for line in f if line.strip]
+        return [DraftQuestion.model_validate_json(line) for line in f if line.strip()]
         
 # convert list of DTO into json dump for the prompt
-
 def serialize_dtos_to_json(dto_list: list[DraftQuestion], prompt_fields: set[str])-> str:
     """
     Convert list of DTOs into a json ready for prompt injection.
@@ -117,9 +98,19 @@ def serialize_dtos_to_json(dto_list: list[DraftQuestion], prompt_fields: set[str
     return questions_json
 
 # chunk questions by type and count
+def chunk_by_type(dto_list: Sequence[DraftQuestion], chunk_size) -> list:
+    """ 
+    Group DTOs by question type and split each group into chunks.
 
-def chunk_by_type(dto_list: list[DraftQuestion], chunk_size) -> list:
-    """ """
+    Args:
+        dto_list: DTOs to chunk. Typed as Sequence (read-only) rather than list so
+            subclass lists (e.g. list[LexDraftQuestion]) pass the type check;
+            list is invariant, Sequence is not.
+        chunk_size: Max questions per chunk.
+
+    Returns:
+        List of (question_type, chunk_index, batch) tuples.
+    """
     # create a dict of each question type that defaults to empty list for each key  
     by_types= defaultdict(list)
     # populate the dict with question type as key, if q type not present = empty list
@@ -129,9 +120,9 @@ def chunk_by_type(dto_list: list[DraftQuestion], chunk_size) -> list:
     batches = []
     for question_type, dto_grouping in by_types.items():
         for i in range(0,len(dto_grouping),chunk_size):
-            batches.append((question_type, dto_grouping[i:i+chunk_size]))
+            batches.append((question_type, i//chunk_size, dto_grouping[i:i+chunk_size]))
 
-    return batches        
+    return batches  # flat list of tuples: (question_type, batch_index, list[DraftQuestion]) for each batch       
 
 def prepare_enrichment_prompt(questions_json: str, prompt_path:Path) -> str:
     """ """
@@ -155,61 +146,163 @@ def prepare_enrichment_prompt(questions_json: str, prompt_path:Path) -> str:
 ## 3.1. Lexical enrichment (first pass)
 
 # recover response
-def convert_to_lex_dto(llm_response, draft_dtos_list: list[DraftQuestion], prompt_verison:str):
-    """"""
-    # 1. load llm response.text (json) into a list of dicts
-    responses = json.loads(llm_response.text)
+def convert_to_dto(parsed_responses: list[dict], draft_dtos_list: Sequence[DraftQuestion], specs: dict):
+    """
+    Build the next-tier DTOs from an LLM enrichment response.
 
-    # 2. take the DraftQuestion list and add a id_tag for lookup
+    Pairs each LLM response record with its source DTO by question id, then constructs
+    the complete output class from three sources: the response provides the new
+    enrichment fields, the source DTO provides the core fields, and the specs dict 
+    provides the pass configuration and metadata.
+    
+    Construction is the validation gate: if a record is malformed or incomplete,
+    Pydantic raises here.
+
+    Works for any enrichment pass — everything pass-specific comes from `specs`.
+
+    Args:
+        parsed_responses: LLM response records (already parsed from JSON). Each must
+            carry `question_id` plus the fields for this pass.
+        draft_dtos_list: The DTOs sent to the LLM for this batch. Typed as Sequence so
+            subclass lists (e.g. list[LexDraftQuestion] for pass 2) pass the type check.
+        specs: Pass config from ENRICHMENT_STRATEGY. Keys read here:
+            - prompt_id: prompt version, stamped onto each output DTO
+            - enrichment_fields: which fields to read from the response; anything else the
+            LLM returned is ignored (originals always come from the source DTO)
+            - output_dto: {QuestionType: class} — which DTO class to build per question type
+            - enrichment_prompt_version_col_name: which DTO field the prompt version is
+              written to, so each pass records its own version without overwriting the other
+
+    Returns:
+        List of validated DTOs of the output class(es) for this pass.
+    """
+    # 1. take the DraftQuestion list and add a id_tag for lookup
+    # TODO add conditionals for legacy handling here after happy path cleaered
     drafts_by_qid =  {d.syn_id: d for d in draft_dtos_list}
 
-    # 3. create metadata dict once (prompt version only right now)
-    lex_prompt_version = prompt_verison
-
-    # 3. Build Lex with loop, for record in the returned responses,  
+    # 2.  Build enrichment DTO with loop, for record in the returned responses,  
     results = []
-    for record in responses:
-        # 3.1. find the matching DraftQuestion DTO (from generation) using question, dict
+    for record in parsed_responses:
+        # 2.1. find the matching DraftQuestion DTO (from generation) using question, dict
         draft = drafts_by_qid[record['question_id']]
-        # 3.2. take the new llm lex fields (dropping question id) as dict
-        lex_llm_fields = {k:v for k,v in record.items() if k in LEXICAL_FIELDS}
-        # 3.3. compile into LexDraftQuestion (by unpacking 2, 3.1, 3.2) - model will ensure all fields are present and right type.
-        updated_record = LexDraftQuestion(
-            lex_enrich_prompt_version = lex_prompt_version,
+        # 2.2. take the new llm lex fields (dropping question id) as dict
+        llm_fields = {k:v for k,v in record.items() if k in specs["enrichment_fields"]}
+        # 2.3. compile into DTO model(by unpacking 2.1, 2.2) - model will ensure all fields are present and right type.
+        # find question type
+        q_type = draft.question_type
+        dto_class = specs["output_dto"][q_type]
+        updated_record = dto_class(
+            **{specs["enrichment_prompt_version_field_name"]: specs["prompt_id"]},
             **draft.model_dump(), 
-            **lex_llm_fields)
-        # 3.4. append dto to list.
+            **llm_fields)
+        # 2.4. append dto to list.
         results.append(updated_record)
 
-    # 4. return list of LexDraftQuestions
+    # 3. return list of LexDraftQuestions
     return results
 
 @flow
-def enrich_with_lexical_cols(dto_list: list[DraftQuestion]):
+def enrich_with_lexical_cols(run_id: str, dto_list: list[DraftQuestion]):
     """ """
+ 
+    # --- 0. SETUP ---
+    # TODO: consider frozen=True on DTO models to avoid mutation during enrichment passes.
+    #       (each pass should build a new object, not edit the old one) - not needed right now.
+    #       Not doing it now: some 'after' validators may assign to self, which frozen blocks.
+    #       Would need to check those and re-run generation to confirm nothing breaks.
     
+    # API and run config
     configure_api(CONFIG_PATH)
+     
+    # --- 1. Initialization & Preprocessing ---
+    results = []
+    # 1.1. confirm question source DTO (jsonl for recovery / testing / legacy later)
+    if not dto_list:
+        raise ValueError("DTO list is empty. Cannot proceed with enrichment.")
+    if not all(isinstance(dto, DraftQuestion) for dto in dto_list):
+        raise TypeError("All items in dto_list must be instances of DraftQuestion.")
+    batches = chunk_by_type(dto_list, CHUNK_SIZE)
 
-    for question_type, batch in chunk_by_type(dto_list, CHUNK_SIZE):
-        
-        prompt_questions = serialize_dtos_to_json(batch, LEX_PROMPT_FIELDS)
-        prompt = prepare_enrichment_prompt(prompt_questions, LEX_PROMPT_PATH )
+    # --- 2. Loop: for each batch ---
 
-        response = make_api_call(prompt, config)
-        
-        print(json.dumps(json.loads(response.text), indent=2))
+    for question_type, batch_index, batch in batches: 
+        # 2.1. serialize dtos to json for prompt injection
+        questions_for_prompt = serialize_dtos_to_json(batch, CORE_PROMPT_FIELDS)
+        # 2.2. prepare prompt for enrichment pass
+        prompt = prepare_enrichment_prompt(questions_for_prompt, LEX_PROMPT_PATH)
+        # 2.3. API call
+        response = make_api_call(prompt, lex_config)
+        # 2.4. parse response into dict
+        parsed_responses = json.loads(response.text)
+        # 2.5.reconcile: all sent qids returned? no unexpected qids?
+        sent = {d.syn_id for d in batch}
+        returned = {r['question_id'] for r in parsed_responses}
+        if sent != returned:
+            raise ValueError(
+                f"Mismatch in question IDs between sent batch and received responses for batch {batch_index} of type {question_type}.")
+        # 2.6. match response to existing record - combine and parse into LexDraftQuestion DTO
+        lex_draft_questions = convert_to_dto(parsed_responses, batch, lex_config)
+        # 2.7.save response as jsonl for recovery / testing / legacy later
+        output_file = OUTPUT_DIR / f"lex_questions_run{run_id}_{question_type}_batch{batch_index}.jsonl"
+        with open(output_file, "w", encoding="utf-8") as f:
+            for dto in lex_draft_questions:
+                f.write(dto.model_dump_json() + "\n")
+        # 2.8. append batch of LexDraftQuestion DTOs to results list
+        results.extend(lex_draft_questions)
+
+    # 3. Closeout / return DTO results list ready for second enrichment pass
+    return results
 
 ## 3.2 Semantic enrichment (second pass)
-
-if __name__ == "__main__":
-    
-     
-    # retrieve from jsonl in case DTOs are empty 
-    questions = retrive_dto_from_jsonl_file(test_path)
-    questions_for_prompt = serialize_dtos_to_json(questions,LEX_PROMPT_FIELDS)
-    prompt = prepare_enrichment_prompt(questions_for_prompt, LEX_PROMPT_PATH)
+@flow
+def enrich_with_semantic_cols(run_id: str, dto_list: list[LexDraftQuestion]):
+    """ """
+    # --- 0. SETUP ---
+    # API and run config
     configure_api(CONFIG_PATH)
-    response = make_api_call(prompt, config)
-    lex_draft_questions = convert_to_lex_dto(response, questions, "v1")
-    print(lex_draft_questions)
     
+     # --- 1. Initialization & Preprocessing ---
+    results = []
+    # 1.1. confirm question source DTO (jsonl for recovery / testing / legacy later)
+    if not dto_list:
+        raise ValueError("DTO list is empty. Cannot proceed with enrichment.")
+    if not all(isinstance(dto, LexDraftQuestion) for dto in dto_list):
+        raise TypeError("All items in dto_list must be instances of LexDraftQuestion.")
+    batches = chunk_by_type(dto_list, CHUNK_SIZE)
+    
+    # --- 2. Loop: for each batch ---
+    
+    for question_type, batch_index, batch in batches: 
+        # 2.1. serialize dtos to json for prompt injection
+        questions_for_prompt = serialize_dtos_to_json(batch, CORE_PROMPT_FIELDS)
+        # 2.2. prepare prompt for enrichment pass
+        prompt = prepare_enrichment_prompt(questions_for_prompt, SEMANTIC_PROMPT_PATH)
+        # 2.3. API call
+        response = make_api_call(prompt, semantic_config)
+        # 2.4. parse response into dict
+        parsed_responses = json.loads(response.text)
+        # 2.5.reconcile: all sent qids returned? no unexpected qids?
+        sent = {d.syn_id for d in batch}
+        returned = {r['question_id'] for r in parsed_responses}
+        if sent != returned:
+            raise ValueError(
+                f"Mismatch in question IDs between sent batch and received responses for batch {batch_index} of type {question_type}.")
+        # 2.6. match response to existing record - combine and parse into SyntheticStandard or MCQ DTO
+        semantic_draft_questions = convert_to_dto(parsed_responses, batch, semantic_config)
+        # 2.7.save response as jsonl for recovery / testing / legacy later
+        output_file = OUTPUT_DIR / f"semantic_questions_run{run_id}_{question_type}_batch{batch_index}.jsonl"
+        with open(output_file, "w", encoding="utf-8") as f:
+            for dto in semantic_draft_questions:
+                f.write(dto.model_dump_json() + "\n")
+        # 2.8. append batch of Synthetic Questions DTOs to results list
+        results.extend(semantic_draft_questions)
+    
+    # 3. Closeout / return DTO results list ready for second enrichment pass
+    return results
+
+## 3.3 Run pipeline for testing / debugging
+if __name__ == "__main__":
+    results = enrich_with_lexical_cols(run_id="test1", dto_list=retrive_dto_from_jsonl_file(test_path))
+    synthetic_batch = enrich_with_semantic_cols(run_id="test1", dto_list=results)
+    print(synthetic_batch[0].model_dump_json(indent=2))
+    # pass  # for testing / debugging in notebook or script context    
