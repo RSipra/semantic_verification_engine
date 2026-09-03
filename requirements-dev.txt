@@ -161,7 +161,7 @@ nbconvert==7.17.1
 nbformat==5.10.4
 nest-asyncio==1.6.0
 networkx==3.2.1
-nltk==3.9.4
+nltk==3.10.3
 numpy==2.0.2
 oauthlib==3.3.1
 omegaconf==2.3.0
