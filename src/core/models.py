@@ -141,11 +141,11 @@ class LexDraftQuestion(DraftQuestion):
     in the generation pipeline for both legacy and synthetic questions
     """
     lex_enrich_prompt_version: str
-    answer_variations: List[str]
-    hint_1: str
-    hint_2: str
-    hint_3: str
-    explanation: str
+    answer_variations: List[str] = Field(..., min_length=1)
+    hint_1: str = Field(..., min_length=1)
+    hint_2: str = Field(..., min_length=1)
+    hint_3: str = Field(..., min_length=1)
+    explanation: str = Field(..., min_length=1)
 
     @field_validator('*', mode='before')
     @classmethod
@@ -154,7 +154,16 @@ class LexDraftQuestion(DraftQuestion):
         if isinstance(v, np.ndarray):
             return v.tolist()
         return v
-    
+
+    @field_validator('hint_1', 'hint_2', 'hint_3', 'explanation', mode='before')
+    @classmethod
+    def no_empty_strings(cls, v:str):
+        """Ensure the hint and explanation fields are not empty strings 
+        (after stripping whitespace)"""
+        if isinstance(v, str) and len(v.strip()) == 0:
+            raise ValueError("Field cannot be empty or whitespace.")
+        return v
+
     @model_validator(mode='after')
     def check_answer_variations(self):
         """check list lengths for answer_variations based on qtype
@@ -166,6 +175,9 @@ class LexDraftQuestion(DraftQuestion):
 
         if q_type == QuestionType.EX and len(ans_var)>3 :
             raise ValueError('EX questions must have at most 3 answer variations')
+        
+        if any(not v.strip() for v in ans_var):
+            raise ValueError('answer variations cannot be empty or whitespace')
         return self
     
 # Basic schema for all question types to inherit
