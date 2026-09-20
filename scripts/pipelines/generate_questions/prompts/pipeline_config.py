@@ -73,7 +73,11 @@ ENRICHMENT_STRATEGY={
         "temperature": 0.7,
         "max_output_tokens": 12000,
         "top_p": 0.95,
-        "candidate_count": 1  
+        "candidate_count": 1,
+        # localized warning: ratio of quarantined records to records returned by the LLM for the batch.
+        "max_batch_failure_rate": 0.10, 
+        # full-run warning: same ratio as a batch accumulated across all batches 
+        "max_run_failure_rate": 0.05, 
     },
     "semantic_enrichment":
     {
@@ -93,6 +97,10 @@ ENRICHMENT_STRATEGY={
         "temperature": 0.7,
         "max_output_tokens": 12000,
         "top_p": 0.95,
-        "candidate_count": 1  
+        "candidate_count": 1,
+        # localized warning: ratio of quarantined records to records returned by the LLM for the batch.
+        "max_batch_failure_rate": 0.10, 
+        # full-run warning: same ratio as a batch accumulated across all batches 
+        "max_run_failure_rate": 0.05,   
     }
 }

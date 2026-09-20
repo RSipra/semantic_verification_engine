@@ -33,11 +33,44 @@ Failure handling:
 - Missing syn_ids: retry missing subset once, then quarantine.
 - Unparseable record: quarantine (raw + reason).
 - DTO Construction failure (critical null): quarantine.
-- Abort thresholds: >10% of a batch, >5% of run.
+- Warn thresholds: if >10% of a batch, >5% of run quarantined (monitored, 
+  not enforced, see Structural failure thresholds below).
 
 Exit: SyntheticStandard set -> staging pool (GCS) or direct handoff to
 validation pipeline. Semantic checks (grounding, dedup, RAG-triad) stay in
 the validation pipeline; this module owns structural contract only.
+
+Structural failure thresholds
+-----------------------------
+Scope: structural contract only — did the LLM return something that
+satisfies the DTO? (parseable response, ids reconciled, required fields
+present and non-empty). Semantic quality (grounding, hallucination,
+dedup) belongs to the validation pipeline.
+
+Both are ratios of quarantined records to records the LLM returned:
+  - max_batch_failure_rate: len(batch_quarantined) / len(parsed_responses)
+      per API call (n≈20, noisy — 1 failure = 5%)
+  - max_run_failure_rate: total_quarantined / total_processed
+      accumulated across batches (less noisy)
+  Values live in ENRICHMENT_STRATEGY, per pass.
+  NB the denominator is records RETURNED, not records sent — a batch that
+  fails before convert_to_dto (unparseable response, transport error)
+  contributes nothing to either ratio and needs its own count.
+
+Declared and monitored, NOT enforced. Breaches log a warning; the run
+continues.
+
+Why not enforced:
+  - Bronze schema gate is the enforcer; nothing bad reaches Silver either way
+  - failures are detected after the batch's tokens are already spent, so
+    aborting only saves batches not yet started
+  - no resume-from-checkpoint, so an abort costs a full re-run
+  - tracer (n=50) showed zero structural failures — normal is not yet
+    characterised, so the values are placeholders, not calibrated limits
+
+Revisit enforcement when any of: a real run shows structural failures;
+runs become unattended (no one watching logs to Ctrl-C); resume-from-
+checkpoint exists.
 
 >> Uses helpers from generate for now; refactor to common module after smoke test.
 
@@ -302,21 +335,27 @@ def enrich_with_llm_cols(run_id: str,
     next-tier DTOs from the responses. Each batch is checkpointed to jsonl as it
     completes. Everything pass-specific comes from `configuration`, so the same flow
     runs both the lexical and semantic passes.
+    
+    Records that fail DTO construction are quarantined rather than failing the batch.
+    Quarantine rates are logged per batch and at run closeout, and warn when they exceed
+    the configured thresholds — monitored only, not enforced (see module docstring,
+    Structural failure thresholds).
 
     Args:
         run_id: Identifier for this pipeline run, used in checkpoint filenames.
         dto_list: Questions to enrich. Must all be instances of the pass's input DTO.
         configuration: Pass config from ENRICHMENT_STRATEGY. Read here: `input_dto`
-            (expected input class), `prompt_file`, `file_prefix` (checkpoint naming).
-            Also passed through to the LLM call and to convert_to_dto.
+            (expected input class), `output_dto` (question types this pass supports),
+            `prompt_file`, `file_prefix` (checkpoint naming), and the two failure-rate
+            thresholds. Also passed through to the LLM call and to convert_to_dto.
 
     Returns:
         Tuple[List[EnrichedDTO], List[QuarantinedRecord]]: A tuple containing the list
         of enriched DTOs, and the list of quarantined records.
 
     Raises:
-        ValueError: empty input, or the LLM response doesn't return exactly the
-            question ids that were sent.
+        ValueError: empty input; a question type with no output DTO configured; or the
+            LLM response doesn't return exactly the question ids that were sent.
         TypeError: input DTOs don't match the pass's expected input class.
         
     ----
@@ -333,8 +372,8 @@ def enrich_with_llm_cols(run_id: str,
     # --- 1. Initialization & Guards ---
     result_dtos = []
     all_quarantined = []  # records quarantined, across batches 
-    total_processed = 0     # records sent, across batches
-    total_quarantined = 0   # records quarantined, across batches (excludes orphans - no matching syn_id)
+    total_processed = 0     # records returned by the LLM, across batches
+    total_quarantined = 0   # records quarantined, across batches 
 
     # 1.1. validation checks
     # confirm question source DTO (jsonl for recovery / testing / legacy later)
@@ -346,47 +385,88 @@ def enrich_with_llm_cols(run_id: str,
     # raise an error for quick fix
     unsupported_qtype = {d.question_type for d in dto_list} - configuration["output_dto"].keys()
     if unsupported_qtype:
-        raise ValueError(f"Question types not configured for this enrichment pass: {unsupported_qtype}")
+        raise ValueError(
+            f"Question types not configured for this enrichment pass: {unsupported_qtype}"
+            )
 
     # 1.2. chunk questions by type and count
     batches = chunk_by_type(dto_list, CHUNK_SIZE)
 
     # --- 2. Loop: for each batch ---
     for question_type, batch_index, batch in batches: 
-        # 2.0. initialize quanrantine for this batch
-        batch_quarantined = []
+
         # 2.1. serialize dtos to json for prompt injection
         questions_for_prompt = serialize_dtos_to_json(batch, CORE_PROMPT_FIELDS)
+
         # 2.2. prepare prompt for enrichment pass
-        prompt = prepare_enrichment_prompt(questions_for_prompt, configuration["prompt_file"])
+        prompt = prepare_enrichment_prompt(
+            questions_for_prompt, configuration["prompt_file"]
+            )
+
         # 2.3. API call
         try:
             response = make_api_call(prompt, configuration)
         except Exception as e:
-            logger.error("Error occurred while making API call for batch %d of type %s: %s", batch_index, question_type, str(e))
+            logger.error("Error occurred while making API call for batch %d of type %s: %s", 
+                         batch_index, question_type, str(e))
             raise
+
         # 2.4. parse response into dict
         parsed_responses = json.loads(response.text)
+
         # 2.5.reconcile: all sent qids returned? no unexpected qids?
         sent = {d.syn_id for d in batch}
         returned = {r['question_id'] for r in parsed_responses}
         if sent != returned:
             raise ValueError(
-                f"Mismatch in question IDs between sent batch and received responses for batch {batch_index} of type {question_type}.")
+                f"Mismatch in question IDs between sent batch and received responses "
+                f"for batch {batch_index} of type {question_type}.")
+        
         # 2.6. match response to existing record - combine and parse into output DTO
         draft_questions, batch_quarantined = convert_to_dto(parsed_responses, batch, configuration)
         #   quarantine records for batch and update total metrics
         all_quarantined.extend(batch_quarantined)
         total_processed += len(parsed_responses)
         total_quarantined += len(batch_quarantined)
+        #   write quarantined records to jsonl for later inspection
         write_quarantine(batch_quarantined, run_id, configuration)
+        
+        #   quarantine threshold checks: (num quarantined / num returned) for batch
+        batch_failure_rate = len(batch_quarantined)/len(parsed_responses) if parsed_responses else 0
+        if batch_failure_rate > configuration["max_batch_failure_rate"]:
+            logger.warning(
+                "Batch %d (%s): %.1f%% structural failure rate exceeds %.1f%% limit (%d/%d)",
+                batch_index, question_type, batch_failure_rate * 100,
+                configuration["max_batch_failure_rate"] * 100,
+                len(batch_quarantined), len(parsed_responses),
+            )
+
         # 2.7.save response as jsonl for recovery / testing / legacy later
-        output_file = OUTPUT_DIR / f"{configuration['file_prefix']}_run{run_id}_{question_type}_batch{batch_index}.jsonl"
+        filename= f"{configuration['file_prefix']}_run{run_id}_{question_type}_batch{batch_index}.jsonl"
+        output_file = OUTPUT_DIR / filename
         write_jsonl_checkpoint(draft_questions, output_file)
+
         # 2.8. append batch of output DTOs to results list
         result_dtos.extend(draft_questions)
 
     # 3. Closeout / return DTO results list ready for second enrichment pass
+
+    #   quarantine threshold check: (num quarantined / num returned) for full run
+    run_failure_rate = total_quarantined/total_processed if total_processed else 0
+    # baseline record of run completion
+    logger.info(
+        "Run %s complete: %d/%d records quarantined (%.1f%%)",
+        run_id, total_quarantined, total_processed, run_failure_rate * 100,
+    )
+    #  log warning if run failure rate exceeds threshold
+    if run_failure_rate > configuration["max_run_failure_rate"]:
+        logger.warning(
+            "Run %s: %.1f%% structural failure rate exceeds %.1f%% limit (%d/%d)",
+            run_id, run_failure_rate * 100,
+            configuration["max_run_failure_rate"] * 100,
+            total_quarantined, total_processed,
+        )
+
     return result_dtos, all_quarantined
 
 ## 4. Run pipeline for testing / debugging
