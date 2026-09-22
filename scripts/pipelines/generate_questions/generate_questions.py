@@ -544,6 +544,16 @@ def make_api_call(final_prompt:str, config: dict):
     Args:
         final_prompt: The finalized prompt string
         config: A dictionary containing 'model_name', 'temperature', etc.
+    
+    # TODO (caching): chapter-major loop + chapter-first prompts would make chapter
+    # text cacheable across question types. Tracer: each chapter pair is sent once
+    # per type with an identical payload (11–18k tokens). Templates alone (768–1,684)
+    # are all below the implicit-caching minimum, so template caching is not viable.
+    # Ceiling: (k-1)/k of chapter sends cached at ~90% discount (k = question types;
+    # 67% at k=3). Revisit when: moving off free tier, or full-corpus runs become
+    # frequent. Requires a prompt experiment first — instruction/source ordering
+    # affects output quality (see ex_primacy_bias).
+    # Evidence: 1_input_template vs 3_input_cached_actual in run receipts.   
     """
     logger = get_run_logger()
 
@@ -666,27 +676,83 @@ def check_safety_and_feedback(response, full_metadata: Dict[str, Any], job_id: s
 def calculate_token_metrics(response, full_metadata: dict, 
                             template_token_count: int) -> Tuple[int, int, int]:
     """
-    response processing layer 2: accounting. Updates metadata with granular token
-    breakdown. Returns (Total, Input, Output) counts.
+    Response processing layer 2: accounting. Records a granular token breakdown
+    for one LLM call in `full_metadata["job_token_breakdown"]` and returns the
+    headline counts. Shared by generation and enrichment passes.
+
+    Input tokens are split into two parts, because every prompt in this pipeline
+    is a fixed template with variable content injected at the end:
+      - template: the prompt template before injection, identical across calls
+        in a pass (measured locally, passed in as `template_token_count`)
+      - payload:  the injected content — chapter text for generation, the
+        question batch for enrichment (derived: total input - template)
+
+    1. Why both template and actual-cached counts are recorded:
+    
+    The caching strategy is not yet decided, and these fields are the evidence
+    for it. `1_input_template` is the ceiling — tokens that *could* be cached,
+    since every call in a pass shares the same template prefix.
+    `3_input_cached_actual` is what the provider *did* cache and bill at the
+    reduced rate. Tracer: all templates are below the implicit-caching minimum,
+    so expect ~0 until prompt structure changes (see caching TODO on the
+    generation loop). Reports cache hits from implicit or explicit caching
+    alike, so this accounting holds if explicit caching is adopted.
+    
+    2. Why thinking and residual are separated: 
+    
+    `6_thinking_actual` is the API's chain-of-thought count, billed at the
+    output rate. `7_other_processing` is the residual — billed minus input,
+    visible output and thinking — so the breakdown sums to the total. Expected
+    ~0; a non-zero value means something else is being billed (e.g. tool-use
+    prompt tokens). Tracer: hidden tokens were 20% of generation and ~40% of
+    enrichment totals — the largest controllable cost (see thinking_level TODO).
+
+    NB: experiment logs (experiments/*.yaml) use input_cached / input_uncached
+    for the same template / payload split. Not provider caching.
+
+    Args:
+        response: Raw API response; read via `response.usage_metadata`.
+        full_metadata: Metadata dict for this call, updated in place.
+        template_token_count: Tokens in the prompt template before injection.
+
+    Returns:
+        (total_billed, total_input, output) as reported by the API.
+
+    Breakdown keys written:
+        1_input_template:       template_token_count
+        2_input_payload:        total input - template (floored at 0)
+        3_input_cached_actual:  cached_content_token_count from the API
+        4_output_candidates:    output tokens
+        5_total_billed:         total_token_count from the API
+        6_thinking_actual:      thoughts_token_count from the API
+        7_other_processing:     billed - (input + output + thinking), e.g. other processing tokens
     """
     # Extract raw numbers from the API
     usage = getattr(response, 'usage_metadata', None)
-    api_total_input = getattr(usage, 'prompt_token_count', 0)
-    api_output = getattr(usage, 'candidates_token_count', 0)
-    api_total_billed = getattr(usage, 'total_token_count', 0) # total tokens
+    api_total_input = getattr(usage, 'prompt_token_count', 0) or 0
+    api_output = getattr(usage, 'candidates_token_count', 0) or 0
+    api_cached = getattr(usage, 'cached_content_token_count', 0) or 0
+    api_thinking     = getattr(usage, 'thoughts_token_count', 0) or 0
+    api_total_billed = getattr(usage, 'total_token_count', 0) or 0 # total tokens
 
-    # Calculate your granular custom metrics
-    cached_input = template_token_count   # prompt template w/o formatting (cached_input)
-    uncached_input = max(0, api_total_input - cached_input)  # chapter_text, source_info tokens 
-    processing_tokens = api_total_billed - (api_total_input + api_output)  # hidden tokens
+    # Calculate granular custom metrics
+    # a. prompt template w/o formatting 
+    input_template = template_token_count
+    # b.  - Generation pass: chapter_text & source_info tokens
+    #     - Enrichment pass: question batch tokens    
+    input_payload = max(0, api_total_input - input_template)
+    # c. hidden processing tokens (billed but not in input/output)  
+    other_processing_tokens = api_total_billed - (api_total_input + api_output + api_thinking)
 
     # Pack counts into a metadata dict
     full_metadata["job_token_breakdown"] = {
-        "1_input_cached": cached_input,
-        "2_input_uncached": uncached_input,
-        "3_total_billed": api_total_billed,
+        "1_input_template": input_template,
+        "2_input_payload": input_payload,
+        "3_input_cached_actual": api_cached,
         "4_output_candidates": api_output,
-        "5_hidden_processing": processing_tokens
+        "5_total_billed": api_total_billed,
+        "6_thinking_actual": api_thinking,
+        "7_other_processing": other_processing_tokens,
     }
     return api_total_billed, api_total_input, api_output
 
@@ -963,6 +1029,16 @@ def generate_questions_pipeline(target_books: List[Book],
         >>> generate_questions_pipeline(target_books=[Book.BOOK_3], target_chapters=[15, 16])
         >>> # 3. Thematic Run (High Throughput)
         >>> generate_questions_pipeline(target_books=[Book.THEME_DOBBY], batch_size=10)
+        
+    -----
+    # TODO (caching): chapter-major loop + chapter-first prompts would make chapter
+    # text cacheable across question types. Tracer: each chapter pair is sent once
+    # per type, identical payload (11–18k tokens). Templates alone (768–1,684) are
+    # all below the implicit-caching minimum, so template caching is not viable.
+    # Ceiling: (k-1)/k of chapter sends cached at ~90% discount (k = question types;
+    # 67% at k=3). Revisit when: moving off free tier, or full-corpus runs become
+    # frequent. Requires a prompt experiment first — instruction/source ordering
+    # affects output quality (see ex_primacy_bias).    
     """
     ## A. INITIALIZATION (RUN LEVEL)
     # A.1: generate identifiers

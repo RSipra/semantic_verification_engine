@@ -10,6 +10,20 @@ from notebook_support.schemas import StandardQuestion, MCQuestion
 # Predefined models for each question type (model-per-type based on experimentation)
 
 # version of the generation strategy (for reproducibility and tracking)
+
+# TODO (sampling + thinking): current config was carried over from 2.5
+# experiments and has not been tested on gemini-3.1-flash-lite.
+#   - temperature=0.7, top_p=0.95: Google recommends leaving sampling params at
+#     defaults for all Gemini 3.x models (temp < 1.0 may cause looping /
+#     degraded output). Test removing them; use system-instruction rules if
+#     determinism is needed.
+#   - thinking_level: not set. Flash-Lite defaults to `minimal`, unlike the
+#     rest of Gemini 3 (default `high`). Tracer thinking share (20–40%) was
+#     2.5 Flash and does not transfer.
+# Before the book run: one smoke run to record 6_thinking_actual at default,
+# then compare quarantine rate + validation yield with sampling params removed.
+# Ref: ai.google.dev/gemini-api/docs/gemini-3 (Temperature, Thinking level)
+
 GEN_STRATEGY_VERSION = "generation_strategy_v1.0"
 MODEL = "gemini-3.1-flash-lite"
 
@@ -98,7 +112,8 @@ ENRICHMENT_STRATEGY={
         "max_output_tokens": 12000,
         "top_p": 0.95,
         "candidate_count": 1,
-        # localized warning: ratio of quarantined records to records returned by the LLM for the batch.
+        # localized warning: ratio of quarantined records to records returned by 
+        # the LLM for the batch.
         "max_batch_failure_rate": 0.10, 
         # full-run warning: same ratio as a batch accumulated across all batches 
         "max_run_failure_rate": 0.05,   
