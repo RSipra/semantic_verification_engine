@@ -82,16 +82,25 @@ from ingestion (e.g. backfilling a new field across existing records).
 """
 ## Setup
 import json
+import time
+import sys
 from collections.abc import Sequence
-from collections import defaultdict
-from datetime import datetime, timezone
+from collections import defaultdict, Counter
 from pathlib import Path
 from pydantic import ValidationError
-from prefect import flow, get_run_logger, task
+from prefect import flow, get_run_logger
 
 from core.models import DraftQuestion
-from scripts.pipelines.generate_questions.generate_questions import configure_api, make_api_call, CONFIG_PATH
 from scripts.pipelines.generate_questions.prompts.pipeline_config import ENRICHMENT_STRATEGY
+from scripts.pipelines.generate_questions.generate_questions import (configure_api,
+                                                                     make_api_call,
+                                                                     append_jsonl,
+                                                                     measure_template_tokens,
+                                                                     calculate_token_metrics,
+                                                                     save_run_completion,
+                                                                     build_run_artifact_path,
+                                                                     CONFIG_PATH, CALLS, QUARANTINE)
+
 import notebook_support.notebook_config as nb_cfg
 
 ## 1. CONSTANTS, DTOs & CONFIGS
@@ -103,7 +112,9 @@ lex_config = ENRICHMENT_STRATEGY["lex_enrichment"]
 semantic_config = ENRICHMENT_STRATEGY["semantic_enrichment"]
 
 test_path = OUTPUT_DIR / "fr_questions_prisoner_of_azkaban_chapter_01_run20260724_9882e5b1.jsonl"
-RUNS_DIR = nb_cfg.RUNS_DIR 
+RUNS_DIR = nb_cfg.RUNS_DIR
+# standardized unique identifier for this question_generation script with version
+PIPELINE_ID = "pipe_q_enrich_v00" 
 
 ## 2. TASKS & HELPERS
 
@@ -116,6 +127,11 @@ def retrive_dto_from_jsonl_file(file_path: Path):
 def write_jsonl_checkpoint(draft_questions: list[DraftQuestion], output_file: Path):
     """
     Write a list of DTOs to a jsonl file for checkpointing.
+    
+    Writes a whole batch of DTOs, replacing the file. Uses model_dump_json
+    so Pydantic types serialise correctly. For accumulating plain dicts,
+    see `append_jsonl()`.
+    
     Args:
         dtos: List of DTO objects to write to the file.
         output_file: Path to the output jsonl file.
@@ -266,37 +282,6 @@ def write_as_parquet():
     """Placeholder for future parquet write, for recovery / staging"""
     pass
 
-@task
-def save_enrichment_run_completion(run_id: str, run_stats: dict) -> None:
-    """
-    Saves the final metrics of the run to a JSON file.
-    This acts as the 'Receipt' proving the run finished successfully.
-    """
-    # Save in the same logs folder
-    runs_dir = RUNS_DIR
-
-    completion_data = {
-        "run_id": run_id,
-        "status": "SUCCESS",
-        "timestamp_end": datetime.now(timezone.utc).isoformat(),
-        "metrics": {
-            "total_questions": run_stats['total_questions'],
-            "total_tokens": run_stats['total_billed'],
-            "input_tokens": run_stats.get('total_input', 0),
-            "output_tokens": run_stats.get('total_output', 0),
-            "chapters_processed": run_stats.get('chapters_processed', 0)
-        },
-        "models_used": list(run_stats.get('models_used', []))
-    }
-
-    file_path = runs_dir / f"run_result_{run_id}.json"
-
-    with open(file_path, 'w', encoding='utf-8') as f:
-        json.dump(completion_data, f, indent=2)
-
-    logger = get_run_logger()
-    logger.info("🏁 Run Completion saved to: %s", file_path)
-
 # quarantine failed records for later inspection
 def write_quarantine(entries: list[dict], run_id: str, configuration: dict) -> None:
     """
@@ -311,10 +296,14 @@ def write_quarantine(entries: list[dict], run_id: str, configuration: dict) -> N
     if not entries:
         return  # No entries to write
 
-    output_file = OUTPUT_DIR / f"{configuration['file_prefix']}_run{run_id}_quarantine.jsonl"
-    with open(output_file, "a", encoding="utf-8") as f:
-        for entry in entries:
-            f.write(json.dumps(entry) + "\n")
+    # output_file = OUTPUT_DIR / f"{configuration['file_prefix']}_run{run_id}_quarantine.jsonl"
+    output_file = build_run_artifact_path(OUTPUT_DIR,
+                                          run_id,
+                                          configuration['llm_pass'],
+                                          QUARANTINE)
+    
+    for entry in entries:
+        append_jsonl(entry, output_file)
 
     logger.warning("Quarantined %d records to %s", len(entries), output_file)
 
@@ -365,9 +354,15 @@ def enrich_with_llm_cols(run_id: str,
            Would need to check those and re-run generation to confirm nothing breaks.    
     """
     # --- 0. SETUP ---
-    # API and run config
+    # API and run config, call files (to save run reciept for LLM pass)
     logger = get_run_logger()
     configure_api(CONFIG_PATH)
+    calls_file = build_run_artifact_path(RUNS_DIR, run_id,configuration['llm_pass'], CALLS)
+    # token count of prompt template without attached questions
+    template_token_count = measure_template_tokens(
+        configuration['model_name'],
+        configuration['prompt_file']
+        )
 
     # --- 1. Initialization & Guards ---
     result_dtos = []
@@ -393,7 +388,12 @@ def enrich_with_llm_cols(run_id: str,
     batches = chunk_by_type(dto_list, CHUNK_SIZE)
 
     # --- 2. Loop: for each batch ---
-    for question_type, batch_index, batch in batches: 
+    for batch_index, (question_type, _, batch) in enumerate(batches): 
+        # pacing for RPM limits — sleep before each call except the first
+        # TODO: same limitation as generation — loop position is not time since
+        # the last call. Proper fix is elapsed-time pacing inside make_api_call.
+        if batch_index > 0:
+            time.sleep(configuration.get("rate_limit_delay", 10))
 
         # 2.1. serialize dtos to json for prompt injection
         questions_for_prompt = serialize_dtos_to_json(batch, CORE_PROMPT_FIELDS)
@@ -442,17 +442,53 @@ def enrich_with_llm_cols(run_id: str,
             )
 
         # 2.7.save response as jsonl for recovery / testing / legacy later
-        filename= f"{configuration['file_prefix']}_run{run_id}_{question_type}_batch{batch_index}.jsonl"
-        output_file = OUTPUT_DIR / filename
+        #   2.7.1. write checkpoint file with enrichment results
+        output_file = build_run_artifact_path(OUTPUT_DIR,
+                                              run_id,
+                                              configuration['llm_pass'],
+                                              f"{question_type}_batch{batch_index}.jsonl"
+)
         write_jsonl_checkpoint(draft_questions, output_file)
+        #   2.7.2. accounting for API call
+        token_breakdown = calculate_token_metrics(response, template_token_count)
+        mode_counts = dict(Counter(q['failure_mode'] for q in batch_quarantined))
+        
+        #   build call_entry dict for run reciept 
+        # (TODO refactor as helper later w. generation)
+        call_entry= {
+            'call_id': f"{question_type}_batch{batch_index}",
+            'question_type': question_type,
+            'model': configuration['model_name'],
+            'prompt_version': configuration['prompt_id'],
+            'output_file': output_file.name,
+            'questions_saved': len(draft_questions),
+            'tokens': token_breakdown,
+            'quarantined': mode_counts,
+        }
+        # write call entry to jsonl file as receipt
+        append_jsonl(call_entry, calls_file)
 
         # 2.8. append batch of output DTOs to results list
         result_dtos.extend(draft_questions)
 
     # 3. Closeout / return DTO results list ready for second enrichment pass
 
-    #   quarantine threshold check: (num quarantined / num returned) for full run
+    #  3.1. quarantine threshold check: (num quarantined / num returned) for full run
     run_failure_rate = total_quarantined/total_processed if total_processed else 0
+    
+    #  3.2. status of llm pass
+    status = "SUCCESS" if result_dtos else "FAILED"
+
+    #  3.3: summary report for Prefect UI / terminal
+    # save actual metrics of run for traceability (run "reciept")
+    save_run_completion(PIPELINE_ID,
+                        run_id, 
+                        configuration['llm_pass'], 
+                        status, 
+                        calls_file)
+    # completion update
+    logger.info("🏁 %s Completed: %d", configuration['llm_pass'], run_id)
+    
     # baseline record of run completion
     logger.info(
         "Run %s complete: %d/%d records quarantined (%.1f%%)",
@@ -471,11 +507,19 @@ def enrich_with_llm_cols(run_id: str,
 
 ## 4. Run pipeline for testing / debugging
 if __name__ == "__main__":
-    results, quarantine_lex = enrich_with_llm_cols(run_id="test1", 
-                                   dto_list=retrive_dto_from_jsonl_file(test_path), 
-                                   configuration=lex_config)
-    synthetic_batch, quarantine_semantic = enrich_with_llm_cols(run_id="test1",
-                                           dto_list=results,
-                                           configuration=semantic_config)
-    print(synthetic_batch[0].model_dump_json(indent=2))
+    try: 
+        results, quarantine_lex = enrich_with_llm_cols(run_id="test1", 
+                                    dto_list=retrive_dto_from_jsonl_file(test_path), 
+                                    configuration=lex_config)
+        synthetic_batch, quarantine_semantic = enrich_with_llm_cols(run_id="test1",
+                                            dto_list=results,
+                                            configuration=semantic_config)
+        print(synthetic_batch[0].model_dump_json(indent=2))
+    except KeyboardInterrupt:
+            # This catches Ctrl+C
+            print("\n🛑 User aborted execution via KeyboardInterrupt.")
+            sys.exit(130) # Standard exit code for Script Terminated by Ctrl-C
+    except Exception as e:  # pylint: disable=broad-exception-caught
+        # This catches crashes
+        sys.exit(1)    
     # pass  # for testing / debugging in notebook or script context    

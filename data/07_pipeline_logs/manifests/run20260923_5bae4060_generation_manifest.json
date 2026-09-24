@@ -1,0 +1,31 @@
+{
+  "identifiers": {
+    "run_id": "run20260923_5bae4060",
+    "pipeline_id": "pipe_q_gen_v00"
+  },
+  "run_timestamp": "2026-09-23T23:58:43.281283+00:00",
+  "scope": {
+    "type": "partial_pilot",
+    "target_books": [
+      "BOOK_3"
+    ],
+    "total_chapters": 1,
+    "chapter_files": [
+      "prisoner_of_azkaban_chapter_01.txt"
+    ]
+  },
+  "strategy": [
+    {
+      "task_name": "FR_Generation",
+      "model_name": "gemini-3.1-flash-lite",
+      "prompt_id": "FR_v0",
+      "prompt_file": "fr_master_prompt_v0.3.txt",
+      "file_prefix": "FR",
+      "rate_limit_delay": 10,
+      "temperature": 0.7,
+      "max_output_tokens": 12000,
+      "top_p": 0.95,
+      "candidate_count": 1
+    }
+  ]
+}

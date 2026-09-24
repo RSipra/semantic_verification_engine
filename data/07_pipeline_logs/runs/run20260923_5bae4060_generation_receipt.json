@@ -1,0 +1,28 @@
+{
+  "pipeline_id": "pipe_q_gen_v00",
+  "run_id": "run20260923_5bae4060",
+  "llm_pass": "generation",
+  "status": "SUCCESS",
+  "timestamp_end": "2026-09-23T23:58:46.488455+00:00",
+  "calls_file": "run20260923_5bae4060_generation_calls.jsonl",
+  "actuals": {
+    "api_calls": 1,
+    "strategies_run": [
+      "FR_Generation"
+    ],
+    "models_used": [
+      "gemini-3.1-flash-lite"
+    ],
+    "chapters_processed": 1,
+    "questions_saved": 5,
+    "tokens": {
+      "1_input_template": 1281,
+      "2_input_payload": 5331,
+      "3_input_cached_actual": 0,
+      "4_output_candidates": 784,
+      "5_total_billed": 7396,
+      "6_thinking_actual": 0,
+      "7_other_processing": 0
+    }
+  }
+}

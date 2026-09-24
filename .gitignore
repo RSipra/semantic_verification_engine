@@ -6,15 +6,20 @@ prompt_costestimate_v0/
 prompt_costestimate_v0.numbers
 
 # Data directory rules:
-# 1. Default: Ignore everything in data
+# 1. Default: ignore everything in data/
 data/*
-# 2. Exception: Allow DVC files anywhere (recursive)
+# 2. DVC pointers and repo docs are tracked wherever they live
 !data/**/*.dvc
 !data/.gitignore
 !data/README.md
 .dvc/cache/
-# 3. Exception: Allow Pipeline Logs folder
+# 3. Pipeline logs are tracked run history — manifests, calls logs, receipts.
+#    The directory itself must be un-ignored before any rule for its contents
+#    can apply, since git does not descend into excluded directories.
 !data/07_pipeline_logs/
+!data/07_pipeline_logs/**
+#    Prefect's raw file-handler output is noise; keep it out.
+data/07_pipeline_logs/logs/
 
 # Ignore extra documents
 docs/archive/.extra_docs
@@ -95,6 +100,8 @@ notebooks/02_research/09_nlp_lab_semantic_evaluators_v0.ipynb
 notebooks/02_research/10_nlp_lab_deterministic_evaluators_v0.ipynb
 storage/
 *.json
+# Run artifacts are tracked history — exempt from the blanket *.json rule
+!data/07_pipeline_logs/**/*.json
 .python-version
 phase2_tracer_deploy
 .dv/config.local

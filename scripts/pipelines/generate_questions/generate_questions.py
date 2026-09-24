@@ -143,6 +143,9 @@ import json
 import uuid
 from dotenv import load_dotenv
 import google.generativeai as genai
+from google.api_core import retry as api_retry
+from google.api_core import exceptions as core_exceptions
+from google.generativeai.types.helper_types import RequestOptionsDict
 from prefect import flow, task, get_run_logger #pipeline orchestrator
 from prefect.artifacts import create_markdown_artifact
 from rich.console import Console
@@ -157,24 +160,42 @@ import notebook_support.notebook_config as nb_cfg
 
 ## CONSTANTS
 
-# Paths
+# Main Paths
 PROMPTS_DIR = nb_cfg.PROMPTS_DIR
-OUTPUT_DIR = nb_cfg.GENERATED_QUESTIONS_DIR
+OUTPUT_DIR = nb_cfg.GENERATED_QUESTIONS_DIR     # generated question dtos as jsonls 
 CONFIG_PATH = nb_cfg.PROJECT_ROOT / 'config.env'
 
 # Reporting Paths (centralized)
-PIPELINE_LOGS_ROOT = nb_cfg.PIPELINE_LOGS_ROOT
-MANIFESTS_DIR = nb_cfg.MANIFESTS_DIR
-RUNS_DIR = nb_cfg.RUNS_DIR 
-LOGS_DIR = nb_cfg.LOGS_DIR
+PIPELINE_LOGS_ROOT = nb_cfg.PIPELINE_LOGS_ROOT  # parent dir
+MANIFESTS_DIR = nb_cfg.MANIFESTS_DIR            # run manifests (run plans before execution)
+RUNS_DIR = nb_cfg.RUNS_DIR                      # run receipts + call logs (after execution)
+LOGS_DIR = nb_cfg.LOGS_DIR                      # Prefect file-handler output
 # safety check: ensure directories that will be written to exist immediately
 for d in [OUTPUT_DIR, MANIFESTS_DIR, RUNS_DIR, LOGS_DIR]:
     d.mkdir(parents=True, exist_ok=True)
 
-# Standardized unique identifier for this question_gerantion script with version
+# ARTIFACT NAMING
+# standardized unique identifier for this question_generation script with version
 PIPELINE_ID = "pipe_q_gen_v00"
+
+# Standard suffixes for run artifacts (see build_run_artifact_path)
+MANIFEST = "manifest.json"
+CALLS    = "calls.jsonl"
+RECEIPT  = "receipt.json"
+QUARANTINE = "quarantine.jsonl"
+
+LLM_PASS_GEN = 'generation'    
+
 # Pipeline settings (circuit breaker limit - how many failed runs before aborting pipeline)
 MAX_FAILURES = 5
+# SDK 500 retry policy: same as SDK default but with 30s budget instead of 600s
+# See the make_api_call docstring for why.
+SDK_RETRY = api_retry.Retry(
+    initial=1.0, maximum=10.0, multiplier=1.3,
+    timeout=15.0,  
+    predicate=api_retry.if_exception_type(core_exceptions.ServiceUnavailable),
+)
+REQUEST_OPTIONS: RequestOptionsDict ={"retry": SDK_RETRY, "timeout": 60}
 
 # GENERATION_STRATEGY: Predefined models for each question type (model-per-type based 
 # on experimentation) imported from src/ds_utils/ds_constants
@@ -202,7 +223,7 @@ def init_run_stats() -> dict:
         "chapters_processed": 0,
         "models_used": set()
     }
-    
+
 def short_uuid(n=8) -> str:
     """
     Generates a concise, random alphanumeric identifier based on UUID4.
@@ -215,7 +236,46 @@ def short_uuid(n=8) -> str:
     Returns:
         str: A random hexadecimal string of length `n` (e.g., "a1b2c3d4").
     """    
-    return uuid.uuid4().hex[:n]  
+    return uuid.uuid4().hex[:n]
+
+def build_run_artifact_path(directory: Path, run_id: str, llm_pass: str, kind: str) -> Path:
+    """
+    Build the standard path for a run artifact: `{run_id}_{llm_pass}_{kind}`.
+
+    Every artifact a pass produces starts with the same stem, so one run's
+    manifest, calls log, receipt and checkpoints sort together, and all passes
+    of a run are found by globbing the run_id. Both pipelines call this, so the
+    convention cannot drift between them.
+    
+    Callers pass their own `llm_pass` — shared helpers must never hardcode one,
+    or a pass will write over another's artifacts
+    
+    Note: not used for generation's question checkpoints. Those are keyed by
+    question type and chapter — three question types run inside the single
+    generation pass — so `{run_id}_generation` does not distinguish them, and
+    they are named directly at the call site.
+
+    Args:
+        directory: where it lives — RUNS_DIR, MANIFESTS_DIR, OUTPUT_DIR.
+        run_id: shared by every artifact of one end-to-end run.
+        llm_pass: "generation", "lex_enrichment", "semantic_enrichment".
+        kind: the suffix — a constant (MANIFEST, CALLS, RECEIPT, QUARANTINE)
+            or a computed batch identity, e.g. "FR_batch0.jsonl"
+    """
+    return directory / f"{run_id}_{llm_pass}_{kind}"
+
+def append_jsonl(entry: dict, file_path: Path) -> None:
+    """
+    Append one record dict to a jsonl file, creating it if absent.
+
+    Used for artifacts that accumulate during a run (call entries, quarantine)
+    so that a run interrupted partway still leaves what it produced
+    on disk.
+    
+    For DTO batches written whole, see `write_jsonl_checkpoint`.
+    """
+    with open(file_path, "a", encoding="utf-8") as f:
+        f.write(json.dumps(entry) + "\n")
 
 @task # filter for flexibility in case not planning to run all question types in GENERATION_TYPE (default is all)
 def filter_strategy(strategy: List[Dict], tasks_to_run: Optional[List[str]] = None) -> List[Dict]:
@@ -249,9 +309,10 @@ def configure_file_logging(run_id: str):
     This allows for persistent, grep-able log files that survive local database clears.
     **Note:** This method was developed with assistance from an LLM (Gemini 3 pro).
     """
-    # Path setup
+    # Path setup: (run-scoped) the handler attaches to the process-wide
+    # prefect logger, so one file captures every pass in this process
     log_dir = LOGS_DIR
-    # log filename
+    # log filename 
     log_file = log_dir / f"{run_id}.log"
 
     # Hook into the existing 'prefect' logger
@@ -404,13 +465,20 @@ def get_run_scope(chapter_limit: Optional[int], chapter_filter: Optional[List[in
     return "full_book"
 
 @task
-def save_run_manifest(run_id: str, pipeline_id: str, active_strategy: list, 
-                      target_books: List[Book], chapters: list, 
+def save_run_manifest(run_id: str, pipeline_id: str, active_strategy: list,
+                      llm_pass: str, target_books: List[Book], chapters: list, 
                       run_timestamp: str, run_scope: str) -> None:
     """
     Saves the execution plan (*recipe*) before execution starts. This is to help distinguish 
     between attempted runs (e.g aborted, crashed) vs. successful runs (with full reporting, 
     artifacts)
+    
+    Full run-level traceability / reproducibility: 
+        - run_manifest *here* (what was planned, written before execution)
+        - questions jsonl (the DTOs produced, one record per line)
+        - calls jsonl (one accounting line per API call)
+        - run_receipt (summary of one LLM pass: settings, totals,
+            status)
     
     Args:
         run_id: The unique UUID for this pipeline execution.
@@ -420,9 +488,6 @@ def save_run_manifest(run_id: str, pipeline_id: str, active_strategy: list,
         target_books: The specific list of Book enums targeted in this run.
         chapters: The specific list of chapters file paths selected for this run.
     """
-    # path to save run manifest to
-    manifest_dir = MANIFESTS_DIR
-
     # Edit question_type dict to json compatible formats
     formatted_strategy = []
     for config in active_strategy:
@@ -445,8 +510,8 @@ def save_run_manifest(run_id: str, pipeline_id: str, active_strategy: list,
         "strategy": formatted_strategy
     }
     # Save manifest with standardized name
-    filename = f"{pipeline_id}_{run_id}_manifest.json"
-    with open(manifest_dir / filename, 'w', encoding='utf-8') as f:
+    filename = build_run_artifact_path(MANIFESTS_DIR, run_id, llm_pass, MANIFEST)
+    with open(filename, 'w', encoding='utf-8') as f:
         json.dump(manifest, f, indent=2)
 
     get_run_logger().info("Manifest saved: %s", filename)
@@ -536,10 +601,20 @@ def prepare_prompt(chapter_path: List[Path], prompt_path:Path) -> str:
 
 # To handle the 429 error caused by time sliding window (exceeding RPM limit for free-tier) 
 # -> pipeline retries with larger delays.
-@task(retries=5, retry_delay_seconds=[30, 60, 90, 120, 180])
+@task(retries=3, retry_delay_seconds=[60, 120, 300])
 def make_api_call(final_prompt:str, config: dict):
     """
     Calls Gemini with built-in retries and specific generation parameters.
+    
+    Retry policy (2026-09-24): 
+    --------------------------
+    google-api-core's default retry on generate_content(503 only,
+    deadline=600s, backoff capped at 10s, full jitter) makes ~120 requests
+    per call during a 503 burst (~12 RPM, matching the 13 RPM observed
+    on the dashboard). Stacked under Prefect retries, a burst used 422/500 RPD.
+    Capped at timeout=15s: measured 8 attempts in 13.3s via probe_api --offline.
+    Worst case with Prefect retries=3 is ~32 requests per task.
+    Do not raise either without rerunning the probe.
     
     Args:
         final_prompt: The finalized prompt string
@@ -575,7 +650,10 @@ def make_api_call(final_prompt:str, config: dict):
   
     # 3. Call API
     try:
-        response = model.generate_content(final_prompt, generation_config=gen_config)
+        response = model.generate_content(
+            final_prompt,
+            generation_config=gen_config,
+            request_options= REQUEST_OPTIONS)
         return response
     except Exception as e:
         logger.error("API Call failed for %s: %s", model_name, e)
@@ -673,8 +751,8 @@ def check_safety_and_feedback(response, full_metadata: Dict[str, Any], job_id: s
     return True
 
 # response output processing helper: calculate token counts
-def calculate_token_metrics(response, full_metadata: dict, 
-                            template_token_count: int) -> Tuple[int, int, int]:
+def calculate_token_metrics(response, 
+                            template_token_count: int) -> dict:
     """
     Response processing layer 2: accounting. Records a granular token breakdown
     for one LLM call in `full_metadata["job_token_breakdown"]` and returns the
@@ -744,8 +822,8 @@ def calculate_token_metrics(response, full_metadata: dict,
     # c. hidden processing tokens (billed but not in input/output)  
     other_processing_tokens = api_total_billed - (api_total_input + api_output + api_thinking)
 
-    # Pack counts into a metadata dict
-    full_metadata["job_token_breakdown"] = {
+    # return breakdown as dict
+    return {
         "1_input_template": input_template,
         "2_input_payload": input_payload,
         "3_input_cached_actual": api_cached,
@@ -754,7 +832,6 @@ def calculate_token_metrics(response, full_metadata: dict,
         "6_thinking_actual": api_thinking,
         "7_other_processing": other_processing_tokens,
     }
-    return api_total_billed, api_total_input, api_output
 
 # Convert LLM response candidates into DraftQuestion objects
 # NOTE: DraftQuestion is generated at runtime (see ADR-P2-023); Pylance can't resolve
@@ -842,19 +919,34 @@ def process_and_save_candidates(run_id: str, batch_id: str, job_id: str, respons
 
 # Process and save questions from candidates as individual entries in jsonl file
 @task
-def parse_and_save(run_id:str, batch_id: str, job_id: str, response, output_file: Path, full_metadata: Dict[str,Any], 
-                   template_token_count: int) -> Tuple[Dict[str, int], List[DraftQuestion]]:  # type: ignore
+def parse_and_save(run_id, batch_id, job_id, response, output_file: Path,
+                   calls_file: Path, full_metadata: Dict[str, Any],
+                   chapter_count: int,
+                   template_token_count: int) -> Tuple[Dict[str, Any], List[DraftQuestion]]: # type: ignore
     """
     Orchestrator task for the ETL processing of model response. it uses helper methods to:
     1. Checks safety (forensics) - was API call suceessful or blocked
     2. Calculates token counts (accounting) for the job (all candidates) 
     3. Parses individual questions_data dict and saves the data as jsonl (core logic)
     
-    Returns: Tuple of (job_tokens dict, list of DraftQuestion DTOs). Job tokens dict 
-    contains (saved_count, input_tokens, output_tokens), where:
-        saved_count : number of questions generated and saved
-        input_tokens: total input tokens for the job (prompt template + chapters)
-        output_tokens: output token counts (single candidate if run has mulitple)
+    Full run-level traceability / reproducibility: 
+    - run_manifest  (what was planned, written before execution)
+    - questions jsonl *here* (the DTOs produced, one record per line)
+    - calls jsonl *here* (one accounting line per API call)
+    - run_receipt (summary of one LLM pass: settings, totals,
+        status)
+    
+    Returns: Tuple of (call_entry dict, list of DraftQuestion DTOs). 
+    call_entry is one accounting line for this API call, appended to the run's
+    calls jsonl before returning. Blocked or empty calls are recorded too (to 
+    capture tokens that are still billed with these calls).
+    Fields:
+        call_id, batch_id: identifiers for this call and its strategy batch
+        question_type, model: what was asked for and which model answered
+        output_file: name of the jsonl this call's questions were written to
+        questions_saved: how many questions were parsed and saved (0 if blocked)
+        tokens: the seven-key breakdown from calculate_token_metrics
+        quarantined: None — generation does not yet track failure modes
     """
     logger = get_run_logger()
 
@@ -862,36 +954,48 @@ def parse_and_save(run_id:str, batch_id: str, job_id: str, response, output_file
     is_safe = check_safety_and_feedback(response, full_metadata, job_id, logger)
 
     # Step 2: accounting (token counts from helper)
-    total_billed, t_in, t_out = calculate_token_metrics(response, full_metadata, 
-                                                        template_token_count)
-    # intialize job token counts and with the total billed cost (even if no questions saved)
-    job_tokens= {
-        "saved_count": 0,
-        "total_billed": total_billed,
-        "input_tokens": t_in,
-        "output_tokens": t_out
-        }
+    token_breakdown = calculate_token_metrics(response, template_token_count)
+    
+    # intialize call metadata including token counts (even if no questions saved)
+    call_entry = {
+        "call_id": job_id,
+        "batch_id": batch_id,
+        "question_type": full_metadata.get("task_type"),
+        "model": full_metadata.get("model_name"),
+        "chapter_count": chapter_count,          
+        "prompt_version": full_metadata.get("prompt_template"),
+        "output_file": output_file.name,
+        "questions_saved": 0,
+        "tokens": token_breakdown,
+        "quarantined": None,
+    }
+
     # check if api call was blocked before proceeding (SAFETY, or other reason response is empty) 
     if not is_safe:
         # Return 0 saved, but still track the cost
-        return job_tokens, []
+        append_jsonl(call_entry, calls_file)
+        return call_entry, []
 
-    # Step 3: core logic
+    # Step 3: core logic (save questions.jsonl file)
     saved_count, draft_questions = process_and_save_candidates(run_id, batch_id, job_id, 
                                               response, output_file, full_metadata, logger)
 
     if saved_count > 0:
         logger.info("✅ [job id: %s] Saved %s questions. Total tokens: %s",
-                    job_id, saved_count, total_billed)
-        job_tokens["saved_count"] = saved_count
-        
+                    job_id, saved_count, call_entry['tokens']['5_total_billed'])
+        # update with question count for the call
+        call_entry["questions_saved"] = saved_count
+
     else: # explicitly log the zero question failure event + the cost incurred 
           # (call not blocked, but no questions to parse e.g. missing '[' delimiters], 
           # MAX_TOKENS hit in middle of first question, etc)
-        logger.warning("⚠️ [job id: %s] 0 questions saved. Tokens wasted: %s", 
-                       job_id, total_billed)    
+        logger.warning("⚠️ [job id: %s] 0 questions saved. Tokens wasted: %s",
+                       job_id, call_entry['tokens']['5_total_billed'])
 
-    return job_tokens, draft_questions
+    # Step 4: write call entry to file (call.jsonl)
+    append_jsonl(call_entry, calls_file)
+
+    return call_entry, draft_questions
 
 # placeholder for cost esmtimate helper if needed for later dataset expansion
 def estimate_run_cost(total_input: int, total_output: int, models_used: list) -> float:  
@@ -915,35 +1019,78 @@ def estimate_run_cost(total_input: int, total_output: int, models_used: list) ->
     return 0.0
 
 @task
-def save_run_completion(run_id: str, run_stats: dict) -> None:
+def save_run_completion(pipeline_id: str, run_id: str, llm_pass: str, status: str,
+                        calls_file: Path) -> None:
     """
-    Saves the final metrics of the run to a JSON file.
-    This acts as the 'Receipt' proving the run finished successfully.
-    """
-    # Save in the same logs folder
-    runs_dir = RUNS_DIR
+    Write the run receipt (SOT for LLM pass completion within run). 
+    A JSON record of one completed LLM pass — generation / enrichment 
+    strategy (what ran and under what settings), token counts (cost 
+    approximation), and status (success or failure).
 
+    Full run-level traceability / reproducibility: 
+    - run_manifest (what was planned, written before execution)
+    - questions jsonl (the DTOs produced, one record per line)
+    - calls jsonl (one accounting line per API call)
+    - run_receipt *here* (summary of one LLM pass: settings, totals,
+        status)      
+    
+    Each LLM pass within a run produces a receipt (e.g. generation, lexical
+    enrichment, semantic enrichment). All passes of a run share a run_id, 
+    so the full end-to-end picture is assembled by globbing that id (no single
+    document reports the whole execution).
+
+    Shared by generation and enrichment passes. The per-call records live 
+    in `calls_file`, appended during the run; this method writes the run-level
+    summary (identity, status, context, totals) and a pointer back to
+    the records file. Deriving rather than accepting totals means the two levels
+    (record files and receipt) cannot disagree.
+
+    Args:
+        pipeline_id: Versioned identifier for the pipeline code that ran.
+        run_id: Run identifier.
+        llm_pass: e.g. "generation", "lex_enrichment", "semantic_enrichment".
+        status: "SUCCESS" or "FAILED".
+        calls_file: Path to the file containing API call records.
+        context: Settings the run executed under — model, prompt version,
+            sampling parameters, and pass scope. This is what makes the run
+            reproducible; it appears nowhere else.
+    """
+    # read the call entries this run appended during execution
+    with open(calls_file, "r", encoding="utf-8") as f:
+        calls = [json.loads(line) for line in f if line.strip()]
+
+    # Calculate run-total metrics from each llm call record
+    token_totals ={}
+    for c in calls:
+        for key, value in c["tokens"].items():
+            token_totals[key] = token_totals.get(key, 0) + value
+    
+    # create run reciept         
     completion_data = {
+        "pipeline_id": pipeline_id,
         "run_id": run_id,
-        "status": "SUCCESS",
+        "llm_pass": llm_pass,
+        "status": status,
         "timestamp_end": datetime.now(timezone.utc).isoformat(),
-        "metrics": {
-            "total_questions": run_stats['total_questions'],
-            "total_tokens": run_stats['total_billed'],
-            "input_tokens": run_stats.get('total_input', 0),
-            "output_tokens": run_stats.get('total_output', 0),
-            "chapters_processed": run_stats.get('chapters_processed', 0)
+        "calls_file": calls_file.name,
+        "actuals": {
+            "api_calls": len(calls),
+            "strategies_run": sorted({c["question_type"] for c in calls}),
+            "models_used": sorted({c["model"] for c in calls}),
+            # chapters will only apply to generation pass, will be 0 for enrichment
+            "chapters_processed": sum(c["chapter_count"] for c in calls if "chapter_count" in c),
+            "questions_saved": sum(c["questions_saved"] for c in calls),
+            "tokens": token_totals,
         },
-        "models_used": list(run_stats.get('models_used', []))
     }
 
-    file_path = runs_dir / f"run_result_{run_id}.json"
-
+    # Save in the same logs folder with standardized name
+    file_path = build_run_artifact_path(RUNS_DIR, run_id, llm_pass, RECEIPT)
     with open(file_path, 'w', encoding='utf-8') as f:
         json.dump(completion_data, f, indent=2)
 
     logger = get_run_logger()
-    logger.info("🏁 Run Completion saved to: %s", file_path)
+    logger.info("🏁 Run receipt saved to: %s", file_path)
 
 # generate a completion report
 @task
@@ -1051,6 +1198,7 @@ def generate_questions_pipeline(target_books: List[Book],
 
     # A.3.1: Configure the pipeline Prefect logger filehandler
     log_path = configure_file_logging(run_id)
+    calls_file = build_run_artifact_path(RUNS_DIR, run_id, LLM_PASS_GEN, CALLS)
     # A.3.2: Initialize logger and print initiation messages
     base_logger = get_run_logger()
     # Add run_id as 'Trace' id to logger messages
@@ -1084,6 +1232,7 @@ def generate_questions_pipeline(target_books: List[Book],
     save_run_manifest(run_id, 
                       pipeline_id, 
                       active_strategy,
+                      LLM_PASS_GEN,
                       target_books,
                       chapter_file_paths,
                       run_timestamp,
@@ -1118,7 +1267,7 @@ def generate_questions_pipeline(target_books: List[Book],
         consecutive_failures = 0
 
         ## C. CHAPTER LOOP (JOB LEVEL)
-        #     job = one API call over a chapter-chunk.
+        #     job / call = one API call over a chapter-chunk.
         #     Loop through batch_size number of chapters per loop (default = 2)
         for i, chapter_batch in enumerate(chunk_list(chapter_file_paths, batch_size)):
             # C.0: pacing (safe time delay for RPM limits) - sleep before each call except the first
@@ -1144,7 +1293,6 @@ def generate_questions_pipeline(target_books: List[Book],
             job_id = f"job_{short_uuid()}"
             # Extract names for metadata (since chapter_batch is a list of Paths)
             batch_names = [p.stem for p in chapter_batch]
-            job_tokens = {"saved_count": 0, "total_billed": 0, "input_tokens": 0, "output_tokens": 0}
             first_chap = chapter_batch[0].stem  # chapter ref in output filename and logging
 
             # C.3: prepare prompt (fill in template)
@@ -1161,10 +1309,17 @@ def generate_questions_pipeline(target_books: List[Book],
 
                 # C.6: save the response into a jsonl
                 # C.6.1: construct output filename
-                output_file = OUTPUT_DIR / f"{config['file_prefix']}_{first_chap}_{run_id}.jsonl"
+                output_file = OUTPUT_DIR / f"{run_id}_{config['file_prefix']}_{first_chap}.jsonl"
+
                 # C.6.2: parse and save as jsonl with Task
-                job_tokens, draft_questions = parse_and_save(run_id, batch_id,
-                    job_id, response, output_file, full_metadata, template_token_count)
+                call_entry, draft_questions = parse_and_save(
+                    run_id, batch_id, job_id, response,
+                    output_file=output_file,
+                    calls_file=calls_file,
+                    full_metadata=full_metadata,
+                    chapter_count=len(chapter_batch),
+                    template_token_count=template_token_count,
+                )
                 # collect draft questions from the job into run-level list
                 all_draft_questions.extend(draft_questions)
 
@@ -1172,10 +1327,11 @@ def generate_questions_pipeline(target_books: List[Book],
                 # if successful update run_stats else update failure counter
                 if  len(draft_questions) > 0:
                     consecutive_failures = 0
+                    tokens = call_entry["tokens"]
                     run_stats["total_questions"] += len(draft_questions)
-                    run_stats["total_input"] += job_tokens["input_tokens"]
-                    run_stats["total_output"] += job_tokens["output_tokens"]
-                    run_stats["total_billed"] += (job_tokens["total_billed"])
+                    run_stats["total_input"] += tokens["2_input_payload"] + tokens["1_input_template"]
+                    run_stats["total_output"] += tokens["4_output_candidates"]
+                    run_stats["total_billed"] += tokens["5_total_billed"]
                     # counter for actual chapters processed (increment by batch len)
                     run_stats["chapters_processed"] += len(chapter_batch) 
                 else:
@@ -1183,8 +1339,9 @@ def generate_questions_pipeline(target_books: List[Book],
 
             except Exception as e:  # pylint: disable=broad-exception-caught
                 consecutive_failures += 1
-                # even a failed run can have billed token counts
-                run_stats["total_billed"] += (job_tokens["input_tokens"] + job_tokens["output_tokens"])
+                # TODO: a call that raised before returning has no usage data here,
+                # so its tokens go unrecorded — the provider may still have billed
+                # them. Closed when transport failures get their own call entry
                 logger.error("Error on %s: %s", first_chap, e)
                 continue
 
@@ -1192,12 +1349,15 @@ def generate_questions_pipeline(target_books: List[Book],
     # D.1: list of model used converted to json compatible format (set -> list)
     run_stats["models_used"] = list(run_stats["models_used"])
 
-    # D.2: save log run and creates a summary report for Prefect UI or Terminal
+    # D.2: run outcome for the receipt
+    status = "SUCCESS" if run_stats["total_questions"] > 0 else "FAILED"
+
+    # D.3: summary report for Prefect UI / terminal
     create_run_report(run_id, run_timestamp, run_stats, OUTPUT_DIR)
     # save actual metrics of run for traceability (run "reciept")
-    save_run_completion(run_id, run_stats)
+    save_run_completion(pipeline_id, run_id, LLM_PASS_GEN, status, calls_file)
     # completion update
-    logger.info("🏁 Pipeline Finished: %s",run_id)
+    logger.info("🏁 Genearation Completed: %s",run_id)
     
     return run_stats, all_draft_questions  # return for testing and validation
 

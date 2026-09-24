@@ -33,7 +33,7 @@ GENERATION_STRATEGY =[
         "model_name": MODEL,
         "prompt_id": "EX_v0",
         "prompt_file": nb_cfg.PROMPTS_DIR / "ex_master_prompt_v0.2.txt",
-        "file_prefix": "ex_questions",  # prefix to use in naming output files
+        "file_prefix": "EX",  # prefix to use in naming output files
         "json_response_schema": list[StandardQuestion],  # standardized schema
         "rate_limit_delay": 10,   # for 10 RPM limit (6s) plus additional margin
         "temperature": 0.7,
@@ -46,7 +46,7 @@ GENERATION_STRATEGY =[
         "model_name": MODEL,
         "prompt_id": "MCQ_v0",
         "prompt_file": nb_cfg.PROMPTS_DIR / "mcq_master_prompt_v1.1.txt",
-        "file_prefix": "mcq_questions",
+        "file_prefix": "MCQ",
         "json_response_schema": list[MCQuestion],  # standardized schema
         "rate_limit_delay": 10,
         "temperature": 0.7,
@@ -59,7 +59,7 @@ GENERATION_STRATEGY =[
         "model_name": MODEL,
         "prompt_id": "FR_v0",
         "prompt_file": nb_cfg.PROMPTS_DIR / "fr_master_prompt_v0.3.txt",
-        "file_prefix": "fr_questions",
+        "file_prefix": "FR",
         "json_response_schema": list[StandardQuestion],
         "rate_limit_delay":  10,  # for 10 RPM limit (6s) plus additional margin
         "temperature": 0.7,
@@ -75,7 +75,7 @@ ENRICHMENT_STRATEGY={
         "model_name": MODEL,
         "prompt_id": "lex_enrich_v0",
         "prompt_file": nb_cfg.PROMPTS_DIR / "lex_enrichment_prompt_master_v0.txt",
-        "file_prefix": "lex_enriched_questions",
+        "llm_pass": "lex_enrichment",
         "input_dto": DraftQuestion,
         "output_dto": {
             QuestionType.EX: LexDraftQuestion,
@@ -98,7 +98,7 @@ ENRICHMENT_STRATEGY={
         "model_name": MODEL,
         "prompt_id": "semantic_enrich_v0",
         "prompt_file": nb_cfg.PROMPTS_DIR / "semantic_enrichment_prompt_master_v0.txt",
-        "file_prefix": "semantic_enriched_questions",
+        "llm_pass": "semantic_enrichment",
         "input_dto": LexDraftQuestion,
         "output_dto": {
             QuestionType.EX: SyntheticStandard,
