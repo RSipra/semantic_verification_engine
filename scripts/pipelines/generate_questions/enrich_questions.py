@@ -98,6 +98,7 @@ from scripts.pipelines.generate_questions.generate_questions import (configure_a
                                                                      measure_template_tokens,
                                                                      calculate_token_metrics,
                                                                      save_run_completion,
+                                                                     create_run_report,
                                                                      build_run_artifact_path,
                                                                      CONFIG_PATH, CALLS, QUARANTINE)
 
@@ -481,11 +482,15 @@ def enrich_with_llm_cols(run_id: str,
 
     #  3.3: summary report for Prefect UI / terminal
     # save actual metrics of run for traceability (run "reciept")
-    save_run_completion(PIPELINE_ID,
-                        run_id, 
-                        configuration['llm_pass'], 
-                        status, 
-                        calls_file)
+    receipt_path = save_run_completion(
+        PIPELINE_ID,
+        run_id,
+        configuration['llm_pass'],
+        status,
+        calls_file
+        )
+    # create run report
+    create_run_report(receipt_path, OUTPUT_DIR)
     # completion update
     logger.info("🏁 %s Completed: %d", configuration['llm_pass'], run_id)
     

@@ -213,17 +213,6 @@ class RunIDFilter(logging.Filter):
 
 ## TASKS AND HELPERS
 
-def init_run_stats() -> dict:
-    """Creates the empty accumulator dictionary for the pipeline run."""
-    return {
-        "total_input": 0,
-        "total_output": 0,
-        "total_billed": 0,
-        "total_questions": 0,
-        "chapters_processed": 0,
-        "models_used": set()
-    }
-
 def short_uuid(n=8) -> str:
     """
     Generates a concise, random alphanumeric identifier based on UUID4.
@@ -998,29 +987,39 @@ def parse_and_save(run_id, batch_id, job_id, response, output_file: Path,
     return call_entry, draft_questions
 
 # placeholder for cost esmtimate helper if needed for later dataset expansion
-def estimate_run_cost(total_input: int, total_output: int, models_used: list) -> float:  
+def estimate_run_cost(run_receipt: Path) -> float:  
     """
     Placeholder for cost estimation. 
     Currently returns $0.00 for Free Tier runs.
+    
+    Reads the receipt's token totals rather than taking counts, so cost is
+    computed from what was actually recorded. Thinking tokens bill at the
+    output rate, and cached input bills at a reduced rate — both are in the
+    breakdown, so the estimate can reflect them when pricing is filled in.
     
     Future Logic (Pay-As-You-Go): UPDATE to most recent costs
     - Pro: ~$3.50 / 1M input, ~$10.50 / 1M output
     - Flash: ~$0.35 / 1M input, ~$1.05 / 1M output
     """
     # Silence linter warnings for unused args (placeholder logic)
-    _ = (total_input, total_output, models_used)
-    # TODO: update if Paid Tier needed to expand dataset in later iterations
-    # PRICING = {
-    #     "PRO": {"input": xx.xx, "output": xx},
-    #     "FLASH": {"input": xx, "output": xxx}
-    # }
+    # TODO:(cost): placeholder while on the free tier. When pricing is needed:
+    #   - compute from the receipt's token breakdown, not raw in/out counts —
+    #     thinking tokens (6_thinking_actual) bill at the output rate, and cached
+    #     input (3_input_cached_actual) bills at ~10% of standard input
+    #   - pricing is per model, so read actuals["models_used"]; a run can use more
+    #     than one
+    #   - decide where it lives: computing it in save_run_completion and storing it
+    #     as an actual makes cost comparable across runs and keeps the report a
+    #     pure projection. Computing it at report time keeps zeros out of every
+    #     receipt while the tier is free. Receipt is probably right once pricing
+    #     is real.
     # ... calculation logic ...
 
     return 0.0
 
 @task
 def save_run_completion(pipeline_id: str, run_id: str, llm_pass: str, status: str,
-                        calls_file: Path) -> None:
+                        calls_file: Path) -> Path:
     """
     Write the run receipt (SOT for LLM pass completion within run). 
     A JSON record of one completed LLM pass — generation / enrichment 
@@ -1054,6 +1053,8 @@ def save_run_completion(pipeline_id: str, run_id: str, llm_pass: str, status: st
         context: Settings the run executed under — model, prompt version,
             sampling parameters, and pass scope. This is what makes the run
             reproducible; it appears nowhere else.
+    Returns:
+        file_path for run receipt         
     """
     # read the call entries this run appended during execution
     with open(calls_file, "r", encoding="utf-8") as f:
@@ -1064,7 +1065,14 @@ def save_run_completion(pipeline_id: str, run_id: str, llm_pass: str, status: st
     for c in calls:
         for key, value in c["tokens"].items():
             token_totals[key] = token_totals.get(key, 0) + value
-    
+
+    # Calculate the total number of records quarantined within the LLM pass
+    # by failure cause - NOTE: currently will be empty for generation pass
+    quarantine_totals = {}
+    for c in calls:
+        for failure_mode, count in (c['quarantined'] or {}).items():
+            quarantine_totals[failure_mode] = quarantine_totals.get(failure_mode,0) + count       
+
     # create run reciept         
     completion_data = {
         "pipeline_id": pipeline_id,
@@ -1081,6 +1089,7 @@ def save_run_completion(pipeline_id: str, run_id: str, llm_pass: str, status: st
             "chapters_processed": sum(c["chapter_count"] for c in calls if "chapter_count" in c),
             "questions_saved": sum(c["questions_saved"] for c in calls),
             "tokens": token_totals,
+            "quarantined": quarantine_totals,
         },
     }
 
@@ -1091,61 +1100,119 @@ def save_run_completion(pipeline_id: str, run_id: str, llm_pass: str, status: st
 
     logger = get_run_logger()
     logger.info("🏁 Run receipt saved to: %s", file_path)
+    return file_path
+
+# create markdown rows for display table
+def render_markdown_rows(rows:List[Tuple[str,Any]]) -> str:
+    """
+    Render label/value pairs as markdown table rows.
+
+    Keeps the pipe syntax in one place so a formatting error cannot hide in
+    one row of many. The caller supplies the header and separator.
+    """
+    return "\n".join(f"| **{label}** | {value}" for label, value in rows)
 
 # generate a completion report
 @task
-def create_run_report(run_id: str, run_timestamp: str, run_stats: dict, output_root: Path):
+def create_run_report(receipt_path: Path, output_root: Path):
     """
-    Generates a Markdown summary of the run and publishes it to the Prefect UI.
+    Render a markdown summary of one completed LLM pass and publish it to the
+    Prefect UI and the terminal.
+
+    A projection of the run receipt: everything shown is read from the receipt
+    file, never from in-memory run state. That means the report can only show
+    what was actually recorded, and a report can be rendered for any past run
+    from its receipt alone.
+
+    Shared by generation and enrichment passes — the receipt's shape is the
+    same for all three, so one report serves them all.
+
+    Args:
+        receipt_path: the receipt written by save_run_completion.
+        output_root: where this pass wrote its question jsonl files, shown in
+            the report so a reader can find them.
     """
+    logger = get_run_logger()
     # create relative path for output artifacts in the report (for clarity)
     rel = output_root.relative_to(nb_cfg.PROJECT_ROOT)
-    # 1. Get (placeholder) Cost
-    # add step for cost estimation when needed
 
-    # 2. Format Model List
-    models_str = ", ".join(run_stats['models_used'])
+    # 1. read from saved run report (SOT)
+    with open(receipt_path, "r", encoding='utf-8') as f:
+        receipt = json.load(f)
+    
+    actuals = receipt['actuals']
+    tokens = actuals['tokens']
+    run_id = receipt['run_id']
+    pipeline_id = receipt['pipeline_id']
+    llm_pass = receipt['llm_pass']    
+
+    # 2. format list and dict fields for the table
+    #    .get: receipts are durable and never migrated, so a reader must tolerate
+    #    fields added after older receipts were written
+    quarantined = actuals.get("quarantined") or {}
+    quarantine_str = (
+        ", ".join(f"{mode}: {n}" for mode, n in quarantined.items())
+        if quarantined else "none"
+    )
 
     # 3. Build the Markdown Report
+    #    gather metrics for rendering
+    global_metrics = [
+        ('Run ID', f"{run_id}" ),
+        ('Pipeline ID', f"{pipeline_id}"),
+        ('Status',receipt['status'] ),
+        ('Completed', receipt['timestamp_end'] ),
+        ('Strategies run', ", ".join(actuals['strategies_run']) ),
+        ('Models Active', ", ".join(actuals['models_used']) ),
+    ]
+    # drop chapters if it doesn't apply to this pass (enrichment has no chapters)
+    if actuals["chapters_processed"]:
+        global_metrics.append(("Chapters Processed", actuals["chapters_processed"]))
+
+    metric_rows_llm_pass = [
+        ('API calls', actuals['api_calls']),
+        ('Input tokens', f"{tokens['1_input_template'] + tokens['2_input_payload']:,}"),
+        ('Output tokens', f"{tokens['4_output_candidates']:,}"),
+        ('Thinking tokens', f"{tokens['6_thinking_actual']:,}"),
+        ('Total tokens',  f"**{tokens['5_total_billed']:,}**"),
+        ('Questions saved', f"**{actuals['questions_saved']}**"),
+        ('Quarantined', quarantine_str),
+    ]
     report = f"""
-# 🧙‍♂️ Harry Potter Trivia: Question Generation Report
+# 🧙‍♂️ Harry Potter Trivia: {llm_pass.replace("_", " ").title()} Pass Report
 
 | **Global Metric** | **Value** |
 |:---|---:|
-| **Run ID** | `{run_id}` |
-| **Date** | {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC')} |
-| **Runtime** | {run_timestamp} |
-| **Chapters Processed** | {run_stats.get('chapters_processed', 0)} |
-| **Models Active** | {models_str} |
+{render_markdown_rows(global_metrics)}
 
 ## 📊 Result Metrics
 
 | Resource | Count |
 |:---|---:|
-| **Total Input Tokens** | {run_stats['total_input']:,} |
-| **Total Output Tokens** | {run_stats['total_output']:,} |
-| **Total Billed** | **{run_stats['total_billed']:,}** |
-| **Questions Created** | **{run_stats['total_questions']}** |
+{render_markdown_rows(metric_rows_llm_pass)}
 
 ## 📂 Output Artifacts
-Files are saved in: `{rel}/ (filenames include run_id: `*_{run_id}.jsonl`)`
+Questions: `{rel}/` (filenames start with `{run_id}_`)  
+Call log: `{receipt['calls_file']}`  
+Receipt: `{receipt_path.name}`
 """
     # 4.1. Create Prefect Artificat for dashboard
     create_markdown_artifact(
-        key=f"report-{run_id}".replace("_", "-").lower(),
+        key=f"report-{run_id}-{llm_pass}".replace("_", "-").lower(),
         markdown=report,
-        description=f"Run Summary: {run_id}"
-    )
+        description=f"Run summary: {run_id} / {llm_pass}"
+        )
 
     # 4.2. Also publish report to console (Teriminal or not) using Rich
     console = Console()
-    console.print("\n") # Add some spacing
+    console.print("\n")
     console.print(Markdown(report))
     console.print("\n")
 
     # 5. Log to console
     logger = get_run_logger()
-    logger.info("📝 Artifact created. Total Questions: %s", run_stats['total_questions'])
+    logger.info("📝 Report created for %s: %s questions saved",
+                llm_pass, actuals["questions_saved"])
 
 ## ORCHESTRATOR
 
@@ -1238,10 +1305,10 @@ def generate_questions_pipeline(target_books: List[Book],
                       run_timestamp,
                       run_scope)
 
-    # A.8: Initialize the run_stats dict (tracking batches, job metadata)
-    run_stats = init_run_stats()
+    # A.8: Initialize
     #   initialize DTO list for all questions generated in this run
-    all_draft_questions: List[DraftQuestion] = [] #type: ignore  
+    all_draft_questions: List[DraftQuestion] = [] #type: ignore
+    total_questions = 0  
 
     
     ## B. GENERATION STRATEGY LOOP (BATCH LEVEL):
@@ -1257,8 +1324,6 @@ def generate_questions_pipeline(target_books: List[Book],
         # input token count for prompt template without formatting
         template_token_count = measure_template_tokens(config['model_name'],
                                                            config['prompt_file'])
-        # update run_stats dict
-        run_stats["models_used"].add(config['model_name'])
 
         # CIRCUIT BREAKER: abort this strategy (q type) if too many jobs fail in a row
         # Scope: counter is per-strategy (resets between question types) and resets
@@ -1324,16 +1389,10 @@ def generate_questions_pipeline(target_books: List[Book],
                 all_draft_questions.extend(draft_questions)
 
                 # C.7: Assess if run was a failure (no questions generated)
-                # if successful update run_stats else update failure counter
+                # if successful update total question count else update failure counter
                 if  len(draft_questions) > 0:
                     consecutive_failures = 0
-                    tokens = call_entry["tokens"]
-                    run_stats["total_questions"] += len(draft_questions)
-                    run_stats["total_input"] += tokens["2_input_payload"] + tokens["1_input_template"]
-                    run_stats["total_output"] += tokens["4_output_candidates"]
-                    run_stats["total_billed"] += tokens["5_total_billed"]
-                    # counter for actual chapters processed (increment by batch len)
-                    run_stats["chapters_processed"] += len(chapter_batch) 
+                    total_questions += len(draft_questions) 
                 else:
                     consecutive_failures += 1
 
@@ -1346,20 +1405,17 @@ def generate_questions_pipeline(target_books: List[Book],
                 continue
 
     ## D: WRAP-UP
-    # D.1: list of model used converted to json compatible format (set -> list)
-    run_stats["models_used"] = list(run_stats["models_used"])
+    # D.1: run outcome for the receipt
+    status = "SUCCESS" if total_questions > 0 else "FAILED"
 
-    # D.2: run outcome for the receipt
-    status = "SUCCESS" if run_stats["total_questions"] > 0 else "FAILED"
-
-    # D.3: summary report for Prefect UI / terminal
-    create_run_report(run_id, run_timestamp, run_stats, OUTPUT_DIR)
+    # D.2: summary report for Prefect UI / terminal
     # save actual metrics of run for traceability (run "reciept")
-    save_run_completion(pipeline_id, run_id, LLM_PASS_GEN, status, calls_file)
+    receipt_path = save_run_completion(pipeline_id, run_id, LLM_PASS_GEN, status, calls_file)
+    create_run_report(receipt_path, OUTPUT_DIR)
     # completion update
     logger.info("🏁 Genearation Completed: %s",run_id)
     
-    return run_stats, all_draft_questions  # return for testing and validation
+    return receipt_path, all_draft_questions  # return for testing and validation
 
 if __name__ == "__main__":
     # 1. Setup the Argument Parser
