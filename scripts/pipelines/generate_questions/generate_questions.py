@@ -697,7 +697,7 @@ def create_strategy_batch_metadata(pipeline_run_id: str,  # Level 1 (pipeline ru
         # context
         "generation_strategy_version": GEN_STRATEGY_VERSION,  # static config version
         "source_files": ", ".join(source_filenames),   # job level
-        "task_type": strategy.get('task_name'),
+        "question_type": strategy.get('file_prefix'),
         "prompt_template": strategy['prompt_file'].name,   # w/o file ext
         "model_name": strategy.get('model_name'),
         # model hyperparameters for current batch / strategy (question type)
@@ -949,7 +949,7 @@ def parse_and_save(run_id, batch_id, job_id, response, output_file: Path,
     call_entry = {
         "call_id": job_id,
         "batch_id": batch_id,
-        "question_type": full_metadata.get("task_type"),
+        "question_type": full_metadata.get("question_type"),
         "model": full_metadata.get("model_name"),
         "chapter_count": chapter_count,          
         "prompt_version": full_metadata.get("prompt_template"),
