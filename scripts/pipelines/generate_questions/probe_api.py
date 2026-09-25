@@ -40,12 +40,13 @@ Run --offline first (free), then the live probe, before any pipeline run.
 
 import sys
 import time
+from prefect import flow
 from google.api_core import exceptions as core_exceptions
 from scripts.pipelines.generate_questions.generate_questions import (configure_api, 
                                                                      CONFIG_PATH, 
                                                                      REQUEST_OPTIONS, 
                                                                      SDK_RETRY)
-
+@flow
 def offline():
     """
     Exercise the retry path with a simulated 503, making no API calls.

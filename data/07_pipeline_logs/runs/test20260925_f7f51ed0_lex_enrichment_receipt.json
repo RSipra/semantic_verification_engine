@@ -1,0 +1,29 @@
+{
+  "pipeline_id": "pipe_q_enrich_v00",
+  "run_id": "test20260925_f7f51ed0",
+  "llm_pass": "lex_enrichment",
+  "status": "SUCCESS",
+  "timestamp_end": "2026-09-25T16:51:05.425174+00:00",
+  "calls_file": "test20260925_f7f51ed0_lex_enrichment_calls.jsonl",
+  "actuals": {
+    "api_calls": 1,
+    "strategies_run": [
+      "FR"
+    ],
+    "models_used": [
+      "gemini-3.1-flash-lite"
+    ],
+    "chapters_processed": 0,
+    "questions_saved": 5,
+    "tokens": {
+      "1_input_template": 1411,
+      "2_input_payload": 616,
+      "3_input_cached_actual": 0,
+      "4_output_candidates": 1186,
+      "5_total_billed": 3213,
+      "6_thinking_actual": 0,
+      "7_other_processing": 0
+    },
+    "quarantined": {}
+  }
+}

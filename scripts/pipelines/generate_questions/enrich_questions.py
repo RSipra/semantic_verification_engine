@@ -83,7 +83,9 @@ from ingestion (e.g. backfilling a new field across existing records).
 ## Setup
 import json
 import time
+from datetime import datetime
 import sys
+import logging
 from collections.abc import Sequence
 from collections import defaultdict, Counter
 from pathlib import Path
@@ -92,7 +94,8 @@ from prefect import flow, get_run_logger
 
 from core.models import DraftQuestion
 from scripts.pipelines.generate_questions.prompts.pipeline_config import ENRICHMENT_STRATEGY
-from scripts.pipelines.generate_questions.generate_questions import (configure_api,
+from scripts.pipelines.generate_questions.generate_questions import (short_uuid,
+                                                                     configure_api,
                                                                      make_api_call,
                                                                      append_jsonl,
                                                                      measure_template_tokens,
@@ -492,7 +495,7 @@ def enrich_with_llm_cols(run_id: str,
     # create run report
     create_run_report(receipt_path, OUTPUT_DIR)
     # completion update
-    logger.info("🏁 %s Completed: %d", configuration['llm_pass'], run_id)
+    logger.info("🏁 %s Completed: %s", configuration['llm_pass'], run_id)
     
     # baseline record of run completion
     logger.info(
@@ -512,19 +515,23 @@ def enrich_with_llm_cols(run_id: str,
 
 ## 4. Run pipeline for testing / debugging
 if __name__ == "__main__":
-    try: 
-        results, quarantine_lex = enrich_with_llm_cols(run_id="test1", 
+    try:
+        test_id = f"test{datetime.now().strftime('%Y%m%d')}_{short_uuid()}" 
+        results, quarantine_lex = enrich_with_llm_cols(run_id=test_id, 
                                     dto_list=retrive_dto_from_jsonl_file(test_path), 
                                     configuration=lex_config)
-        synthetic_batch, quarantine_semantic = enrich_with_llm_cols(run_id="test1",
+        synthetic_batch, quarantine_semantic = enrich_with_llm_cols(run_id=test_id,
                                             dto_list=results,
                                             configuration=semantic_config)
         print(synthetic_batch[0].model_dump_json(indent=2))
     except KeyboardInterrupt:
-            # This catches Ctrl+C
-            print("\n🛑 User aborted execution via KeyboardInterrupt.")
-            sys.exit(130) # Standard exit code for Script Terminated by Ctrl-C
+        # This catches Ctrl+C
+        logger = logging.getLogger("prefect")
+        logger.error("\n🛑 Pipeline execution aborted by user (KeyboardInterrupt).")
+        print("\n🛑 User aborted execution via KeyboardInterrupt.")
+        sys.exit(130) # Standard exit code for Script Terminated by Ctrl-C
     except Exception as e:  # pylint: disable=broad-exception-caught
-        # This catches crashes
+        logger = logging.getLogger("prefect")
+        logger.error("\n💥 Pipeline crashed with critical error: %s", e)
         sys.exit(1)    
     # pass  # for testing / debugging in notebook or script context    

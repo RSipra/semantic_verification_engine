@@ -1413,7 +1413,7 @@ def generate_questions_pipeline(target_books: List[Book],
     receipt_path = save_run_completion(pipeline_id, run_id, LLM_PASS_GEN, status, calls_file)
     create_run_report(receipt_path, OUTPUT_DIR)
     # completion update
-    logger.info("🏁 Genearation Completed: %s",run_id)
+    logger.info("🏁 Generation Completed: %s",run_id)
     
     return receipt_path, all_draft_questions  # return for testing and validation
 
