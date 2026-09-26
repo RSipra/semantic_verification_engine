@@ -14,6 +14,7 @@ expensive part to reconstruct.
 | 1 | File-first handoff between pipeline stages | Decided |
 | 2 | Structural gate moves to the producer | Decided |
 | 3 | Receipt readers must tolerate schema drift | Decided |
+| 4 | Orchestrator run modes, and what the manifest describes | Decided in principle |
 
 ---
 
@@ -229,3 +230,66 @@ ever *removes* or *renames* a field rather than adding one — that is the case
       artifact format, so it may belong in whichever ADR documents the receipt
       rather than standing alone.
 - [ ] **Decide on `schema_version`** — see the open question above.
+
+## 4 · Orchestrator run modes, and what the manifest describes
+
+**Status:** Decided in principle, not implemented
+**Date:** 2026-09-25
+
+### The change
+
+The orchestrator runs any contiguous subsequence of the three passes, not only
+the full chain. It mints the run id, attaches file logging once, and writes one
+manifest for the whole run rather than one per pass.
+
+### Why three modes, not one
+
+- **Full** — generation → lex → semantic. The normal synthetic path.
+- **Generation only** — produce DraftQuestion DTOs and stop. This is how prompt
+  quality gets checked before enrichment tokens are spent on bad questions.
+- **Enrichment only** — take existing DTOs and enrich. This is the legacy
+  bootstrap path and the resume path.
+
+So a partial run is not a degenerate case; two of the three modes are how the
+pipeline is actually used during development and for legacy content.
+
+### What falls out
+
+**Input when generation is skipped.** A file path read into DTOs via
+`retrive_dto_from_jsonl_file` — the same door legacy preprocessing uses.
+
+**Who mints the run id.** The orchestrator, not generation. Today generation
+mints it and enrichment's `__main__` mints its own, so a chained run has to
+thread one through. With an orchestrator, nothing else owns the id.
+
+**File logging happens once.** `configure_file_logging` attaches a handler to
+the process-wide "prefect" logger, so calling it per pass would attach several
+and write every line once per handler. The caller — orchestrator or `__main__` —
+calls it; flows never do. This follows the rule already applied to paths and
+llm_pass: flows supply, helpers receive.
+
+**The manifest describes the run, not the pass.** Generation's manifest records
+books, chapters and strategies; an enrichment manifest would record DTO count,
+question types, chunk size. Rather than a second manifest shape, the orchestrator
+writes one plan for the run: which stages, what input, what settings. Plan once,
+record per stage — receipts stay per pass.
+
+### Open question
+
+Whether enrichment run standalone still needs its own manifest and file log, or
+whether standalone runs are always launched through the orchestrator. If the
+latter, `__main__` in each pipeline stays a smoke-test entry point only.
+
+### Actions
+
+- [ ] **Code — orchestrator (new module):** mode selection, run id, file
+      logging, run-level manifest, stage sequencing
+- [ ] **Code — `generate_questions.py`:** stop minting the run id and calling
+      `configure_file_logging` when invoked through the orchestrator
+- [ ] **Code — `enrich_questions.py`:** accept an input file path for the
+      enrichment-only mode
+- [ ] **Code — `save_run_manifest`:** takes a pre-built plan dict rather than
+      generation-shaped arguments
+- [ ] **Update design doc** — execution section: document the three run modes
+- [ ] **Write ADR** — or fold into the file-first handoff ADR (entry 1), since
+      the orchestrator is what holds the run mode there too
