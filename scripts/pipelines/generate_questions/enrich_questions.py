@@ -320,7 +320,9 @@ def write_quarantine(entries: list[dict], run_id: str, configuration: dict) -> N
 # for both enrichment passes (lexical and semantic), the flow is the same, only the config changes.
 def enrich_with_llm_cols(run_id: str, 
                          dto_list: Sequence[DraftQuestion],
-                         configuration:dict):
+                         configuration:dict,
+                         runs_dir: Path = RUNS_DIR,
+                         output_dir: Path = OUTPUT_DIR):
     """
     Run one LLM enrichment pass over a batch of questions.
 
@@ -333,6 +335,10 @@ def enrich_with_llm_cols(run_id: str,
     Quarantine rates are logged per batch and at run closeout, and warn when they exceed
     the configured thresholds — monitored only, not enforced (see module docstring,
     Structural failure thresholds).
+    
+    Output locations are parameters (not module constants), so a trial
+    run can redirect every artifact to a separate tree without touching the
+    real run history. Inputs (prompts, DTO list) are not affected.
 
     Args:
         run_id: Identifier for this pipeline run, used in checkpoint filenames.
@@ -341,6 +347,11 @@ def enrich_with_llm_cols(run_id: str,
             (expected input class), `output_dto` (question types this pass supports),
             `prompt_file`, `file_prefix` (checkpoint naming), and the two failure-rate
             thresholds. Also passed through to the LLM call and to convert_to_dto.
+        runs_dir: Where the run receipt and calls log are written. Defaults to
+            the real tree; pass nb_cfg.TRIAL_RUNS_DIR for a throwaway run.
+        output_dir: Where question checkpoints and the quarantine file are
+            written. Defaults to the real tree; pass
+            nb_cfg.TRIAL_GENERATED_QUESTIONS_DIR for a throwaway run.
 
     Returns:
         Tuple[List[EnrichedDTO], List[QuarantinedRecord]]: A tuple containing the list
@@ -361,7 +372,7 @@ def enrich_with_llm_cols(run_id: str,
     # API and run config, call files (to save run reciept for LLM pass)
     logger = get_run_logger()
     configure_api(CONFIG_PATH)
-    calls_file = build_run_artifact_path(RUNS_DIR, run_id,configuration['llm_pass'], CALLS)
+    calls_file = build_run_artifact_path(runs_dir, run_id,configuration['llm_pass'], CALLS)
     # token count of prompt template without attached questions
     template_token_count = measure_template_tokens(
         configuration['model_name'],
@@ -447,7 +458,7 @@ def enrich_with_llm_cols(run_id: str,
 
         # 2.7.save response as jsonl for recovery / testing / legacy later
         #   2.7.1. write checkpoint file with enrichment results
-        output_file = build_run_artifact_path(OUTPUT_DIR,
+        output_file = build_run_artifact_path(output_dir,
                                               run_id,
                                               configuration['llm_pass'],
                                               f"{question_type}_batch{batch_index}.jsonl"
@@ -490,10 +501,11 @@ def enrich_with_llm_cols(run_id: str,
         run_id,
         configuration['llm_pass'],
         status,
-        calls_file
+        calls_file,
+        runs_dir
         )
     # create run report
-    create_run_report(receipt_path, OUTPUT_DIR)
+    create_run_report(receipt_path, output_dir)
     # completion update
     logger.info("🏁 %s Completed: %s", configuration['llm_pass'], run_id)
     
@@ -517,12 +529,20 @@ def enrich_with_llm_cols(run_id: str,
 if __name__ == "__main__":
     try:
         test_id = f"test{datetime.now().strftime('%Y%m%d')}_{short_uuid()}" 
-        results, quarantine_lex = enrich_with_llm_cols(run_id=test_id, 
-                                    dto_list=retrive_dto_from_jsonl_file(test_path), 
-                                    configuration=lex_config)
-        synthetic_batch, quarantine_semantic = enrich_with_llm_cols(run_id=test_id,
-                                            dto_list=results,
-                                            configuration=semantic_config)
+        results, quarantine_lex = enrich_with_llm_cols(
+            run_id=test_id, 
+            dto_list=retrive_dto_from_jsonl_file(test_path), 
+            configuration=lex_config,
+            runs_dir=nb_cfg.TRIAL_RUNS_DIR,
+            output_dir=nb_cfg.TRIAL_GENERATED_QUESTIONS_DIR,
+            )
+        synthetic_batch, quarantine_semantic = enrich_with_llm_cols(
+            run_id=test_id,
+            dto_list=results,
+            configuration=semantic_config,
+            runs_dir=nb_cfg.TRIAL_RUNS_DIR,
+            output_dir=nb_cfg.TRIAL_GENERATED_QUESTIONS_DIR,
+            )
         print(synthetic_batch[0].model_dump_json(indent=2))
     except KeyboardInterrupt:
         # This catches Ctrl+C

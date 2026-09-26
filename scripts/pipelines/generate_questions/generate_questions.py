@@ -291,7 +291,7 @@ def filter_strategy(strategy: List[Dict], tasks_to_run: Optional[List[str]] = No
     return active_strategy
 
 @task
-def configure_file_logging(run_id: str):
+def configure_file_logging(run_id: str, logs_dir: Path):
     """
     Attaches a FileHandler to the Prefect logger so logs are saved to disk
     in addition to the Prefect UI/Database.
@@ -300,9 +300,8 @@ def configure_file_logging(run_id: str):
     """
     # Path setup: (run-scoped) the handler attaches to the process-wide
     # prefect logger, so one file captures every pass in this process
-    log_dir = LOGS_DIR
     # log filename 
-    log_file = log_dir / f"{run_id}.log"
+    log_file = logs_dir / f"{run_id}.log"
 
     # Hook into the existing 'prefect' logger
     # Note: This ensures we capture both our logs AND Prefect's system logs
@@ -456,7 +455,8 @@ def get_run_scope(chapter_limit: Optional[int], chapter_filter: Optional[List[in
 @task
 def save_run_manifest(run_id: str, pipeline_id: str, active_strategy: list,
                       llm_pass: str, target_books: List[Book], chapters: list, 
-                      run_timestamp: str, run_scope: str) -> None:
+                      run_timestamp: str, run_scope: str,
+                      manifests_dir: Path) -> None:
     """
     Saves the execution plan (*recipe*) before execution starts. This is to help distinguish 
     between attempted runs (e.g aborted, crashed) vs. successful runs (with full reporting, 
@@ -499,7 +499,7 @@ def save_run_manifest(run_id: str, pipeline_id: str, active_strategy: list,
         "strategy": formatted_strategy
     }
     # Save manifest with standardized name
-    filename = build_run_artifact_path(MANIFESTS_DIR, run_id, llm_pass, MANIFEST)
+    filename = build_run_artifact_path(manifests_dir, run_id, llm_pass, MANIFEST)
     with open(filename, 'w', encoding='utf-8') as f:
         json.dump(manifest, f, indent=2)
 
@@ -1019,7 +1019,7 @@ def estimate_run_cost(run_receipt: Path) -> float:
 
 @task
 def save_run_completion(pipeline_id: str, run_id: str, llm_pass: str, status: str,
-                        calls_file: Path) -> Path:
+                        calls_file: Path, runs_dir:Path) -> Path:
     """
     Write the run receipt (SOT for LLM pass completion within run). 
     A JSON record of one completed LLM pass — generation / enrichment 
@@ -1094,7 +1094,7 @@ def save_run_completion(pipeline_id: str, run_id: str, llm_pass: str, status: st
     }
 
     # Save in the same logs folder with standardized name
-    file_path = build_run_artifact_path(RUNS_DIR, run_id, llm_pass, RECEIPT)
+    file_path = build_run_artifact_path(runs_dir, run_id, llm_pass, RECEIPT)
     with open(file_path, 'w', encoding='utf-8') as f:
         json.dump(completion_data, f, indent=2)
 
@@ -1221,7 +1221,11 @@ def generate_questions_pipeline(target_books: List[Book],
                                 target_chapters: Optional[List[int]] = None,
                                 tasks_to_run: Optional[List[str]] = None,
                                 chapter_limit: Optional[int] = None,
-                                batch_size: int =2):
+                                batch_size: int =2,
+                                runs_dir: Path = RUNS_DIR,
+                                output_dir: Path = OUTPUT_DIR,
+                                manifests_dir: Path = MANIFESTS_DIR,
+                                logs_dir: Path = LOGS_DIR):
     """
    Orchestrates the full generation lifecycle: Initialization -> Manifest -> Batched 
    Execution -> Reporting.
@@ -1264,8 +1268,8 @@ def generate_questions_pipeline(target_books: List[Book],
     active_strategy = filter_strategy(GENERATION_STRATEGY, tasks_to_run)
 
     # A.3.1: Configure the pipeline Prefect logger filehandler
-    log_path = configure_file_logging(run_id)
-    calls_file = build_run_artifact_path(RUNS_DIR, run_id, LLM_PASS_GEN, CALLS)
+    log_path = configure_file_logging(run_id, logs_dir)
+    calls_file = build_run_artifact_path(runs_dir, run_id, LLM_PASS_GEN, CALLS)
     # A.3.2: Initialize logger and print initiation messages
     base_logger = get_run_logger()
     # Add run_id as 'Trace' id to logger messages
@@ -1303,7 +1307,8 @@ def generate_questions_pipeline(target_books: List[Book],
                       target_books,
                       chapter_file_paths,
                       run_timestamp,
-                      run_scope)
+                      run_scope,
+                      manifests_dir)
 
     # A.8: Initialize
     #   initialize DTO list for all questions generated in this run
@@ -1374,7 +1379,7 @@ def generate_questions_pipeline(target_books: List[Book],
 
                 # C.6: save the response into a jsonl
                 # C.6.1: construct output filename
-                output_file = OUTPUT_DIR / f"{run_id}_{config['file_prefix']}_{first_chap}.jsonl"
+                output_file = output_dir / f"{run_id}_{config['file_prefix']}_{first_chap}.jsonl"
 
                 # C.6.2: parse and save as jsonl with Task
                 call_entry, draft_questions = parse_and_save(
@@ -1410,8 +1415,13 @@ def generate_questions_pipeline(target_books: List[Book],
 
     # D.2: summary report for Prefect UI / terminal
     # save actual metrics of run for traceability (run "reciept")
-    receipt_path = save_run_completion(pipeline_id, run_id, LLM_PASS_GEN, status, calls_file)
-    create_run_report(receipt_path, OUTPUT_DIR)
+    receipt_path = save_run_completion(pipeline_id,
+                                       run_id,
+                                       LLM_PASS_GEN,
+                                       status,
+                                       calls_file,
+                                       runs_dir)
+    create_run_report(receipt_path, output_dir)
     # completion update
     logger.info("🏁 Generation Completed: %s",run_id)
     
@@ -1456,6 +1466,12 @@ if __name__ == "__main__":
         default=2,
         help="Chapters per API call. Default: 2 (Proven). Max Rec: 4."
     )
+    
+    parser.add_argument(
+        "--trial",
+        action="store_true",
+        help="Write artifacts to data/trial/ instead of the real tree."
+        )
 
     # 3. Parse arguments
     args = parser.parse_args()
@@ -1463,12 +1479,26 @@ if __name__ == "__main__":
     target_book_enums = [getattr(Book, b) for b in args.books]
 
     try:
+        # --trial redirects every output to the disposable tree; inputs are unaffected
+        # Empty when not a trial, so the flow's own defaults apply.
+        trial_dirs = {}
+        if args.trial:
+            trial_dirs = {
+                "runs_dir": nb_cfg.TRIAL_RUNS_DIR,
+                "output_dir": nb_cfg.TRIAL_GENERATED_QUESTIONS_DIR,
+                "manifests_dir": nb_cfg.TRIAL_MANIFESTS_DIR,
+                "logs_dir": nb_cfg.TRIAL_LOGS_DIR,
+            }
+            for d in trial_dirs.values():
+                d.mkdir(parents=True, exist_ok=True)
+
         # 4. Run the Flow
         generate_questions_pipeline(target_books=target_book_enums,
                                     target_chapters=args.chapters,
                                     tasks_to_run=args.tasks,
                                     chapter_limit=args.limit,
-                                    batch_size=args.batch_size)
+                                    batch_size=args.batch_size,
+                                    **trial_dirs)
     except KeyboardInterrupt:
         # This catches Ctrl+C
         print("\n🛑 User aborted execution via KeyboardInterrupt.")

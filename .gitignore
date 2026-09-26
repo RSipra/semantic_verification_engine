@@ -20,6 +20,8 @@ data/*
 !data/07_pipeline_logs/**
 #    Prefect's raw file-handler output is noise; keep it out.
 data/07_pipeline_logs/logs/
+# Trial runs are disposable output — never tracked
+data/trial/
 
 # Ignore extra documents
 docs/archive/.extra_docs

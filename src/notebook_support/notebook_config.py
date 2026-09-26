@@ -39,7 +39,7 @@ MODELS_DIR = DATA_DIR / "03_models"
 METRICS_DIR = DATA_DIR / "04_metrics"
 FINAL_DATA_DIR = DATA_DIR / "05_final"
 BOOK_TEXT = DATA_DIR / "06_books"
-PL_LOGS = DATA_DIR / "07_pipeline_logs"
+
 # Generated Content
 GENERATED_QUESTIONS_DIR = DATA_DIR / "08_generated"
 THEMES_DIR = DATA_DIR / "09_themes"
@@ -54,8 +54,16 @@ MANIFESTS_DIR = PIPELINE_LOGS_ROOT / "manifests"
 RUNS_DIR = PIPELINE_LOGS_ROOT / "runs"
 LOGS_DIR = PIPELINE_LOGS_ROOT / "logs"
 
-# Generated Content
-GENERATED_QUESTIONS_DIR = DATA_DIR / "08_generated"
+# Offline pipeline trial output tree (for test results segregation from main results)
+# Same structure as data/ under a separate root, so throwaway run artifacts can
+# be deleted wholesale without touching real run history.
+# Outputs only: inputs (books, themes, prompts) are read from the real locations.
+TRIAL_DATA_DIR = DATA_DIR / "trial"
+TRIAL_PIPELINE_LOGS_ROOT = TRIAL_DATA_DIR / "07_pipeline_logs"
+TRIAL_MANIFESTS_DIR = TRIAL_PIPELINE_LOGS_ROOT / "manifests"
+TRIAL_RUNS_DIR = TRIAL_PIPELINE_LOGS_ROOT / "runs"
+TRIAL_LOGS_DIR = TRIAL_PIPELINE_LOGS_ROOT / "logs"
+TRIAL_GENERATED_QUESTIONS_DIR = TRIAL_DATA_DIR / "08_generated"
 
 # TRACER-specific paths
 # LLM runs
