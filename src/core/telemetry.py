@@ -1,0 +1,82 @@
+"""
+Telemetry - models and helpers
+
+Currently models for LLM call records. Other accounting (evaluator tier routing,
+local inference timing) would live here too if it needs the same treatment.
+
+One accounting line per API call: identity, model, cost, and what the call
+produced. The base carries what is true of every call; each pipeline's subclass
+adds only its own fields, so a record documents its own shape.
+
+Shared by the offline generation and enrichment passes. The validation pipeline
+and the runtime judge will extend the same base once their LLM calls are
+consolidated into a common service.
+
+"""
+
+from pydantic import BaseModel, model_validator
+from core.constants import QuestionType
+
+## LLM API CALLS
+
+# common to all llm calls
+class CallEntry(BaseModel):
+    """
+    One accounting line for a single LLM API call.
+
+    Written to the run's calls jsonl as each call completes, and read back by
+    save_run_completion to derive the run totals. Records that cost tokens but
+    produced nothing are still entries — a call that failed is accounted for,
+    not omitted.
+
+    Dump with model_dump(mode="json", exclude_none=True) so the enum serialises
+    to its value and fields that do not apply are left out.    
+    """
+    call_id: str
+    question_type: QuestionType
+    model: str
+    prompt_version: str
+    tokens: dict
+    # location where output jsonl saved (only for valid, empty for quarantined call)
+    output_file: str | None = None
+    # the number of llm records saved in jsonl checkpoint files
+    records_written: int = 0  
+    # if llm call fails, add failure mode to call entry
+    failure_mode: str | None = None
+
+    # make sure the output file name is recorded for valid records
+    @model_validator(mode ='after')
+    def output_file_matches_records(self):
+        """Records that were written must name the file they went to"""
+        if self.records_written > 0 and not self.output_file:
+            raise ValueError("records were written but no output_file was recorded")
+        return self
+
+    @model_validator(mode="after")
+    def failed_calls_produced_nothing(self):
+        """A call that failed before evaluation cannot have written records"""
+        if self.failure_mode and self.records_written:
+            raise ValueError("a failed call cannot have written records")
+        return self
+
+## Question generation pipeline (Prefect)
+
+# question generation llm pass
+class GenerationCallEntry(CallEntry):
+    """
+    A generation call: one batch (default 2 full chapters at atime) for one question 
+    type in a single api call.
+
+    Source files are whole chapters by default, or thematic excerpts for a
+    thematic run. source_files is how many went into this call.
+
+    No records_sent: the model decides how many questions a batch yields, so
+    there is no expected count to compare against.    
+    """
+    batch_id: str
+    chapters: int
+            
+class EnrichmentCallEntry(CallEntry):
+    """ """
+    records_sent: int
+    quarantined: dict | None = None
