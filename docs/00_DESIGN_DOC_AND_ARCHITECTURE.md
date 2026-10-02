@@ -132,7 +132,7 @@ The design of the project is grounded from the start by looking at the project l
 4. **Swiss cheese approach**: layered defensive strategy (prevention, detection, correction) for data quality assurance.
 
 ## 1.5: Basis for Design
-Design constraints are iteratively refined using telemetry from the system tracer, which provides empirical feedback on runtime performance, routing behavior, and LLM dependency patterns.
+Design constraints are iteratively refined using telemetry from the system tracer — the first Phase 2 code and the basis for the current codebase: a thin end-to-end slice that generated, validated and served real questions before the orchestrated pipelines existed. It provides empirical feedback on runtime performance, routing behavior, and LLM dependency patterns (see Tracer Feedback & Telemetry).
 
 Constraints and target boundaries:
 
@@ -349,7 +349,7 @@ This section captures the core assumptions the system relies on to remain correc
 | **Single active SBERT model** | Exactly one SBERT model version is active across all offline pipelines and runtime at any time. | NLP Lab + pipeline validation ([ADR-P2-013](#p2-key-decisions-adrs)).|
 |**Embedding-Schema coherence**|No record advances a tier without a valid embedding from the active model.| Pydantic schema gate|
 | **Append-only system of record** | The audit ledger is never mutated in place; corrections are new entries.|DVC + publishing pipeline|
-| **Stateless runtime** | The runtime does not generate or mutate data. It only consumes production-ready artifacts. | Runtime architecture |
+| **Stateless runtime** | The runtime does not generate or mutate data. It only consumes the Production dataset. | Runtime architecture |
 | **Offline-first intelligence** | Expensive or high-volume intelligence is performed offline. Runtime logic is optimized for latency and responsiveness. | Phase 2 design |
 | **Unidirectional flow** | Data flows unidirectionally from content factory to context refinery. Production datasets are regenerated artifacts and are not used as inputs to Content Factory pipelines. | Publishing pipeline |
 
@@ -385,7 +385,8 @@ The lifecycle will be managed as follows:
 - *Schema decoupling*: Both systems inherit from the Gold dataset, ensuring a singular source of truth for core trivia while allowing the refinery to branch for different use cases (development vs. stable runtime).
 - *Promotion workflow*: once a feature is vetted and finalized in the Green and is used in the game logic, it is promoted to the Blue schema.
 - *Live, symmetric tensor generation*: Both mirrors utilize static embeddings that are hydrated into live PyTorch tensors during the session warmup ensuring high-speed matrix operations during the answer evaluation.
-- *Router with Production DTO options*: enables the game engine to toggle between Blue (stable mode) and Green (development / debug mode) without modifying the evaluation logic.
+- *Router with Production DTO options*: the game engine accepts either Production tier, so Green can be exercised offline for feature work, threshold tuning and error analysis without touching evaluation logic.
+- *Enforcement is at image build, not in code*: the container ships only `Production_Blue`, so the Green path is unreachable in a deployed runtime by construction. The engine stays permissive; stability and correctness are guaranteed by what the docker image contains.
 
 **3. Object-oriented evaluation contract for the Answer Evaluators**: The pydantic schema is the interface for the runtime Answer Evaluators. So instead of passing dataframe rows parsed as dicts, the game instantiates them into a `Question` object.
 - *Allows for dot-notation*: This allows for the data to be accessed via strict predefined attributes based on the SOT Pydantic schema (eliminating KeyErrors or column mixups).
@@ -527,7 +528,7 @@ The architecture below is the anticipated Phase 2 runtime design. The tracer is 
 ### Staggered runtime upgrade
 The runtime upgrade is deliberately staggered rather than implemented all at once:
 
-1. **Tracer (current)**: Phase 1 GoTTY/VM deployment, reused for speed. It let the end-to-end logic be validated without runtime refactoring.
+1. **Tracer (current)**: Phase 1 GoTTY/VM deployment, reused for speed. The CLI application itself was substantially refactored (router, evaluators, startup logic with tensor hydration) but the serving layer was left as-is, accepting single-session concurrency and ~30s cold start in exchange for validating the end-to-end path first.
 2. **Next — FastAPI service layer**: the priority upgrade, addressing the two limitations the tracer surfaced, single-session concurrency (GoTTY shares one terminal) and cold-start lag (~30s model load). A FastAPI service enables concurrent sessions and a single warm startup.
 3. **Deferred — full operational tooling:** CI/CD automation and cloud logging are deferred until justified by usage. Manual session reports cover observability needs at current demo scale; the added complexity only pays off at meaningful user volume.
 
@@ -543,10 +544,34 @@ Since the question runs are batched and infrequent from a contained source (HP b
 - Critical patching: Ad-hoc rebuilds are permitted only for severe correctness fixes.
 
 ## P2 Tracer Feedback & Telemetry
-
+Covers the deployed runtime. Offline pipeline run accounting is in
 > 🚧 *Section pending — to be populated with consolidated telemetry once a stable 
 > baseline is established. This section will present concrete measured results 
 > (routing, latency, compute, cost) as the empirical basis for the design constraints.*
+
+## P2 Orchestration & Automation
+
+### Offline pipelines
+**Purpose**: The tracer proved the generation and validation logic in the demo notebooks. The pipelines make that logic repeatable and automated, i.e. orchestration, run accounting, and explicit failure handling around the LLM API calls. The orchestration adds: 
+
+- **API call retries and pacing** against provider rate limits, since no one is there to re-run a failed cell.
+- **Run artifacts**, so a completed run can be reconstructed from disk instead of building it manually.
+- **Explicit failure branches** to capture and manage errors and pipeline operation for different failure cases. 
+    - *Content factory*: failed records are quarantined and reported. Batch quarantine thresholds are used as warnings (not for abort) and used to create a baseline. Quarantining was not an observable issue at Tracer level and not yet characterized at book scale. Aborting is only applicable once a resume exists.
+
+**Run observability**: every run records what was planned, what was produced, and what each call cost, so the run can be reconstructed from disk:
+
+| Artifact | Answers | Grain |
+|-|-|-|
+| manifest | what the run planned to do | run |
+| questions jsonl | the records produced | question |
+| calls jsonl | what each API call cost and returned | call |
+| receipt | how the pass closed out | pass |
+
+Two rules hold the layer together:
+
+- **Derive, never duplicate.** Receipt totals are computed from the calls file at write time, so the two levels cannot disagree. The markdown report is a projection of the receipt, not a second source.
+- **Receipts are immutable history.** They are never migrated, so the set on disk spans code versions and readers must tolerate fields that did not exist when an older receipt was written.
 
 ## PHASE 3: Optional Runtime Enhancements
 **Objective**: Improve perceived game intelligence through optional, controlled use of an SLM or LLM.
