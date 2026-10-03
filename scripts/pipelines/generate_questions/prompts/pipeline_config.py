@@ -35,7 +35,7 @@ GENERATION_STRATEGY =[
         "prompt_file": nb_cfg.PROMPTS_DIR / "ex_master_prompt_v0.2.txt",
         "file_prefix": "EX",  # prefix to use in naming output files
         "json_response_schema": list[StandardQuestion],  # standardized schema
-        "rate_limit_delay": 10,   # for 10 RPM limit (6s) plus additional margin
+        "rate_limit_delay": 10,   # conservative spacing for the model's free-tier RPM limit
         "temperature": 0.7,
         "max_output_tokens": 12000,
         "top_p": 0.95,
@@ -48,7 +48,7 @@ GENERATION_STRATEGY =[
         "prompt_file": nb_cfg.PROMPTS_DIR / "mcq_master_prompt_v1.1.txt",
         "file_prefix": "MCQ",
         "json_response_schema": list[MCQuestion],  # standardized schema
-        "rate_limit_delay": 10,
+        "rate_limit_delay": 10,  # conservative spacing for the model's free-tier RPM limit
         "temperature": 0.7,
         "max_output_tokens": 12000,
         "top_p": 0.95,
@@ -61,7 +61,7 @@ GENERATION_STRATEGY =[
         "prompt_file": nb_cfg.PROMPTS_DIR / "fr_master_prompt_v0.3.txt",
         "file_prefix": "FR",
         "json_response_schema": list[StandardQuestion],
-        "rate_limit_delay":  10,  # for 10 RPM limit (6s) plus additional margin
+        "rate_limit_delay":  10,  # conservative spacing for the model's free-tier RPM limit
         "temperature": 0.7,
         "max_output_tokens": 12000,
         "top_p": 0.95,

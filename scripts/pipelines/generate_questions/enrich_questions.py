@@ -29,8 +29,11 @@ Per pass:
 - Construct next DTO class
 
 Failure handling:
+A batch of records fails; the branch writes one quarantine entry and one call entry,
+and emits one log line.
 - Transport error: retry w/ backoff (Prefect), then fail batch.
 - Missing syn_ids: retry missing subset once, then quarantine.
+- No candidates: a blocked or empty response
 - Unparseable record: quarantine (raw + reason).
 - DTO Construction failure (critical null): quarantine.
 - Warn thresholds: if >10% of a batch, >5% of run quarantined (monitored, 
@@ -93,6 +96,7 @@ from pydantic import ValidationError
 from prefect import flow, get_run_logger
 
 from core.models import DraftQuestion
+from core.telemetry import EnrichmentCallEntry
 from scripts.pipelines.generate_questions.prompts.pipeline_config import ENRICHMENT_STRATEGY
 from scripts.pipelines.generate_questions.generate_questions import (short_uuid,
                                                                      configure_api,
@@ -112,6 +116,7 @@ OUTPUT_DIR = nb_cfg.GENERATED_QUESTIONS_DIR
 CORE_PROMPT_FIELDS = {'syn_id','question_type','question','answer','mcq_options'}
 
 CHUNK_SIZE = 20     # number of questions per API call
+RAW_RESPONSE_CAP = 2000   # chars of raw response kept in a quarantine entry
 lex_config = ENRICHMENT_STRATEGY["lex_enrichment"]
 semantic_config = ENRICHMENT_STRATEGY["semantic_enrichment"]
 
@@ -175,7 +180,8 @@ def chunk_by_type(dto_list: Sequence[DraftQuestion], chunk_size) -> list:
         chunk_size: Max questions per chunk.
 
     Returns:
-        List of (question_type, chunk_index, batch) tuples.
+        List of (question_type, chunk_index, batch) tuples, where batch is a list of
+        DraftQuestion DTOs.
     """
     # create a dict of each question type that defaults to empty list for each key  
     by_types= defaultdict(list)
@@ -331,15 +337,47 @@ def enrich_with_llm_cols(run_id: str,
     completes. Everything pass-specific comes from `configuration`, so the same flow
     runs both the lexical and semantic passes.
     
-    Records that fail DTO construction are quarantined rather than failing the batch.
+    Trial vs Default Main pipeline run:
+    -----------------------------------
+    Output locations are parameters (not module constants), so a trial
+    run can redirect every artifact to a separate tree without touching the
+    real run history. Inputs (prompts, DTO list) are not affected.
+    
+    Failure handling:
+    ----------------
+    Records that fail processing are quarantined instead of failing the batch.
     Quarantine rates are logged per batch and at run closeout, and warn when they exceed
     the configured thresholds — monitored only, not enforced (see module docstring,
     Structural failure thresholds).
     
-    Output locations are parameters (not module constants), so a trial
-    run can redirect every artifact to a separate tree without touching the
-    real run history. Inputs (prompts, DTO list) are not affected.
+    A failed batch produces three records: a quarantine entry (what failed and why), 
+    a call entry (accounting for the API call), and a log line (narration). Only the
+    first two are read back by code.
+    
+    Three failure modes, ordered so each branch narrows what the next has to handle:
 
+    - transport_failure    — the call never completed. No response exists, so tokens
+                            are {}.
+    - no_candidates        — the call returned but generated nothing: a blocked
+                            prompt leaves no candidate, a blocked output leaves a
+                            candidate with no parts. Tokens are real. Retrying is
+                            futile — the same prompt blocks the same way.
+    - response_unparseable — text returned but is not valid JSON. Tokens are real,
+                            and finish_reason separates a MAX_TOKENS truncation
+                            from genuinely malformed output.
+    
+    The order is load-bearing and reordering risks a silent error. The `response_unparseable`
+    branch assumes a candidate with content exists, which `no_candidates` guarantees. 
+    
+    Two ways records are lost, counted separately. They are kept separate because the 
+    fix differs (rejections point at the prompt, batch loss points at the API or the quota).
+
+    - batch loss  — the call failed, so nothing came back for any record in the
+                    batch. Measured as records_sent on a call with a failure_mode.
+    - rejection   — the call returned output, but an individual record failed DTO
+                    construction. Measured as records_sent - records_written on a
+                    call with no failure_mode.
+   
     Args:
         run_id: Identifier for this pipeline run, used in checkpoint filenames.
         dto_list: Questions to enrich. Must all be instances of the pass's input DTO.
@@ -354,8 +392,8 @@ def enrich_with_llm_cols(run_id: str,
             nb_cfg.TRIAL_GENERATED_QUESTIONS_DIR for a throwaway run.
 
     Returns:
-        Tuple[List[EnrichedDTO], List[QuarantinedRecord]]: A tuple containing the list
-        of enriched DTOs, and the list of quarantined records.
+        Tuple[list[EnrichedDTO], list[dict]]: the enriched DTOs, and the quarantine
+        entries accumulated across all batches.
 
     Raises:
         ValueError: empty input; a question type with no output DTO configured; or the
@@ -383,7 +421,7 @@ def enrich_with_llm_cols(run_id: str,
     result_dtos = []
     all_quarantined = []  # records quarantined, across batches 
     total_processed = 0     # records returned by the LLM, across batches
-    total_quarantined = 0   # records quarantined, across batches 
+    total_quarantined = 0   # records quarantined, across batches
 
     # 1.1. validation checks
     # confirm question source DTO (jsonl for recovery / testing / legacy later)
@@ -403,7 +441,21 @@ def enrich_with_llm_cols(run_id: str,
     batches = chunk_by_type(dto_list, CHUNK_SIZE)
 
     # --- 2. Loop: for each batch ---
-    for batch_index, (question_type, _, batch) in enumerate(batches): 
+    for batch_index, (question_type, chunk_index, batch) in enumerate(batches): 
+
+        # Call entry = record of one API call; fields common to happy + failure branches
+        call_entry_ctx = {
+            "call_id": f"{question_type}_batch{batch_index}",
+            "chunk_index": chunk_index,
+            "question_type": question_type,
+            "model": configuration["model_name"],
+            "prompt_version": configuration["prompt_id"],
+            "records_sent": len(batch),
+        }
+        # For quarantine entries: keep track of question ids to lookup records instead of
+        # storing whole record.
+        record_ids = [q.syn_id for q in batch]
+
         # pacing for RPM limits — sleep before each call except the first
         # TODO: same limitation as generation — loop position is not time since
         # the last call. Proper fix is elapsed-time pacing inside make_api_call.
@@ -422,12 +474,81 @@ def enrich_with_llm_cols(run_id: str,
         try:
             response = make_api_call(prompt, configuration)
         except Exception as e:
+            failure_mode = "transport_failure"
+            entry = {
+                "record": None,
+                "record_ids": record_ids, 
+                "error": str(e),
+                "failure_mode": failure_mode                
+                }
+            all_quarantined.append(entry)
+            write_quarantine([entry], run_id, configuration)
+            call_entry = EnrichmentCallEntry(
+                            **call_entry_ctx,
+                            tokens={},
+                            failure_mode=failure_mode,
+                        )
+            append_jsonl(call_entry, calls_file)
             logger.error("Error occurred while making API call for batch %d of type %s: %s", 
                          batch_index, question_type, str(e))
-            raise
-
+            continue
+        # in case the response is empty or blocked
+        candidate = response.candidates[0] if response.candidates else None
+        if candidate is None or not candidate.content.parts:
+            failure_mode = "no_candidates"
+            feedback = str(response.prompt_feedback) if response.prompt_feedback else None
+            finish_reason = candidate.finish_reason.name if candidate else None
+            token_breakdown = calculate_token_metrics(response, template_token_count)
+            entry = {
+                "record": None,
+                "record_ids": record_ids,  
+                "error": feedback,
+                "finish_reason": finish_reason,
+                "failure_mode": failure_mode,
+            }
+            all_quarantined.append(entry)
+            write_quarantine([entry], run_id, configuration)
+            call_entry = EnrichmentCallEntry(
+                            **call_entry_ctx,
+                            tokens=token_breakdown,
+                            failure_mode=failure_mode,
+                        )
+            append_jsonl(call_entry, calls_file)
+            logger.warning(
+                "Batch %d (%s): no usable content — feedback=%s finish_reason=%s",
+                batch_index, question_type, feedback, finish_reason,
+                )
+            continue
+                        
         # 2.4. parse response into dict
-        parsed_responses = json.loads(response.text)
+        try:
+            parsed_responses = json.loads(response.text)
+        except json.JSONDecodeError as e:
+            failure_mode= "response_unparseable"
+            raw =response.text
+            entry = {
+                # shortend record for jsonl
+                "record": raw if len(raw) <= RAW_RESPONSE_CAP
+                          else raw[:1000] + "\n...[truncated]...\n" + raw[-1000:],
+                "record_ids": record_ids, 
+                "truncated": len(raw) > RAW_RESPONSE_CAP, 
+                "error": str(e),
+                # ok (no guard) since 2.3b makes sure response is not empty
+                "finish_reason":response.candidates[0].finish_reason.name,
+                "failure_mode": failure_mode,
+                }
+            all_quarantined.append(entry)
+            write_quarantine([entry], run_id, configuration)
+            token_breakdown = calculate_token_metrics(response, template_token_count)
+            call_entry = EnrichmentCallEntry(
+                **call_entry_ctx,
+                tokens=token_breakdown,
+                failure_mode=failure_mode,
+            )
+            append_jsonl(call_entry, calls_file)
+            logger.warning("Batch %d (%s): response was not valid JSON — %s",
+                           batch_index, question_type, e)
+            continue
 
         # 2.5.reconcile: all sent qids returned? no unexpected qids?
         sent = {d.syn_id for d in batch}
@@ -462,24 +583,22 @@ def enrich_with_llm_cols(run_id: str,
                                               run_id,
                                               configuration['llm_pass'],
                                               f"{question_type}_batch{batch_index}.jsonl"
-)
+                                              )
         write_jsonl_checkpoint(draft_questions, output_file)
         #   2.7.2. accounting for API call
         token_breakdown = calculate_token_metrics(response, template_token_count)
         mode_counts = dict(Counter(q['failure_mode'] for q in batch_quarantined))
-        
+
         #   build call_entry dict for run reciept 
         # (TODO refactor as helper later w. generation)
-        call_entry= {
-            'call_id': f"{question_type}_batch{batch_index}",
-            'question_type': question_type,
-            'model': configuration['model_name'],
-            'prompt_version': configuration['prompt_id'],
-            'output_file': output_file.name,
-            'questions_saved': len(draft_questions),
-            'tokens': token_breakdown,
-            'quarantined': mode_counts,
-        }
+        call_entry= EnrichmentCallEntry(
+            **call_entry_ctx,
+            output_file =  output_file.name,
+            tokens = token_breakdown,
+            quarantined= mode_counts,
+            # count of questions actually saved in jsonl
+            records_written = len(draft_questions),
+        )
         # write call entry to jsonl file as receipt
         append_jsonl(call_entry, calls_file)
 

@@ -5,7 +5,7 @@ Automated Question Generation Pipeline using PREFECT.
 
 This module orchestrates the end-to-end flow of generating trivia questions using
 Google's Gemini models (Pro & Flash). It handles API interactions, token accounting,
-data lineage tracking via manifests, and robust error handling.
+data lineage tracking via manifests, and per-call failure accounting.
 
 KEY COMPONENTS:
     - Model-per-Task routing (Pro for EX/MCQ, Flash for FR)
@@ -62,6 +62,11 @@ USAGE:
     >>> generate_questions_pipeline(target_books=[Book.BOOK_3],chapter_limit=1)
     >>> # 5. Thematic Run
     >>> generate_questions_pipeline(target_books=[Book.THEME_DOBBY], batch_size=10)
+
+FAILURE HANDLING:
+
+A batch of records fails; the branch writes one quarantine entry and one call entry,
+and emits one log line.    
   
 -----------------------------------------------------------------------------------
 BEST PRACTICES & CONSTRAINTS:
@@ -150,6 +155,7 @@ from prefect import flow, task, get_run_logger #pipeline orchestrator
 from prefect.artifacts import create_markdown_artifact
 from rich.console import Console
 from rich.markdown import Markdown
+from pydantic import BaseModel
 
 # IMPORT PROJECT CONFIGURATION
 # Using the "Src Layout" (pip install -e .)
@@ -253,7 +259,7 @@ def build_run_artifact_path(directory: Path, run_id: str, llm_pass: str, kind: s
     """
     return directory / f"{run_id}_{llm_pass}_{kind}"
 
-def append_jsonl(entry: dict, file_path: Path) -> None:
+def append_jsonl(entry: dict | BaseModel, file_path: Path) -> None:
     """
     Append one record dict to a jsonl file, creating it if absent.
 
@@ -261,8 +267,18 @@ def append_jsonl(entry: dict, file_path: Path) -> None:
     so that a run interrupted partway still leaves what it produced
     on disk.
     
+    Accepts a model or a plain dict. Dumping here rather than at the call site
+    keeps the serialisation options in one place, so they cannot drift between
+    callers
+    
     For DTO batches written whole, see `write_jsonl_checkpoint`.
     """
+    if isinstance(entry, BaseModel):
+        # mode="json" so enums serialise to their value (so "QuestionType.FR" 
+        # is written as "FR".
+        # All fields are written, including optional ones set to None, so a missing
+        # key means the entry's shape lacks that field.
+        entry = entry.model_dump(mode="json")
     with open(file_path, "a", encoding="utf-8") as f:
         f.write(json.dumps(entry) + "\n")
 
@@ -296,7 +312,6 @@ def configure_file_logging(run_id: str, logs_dir: Path):
     Attaches a FileHandler to the Prefect logger so logs are saved to disk
     in addition to the Prefect UI/Database.
     This allows for persistent, grep-able log files that survive local database clears.
-    **Note:** This method was developed with assistance from an LLM (Gemini 3 pro).
     """
     # Path setup: (run-scoped) the handler attaches to the process-wide
     # prefect logger, so one file captures every pass in this process
@@ -945,6 +960,12 @@ def parse_and_save(run_id, batch_id, job_id, response, output_file: Path,
     # Step 2: accounting (token counts from helper)
     token_breakdown = calculate_token_metrics(response, template_token_count)
     
+    # TODO: replace with GenerationCallEntry — mirrors the enrichment
+    # refactor. Requires: questions_saved -> records_written, add source_files
+    # (names, not count), drop quarantined (generation has none, and it's an
+    # enrichment-only field), switch full_metadata.get() -> [] (same-run data,
+    # a missing key is a bug), and confirm prompt_template vs prompt_id is the
+    # same value enrichment records as prompt_version.
     # intialize call metadata including token counts (even if no questions saved)
     call_entry = {
         "call_id": job_id,
@@ -1038,11 +1059,20 @@ def save_run_completion(pipeline_id: str, run_id: str, llm_pass: str, status: st
     so the full end-to-end picture is assembled by globbing that id (no single
     document reports the whole execution).
 
-    Shared by generation and enrichment passes. The per-call records live 
-    in `calls_file`, appended during the run; this method writes the run-level
-    summary (identity, status, context, totals) and a pointer back to
-    the records file. Deriving rather than accepting totals means the two levels
-    (record files and receipt) cannot disagree.
+    Shared by generation and enrichment passes, defined by the `llm_pass` argument
+    from the orchestrator. The per-call records live in `calls_file`, appended 
+    during the run; this method writes the run-level summary (identity, status,
+    context, totals —> record counts, tokens, and failures by mode) and a 
+    pointer back tothe records file. Deriving rather than accepting totals 
+    means the two levels (record files and receipt) cannot disagree.
+    
+    Record counts are a breakdown, not a check: rejected is the remainder of
+    sent − written, so the identity cannot disagree with itself. Reconciling against
+    the questions jsonl and quarantine file is the delta report's job.
+    
+    Receipts are never migrated, so call entries on disk span code versions:
+    fields added after the first format are read with `.get()`, fields present
+    from the start with `[]`, where a missing key is a bug.
 
     Args:
         pipeline_id: Versioned identifier for the pipeline code that ran.
@@ -1071,7 +1101,21 @@ def save_run_completion(pipeline_id: str, run_id: str, llm_pass: str, status: st
     quarantine_totals = {}
     for c in calls:
         for failure_mode, count in (c['quarantined'] or {}).items():
-            quarantine_totals[failure_mode] = quarantine_totals.get(failure_mode,0) + count       
+            # Quarantine is enrichment-only: GenerationCallEntry has no `quarantined`
+        # field, so .get() here is the shared function serving two entry shapes.
+            quarantine_totals[failure_mode] = quarantine_totals.get(failure_mode,0) + count
+
+    # Aggregate call entry counts across successful and quarantined runs for troubleshooting
+    sent = written = rejected = batch_loss = 0
+    for c in calls:
+        # total calls sent in llm pass
+        n_sent = c["records_sent"]
+        sent += n_sent
+        if c["failure_mode"]:
+            batch_loss += n_sent
+        else:
+            written += c["records_written"]
+            rejected += n_sent - c["records_written"]
 
     # create run reciept         
     completion_data = {
@@ -1087,7 +1131,9 @@ def save_run_completion(pipeline_id: str, run_id: str, llm_pass: str, status: st
             "models_used": sorted({c["model"] for c in calls}),
             # chapters will only apply to generation pass, will be 0 for enrichment
             "chapters_processed": sum(c["chapter_count"] for c in calls if "chapter_count" in c),
-            "questions_saved": sum(c["questions_saved"] for c in calls),
+            # output keys unchanged for now; renamed with the rest when the
+            # receipt becomes a model (see core/telemetry.py)
+            "questions_saved": sum(c["records_written"] for c in calls),
             "tokens": token_totals,
             "quarantined": quarantine_totals,
         },
@@ -1236,9 +1282,14 @@ def generate_questions_pipeline(target_books: List[Book],
         tasks_to_run (List[str], optional): Specific strategies to execute (e.g. 
             `["MCQ_Generation"]`). Defaults to ALL strategies if None.
         chapter_limit (int, optional): Caps the number of chapters processed (useful for pilots).
-        batch_size (int, default=2): Files processed per API call. 
-            * **Default (2):** Optimized for full chapters (balances context vs. output limits).
-            * **Higher (10+):** Recommended for short thematic excerpts.
+        batch_size (int, default=2): Source files per API call.
+            * **Default (2):** Question quality degrades with more source text
+              per call — a finding from prompt experimentation (not a token
+              limit). Two full chapters sits well within the model's TPM ceiling.
+            * **Higher (10+):** For short thematic excerpts, on the assumption
+              that what matters is total text rather than file count. 
+              NOTE: The pipeline supports this but it has not been run — the workable
+              limit for excerpts is unconfirmed.
 
     Examples:
         >>> # 1. Standard Full Run

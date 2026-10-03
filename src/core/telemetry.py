@@ -13,7 +13,6 @@ and the runtime judge will extend the same base once their LLM calls are
 consolidated into a common service.
 
 """
-
 from pydantic import BaseModel, model_validator
 from core.constants import QuestionType
 
@@ -64,7 +63,7 @@ class CallEntry(BaseModel):
 # question generation llm pass
 class GenerationCallEntry(CallEntry):
     """
-    A generation call: one batch (default 2 full chapters at atime) for one question 
+    A generation call: one batch (default 2 full chapters at a time) for one question 
     type in a single api call.
 
     Source files are whole chapters by default, or thematic excerpts for a
@@ -74,9 +73,29 @@ class GenerationCallEntry(CallEntry):
     there is no expected count to compare against.    
     """
     batch_id: str
-    chapters: int
+    # from the batch plan, not len(source_files) — a thematic
+    # run can cover fewer chapters than it has excerpt file
+    chapter_count: int
+    source_files: list[str]
             
 class EnrichmentCallEntry(CallEntry):
-    """ """
+    """
+    One API call in an enrichment pass.
+
+    Adding how many records went into the call,
+    and which slice of the pass's partition they came from.
+
+    - `records_sent` is the denominator for this call's loss accounting —
+       records_sent = records_written + records_rejected + batch_loss, each measured
+       at a different point (send / DTO construction / disk write).
+    - `chunk_index` is the position of this call's input within its question type's
+       grouping, and is the join key back to the manifest. Generation has no
+       equivalent: its input is a set of source documents, not an ordered partition,
+       so it records which files it covered instead.
+    - `quarantined` — <what it holds>
+    """
     records_sent: int
+    # position of this call's input slice within its pass's partition 
+    # (e.g. MCQ questions split into N question batches for enrichment)
+    chunk_index: int  
     quarantined: dict | None = None
