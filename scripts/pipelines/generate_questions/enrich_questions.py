@@ -120,7 +120,7 @@ RAW_RESPONSE_CAP = 2000   # chars of raw response kept in a quarantine entry
 lex_config = ENRICHMENT_STRATEGY["lex_enrichment"]
 semantic_config = ENRICHMENT_STRATEGY["semantic_enrichment"]
 
-test_path = OUTPUT_DIR / "fr_questions_prisoner_of_azkaban_chapter_01_run20260724_9882e5b1.jsonl"
+test_path =  nb_cfg.TRIAL_GENERATED_QUESTIONS_DIR / "test20261004_2bddaad2_FR_prisoner_of_azkaban_chapter_01.jsonl"
 RUNS_DIR = nb_cfg.RUNS_DIR
 # standardized unique identifier for this question_generation script with version
 PIPELINE_ID = "pipe_q_enrich_v00" 
@@ -647,7 +647,8 @@ def enrich_with_llm_cols(run_id: str,
 ## 4. Run pipeline for testing / debugging
 if __name__ == "__main__":
     try:
-        test_id = f"test{datetime.now().strftime('%Y%m%d')}_{short_uuid()}" 
+        # test_id = f"test{datetime.now().strftime('%Y%m%d')}_{short_uuid()}"
+        test_id = "test20261004_2bddaad2"
         results, quarantine_lex = enrich_with_llm_cols(
             run_id=test_id, 
             dto_list=retrive_dto_from_jsonl_file(test_path), 

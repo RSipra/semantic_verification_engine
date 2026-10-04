@@ -47,7 +47,14 @@ USAGE:
     # 5. Thematic run: using "Theme" dir / excerpt "{theme_prefix}_{descriptive_text}_{number}.txt" 
     #    with batch size being the excerpts to be used within the same API call 
     #    NOTE: Book.THEME_DOBBY will need to defined in Book Enum
-    $ python scripts/generate_questions.py --books THEME_DOBBY --batch-size 10 
+    $ python scripts/generate_questions.py --books THEME_DOBBY --batch-size 10
+    # 6. Trial run: any of the above, writing to the disposable tree
+    $ python scripts/generate_questions.py --books BOOK_3 --tasks FR_Generation --limit 1 --trial
+        **--trial:** redirects every artifact — questions, manifest, calls log,
+        receipt, Prefect log file — to `data/trial/`, leaving the real run history
+        untouched. Inputs (prompts, source files) are unaffected. The run_id is
+        prefixed `test` rather than `run`, so a trial artifact is identifiable even
+        if it lands in the wrong directory. 
     
     **Python (Notebook/Script):** same examples as CLI
     >>> from scripts.generate_questions import generate_questions_pipeline
@@ -62,6 +69,14 @@ USAGE:
     >>> generate_questions_pipeline(target_books=[Book.BOOK_3],chapter_limit=1)
     >>> # 5. Thematic Run
     >>> generate_questions_pipeline(target_books=[Book.THEME_DOBBY], batch_size=10)
+        >>> # 6. Trial Run (no --trial flag in Python; pass the directories)
+    >>> import notebook_support.notebook_config as nb_cfg
+    >>> generate_questions_pipeline(target_books=[Book.BOOK_3],
+    ...                             chapter_limit=1,
+    ...                             runs_dir=nb_cfg.TRIAL_RUNS_DIR,
+    ...                             output_dir=nb_cfg.TRIAL_GENERATED_QUESTIONS_DIR,
+    ...                             manifests_dir=nb_cfg.TRIAL_MANIFESTS_DIR,
+    ...                             logs_dir=nb_cfg.TRIAL_LOGS_DIR)
 
 FAILURE HANDLING:
 
@@ -161,6 +176,7 @@ from pydantic import BaseModel
 # Using the "Src Layout" (pip install -e .)
 from core.constants import Book, QuestionSource
 from core.models import DraftQuestion
+from core.telemetry import GenerationCallEntry
 from scripts.pipelines.generate_questions.prompts.pipeline_config import GENERATION_STRATEGY, GEN_STRATEGY_VERSION
 import notebook_support.notebook_config as nb_cfg
 
@@ -476,6 +492,9 @@ def save_run_manifest(run_id: str, pipeline_id: str, active_strategy: list,
     Saves the execution plan (*recipe*) before execution starts. This is to help distinguish 
     between attempted runs (e.g aborted, crashed) vs. successful runs (with full reporting, 
     artifacts)
+     
+    Not written for a malformed invocation: a run with no strategy to execute
+    fails before this point, since there is no plan to record.
     
     Full run-level traceability / reproducibility: 
         - run_manifest *here* (what was planned, written before execution)
@@ -713,13 +732,13 @@ def create_strategy_batch_metadata(pipeline_run_id: str,  # Level 1 (pipeline ru
         "generation_strategy_version": GEN_STRATEGY_VERSION,  # static config version
         "source_files": ", ".join(source_filenames),   # job level
         "question_type": strategy.get('file_prefix'),
-        "prompt_template": strategy['prompt_file'].name,   # w/o file ext
-        "model_name": strategy.get('model_name'),
+        "prompt_id": strategy['prompt_id'],  
+        "model_name": strategy['model_name'],
         # model hyperparameters for current batch / strategy (question type)
         "hyperparameters": {
-            "temperature": strategy.get('temperature'),
-            "top_p": strategy.get('top_p'),
-            "max_tokens": strategy.get('max_output_tokens'),
+            "temperature": strategy['temperature'],
+            "top_p": strategy['top_p'],
+            "max_tokens": strategy['max_output_tokens'],
             "candidate_count": strategy.get('candidate_count', 1)
         }
     }
@@ -888,7 +907,7 @@ def process_and_save_candidates(run_id: str, batch_id: str, job_id: str, respons
                         # 2. Context: inject the full run/job metadata
                         question_data['generation_model'] = full_metadata.get('model_name')
                         question_data['timestamp'] = full_metadata.get('timestamp')
-                        question_data['generation_prompt_version'] = full_metadata.get('prompt_template')
+                        question_data['generation_prompt_version'] = full_metadata.get('prompt_id')
                         question_data['generation_pipeline_id'] = full_metadata['identifiers'].get('pipeline_name')
                         question_data['generation_strategy_version'] = full_metadata.get('generation_strategy_version')
                         
@@ -925,8 +944,8 @@ def process_and_save_candidates(run_id: str, batch_id: str, job_id: str, respons
 @task
 def parse_and_save(run_id, batch_id, job_id, response, output_file: Path,
                    calls_file: Path, full_metadata: Dict[str, Any],
-                   chapter_count: int,
-                   template_token_count: int) -> Tuple[Dict[str, Any], List[DraftQuestion]]: # type: ignore
+                   chapter_count: int, source_files: List[str],
+                   template_token_count: int) -> Tuple[GenerationCallEntry, List[DraftQuestion]]: # type: ignore
     """
     Orchestrator task for the ETL processing of model response. it uses helper methods to:
     1. Checks safety (forensics) - was API call suceessful or blocked
@@ -940,7 +959,7 @@ def parse_and_save(run_id, batch_id, job_id, response, output_file: Path,
     - run_receipt (summary of one LLM pass: settings, totals,
         status)
     
-    Returns: Tuple of (call_entry dict, list of DraftQuestion DTOs). 
+    Returns: Tuple of (GenerationCallEntry DTO, list of DraftQuestion DTOs). 
     call_entry is one accounting line for this API call, appended to the run's
     calls jsonl before returning. Blocked or empty calls are recorded too (to 
     capture tokens that are still billed with these calls).
@@ -948,9 +967,9 @@ def parse_and_save(run_id, batch_id, job_id, response, output_file: Path,
         call_id, batch_id: identifiers for this call and its strategy batch
         question_type, model: what was asked for and which model answered
         output_file: name of the jsonl this call's questions were written to
-        questions_saved: how many questions were parsed and saved (0 if blocked)
+        records_written: how many questions were parsed and saved (0 if blocked)
         tokens: the seven-key breakdown from calculate_token_metrics
-        quarantined: None — generation does not yet track failure modes
+
     """
     logger = get_run_logger()
 
@@ -959,26 +978,20 @@ def parse_and_save(run_id, batch_id, job_id, response, output_file: Path,
 
     # Step 2: accounting (token counts from helper)
     token_breakdown = calculate_token_metrics(response, template_token_count)
-    
-    # TODO: replace with GenerationCallEntry — mirrors the enrichment
-    # refactor. Requires: questions_saved -> records_written, add source_files
-    # (names, not count), drop quarantined (generation has none, and it's an
-    # enrichment-only field), switch full_metadata.get() -> [] (same-run data,
-    # a missing key is a bug), and confirm prompt_template vs prompt_id is the
-    # same value enrichment records as prompt_version.
+
     # intialize call metadata including token counts (even if no questions saved)
-    call_entry = {
-        "call_id": job_id,
-        "batch_id": batch_id,
-        "question_type": full_metadata.get("question_type"),
-        "model": full_metadata.get("model_name"),
-        "chapter_count": chapter_count,          
-        "prompt_version": full_metadata.get("prompt_template"),
-        "output_file": output_file.name,
-        "questions_saved": 0,
-        "tokens": token_breakdown,
-        "quarantined": None,
-    }
+    call_entry = GenerationCallEntry(
+        call_id = job_id,
+        question_type = full_metadata["question_type"],
+        model = full_metadata["model_name"],
+        prompt_version = full_metadata["prompt_id"],
+        tokens = token_breakdown,
+        output_file = output_file.name,
+        records_written = 0,
+        batch_id= batch_id,
+        chapter_count = chapter_count,
+        source_files = source_files,
+    )
 
     # check if api call was blocked before proceeding (SAFETY, or other reason response is empty) 
     if not is_safe:
@@ -992,15 +1005,15 @@ def parse_and_save(run_id, batch_id, job_id, response, output_file: Path,
 
     if saved_count > 0:
         logger.info("✅ [job id: %s] Saved %s questions. Total tokens: %s",
-                    job_id, saved_count, call_entry['tokens']['5_total_billed'])
+                    job_id, saved_count, call_entry.tokens['5_total_billed'])
         # update with question count for the call
-        call_entry["questions_saved"] = saved_count
+        call_entry.records_written = saved_count
 
     else: # explicitly log the zero question failure event + the cost incurred 
           # (call not blocked, but no questions to parse e.g. missing '[' delimiters], 
           # MAX_TOKENS hit in middle of first question, etc)
         logger.warning("⚠️ [job id: %s] 0 questions saved. Tokens wasted: %s",
-                       job_id, call_entry['tokens']['5_total_billed'])
+                       job_id, call_entry.tokens['5_total_billed'])
 
     # Step 4: write call entry to file (call.jsonl)
     append_jsonl(call_entry, calls_file)
@@ -1080,15 +1093,18 @@ def save_run_completion(pipeline_id: str, run_id: str, llm_pass: str, status: st
         llm_pass: e.g. "generation", "lex_enrichment", "semantic_enrichment".
         status: "SUCCESS" or "FAILED".
         calls_file: Path to the file containing API call records.
-        context: Settings the run executed under — model, prompt version,
-            sampling parameters, and pass scope. This is what makes the run
-            reproducible; it appears nowhere else.
+        runs_dir: Path to the where the run receipts are to be stored.
     Returns:
         file_path for run receipt         
     """
     # read the call entries this run appended during execution
-    with open(calls_file, "r", encoding="utf-8") as f:
-        calls = [json.loads(line) for line in f if line.strip()]
+    # A run that made no successful calls leaves no calls file — a circuit-breaker
+    # abort, or every call raising. That is a legitimate failed run and still gets
+    # a receipt, with zeroed actuals, rather than crashing at closeout.
+    calls = []
+    if calls_file.exists():
+        with open(calls_file, "r", encoding="utf-8") as f:
+            calls = [json.loads(line) for line in f if line.strip()]
 
     # Calculate run-total metrics from each llm call record
     token_totals ={}
@@ -1100,22 +1116,27 @@ def save_run_completion(pipeline_id: str, run_id: str, llm_pass: str, status: st
     # by failure cause - NOTE: currently will be empty for generation pass
     quarantine_totals = {}
     for c in calls:
-        for failure_mode, count in (c['quarantined'] or {}).items():
+        for failure_mode, count in (c.get('quarantined') or {}).items():
             # Quarantine is enrichment-only: GenerationCallEntry has no `quarantined`
-        # field, so .get() here is the shared function serving two entry shapes.
+            # field, so .get() here is the shared function serving two entry shapes.
             quarantine_totals[failure_mode] = quarantine_totals.get(failure_mode,0) + count
 
-    # Aggregate call entry counts across successful and quarantined runs for troubleshooting
+    # Record accounting.Aggregate call entry counts across successful and quarantined runs 
+    # for troubleshooting
+    #   - Only enrichment sends records.
+    #   - In generation runs, send chaptersand model decides how many questions come back
+    #     so sent/rejected do not apply, therefore GenerationCallEntry has no records_sent field.
+    sent_applies = any("records_sent" in c for c in calls)
     sent = written = rejected = batch_loss = 0
     for c in calls:
         # total calls sent in llm pass
-        n_sent = c["records_sent"]
-        sent += n_sent
         if c["failure_mode"]:
-            batch_loss += n_sent
-        else:
-            written += c["records_written"]
-            rejected += n_sent - c["records_written"]
+            batch_loss += c.get('records_sent',0)
+            continue
+        written += c["records_written"]
+        if 'records_sent' in c:
+            sent += c["records_sent"]
+            rejected += c["records_sent"] - c["records_written"]
 
     # create run reciept         
     completion_data = {
@@ -1130,12 +1151,18 @@ def save_run_completion(pipeline_id: str, run_id: str, llm_pass: str, status: st
             "strategies_run": sorted({c["question_type"] for c in calls}),
             "models_used": sorted({c["model"] for c in calls}),
             # chapters will only apply to generation pass, will be 0 for enrichment
-            "chapters_processed": sum(c["chapter_count"] for c in calls if "chapter_count" in c),
+            "chapters_processed": (
+                sum(c["chapter_count"] for c in calls if "chapter_count" in c)
+                if any("chapter_count" in c for c in calls) else None
+            ),
             # output keys unchanged for now; renamed with the rest when the
             # receipt becomes a model (see core/telemetry.py)
-            "questions_saved": sum(c["records_written"] for c in calls),
             "tokens": token_totals,
             "quarantined": quarantine_totals,
+            "records_sent": sent if sent_applies else None,
+            "records_written": written,
+            "records_rejected": rejected if sent_applies else None,
+            "batch_loss": batch_loss if sent_applies else None,           
         },
     }
 
@@ -1221,9 +1248,18 @@ def create_run_report(receipt_path: Path, output_root: Path):
         ('Output tokens', f"{tokens['4_output_candidates']:,}"),
         ('Thinking tokens', f"{tokens['6_thinking_actual']:,}"),
         ('Total tokens',  f"**{tokens['5_total_billed']:,}**"),
-        ('Questions saved', f"**{actuals['questions_saved']}**"),
+        ('Questions saved', f"**{actuals['records_written']}**"),
         ('Quarantined', quarantine_str),
     ]
+    # sent/rejected/batch loss only apply where records were sent — generation
+    # sends chapters and the model decides the yield, so these are 0 there
+    if actuals["records_sent"]:
+        metric_rows_llm_pass.extend([
+            ('Records sent', actuals["records_sent"]),
+            ('Records rejected', actuals["records_rejected"]),
+            ('Batch loss', actuals["batch_loss"]),
+        ])
+        
     report = f"""
 # 🧙‍♂️ Harry Potter Trivia: {llm_pass.replace("_", " ").title()} Pass Report
 
@@ -1256,9 +1292,8 @@ Receipt: `{receipt_path.name}`
     console.print("\n")
 
     # 5. Log to console
-    logger = get_run_logger()
     logger.info("📝 Report created for %s: %s questions saved",
-                llm_pass, actuals["questions_saved"])
+                llm_pass, actuals["records_written"])
 
 ## ORCHESTRATOR
 
@@ -1312,11 +1347,21 @@ def generate_questions_pipeline(target_books: List[Book],
     ## A. INITIALIZATION (RUN LEVEL)
     # A.1: generate identifiers
     pipeline_id = PIPELINE_ID
-    run_id = f"run{datetime.now().strftime('%Y%m%d')}_{short_uuid()}"
+    # 'test' prefix when writing to the trial tree, so a trial artifact is
+    # identifiable even if it lands in the wrong directory
+    is_trial = runs_dir == nb_cfg.TRIAL_RUNS_DIR
+    run_id = f"{'test' if is_trial else 'run'}{datetime.now().strftime('%Y%m%d')}_{short_uuid()}"
     run_timestamp = datetime.now(timezone.utc).isoformat()
 
     # A.2: Deterimine the specific run strategy (if filtered):
     active_strategy = filter_strategy(GENERATION_STRATEGY, tasks_to_run)
+    # fail fast: an empty strategy produces no calls, no calls file, and a
+    # confusing crash at closeout rather than here
+    if not active_strategy:
+        raise ValueError(
+            f"No strategies to run. Filter {tasks_to_run} matched nothing. "
+            f"Available: {[c['task_name'] for c in GENERATION_STRATEGY]}"
+        )
 
     # A.3.1: Configure the pipeline Prefect logger filehandler
     log_path = configure_file_logging(run_id, logs_dir)
@@ -1413,8 +1458,8 @@ def generate_questions_pipeline(target_books: List[Book],
             # C.2: Initialize 
             job_id = f"job_{short_uuid()}"
             # Extract names for metadata (since chapter_batch is a list of Paths)
-            batch_names = [p.stem for p in chapter_batch]
             first_chap = chapter_batch[0].stem  # chapter ref in output filename and logging
+            source_files=[p.name for p in chapter_batch]
 
             # C.3: prepare prompt (fill in template)
             final_prompt = prepare_prompt(chapter_batch,config['prompt_file'])
@@ -1426,7 +1471,7 @@ def generate_questions_pipeline(target_books: List[Book],
                 # C.5: generate the full meta_data dict for job
                 full_metadata = create_strategy_batch_metadata(run_id, batch_id, 
                                                                job_id, run_timestamp,
-                                                               config, batch_names)
+                                                               config, source_files)
 
                 # C.6: save the response into a jsonl
                 # C.6.1: construct output filename
@@ -1439,6 +1484,7 @@ def generate_questions_pipeline(target_books: List[Book],
                     calls_file=calls_file,
                     full_metadata=full_metadata,
                     chapter_count=len(chapter_batch),
+                    source_files= source_files,
                     template_token_count=template_token_count,
                 )
                 # collect draft questions from the job into run-level list
@@ -1487,6 +1533,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--tasks", 
         nargs="+", # Accepts 1 or more values
+        choices=[c["task_name"] for c in GENERATION_STRATEGY],
         help="List of specific tasks to run (e.g. 'MCQ_Generation'). Default is ALL.",
         default=None
     )

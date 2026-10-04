@@ -31,7 +31,7 @@ GENERATION_STRATEGY =[
     {
         "task_name": "EX_Generation",
         "model_name": MODEL,
-        "prompt_id": "EX_v0",
+        "prompt_id": "EX_v0.2",
         "prompt_file": nb_cfg.PROMPTS_DIR / "ex_master_prompt_v0.2.txt",
         "file_prefix": "EX",  # prefix to use in naming output files
         "json_response_schema": list[StandardQuestion],  # standardized schema
@@ -44,7 +44,7 @@ GENERATION_STRATEGY =[
     {
         "task_name": "MCQ_Generation",
         "model_name": MODEL,
-        "prompt_id": "MCQ_v0",
+        "prompt_id": "MCQ_v1.1",
         "prompt_file": nb_cfg.PROMPTS_DIR / "mcq_master_prompt_v1.1.txt",
         "file_prefix": "MCQ",
         "json_response_schema": list[MCQuestion],  # standardized schema
@@ -57,7 +57,7 @@ GENERATION_STRATEGY =[
     {
         "task_name": "FR_Generation",
         "model_name": MODEL,
-        "prompt_id": "FR_v0",
+        "prompt_id": "FR_v0.3",
         "prompt_file": nb_cfg.PROMPTS_DIR / "fr_master_prompt_v0.3.txt",
         "file_prefix": "FR",
         "json_response_schema": list[StandardQuestion],

@@ -13,7 +13,7 @@ and the runtime judge will extend the same base once their LLM calls are
 consolidated into a common service.
 
 """
-from pydantic import BaseModel, model_validator
+from pydantic import BaseModel, model_validator, ConfigDict
 from core.constants import QuestionType
 
 ## LLM API CALLS
@@ -28,9 +28,13 @@ class CallEntry(BaseModel):
     produced nothing are still entries — a call that failed is accounted for,
     not omitted.
 
-    Dump with model_dump(mode="json", exclude_none=True) so the enum serialises
-    to its value and fields that do not apply are left out.    
+    Dump with model_dump(mode="json") so the enum serialisesto its value. All
+    fields are written, including optional ones set to None — a missing key then
+    means the entry's shape lacks that field, not that it was unset.    
     """
+    # validator re-runs if a value is reassigned; unknown fields raise
+    model_config = ConfigDict(validate_assignment=True, extra='forbid')
+
     call_id: str
     question_type: QuestionType
     model: str
