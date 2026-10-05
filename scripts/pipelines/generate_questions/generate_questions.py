@@ -743,35 +743,32 @@ def create_strategy_batch_metadata(pipeline_run_id: str,  # Level 1 (pipeline ru
         }
     }
 
-# response processing helper: check if api call accepted by model and response present
-def check_safety_and_feedback(response, full_metadata: Dict[str, Any], job_id: str, logger_obj) -> bool:
+# check if the API response is blocked or empty
+def check_response_usable(response):
     """
-    response processing layer 1: forensics, if successful returns True,
-    updates metadata with API status (prompt_feedback, finish_reason),
-    else returns False if the call was blocked.
+    Determine if API response is usable or blocked / empty and
+    return the appropriate diagnostics.
+
+    Four states are considered for response (3 of them are unusable):
+    - no candidate (prompt blocked), 
+    - a candidate finishing on SAFETY (output blocked),
+    - a candidate with no parts (empty for another reason), or
+    - usable.
+
+    Returns:
+        (usable, finish_reason, prompt_feedback). finish_reason is None when no
+        candidate exists; prompt_feedback is None when the provider sent none.
     """
-    # Check if the model refused to generate content (Safety Block)
-    finish_reason = "UNKNOWN"  # default
-    if hasattr(response, 'candidates') and response.candidates:
-        finish_reason = response.candidates[0].finish_reason.name
-
-    prompt_feedback = getattr(response, 'prompt_feedback', None)
-
-    # update metadata in-place so we have a record even if it fails
-    full_metadata["finish_reason"] = finish_reason
-    full_metadata["prompt_feedback"] = str(prompt_feedback)
-
-    # 1. Safety Block Check
-    if finish_reason == "SAFETY":
-        logger_obj.error("⛔ [job id: %s] Safety Block triggered. Feedback: %s", job_id, prompt_feedback)
-        return False 
-
-    # 2. Empty/Malformed Response Check
-    if not hasattr(response, 'candidates') or not response.candidates:
-        logger_obj.error("[job id: %s] No candidates found in response object.", job_id)
-        return False
-
-    return True
+    candidate = response.candidates[0] if response.candidates else None
+    finish_reason = candidate.finish_reason.name if candidate else None
+    feedback = str(response.prompt_feedback) if response.prompt_feedback else None
+    
+    usable = (
+        candidate is not None
+        and finish_reason != "SAFETY"
+        and bool(candidate.content.parts)  # candidate is not empty
+    )
+    return usable, finish_reason, feedback
 
 # response output processing helper: calculate token counts
 def calculate_token_metrics(response, 
@@ -948,7 +945,7 @@ def parse_and_save(run_id, batch_id, job_id, response, output_file: Path,
                    template_token_count: int) -> Tuple[GenerationCallEntry, List[DraftQuestion]]: # type: ignore
     """
     Orchestrator task for the ETL processing of model response. it uses helper methods to:
-    1. Checks safety (forensics) - was API call suceessful or blocked
+    1. Checks whether the response carries usable content
     2. Calculates token counts (accounting) for the job (all candidates) 
     3. Parses individual questions_data dict and saves the data as jsonl (core logic)
     
@@ -974,7 +971,9 @@ def parse_and_save(run_id, batch_id, job_id, response, output_file: Path,
     logger = get_run_logger()
 
     # Step 1: forensics
-    is_safe = check_safety_and_feedback(response, full_metadata, job_id, logger)
+    usable, finish_reason, prompt_feedback = check_response_usable(response)
+    full_metadata["finish_reason"] = finish_reason
+    full_metadata["prompt_feedback"] = prompt_feedback
 
     # Step 2: accounting (token counts from helper)
     token_breakdown = calculate_token_metrics(response, template_token_count)
@@ -994,8 +993,10 @@ def parse_and_save(run_id, batch_id, job_id, response, output_file: Path,
     )
 
     # check if api call was blocked before proceeding (SAFETY, or other reason response is empty) 
-    if not is_safe:
+    if not usable:
         # Return 0 saved, but still track the cost
+        logger.error("⛔ [job id: %s] No usable content — finish_reason=%s feedback=%s",
+                    job_id, finish_reason, prompt_feedback)
         append_jsonl(call_entry, calls_file)
         return call_entry, []
 

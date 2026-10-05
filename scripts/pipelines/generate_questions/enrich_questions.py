@@ -99,6 +99,7 @@ from core.models import DraftQuestion
 from core.telemetry import EnrichmentCallEntry
 from scripts.pipelines.generate_questions.prompts.pipeline_config import ENRICHMENT_STRATEGY
 from scripts.pipelines.generate_questions.generate_questions import (short_uuid,
+                                                                     check_response_usable,
                                                                      configure_api,
                                                                      make_api_call,
                                                                      append_jsonl,
@@ -493,16 +494,14 @@ def enrich_with_llm_cols(run_id: str,
                          batch_index, question_type, str(e))
             continue
         # in case the response is empty or blocked
-        candidate = response.candidates[0] if response.candidates else None
-        if candidate is None or not candidate.content.parts:
+        usable, finish_reason, prompt_feedback = check_response_usable(response)
+        if not usable:
             failure_mode = "no_candidates"
-            feedback = str(response.prompt_feedback) if response.prompt_feedback else None
-            finish_reason = candidate.finish_reason.name if candidate else None
             token_breakdown = calculate_token_metrics(response, template_token_count)
             entry = {
                 "record": None,
                 "record_ids": record_ids,  
-                "error": feedback,
+                "error": prompt_feedback,
                 "finish_reason": finish_reason,
                 "failure_mode": failure_mode,
             }
@@ -516,7 +515,7 @@ def enrich_with_llm_cols(run_id: str,
             append_jsonl(call_entry, calls_file)
             logger.warning(
                 "Batch %d (%s): no usable content — feedback=%s finish_reason=%s",
-                batch_index, question_type, feedback, finish_reason,
+                batch_index, question_type, prompt_feedback, finish_reason,
                 )
             continue
                         
@@ -533,7 +532,8 @@ def enrich_with_llm_cols(run_id: str,
                 "record_ids": record_ids, 
                 "truncated": len(raw) > RAW_RESPONSE_CAP, 
                 "error": str(e),
-                # ok (no guard) since 2.3b makes sure response is not empty
+                # no guard needed: check_response_usable above returns False
+                # unless a candidate with parts exists
                 "finish_reason":response.candidates[0].finish_reason.name,
                 "failure_mode": failure_mode,
                 }
