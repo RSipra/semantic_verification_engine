@@ -15,6 +15,9 @@ expensive part to reconstruct.
 | 2 | Structural gate moves to the producer | Decided |
 | 3 | Receipt readers must tolerate schema drift | Decided |
 | 4 | Orchestrator run modes, and what the manifest describes | Decided in principle |
+| 5 | Provider portability — the LLM call seam | Open |
+| 6 | What makes a dataset Production_Blue | Open |
+| 7 | `chunk` and `batch` used interchangeably | Decided |
 
 ---
 
@@ -293,3 +296,278 @@ latter, `__main__` in each pipeline stays a smoke-test entry point only.
 - [ ] **Update design doc** — execution section: document the three run modes
 - [ ] **Write ADR** — or fold into the file-first handoff ADR (entry 1), since
       the orchestrator is what holds the run mode there too
+
+
+## 5 · Provider portability — the LLM call seam
+
+**Status:** Open — seam identified, approach not decided
+**Date:** 2026-10-02
+
+### The problem
+
+The pipelines are coupled to one provider SDK. Substituting a provider today
+means rewriting six functions, and there is no interface between them and the
+rest of the pipeline.
+
+The coupling is contained, though, and worth being precise about where it lives:
+
+| Function | Coupled to |
+|---|---|
+| `configure_api` | `genai.configure(api_key=...)` |
+| `make_api_call` | `GenerativeModel`, `GenerationConfig`, `generate_content`, `response_mime_type`, `request_options` / `api_retry.Retry` / `ServiceUnavailable` |
+| `measure_template_tokens` | `model.count_tokens(...)` |
+| `calculate_token_metrics` | `usage_metadata.*` field names |
+| `check_safety_and_feedback` | `candidates[0].finish_reason.name`, `prompt_feedback` |
+| `process_and_save_candidates` | `candidates`, `content.parts[0].text` |
+
+Plus two reads in the enrichment flow (`response.candidates`, `response.text`)
+and four config keys (`candidate_count`, `top_p`, `response_mime_type`).
+
+### Why this is already solved more than it looks
+
+`CallEntry` is the normalisation boundary. Everything downstream of it — the
+receipt, the report, the thresholds, the trend views, the orchestrator — is
+provider-agnostic, because it reads a model rather than an SDK response.
+
+That is also the same seam the shared-utilities split identified: "call the
+model" (coupled) versus "account for the call" (portable). Provider
+portability is a second, independent reason the same boundary is the right one.
+A boundary two unrelated forces agree on is usually real.
+
+### The one leak past the seam
+
+`tokens: dict` on `CallEntry` is untyped, so provider-shaped keys pass straight
+through into the receipt and the report:
+
+- `4_output_candidates` — "candidates" is Gemini vocabulary
+- `6_thinking_actual` — not every provider reports reasoning tokens separately.
+  Where it isn't reported, the correct value is `None` (not measured), not `0`
+  (measured as zero) — the same distinction that matters for Flash-Lite today.
+- `3_input_cached_actual` — maps to one field here, but caching elsewhere often
+  splits into cache *read* and cache *write*, billed differently. One key
+  cannot hold two numbers.
+
+Fix when the time comes: give the token breakdown its own model in
+`core/telemetry.py` with provider-neutral names and `None` meaning
+not-reported.
+
+### Why not now
+
+An adapter designed with only one SDK in hand will be shaped like that SDK.
+The honest way to find the interface is to port one call path to a second
+provider as a throwaway experiment and see what refuses to fit.
+
+Note that a Gemma judge via AI Studio would **not** test this — it goes through
+the same `generativelanguage` surface.
+
+### Not hypothetical
+
+Phase 3 states a local-models requirement for regulated domains, and a Gemma
+judge was floated for quota isolation between pipeline and runtime. This is a
+deferred stated need, not speculation.
+
+### Actions
+
+- [ ] **Read `src/engine/services/llm_service.py` first.** It exists in the
+      runtime and carries its own rate-limit assumption (10 RPM / 6s buffer).
+      There may already be a second, divergent provider-calling implementation;
+      designing the seam without reading it risks a third.
+- [ ] **Experiment — port one call path to a second provider.** Throwaway, not
+      a refactor. The goal is to find out what the interface needs, not to ship
+      an adapter.
+- [ ] **Code — `core/telemetry.py`:** typed token-breakdown model with
+      provider-neutral field names; `None` for not-reported.
+- [ ] **Write ADR** once the experiment says what the seam looks like. Not
+      before — an ADR written now would record a guess.
+- [ ] **Update design doc** — note the coupling and the seam in the
+      orchestration section, so a reader knows it is known rather than missed.
+
+---
+
+## 6 · What makes a dataset Production_Blue
+
+**Status:** Open — needs resolving before the first Blue is written
+**Date:** 2026-10-02
+
+### The question
+
+Is Blue **declared** by the author, or **earned** against criteria?
+
+Nothing currently defines the promotion from Green to Blue beyond "once a
+feature is vetted and finalized in Green and is used in the game logic." That
+describes one feature's promotion, not the dataset's.
+
+### The two options
+
+**Declared.** Cheaper, and will drift — "stable" becomes whatever was most
+recently written.
+
+**Earned.** More work, and makes the tier mean something. Candidate criteria:
+
+- every feature in the schema is read by game logic (nothing carried
+  speculatively)
+- evaluator thresholds tuned against it and frozen
+- schema stable — no `Optional` fields still awaiting backfill
+- evaluator performance measured and recorded on this exact dataset
+
+### Related: the tier is named twice
+
+`enforce_schema_pipeline(df, mode="dev")` and `ProductionMCQ_Green` both encode
+the tier, for different consumers — `mode` steers downstream routing, the model
+shapes the DTO. Nothing checks that they agree, so `mode="dev"` with a Blue
+model would be accepted and the two halves of the system would disagree about
+which tier the data is.
+
+They could be tied together: `mode` selects the model, so the tier is set once.
+`mode` is the right input of the two, since it carries more than the model
+choice.
+
+### Actions
+
+- [ ] **Decide declared vs earned**, before the promotion step is written.
+- [ ] **Write ADR** if earned — the criteria are the decision and need a record.
+- [ ] **Update design doc** — the Green/Blue lifecycle block states the
+      promotion workflow but not what qualifies a dataset; add whichever answer
+      is chosen.
+- [ ] **Code — refinery:** `mode` selects the DTO model rather than both being
+      passed. Check first whether the model is used anywhere else in the flow;
+      if `prepare_parquet_table` is the only consumer, it can take `mode` too
+      and the model never appears at the call site.
+- [ ] **Code — tracer demo notebook:** the markdown cell records this as open;
+      remove that note once resolved.
+
+---
+
+## 7 · `chunk` and `batch` used interchangeably
+
+**Status:** Decided — defer to the shared-utilities extraction
+**Date:** 2026-10-02
+
+### The change
+
+Settle on **batch** as the single term for *the set of items sent in one API
+call*. Retire "chunk".
+
+### Why
+
+Both words are currently used for the same thing, in both pipelines:
+
+- generation: `chunk_list(chapter_file_paths, batch_size)` yielding
+  `chapter_batch`
+- enrichment: `chunk_size`, `chunk_index`, alongside `batches` and
+  `batch_index`
+
+"Batch" is already load-bearing — `batch_id` is a field on
+`GenerationCallEntry` — and it is the standard term for what both passes mean.
+
+This cost real time twice while writing the failure branches: the vocabulary
+collision reads as a semantic difference between the passes, and it isn't one.
+
+### One genuine asymmetry to preserve
+
+Enrichment has two counters, generation one:
+
+| | Flat position across all calls | Position within a partition |
+|---|---|---|
+| Enrichment | `batch_index` (enumerate) | `i // chunk_size`, per question type |
+| Generation | `i` (enumerate) | same `i` — only one partition |
+
+They collapse in generation because there is a single chapter list; enrichment
+partitions by question type first, then batches within each. The stored field is
+the **per-partition** index, since that is what joins back to what the manifest
+planned. Enrichment's flat counter is a local for building `call_id`.
+
+### Actions
+
+- [ ] **Code — rename at the extraction:** `chunk_list` → `batch_chapters`,
+      `chunk_size` → `batch_size`, `chunk_index` → `batch_index`. Not before —
+      a rename across both pipelines mid-feature is churn.
+- [ ] **Code — `core/telemetry.py`:** rename `chunk_index` on
+      `EnrichmentCallEntry` in the same pass.
+- [ ] **Pipeline README:** use one term once the rename lands.
+
+---
+
+## Amendments to existing entries
+
+### Into #2 · Structural gate moves to the producer
+
+Add under **Consequence**, as a second instance of the same rule:
+
+> The same reasoning applies at the container boundary. The refinery enforces
+> the **label** — a Pydantic `Literal` on `data_tier` so a mislabelled or
+> mixed-tier write fails on construction. The image build enforces the
+> **choice** — which file was actually copied in. A schema gate cannot catch a
+> selection error, because `Production_Green` is a valid Green file.
+>
+> The general rule both cases are instances of: **a tier boundary needs a check
+> at the boundary, not trust on either side.** And a gate validates that a thing
+> is what it claims; it cannot validate that it is the thing you wanted.
+
+Add to **Actions**:
+
+- [ ] **Code — refinery final validation:** `Literal` on `data_tier` in the
+      Green and Blue models, so construction is the gate. Confirm first that
+      `data_tier` is actually *updated* as records move tiers rather than
+      stamped once at Bronze — if it isn't, the field is decorative and the
+      `Literal` is what forces it to be load-bearing.
+- [ ] **Code — container build:** assert the dataset being copied is
+      `Production_Blue`. Check contents, not the filename — a filename can lie,
+      and mispointing is the mistake being guarded against. Enforcement by
+      absence (the image contains only Blue) covers the runtime; this covers the
+      build.
+
+Amend the existing design-doc action to name the table:
+
+- [ ] **Update design doc — P2 Data Tier table:** the Bronze row still reads
+      "Raw / Ingestion & Schema Check," which is pre-decision. Post-decision
+      Bronze is *structurally gated*, and "Raw" is no longer accurate for data
+      that passed a Pydantic gate.
+
+### Into #3 · Receipt readers must tolerate schema drift
+
+Add a third row to **the rule**:
+
+> A key can be missing for three reasons, not two:
+>
+> | Reason | Accessor |
+> |---|---|
+> | Same run, same code version | `[]` — a missing key is a bug |
+> | Written by an older code version | `.get()` — expected history |
+> | **The entry's subclass does not have the field** | **`.get()` — permanent** |
+>
+> The third is the one that applies today: `quarantined` exists on
+> `EnrichmentCallEntry` only, and `save_run_completion` is shared by both
+> pipelines, so it reads a field that generation entries will never have. Unlike
+> the version case, this does not resolve over time.
+
+Add under **Why**:
+
+> `exclude_none=True` was removed from `append_jsonl` (commit 7). With it,
+> an optional field set to `None` was indistinguishable from a field the entry's
+> shape does not have, which destroyed the not-recorded versus unset
+> distinction. Now `null` means unset and an absent key means the shape lacks
+> the field — so `.get()` has exactly one meaning.
+
+Note on the existing **Open question** about `schema_version`: the dev-era
+receipts that produced the original `KeyError` have no value as history. Clearing
+them and reading with `[]` until the first real run is cheaper than carrying a
+compatibility rule from before there is anything to be compatible with. The
+version case becomes live the first time a field is added *after* a real run
+exists.
+
+---
+
+## Deliberately not added
+
+**Generation call entry is still a dict literal.** A refactor task, not a design
+decision. The TODO at the construction site carries the field mismatches
+(`questions_saved` → `records_written`, add `source_files`, drop `quarantined`,
+`.get()` → `[]`, confirm `prompt_template` vs `prompt_id`).
+
+**One source file = one unit of source content.** Not pending — it is a contract
+the pipeline already relies on. Splitting a medium into units (a long article, a
+PDF) is a preprocessing concern; the pipeline reads whatever files preprocessing
+produced. This belongs in the design doc's Content Factory section directly,
+stated as a boundary with a named owner.
+
