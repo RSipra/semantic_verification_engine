@@ -108,7 +108,8 @@ from scripts.pipelines.generate_questions.generate_questions import (short_uuid,
                                                                      save_run_completion,
                                                                      create_run_report,
                                                                      build_run_artifact_path,
-                                                                     CONFIG_PATH, CALLS, QUARANTINE)
+                                                                     write_quarantine,
+                                                                     CONFIG_PATH, CALLS)
 
 import notebook_support.notebook_config as nb_cfg
 
@@ -293,31 +294,6 @@ def write_as_parquet():
     """Placeholder for future parquet write, for recovery / staging"""
     pass
 
-# quarantine failed records for later inspection
-def write_quarantine(entries: list[dict], run_id: str, configuration: dict) -> None:
-    """
-    One jsonl per run, appended per batch. Entries are self-describing via failure_mode.
-
-    Args:
-        entries: List of dicts containing the failed records, failure type tag, and their errors.
-        run_id: Identifier for this pipeline run, used in checkpoint filenames.
-        configuration: Pass config from ENRICHMENT_STRATEGY. Read here: `file_prefix` (checkpoint naming).
-    """
-    logger = get_run_logger()
-    if not entries:
-        return  # No entries to write
-
-    # output_file = OUTPUT_DIR / f"{configuration['file_prefix']}_run{run_id}_quarantine.jsonl"
-    output_file = build_run_artifact_path(OUTPUT_DIR,
-                                          run_id,
-                                          configuration['llm_pass'],
-                                          QUARANTINE)
-    
-    for entry in entries:
-        append_jsonl(entry, output_file)
-
-    logger.warning("Quarantined %d records to %s", len(entries), output_file)
-
 # Report for enrichment passes
 # TODO: markdown report for enrichment passes — may fold into generation's report
 
@@ -483,7 +459,7 @@ def enrich_with_llm_cols(run_id: str,
                 "failure_mode": failure_mode                
                 }
             all_quarantined.append(entry)
-            write_quarantine([entry], run_id, configuration)
+            write_quarantine([entry], run_id, configuration['llm_pass'], runs_dir)
             call_entry = EnrichmentCallEntry(
                             **call_entry_ctx,
                             tokens={},
@@ -506,7 +482,7 @@ def enrich_with_llm_cols(run_id: str,
                 "failure_mode": failure_mode,
             }
             all_quarantined.append(entry)
-            write_quarantine([entry], run_id, configuration)
+            write_quarantine([entry], run_id, configuration['llm_pass'], runs_dir)
             call_entry = EnrichmentCallEntry(
                             **call_entry_ctx,
                             tokens=token_breakdown,
@@ -538,7 +514,7 @@ def enrich_with_llm_cols(run_id: str,
                 "failure_mode": failure_mode,
                 }
             all_quarantined.append(entry)
-            write_quarantine([entry], run_id, configuration)
+            write_quarantine([entry], run_id, configuration['llm_pass'], runs_dir)
             token_breakdown = calculate_token_metrics(response, template_token_count)
             call_entry = EnrichmentCallEntry(
                 **call_entry_ctx,
@@ -565,7 +541,7 @@ def enrich_with_llm_cols(run_id: str,
         total_processed += len(parsed_responses)
         total_quarantined += len(batch_quarantined)
         #   write quarantined records to jsonl for later inspection
-        write_quarantine(batch_quarantined, run_id, configuration)
+        write_quarantine(batch_quarantined, run_id, configuration['llm_pass'], runs_dir)
         
         #   quarantine threshold checks: (num quarantined / num returned) for batch
         batch_failure_rate = len(batch_quarantined)/len(parsed_responses) if parsed_responses else 0
@@ -644,11 +620,24 @@ def enrich_with_llm_cols(run_id: str,
 
     return result_dtos, all_quarantined
 
-## 4. Run pipeline for testing / debugging
+## 4. Standalone entry point — runs this module on its own for testing / debugging.
+#
+# Everything written from here goes to the trial tree, and test_id is minted
+# fresh each time. To enrich the output of an earlier trial generation run,
+# overwrite test_id with that run's id — otherwise the two runs' artifacts
+# carry different ids and don't glob together.
+#
+# In a real run, run_id and the output directories are supplied by the caller.
+# This block stays after the orchestrator exists: each module keeps a standalone
+# entry point so a single pass can be run in isolation, and the orchestrator
+# covers the combined flow.
+
 if __name__ == "__main__":
     try:
-        # test_id = f"test{datetime.now().strftime('%Y%m%d')}_{short_uuid()}"
-        test_id = "test20261004_2bddaad2"
+        test_id = f"test{datetime.now().strftime('%Y%m%d')}_{short_uuid()}"
+        # To append this pass to an earlier generation run's artifacts, comment out
+        # the line above and set test_id to that run's id, e.g.:
+        # test_id = "test20261004_2bddaad2"
         results, quarantine_lex = enrich_with_llm_cols(
             run_id=test_id, 
             dto_list=retrive_dto_from_jsonl_file(test_path), 

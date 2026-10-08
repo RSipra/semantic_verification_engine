@@ -862,6 +862,36 @@ def convert_question_to_dto(question_data: Dict[str, Any]) -> DraftQuestion:  # 
     """
     return DraftQuestion(**question_data)
 
+# quarantine failed records for later inspection
+def write_quarantine(entries: list[dict], run_id: str, llm_pass: str, runs_dir: Path) -> None:
+    """
+    One jsonl per run, appended per batch. Entries are self-describing via failure_mode.
+    
+    Quarantine is run accounting, not data (record is not rehabilitated so not read downstream),
+    and instead kept with the manifest, calls and receipt for debugging and troubleshooting.
+
+    Args:
+        entries: List of dicts containing the failed records, failure type tag, and their errors.
+        run_id: Identifier for this pipeline run, used in artifact filename.
+        llm_pass: Which pass is writing. Supplied by the flow — the segment that
+            stops one pass overwriting another's quarantine file.
+        runs_dir: Where to write. A parameter so a trial run's quarantine lands
+            in the trial tree with the rest of its artifacts.
+    """
+    logger = get_run_logger()
+    if not entries:
+        return  # No entries to write
+
+    output_file = build_run_artifact_path(runs_dir,
+                                          run_id,
+                                          llm_pass,
+                                          QUARANTINE)
+
+    for entry in entries:
+        append_jsonl(entry, output_file)
+
+    logger.warning("Quarantined %d records to %s", len(entries), output_file)
+
 # response output helper: parse output and json output from the API call (helper)
 def process_and_save_candidates(run_id: str, batch_id: str, job_id: str, response, output_file: Path,
                                full_metadata: Dict[str,Any], logger) -> Tuple[int, List[DraftQuestion]]:  # type: ignore
