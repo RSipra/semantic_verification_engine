@@ -60,7 +60,7 @@ docker==7.1.0
 docopt==0.6.2
 docstring_parser==0.18.0
 dpath==2.2.0
-dulwich==1.2.6
+dulwich==1.2.9
 dvc==3.64.0
 dvc-data==3.16.12
 dvc-gs==3.0.2
