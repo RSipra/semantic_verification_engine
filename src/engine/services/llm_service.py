@@ -42,10 +42,13 @@ LLM calls during known outage/degraded states
 import time
 import logging
 import os
-from enum import Enum
-from dotenv import load_dotenv, find_dotenv
 from functools import wraps
-import google.generativeai as genai
+from enum import Enum
+from typing import TypedDict, Literal
+from dotenv import load_dotenv, find_dotenv
+import httpx
+from google import genai
+from google.genai import types, errors
 from engine.dto import LLMJudgeResponse
 
 logger = logging.getLogger(__name__)
@@ -70,6 +73,7 @@ logger = logging.getLogger(__name__)
 #    - Decouple logging from evaluation logic
 #    - Introduce structured event stream (EvaluatorEvent / SessionEvent)
 #    - Prepare for cloud persistence layer (VM-safe session recovery)
+#    - Judge-call signals deferred; see NOTE below call_llm_judge.
 #
 # NOTE:
 # This module should remain stateless and purely evaluative.
@@ -82,27 +86,64 @@ logger = logging.getLogger(__name__)
 PRIMARY_MODEL =  "models/gemini-3.1-flash-lite"
 FALLBACK_MODEL = "models/gemini-flash-latest"
 
+# LLM Judge temperature: low temperature for deterministic evaluation
+LLM_JUDGE_TEMPERATURE = 0.1
+
 TRANSIENT_BACKOFF = 10.0
 ERROR_COOLDOWN = 4.0 
 
+# Error classification for LLM call outcomes; shared by warmup and judge
+class ErrorClass(str, Enum):
+    """Category of an LLM call outcome; shared by warmup and judge."""
+    NONE = "none"
+    TRANSIENT = "transient"
+    FAIL_FAST = "fail_fast"
+    UNEXPECTED = "unexpected"
+
 # llm warmup health signal 
-class llm_warmup_health(str, Enum):
+class LlmWarmupHealth(str, Enum):
     """signal for LLM health from warmup ping at app startup"""
     OK = "ok"
     DEGRADED = "degraded"
     FAILED = "failed"
 
-# error 429: resource exchausted (exceeded API usage limits rpm or rpd)
-# error 503: service unavailable (server temporarily overloaded, down)
-TRANSIENT_CODES = {"429", "503", "timeout", "deadline"}
-FAIL_FAST_CODES = {"404", "400", "401", "403"}
+# mapping from error class to warmup health signal
+_HEALTH_BY_CLASS: dict[ErrorClass, LlmWarmupHealth] = {
+    ErrorClass.NONE: LlmWarmupHealth.OK,
+    ErrorClass.TRANSIENT: LlmWarmupHealth.DEGRADED,
+    ErrorClass.FAIL_FAST: LlmWarmupHealth.FAILED,
+    ErrorClass.UNEXPECTED: LlmWarmupHealth.FAILED,
+}
+
+# warmup event record: identical keys for every outcome
+class WarmupSignals(TypedDict):
+    """Warmup event record consumed by the controller."""
+    event_type: Literal["llm_warmup"]
+    success: bool
+    model: str
+    duration_sec: float
+    error: str | None
+    error_type: str | None
+    error_code: int | None
+    error_class: ErrorClass
+    health: LlmWarmupHealth
+
+# HTTP status codes from google.genai.errors.APIError (.code is an int)
+# Transient: worth trying the next model in the cascade
+#   429 resource exhausted (rate limit rpm, or daily quota rpd)
+#   500/502/504 server-side errors; 503 service unavailable (overloaded)
+TRANSIENT_CODES = {429, 500, 502, 503, 504}
+
+# Fail fast: retrying cannot help, fix the request or config instead
+#   400 bad request, 401 bad API key, 403 no permission, 404 model not found
+FAIL_FAST_CODES = {400, 401, 403, 404}
 
 # --configure API for LLM judge for EX evaluator--
 load_dotenv(find_dotenv("config.env"), override=True)
 google_api_key = os.environ.get('GEMINI_API_KEY')
 if not google_api_key:
     raise ValueError("Error: GEMINI_API_KEY not found.")
-genai.configure(api_key=google_api_key)  # type: ignore    
+client = genai.Client(api_key=google_api_key)
 
 ## 2: Prompts
 
@@ -140,80 +181,87 @@ In your `reasoning` field, first check for Proper Noun identity. If the specific
 
 ## 3: Helpers
 
-# identify if exception is because of transient error
-def _is_transient_error(e: Exception | str | None) -> bool:
-    msg = str(e or "").lower()
-    return any(code in msg for code in TRANSIENT_CODES)
+# helper to classify LLM errors into transient vs fail-fast
+def _classify_error(e: Exception | None) -> ErrorClass:
+    """Single source of truth for how an LLM error should be handled."""
+    if e is None:
+        return ErrorClass.NONE
+    if isinstance(e, errors.APIError):
+        if e.code in TRANSIENT_CODES:
+            return ErrorClass.TRANSIENT
+        if e.code in FAIL_FAST_CODES:
+            return ErrorClass.FAIL_FAST
+        return ErrorClass.UNEXPECTED
+    if isinstance(e, httpx.TransportError):
+        return ErrorClass.TRANSIENT
+    return ErrorClass.UNEXPECTED
 
 # Raise warmup llm health signal for controller action
-def signal_llm_health(warmup_system_signals: dict):
-    """Translates the warmup outcome into a health signal for the controller."""
+def signal_llm_health(warmup_system_signals: WarmupSignals) -> LlmWarmupHealth:
+    """Translates the warmup event record into a health signal for the controller."""
+    return _HEALTH_BY_CLASS.get(warmup_system_signals["error_class"],
+                                LlmWarmupHealth.FAILED)
 
-    if warmup_system_signals.get('success'):
-        return llm_warmup_health.OK
-
-    if _is_transient_error(warmup_system_signals.get("error","")):
-        return llm_warmup_health.DEGRADED
-
-    return llm_warmup_health.FAILED
+def _build_warmup_signals(model_name: str, duration: float,
+                          error: Exception | None = None) -> WarmupSignals:
+    """Warmup event record; identical keys for every outcome."""
+    error_class = _classify_error(error)
+    return WarmupSignals(
+        event_type="llm_warmup",
+        success=error is None,
+        model=model_name,
+        duration_sec=duration,
+        error=str(error) if error else None,
+        error_type=type(error).__name__ if error else None,
+        error_code=getattr(error, "code", None),
+        error_class=error_class,
+        health=_HEALTH_BY_CLASS[error_class],
+    )
 
 # warmup function to mitigate cold start latency for the first few LLM calls in the evaluation loop
 def warmup_llm_connection(model_name: str = PRIMARY_MODEL, 
                           system_prompt: str = SYSTEM_PROMPT_EX):
     """
-    Standalone network ping to absorb the 6-second gRPC cold-start penalty.
-    Run this once before the main evaluation loop.
+    Send one minimal request to open the HTTPS connection held by the shared
+    `client`, so the first real evaluation call doesn't pay the setup cost.
+    Only effective if later calls reuse the same module-level `client`.
+    Run once before the main evaluation loop
     """
     # DEBUG: warmup LLM request boundary marker
     logger.debug("LLM warmup started for model=%s", model_name)
     start_time = time.time()
-    duration = None
 
     try:
-        # 1. Initialize the model using your exact genai syntax 
-        #    System instructions for EX (most LLM calls) added upfront to avoid cold start penalty
-        #    on the first real evaluation call.
-        ping_model = genai.GenerativeModel( # type: ignore
-            model_name=model_name,
-            system_instruction=system_prompt
-            )
-
-        # 2. Send the smallest possible payload to open the connection and 
-        #    compile the response schema (LLMJudgeResponse) to mitigate the 
-        #    cold start penalty for future calls.
-        _ = ping_model.generate_content(
-            "Return a dummy response",
-            generation_config=genai.GenerationConfig(  # type: ignore
+        # This mirrors the real judge config (system prompt + JSON schema) so the
+        # warmup exercises the same request path. Response is not parsed.
+        client.models.generate_content(
+            model=model_name,
+            contents="Return a dummy response",
+            config=types.GenerateContentConfig(
+                system_instruction=system_prompt,
                 response_mime_type="application/json",
-                response_schema=LLMJudgeResponse, 
+                response_schema=LLMJudgeResponse,
+                http_options=types.HttpOptions(timeout=60_000),
+                )
             )
-        )
 
         duration = time.time() - start_time
-        
-        system_signals = {"event_type": "llm_warmup",
-                          "success": True,  # warmup completed end-to-end, usable baseline established
-                          "model": model_name,
-                          "duration_sec": duration,
-                          "error": None}
-        system_signals['health'] = signal_llm_health(system_signals)
-        
+        # helper builds the warmup system signals for the controller as success
+        system_signals = _build_warmup_signals(model_name, duration)
+
         logger.info("LLM warmup successful (model=%s)", model_name)
         logger.debug("Warmup duration: %.2f s", duration)
         return system_signals
 
     except Exception as e:   # intentionally broad for external API boundary
-           
-        system_signals = {"event_type": "llm_warmup",
-                          "success": False,  #  warmup failed at any stage (init OR request OR parse)
-                          "model": model_name,
-                          "duration_sec": None,
-                          "error": str(e)}
-        
-        system_signals['health'] = signal_llm_health(system_signals)
-        logger.exception("LLM warmup failed for model=%s", model_name)
-        return system_signals
-    
+        duration = time.time() - start_time
+        # helpers classify error as transient, fail-fast, or unexpected and
+        # build system signals for controller
+        signals = _build_warmup_signals(model_name, duration, error=e)
+        logger.exception("LLM warmup failed (model=%s, class=%s, code=%s)",
+                     model_name, signals["error_class"].value, signals["error_code"])
+        return signals
+
 # decorator for timing llm calls
 def track_eval_latency(func):
     """
@@ -232,7 +280,7 @@ def track_eval_latency(func):
         latency = time.perf_counter() - start_time
         if result is not None:
             result.execution_time_sec = round(latency, 4)
-        
+
         return result
     return wrapper
 
@@ -261,7 +309,7 @@ def _build_prompt_context(gold_answer: str,
     """
     # type safety
     answer_variations = answer_variations or []
-    
+
     # base context for every question evaluation
     context = f"""
     [GROUND TRUTH CONTEXT]
@@ -270,9 +318,9 @@ def _build_prompt_context(gold_answer: str,
     # conditionally append the answer variations if list is not empty (reduce LLM noise)
     if answer_variations:
         context += f"Acceptable Variations: {', '.join(answer_variations)}\n"
-    
+
     context += f"Explanation: {explanation}\n"
-    
+
     # conditionally append the quote only if it exists (for synthetic data)
     if isinstance(source_quote, str) and source_quote.strip():
         context += f'    Source Text Quote: "{source_quote}"\n'
@@ -282,23 +330,20 @@ def _build_prompt_context(gold_answer: str,
 ## 4: LLM Judge API call
 
 # TODO (optimization - Phase 2):
-# Refactor LLM judge architecture to create separate LLM client instances
-# for each evaluator type (EX, FR, etc.)
+# Refactor LLM judge into evaluator-specific wrappers (EX, FR, etc.)
+# sharing the single module-level client
 #
 # Current state:
-# - _call_llm_judge receives system_prompt dynamically
-# - model is re-instantiated per call
+# - one shared module-level `client`; system_prompt passed per request
 #
 # Target state:
-# - Create evaluator-specific LLM clients:
-#     - EX_LLM_CLIENT (system_prompt = SYSTEM_PROMPT_EX)
-#     - FR_LLM_CLIENT (system_prompt = SYSTEM_PROMPT_FR_SPECIALIST)
+# - evaluator-specific wrappers (EX, FR) that each hold their system_prompt
+#   and share the single module-level `client`
+#   (never create a genai.Client per call or per evaluator)
 #
 # Benefits:
-# - avoid repeated GenerativeModel initialization
-# - enable system_prompt caching at client level
-# - improve throughput for batch evaluation
-# - reduce per-call overhead in cascade scenarios
+# - fixed system_prompt per evaluator: no cross-contamination between modes
+# - cleaner call sites for batch evaluation
 # 
 # Future interface idea:
 # class LLMJudgeClient:
@@ -365,27 +410,30 @@ def call_llm_judge(question: str,
     for target_model in model_cascade:
         last_model = target_model
         try:
-            # initialize the Gemma model
-            model = genai.GenerativeModel( #  type: ignore
-                model_name=target_model, 
-                system_instruction=system_prompt
-            )
             logger.debug("Invoking LLM judge (model=%s)", target_model)
             start_time = time.time()
             
-            response = model.generate_content(
-                user_prompt,
-                generation_config=genai.GenerationConfig(  # type: ignore
-                    temperature=0.1,
+            # 2. LLM inference call with structured response schema and timeout
+            response = client.models.generate_content(
+                model=target_model,
+                contents=user_prompt,
+                config=types.GenerateContentConfig(
+                    system_instruction=system_prompt,
+                    temperature=LLM_JUDGE_TEMPERATURE,
                     response_mime_type="application/json",
-                    response_schema=LLMJudgeResponse, ),
-                request_options={"timeout": 60.0}
-            )
+                    response_schema=LLMJudgeResponse,
+                    http_options=types.HttpOptions(timeout=60_000),
+                    )
+                )
+
             latency_sec = time.time() - start_time
             logger.debug("llm_latency_sec=%.3f", latency_sec)
 
-            # 2. conservative rate Limiting (10 RPM / 6s buffer)
+            # 3. conservative rate Limiting (10 RPM / 6s buffer)
             time.sleep(delay_seconds)
+            
+            if not response.text:
+                raise ValueError(f"Empty response from {target_model}")
             
             # clean markdown formatting before parsing
             raw_text = response.text.strip()
@@ -395,37 +443,63 @@ def call_llm_judge(question: str,
                 raw_text = raw_text[3:]
             if raw_text.endswith("```"):
                 raw_text = raw_text[:-3]
-            
-            # 3. validation
+
+            # 4. validation
             payload = LLMJudgeResponse.model_validate_json(raw_text.strip())    
             return payload, target_model, latency_sec, True
 
+        # intentionally broad for external API boundary
         except Exception as e:
-            
-            # catch transient errors: Rate Limits (429), Timeouts (deadline), Server Errors (503/500)
-            if _is_transient_error(e):
-                logger.warning("Transient LLM error (model=%s).  Will retry with next model.", target_model, exc_info=True)
-                logger.info("Switching to next model in cascade")
+            error_class = _classify_error(e)
+
+            if error_class is ErrorClass.TRANSIENT:
+                logger.warning("Transient LLM error (model=%s). Switching to next model.",
+                            target_model, exc_info=True)
                 time.sleep(TRANSIENT_BACKOFF)
-                continue # <-- pushes it to  FALLBACK_MODEL
+                continue
+
+            if error_class is ErrorClass.FAIL_FAST:
+                logger.error("Permanent LLM error (model=%s, code=%s). Check request/config.",
+                            target_model, getattr(e, "code", None), exc_info=True)
             
-            time.sleep(ERROR_COOLDOWN) # sleep even on errors to cool down the connection
-            
-            # non-retryable error → fail fast
-            logger.error("Non-retryable LLM error (model=%s). Failing fast.", target_model, exc_info=True)
+            else:  # UNEXPECTED
+                logger.error("Unexpected LLM error (model=%s). Failing fast.",
+                            target_model, exc_info=True)
+
+            # sleep even on errors to cool down the connection
+            time.sleep(ERROR_COOLDOWN) 
+
             error_payload = LLMJudgeResponse(
                 is_correct=False,
                 quiz_host_response="The Restricted Section is currently off-limits.",
                 evaluation_reasoning=f"System error: {str(e)}")
             return error_payload, target_model, 0.0, False
-            
-    # 4. Graceful Degradation if entire cascade fails
+
+    # 5. Graceful Degradation if entire cascade fails
     logger.error("LLM cascade exhausted across all models",
                  extra={"question": question,"models_tried": model_cascade})
 
     logger.warning("Returning fallback LLM response due to full cascade failure.")
-    
+
     fail_payload = LLMJudgeResponse(is_correct=False,
                                     quiz_host_response="The Floo Network is currently congested.",
                                     evaluation_reasoning="System error: All LLM tiers failed or exceeded quota.")
     return fail_payload, last_model, 0.0, False
+
+# NOTE (observability - deferred by design):
+# Unlike warmup_llm_connection, this function does not emit a structured
+# signal record (cf. WarmupSignals). This is intentional:
+# - Its 4-tuple return is consumed by the EX/FR evaluators; changing it is a
+#   contract change across consumers.
+# - No controller consumes LLM health signals yet (warmup health is also
+#   not integrated), so the record shape would be designed without a consumer.
+# Error categories are still applied here via _classify_error, so log output
+# carries the same classification as warmup.
+#
+# Revisit after the controller observability design decides:
+# - what the controller does with health (skip tiers, degraded-mode UX, retries)
+# - per-call vs per-attempt events for the cascade
+# - whether a successful fallback counts as DEGRADED
+# - where events go (logs, in-memory buffer, persistence)
+# Then: generalize WarmupSignals → LLMCallSignals (event_type: warmup | judge),
+# reusing _classify_error and the builder.
