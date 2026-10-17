@@ -21,7 +21,7 @@ from rich.align import Align
 
 from core.constants import QuestionType
 from game_app.player import Player
-from game_app.types import Question
+from game_app.game_types import Question
 import game_app.constants as const
 import game_app.utils_general as ut
 from engine.dto import TurnResult

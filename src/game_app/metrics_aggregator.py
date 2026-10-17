@@ -15,7 +15,7 @@ import numpy as np
 
 from engine.dto import TurnResult
 from game_app.constants import GameStatus
-from game_app.types import SessionAggregates, SessionReport, PerformanceMetrics
+from game_app.game_types import SessionAggregates, SessionReport, PerformanceMetrics
 
 ## --- Aggregation ---
 TIER_CATEGORIES = ["exact", "fuzzy", "sbert", "llm", "unresolved"]

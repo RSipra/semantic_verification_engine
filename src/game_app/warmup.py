@@ -47,7 +47,7 @@ import pandas as pd
 from core.constants import QuestionType
 from core.models import RUNTIME_REGISTRY
 from game_app.constants import NUM_QUESTIONS_PER_SESSION
-from game_app.types import Session, SessionStatus
+from game_app.game_types import Session, SessionStatus
 
 WARMUP_VERSION = "warmup_v1"
 logger = logging.getLogger(__name__)

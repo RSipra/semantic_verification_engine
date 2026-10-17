@@ -72,7 +72,7 @@ from core.preprocessing import normalize_value
 from core.constants import AnswerType, QuestionType
 from core.models import (RuntimeStandard_Green, RuntimeMCQ_Green,
                          RuntimeStandard_Blue, RuntimeMCQ_Blue)
-from game_app.types import Question
+from game_app.game_types import Question
 from engine.dto import BaseEvalResults
 from engine.evaluators.structured_evaluators import (preprocess_numeric_player_ans,
                                                      check_numeric_answer,

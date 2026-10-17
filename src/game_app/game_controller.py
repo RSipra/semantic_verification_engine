@@ -44,7 +44,7 @@ import time
 
 from game_app.player import Player
 from game_app.constants import NUM_QUESTIONS_PER_SESSION, GameStatus, UserWantsToQuit
-from game_app.types import Question, SessionReport, Session
+from game_app.game_types import Question, SessionReport, Session
 from engine.dto import TurnResult
 from engine.evaluators.router import evaluation_router
 
