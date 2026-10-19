@@ -96,7 +96,7 @@ from pydantic import ValidationError
 from prefect import flow, get_run_logger
 
 from core.models import DraftQuestion
-from core.telemetry import EnrichmentCallEntry
+from core.telemetry import EnrichmentCallEntry, FailureMode
 from scripts.pipelines.generate_questions.prompts.pipeline_config import ENRICHMENT_STRATEGY
 from scripts.pipelines.generate_questions.generate_questions import (short_uuid,
                                                                      check_response_usable,
@@ -108,6 +108,7 @@ from scripts.pipelines.generate_questions.generate_questions import (short_uuid,
                                                                      save_run_completion,
                                                                      create_run_report,
                                                                      build_run_artifact_path,
+                                                                     build_quarantine_entry,
                                                                      write_quarantine,
                                                                      CONFIG_PATH, CALLS)
 
@@ -118,7 +119,7 @@ OUTPUT_DIR = nb_cfg.GENERATED_QUESTIONS_DIR
 CORE_PROMPT_FIELDS = {'syn_id','question_type','question','answer','mcq_options'}
 
 CHUNK_SIZE = 20     # number of questions per API call
-RAW_RESPONSE_CAP = 2000   # chars of raw response kept in a quarantine entry
+# RAW_RESPONSE_CAP = 2000   # chars of raw response kept in a quarantine entry
 lex_config = ENRICHMENT_STRATEGY["lex_enrichment"]
 semantic_config = ENRICHMENT_STRATEGY["semantic_enrichment"]
 
@@ -131,7 +132,7 @@ PIPELINE_ID = "pipe_q_enrich_v00"
 
 # read jsonl from file into DTO
 def retrive_dto_from_jsonl_file(file_path: Path):
-    """"""
+    """read jsonl from file into DTO"""
     with open(file_path, "r", encoding="utf-8") as f:
         return [DraftQuestion.model_validate_json(line) for line in f if line.strip()]
 
@@ -162,7 +163,8 @@ def serialize_dtos_to_json(dto_list: list[DraftQuestion], prompt_fields: set[str
         question_json: A structured json array of questions from the DTOs
     """
     questions_payload = [dto.model_dump(mode='json', include=prompt_fields) for dto in dto_list]
-    # rename id key to generic 'question_id' for prompt injection from the DTOs (syn_id or original_question_id)
+    # rename id key to generic 'question_id' for prompt injection from the DTOs 
+    # (syn_id or original_question_id)
     for question in questions_payload:
         question['question_id'] = (question.pop('syn_id', None) or 
                                    question.pop('original_question_id', None))
@@ -195,11 +197,36 @@ def chunk_by_type(dto_list: Sequence[DraftQuestion], chunk_size) -> list:
     for question_type, dto_grouping in by_types.items():
         for i in range(0,len(dto_grouping),chunk_size):
             batches.append((question_type, i//chunk_size, dto_grouping[i:i+chunk_size]))
-
-    return batches  # flat list of tuples: (question_type, batch_index, list[DraftQuestion]) for each batch       
+    # flat list of tuples: (question_type, batch_index, list[DraftQuestion]) for each batch
+    return batches       
 
 def prepare_enrichment_prompt(questions_json: str, prompt_path:Path) -> str:
-    """ """
+    """ 
+    Build the final enrichment prompt by injecting a question batch into the
+    pass's prompt template.
+
+    The template is read fresh on each call and checked before formatting, so a
+    misconfigured prompt fails here with a clear message rather than producing a
+    malformed prompt that the LLM silently answers anyway.
+    
+    Note:
+        Literal braces in the template (e.g. JSON examples) must be doubled
+        (`{{` / `}}`) — str.format() treats single braces as placeholders and
+        raises KeyError on unknown ones.
+
+    Args:
+        questions_json: The question batch serialised as a JSON string (see
+            `serialize_dtos_to_json`), injected at the `{question_batch}`
+            placeholder.
+        prompt_path: Path to the pass's prompt template file.
+
+    Returns:
+        str: The fully formatted prompt, ready for the API call.
+
+    Raises:
+        ValueError: The template is empty or whitespace-only, or is missing the
+            required `{question_batch}` placeholder.
+    """
     # get the prompt template location for the specific experiment run and read it
     prompt_template = prompt_path.read_text(encoding="utf-8")
 
@@ -207,7 +234,7 @@ def prepare_enrichment_prompt(questions_json: str, prompt_path:Path) -> str:
     #1. incase the prompt template is empty
     if not prompt_template or prompt_template.isspace():
         raise ValueError(f"Prompt template file is empty: {prompt_path.name}")
-    #2. if the prompt template doesn't have a placeholder for the chapters (source text)    
+    #2. if the prompt template doesn't have a placeholder for the question batch    
     if "{question_batch}" not in prompt_template:
         raise ValueError("Prompt template is missing the required '{question_batch}' placeholder.")
 
@@ -219,7 +246,10 @@ def prepare_enrichment_prompt(questions_json: str, prompt_path:Path) -> str:
 # recover response
 def convert_to_dto(parsed_responses: list[dict], 
                    draft_dtos_list: Sequence[DraftQuestion], 
-                   specs: dict):
+                   specs: dict,
+                   run_id: str,
+                   llm_pass: str,
+                   call_id: str):
     """
     Build the next-tier DTOs from an LLM enrichment response.
 
@@ -250,8 +280,7 @@ def convert_to_dto(parsed_responses: list[dict],
 
     Returns:
         (results, quarantine) — validated DTOs for this pass, and the records that failed
-        construction as {"record": raw response, "error": message, "failure_mode": "dto_construction"}.
-        The caller (flow) decides what the failure rate means.
+        construction as a list of QuarantineEntry objects.
     """
     # 1. take the DraftQuestion list and add a id_tag for lookup
     # TODO add conditionals for legacy handling here after happy path cleaered
@@ -259,15 +288,20 @@ def convert_to_dto(parsed_responses: list[dict],
 
     # 2.  Build enrichment DTO with loop, for record in the returned responses,  
     results = []
-    quarantine = []
-    
+    quarantine = []  # list of QuarantineEntry DTOs
+
     for record in parsed_responses:
 
-        # 2.1. find the matching DraftQuestion DTO (from generation) using question, dict
+        # 2.1. find the source DTO this response record belongs to, by question id
+        # ASSUMPTION: every question_id here was sent in this batch. Safe because the
+        # flow's reconcile step (sent vs returned ids) runs before this function and
+        # skips mismatched batches, so a KeyError here means that guard was removed
+        # or bypassed — fix the caller, don't catch it here.
         draft = drafts_by_qid[record['question_id']]
         # 2.2. take the new llm lex fields (dropping question id) as dict
         llm_fields = {k:v for k,v in record.items() if k in specs["enrichment_fields"]}
-        # 2.3. compile into DTO model(by unpacking 2.1, 2.2) - model will ensure all fields are present and right type.
+        # 2.3. compile into DTO model(by unpacking 2.1, 2.2) 
+        #    - model will ensure all fields are present and right type.
         # find question type
         q_type = draft.question_type
         dto_class = specs["output_dto"][q_type]
@@ -280,9 +314,16 @@ def convert_to_dto(parsed_responses: list[dict],
             results.append(updated_record)
         # if the construction fails, quarantine record and log error, continue to next record    
         except ValidationError as e:
-            quarantine.append({"record": record, 
-                               "error": str(e),
-                               "failure_mode": "dto_construction"})
+            entry = build_quarantine_entry(run_id = run_id,
+                                           call_id = call_id,
+                                           question_type = draft.question_type,
+                                           llm_pass = llm_pass,
+                                           error= e,
+                                           failure_mode=FailureMode.DTO_CONSTRUCTION,
+                                           raw_record = record,
+                                           record_ids=[record["question_id"]],
+                                           )
+            quarantine.append(entry)
             continue
 
     # 3. return tuple of (results dto list, quarantined llm response) 
@@ -387,12 +428,14 @@ def enrich_with_llm_cols(run_id: str,
     # API and run config, call files (to save run reciept for LLM pass)
     logger = get_run_logger()
     configure_api(CONFIG_PATH)
-    calls_file = build_run_artifact_path(runs_dir, run_id,configuration['llm_pass'], CALLS)
+    llm_pass = configuration['llm_pass']
+    calls_file = build_run_artifact_path(runs_dir, run_id, llm_pass , CALLS)
     # token count of prompt template without attached questions
     template_token_count = measure_template_tokens(
         configuration['model_name'],
         configuration['prompt_file']
         )
+    
 
     # --- 1. Initialization & Guards ---
     result_dtos = []
@@ -419,10 +462,10 @@ def enrich_with_llm_cols(run_id: str,
 
     # --- 2. Loop: for each batch ---
     for batch_index, (question_type, chunk_index, batch) in enumerate(batches): 
-
+        call_id = f"{question_type}_batch{batch_index}"
         # Call entry = record of one API call; fields common to happy + failure branches
         call_entry_ctx = {
-            "call_id": f"{question_type}_batch{batch_index}",
+            "call_id": call_id,
             "chunk_index": chunk_index,
             "question_type": question_type,
             "model": configuration["model_name"],
@@ -451,15 +494,17 @@ def enrich_with_llm_cols(run_id: str,
         try:
             response = make_api_call(prompt, configuration)
         except Exception as e:
-            failure_mode = "transport_failure"
-            entry = {
-                "record": None,
-                "record_ids": record_ids, 
-                "error": str(e),
-                "failure_mode": failure_mode                
-                }
+            failure_mode = FailureMode.TRANSPORT
+            entry = build_quarantine_entry(run_id = run_id,
+                                           call_id = call_id,
+                                           question_type = question_type,
+                                           llm_pass = llm_pass,
+                                           error = e,
+                                           failure_mode= failure_mode,
+                                           raw_record = None,
+                                           record_ids = record_ids)
             all_quarantined.append(entry)
-            write_quarantine([entry], run_id, configuration['llm_pass'], runs_dir)
+            write_quarantine([entry], run_id, llm_pass, runs_dir)
             call_entry = EnrichmentCallEntry(
                             **call_entry_ctx,
                             tokens={},
@@ -472,17 +517,20 @@ def enrich_with_llm_cols(run_id: str,
         # in case the response is empty or blocked
         usable, finish_reason, prompt_feedback = check_response_usable(response)
         if not usable:
-            failure_mode = "no_candidates"
+            failure_mode = FailureMode.NO_CANDIDATES
             token_breakdown = calculate_token_metrics(response, template_token_count)
-            entry = {
-                "record": None,
-                "record_ids": record_ids,  
-                "error": prompt_feedback,
-                "finish_reason": finish_reason,
-                "failure_mode": failure_mode,
-            }
+            entry = build_quarantine_entry(run_id=run_id,
+                                           call_id=call_id,
+                                           question_type=question_type,
+                                           llm_pass=llm_pass,
+                                           error = prompt_feedback or "no prompt feedback provided",
+                                           failure_mode = failure_mode,
+                                           raw_record=None,
+                                           record_ids = record_ids,
+                                           finish_reason=finish_reason)
+
             all_quarantined.append(entry)
-            write_quarantine([entry], run_id, configuration['llm_pass'], runs_dir)
+            write_quarantine([entry], run_id, llm_pass, runs_dir)
             call_entry = EnrichmentCallEntry(
                             **call_entry_ctx,
                             tokens=token_breakdown,
@@ -499,20 +547,19 @@ def enrich_with_llm_cols(run_id: str,
         try:
             parsed_responses = json.loads(response.text)
         except json.JSONDecodeError as e:
-            failure_mode= "response_unparseable"
+            failure_mode= FailureMode.UNPARSEABLE
             raw =response.text
-            entry = {
-                # shortend record for jsonl
-                "record": raw if len(raw) <= RAW_RESPONSE_CAP
-                          else raw[:1000] + "\n...[truncated]...\n" + raw[-1000:],
-                "record_ids": record_ids, 
-                "truncated": len(raw) > RAW_RESPONSE_CAP, 
-                "error": str(e),
-                # no guard needed: check_response_usable above returns False
-                # unless a candidate with parts exists
-                "finish_reason":response.candidates[0].finish_reason.name,
-                "failure_mode": failure_mode,
-                }
+            entry = build_quarantine_entry(run_id=run_id,
+                                           call_id = call_id,
+                                           question_type = question_type,
+                                           llm_pass = llm_pass,
+                                           error = e,
+                                           failure_mode = failure_mode,
+                                           raw_record = response.text,
+                                           record_ids = record_ids,
+                                           # no guard needed: check_response_usable above returns 
+                                           # False unless a candidate with parts exists
+                                           finish_reason = response.candidates[0].finish_reason.name)
             all_quarantined.append(entry)
             write_quarantine([entry], run_id, configuration['llm_pass'], runs_dir)
             token_breakdown = calculate_token_metrics(response, template_token_count)
@@ -535,13 +582,16 @@ def enrich_with_llm_cols(run_id: str,
                 f"for batch {batch_index} of type {question_type}.")
         
         # 2.6. match response to existing record - combine and parse into output DTO
-        draft_questions, batch_quarantined = convert_to_dto(parsed_responses, batch, configuration)
+        draft_questions, batch_quarantined = convert_to_dto(parsed_responses,
+                                                            batch,
+                                                            configuration,
+                                                            run_id, llm_pass, call_id)
         #   quarantine records for batch and update total metrics
         all_quarantined.extend(batch_quarantined)
         total_processed += len(parsed_responses)
         total_quarantined += len(batch_quarantined)
         #   write quarantined records to jsonl for later inspection
-        write_quarantine(batch_quarantined, run_id, configuration['llm_pass'], runs_dir)
+        write_quarantine(batch_quarantined, run_id, llm_pass, runs_dir)
         
         #   quarantine threshold checks: (num quarantined / num returned) for batch
         batch_failure_rate = len(batch_quarantined)/len(parsed_responses) if parsed_responses else 0
@@ -557,7 +607,7 @@ def enrich_with_llm_cols(run_id: str,
         #   2.7.1. write checkpoint file with enrichment results
         output_file = build_run_artifact_path(output_dir,
                                               run_id,
-                                              configuration['llm_pass'],
+                                              llm_pass,
                                               f"{question_type}_batch{batch_index}.jsonl"
                                               )
         write_jsonl_checkpoint(draft_questions, output_file)
@@ -585,7 +635,7 @@ def enrich_with_llm_cols(run_id: str,
 
     #  3.1. quarantine threshold check: (num quarantined / num returned) for full run
     run_failure_rate = total_quarantined/total_processed if total_processed else 0
-    
+
     #  3.2. status of llm pass
     status = "SUCCESS" if result_dtos else "FAILED"
 
@@ -594,7 +644,7 @@ def enrich_with_llm_cols(run_id: str,
     receipt_path = save_run_completion(
         PIPELINE_ID,
         run_id,
-        configuration['llm_pass'],
+        llm_pass,
         status,
         calls_file,
         runs_dir
@@ -602,8 +652,8 @@ def enrich_with_llm_cols(run_id: str,
     # create run report
     create_run_report(receipt_path, output_dir)
     # completion update
-    logger.info("🏁 %s Completed: %s", configuration['llm_pass'], run_id)
-    
+    logger.info("🏁 %s Completed: %s", llm_pass, run_id)
+
     # baseline record of run completion
     logger.info(
         "Run %s complete: %d/%d records quarantined (%.1f%%)",

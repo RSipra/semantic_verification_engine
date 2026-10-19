@@ -170,13 +170,13 @@ from prefect import flow, task, get_run_logger #pipeline orchestrator
 from prefect.artifacts import create_markdown_artifact
 from rich.console import Console
 from rich.markdown import Markdown
-from pydantic import BaseModel
+from pydantic import BaseModel, ValidationError
 
 # IMPORT PROJECT CONFIGURATION
 # Using the "Src Layout" (pip install -e .)
-from core.constants import Book, QuestionSource
+from core.constants import Book, QuestionSource, QuestionType
 from core.models import DraftQuestion
-from core.telemetry import GenerationCallEntry
+from core.telemetry import FailureMode, GenerationCallEntry, QuarantineEntry
 from scripts.pipelines.generate_questions.prompts.pipeline_config import GENERATION_STRATEGY, GEN_STRATEGY_VERSION
 import notebook_support.notebook_config as nb_cfg
 
@@ -297,6 +297,47 @@ def append_jsonl(entry: dict | BaseModel, file_path: Path) -> None:
         entry = entry.model_dump(mode="json")
     with open(file_path, "a", encoding="utf-8") as f:
         f.write(json.dumps(entry) + "\n")
+
+# helper to create quarantine entry for a failed record for logging
+# chars of raw response kept in a quarantine entry sliced from start and end plus the truncation marker
+RAW_RESPONSE_EDGE_CHAR_CAP = 1000   
+def build_quarantine_entry(run_id: str,
+                           question_type: QuestionType,
+                           call_id: str,
+                           llm_pass: str,
+                           error: Exception | str,
+                           failure_mode: FailureMode,
+                           raw_record: str|dict|None = None,
+                           finish_reason: str|None = None,
+                           record_ids: list[str]|None = None,
+                           ) -> QuarantineEntry:
+    """ Build quarantine entry record for troubleshooting"""
+    
+    # empty response -> no truncation flag
+    if raw_record is None:
+        record = raw_record
+        raw_record_truncated = None
+    # truncate long str response (unparsable) 
+    elif isinstance(raw_record, str) and len(raw_record)>RAW_RESPONSE_EDGE_CHAR_CAP*2:
+        record = raw_record[:RAW_RESPONSE_EDGE_CHAR_CAP] + "\n...[truncated]...\n" + raw_record[-RAW_RESPONSE_EDGE_CHAR_CAP:]
+        raw_record_truncated = True
+    #  dict or short str
+    else: #  
+        record = raw_record
+        raw_record_truncated = False   
+    
+    return QuarantineEntry(
+        run_id = run_id,
+        question_type = question_type,
+        call_id = call_id,
+        llm_pass =  llm_pass,
+        error = str(error),
+        failure_mode= failure_mode,
+        raw_record = record,
+        finish_reason= finish_reason,
+        record_ids= record_ids,
+        raw_record_truncated = raw_record_truncated
+    )
 
 @task # filter for flexibility in case not planning to run all question types in GENERATION_TYPE (default is all)
 def filter_strategy(strategy: List[Dict], tasks_to_run: Optional[List[str]] = None) -> List[Dict]:
@@ -863,7 +904,7 @@ def convert_question_to_dto(question_data: Dict[str, Any]) -> DraftQuestion:  # 
     return DraftQuestion(**question_data)
 
 # quarantine failed records for later inspection
-def write_quarantine(entries: list[dict], run_id: str, llm_pass: str, runs_dir: Path) -> None:
+def write_quarantine(entries: list[QuarantineEntry], run_id: str, llm_pass: str, runs_dir: Path) -> None:
     """
     One jsonl per run, appended per batch. Entries are self-describing via failure_mode.
     

@@ -13,8 +13,20 @@ and the runtime judge will extend the same base once their LLM calls are
 consolidated into a common service.
 
 """
+from enum import Enum
 from pydantic import BaseModel, model_validator, ConfigDict
 from core.constants import QuestionType
+
+# Enum for the offline generation + enrichment pipeline failure modes
+class FailureMode(str, Enum):
+    """
+    Enum definition for quarantine / failure modes used in 
+    offline question generation (and enrichment) pipeline.
+    """
+    TRANSPORT = "transport_failure"  # api call failed (transient or fail fast)
+    NO_CANDIDATES = "no_candidates"  # api call returned no / unusable candidates
+    UNPARSEABLE = "response_unparseable"  # api call returned a response that could not be parsed
+    DTO_CONSTRUCTION = "dto_construction"  # api response couldn't be converted to LLM Pass DTO
 
 ## LLM API CALLS
 
@@ -103,3 +115,21 @@ class EnrichmentCallEntry(CallEntry):
     # (e.g. MCQ questions split into N question batches for enrichment)
     chunk_index: int  
     quarantined: dict | None = None
+
+class QuarantineEntry(BaseModel):
+    """Entry for tracking quarantined records."""
+    run_id: str  # pipeline run id
+    # provides batch id for llm pass
+    question_type: QuestionType
+    call_id: str
+    llm_pass: str
+    error: str
+    failure_mode: FailureMode
+    # evidence as text: the failing record as a dict (dto_construction), or the whole
+    # response as text (response_unparseable, shortened if long); # None when no response exists.
+    raw_record : str | dict | None = None
+    finish_reason: str | None = None  # None if call failed
+    # affected records; None for generation call-level failures (no records exist yet)
+    record_ids: list[str] | None = None 
+    # if record was truncated when appending to entry
+    raw_record_truncated: bool | None = None
