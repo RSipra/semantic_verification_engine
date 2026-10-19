@@ -27,6 +27,7 @@ class FailureMode(str, Enum):
     NO_CANDIDATES = "no_candidates"  # api call returned no / unusable candidates
     UNPARSEABLE = "response_unparseable"  # api call returned a response that could not be parsed
     DTO_CONSTRUCTION = "dto_construction"  # api response couldn't be converted to LLM Pass DTO
+    ID_MISMATCH = "id_mismatch" # response did not match existing id of question
 
 ## LLM API CALLS
 

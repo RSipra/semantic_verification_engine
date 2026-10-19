@@ -249,7 +249,8 @@ def convert_to_dto(parsed_responses: list[dict],
                    specs: dict,
                    run_id: str,
                    llm_pass: str,
-                   call_id: str):
+                   call_id: str,
+                   finish_reason: str|None):
     """
     Build the next-tier DTOs from an LLM enrichment response.
 
@@ -277,6 +278,10 @@ def convert_to_dto(parsed_responses: list[dict],
             - output_dto: {QuestionType: class} — which DTO class to build per question type
             - enrichment_prompt_version_field_name: which DTO field the prompt version is
               written to, so each pass records its own version without overwriting the other
+        run_id, llm_pass, call_id: context recorded on each quarantine entry, so a
+            failed record can be traced to its run, pass and API call.
+        finish_reason: the call's finish reason, recorded on quarantine entries —
+            MAX_TOKENS here means a record likely failed because output was cut off.      
 
     Returns:
         (results, quarantine) — validated DTOs for this pass, and the records that failed
@@ -295,7 +300,7 @@ def convert_to_dto(parsed_responses: list[dict],
         # 2.1. find the source DTO this response record belongs to, by question id
         # ASSUMPTION: every question_id here was sent in this batch. Safe because the
         # flow's reconcile step (sent vs returned ids) runs before this function and
-        # skips mismatched batches, so a KeyError here means that guard was removed
+        # quarantines mismatched batches, so a KeyError here means that guard was removed
         # or bypassed — fix the caller, don't catch it here.
         draft = drafts_by_qid[record['question_id']]
         # 2.2. take the new llm lex fields (dropping question id) as dict
@@ -322,6 +327,7 @@ def convert_to_dto(parsed_responses: list[dict],
                                            failure_mode=FailureMode.DTO_CONSTRUCTION,
                                            raw_record = record,
                                            record_ids=[record["question_id"]],
+                                           finish_reason=finish_reason,
                                            )
             quarantine.append(entry)
             continue
@@ -372,7 +378,7 @@ def enrich_with_llm_cols(run_id: str,
     a call entry (accounting for the API call), and a log line (narration). Only the
     first two are read back by code.
     
-    Three failure modes, ordered so each branch narrows what the next has to handle:
+    Four failure modes, ordered so each branch narrows what the next has to handle:
 
     - transport_failure    — the call never completed. No response exists, so tokens
                             are {}.
@@ -383,6 +389,9 @@ def enrich_with_llm_cols(run_id: str,
     - response_unparseable — text returned but is not valid JSON. Tokens are real,
                             and finish_reason separates a MAX_TOKENS truncation
                             from genuinely malformed output.
+    - id mismatch           - the response's question_ids don't match the ids sent
+                            (missing or unexpected). The whole batch is quarantined
+                            (coarse handling); tokens are real                        
     
     The order is load-bearing and reordering risks a silent error. The `response_unparseable`
     branch assumes a candidate with content exists, which `no_candidates` guarantees. 
@@ -410,12 +419,11 @@ def enrich_with_llm_cols(run_id: str,
             nb_cfg.TRIAL_GENERATED_QUESTIONS_DIR for a throwaway run.
 
     Returns:
-        Tuple[list[EnrichedDTO], list[dict]]: the enriched DTOs, and the quarantine
+        Tuple[list[EnrichedDTO], list[QuarantineEntry]]: the enriched DTOs, and the quarantine
         entries accumulated across all batches.
 
     Raises:
-        ValueError: empty input; a question type with no output DTO configured; or the
-            LLM response doesn't return exactly the question ids that were sent.
+        ValueError: empty input, or a question type with no output DTO configured.
         TypeError: input DTOs don't match the pass's expected input class.
         
     ----
@@ -548,7 +556,6 @@ def enrich_with_llm_cols(run_id: str,
             parsed_responses = json.loads(response.text)
         except json.JSONDecodeError as e:
             failure_mode= FailureMode.UNPARSEABLE
-            raw =response.text
             entry = build_quarantine_entry(run_id=run_id,
                                            call_id = call_id,
                                            question_type = question_type,
@@ -559,9 +566,9 @@ def enrich_with_llm_cols(run_id: str,
                                            record_ids = record_ids,
                                            # no guard needed: check_response_usable above returns 
                                            # False unless a candidate with parts exists
-                                           finish_reason = response.candidates[0].finish_reason.name)
+                                           finish_reason = finish_reason)
             all_quarantined.append(entry)
-            write_quarantine([entry], run_id, configuration['llm_pass'], runs_dir)
+            write_quarantine([entry], run_id, llm_pass, runs_dir)
             token_breakdown = calculate_token_metrics(response, template_token_count)
             call_entry = EnrichmentCallEntry(
                 **call_entry_ctx,
@@ -575,17 +582,43 @@ def enrich_with_llm_cols(run_id: str,
 
         # 2.5.reconcile: all sent qids returned? no unexpected qids?
         sent = {d.syn_id for d in batch}
-        returned = {r['question_id'] for r in parsed_responses}
+        returned = {r.get('question_id') for r in parsed_responses} # return none if id missing
+        # Coarse handling: any sent/returned id mismatch drops the *full* batch
+        # (call-level failure, matched records discarded). Deliberately simple —
+        # frequency is unknown. If receipts show id_mismatch is common, move to
+        # per-record handling: keep matched, quarantine missing / unexpected
+        # separately (see backlog: enrichment reconciliation partial success).
         if sent != returned:
-            raise ValueError(
-                f"Mismatch in question IDs between sent batch and received responses "
-                f"for batch {batch_index} of type {question_type}.")
-        
+            missing = sent - returned
+            unexpected = returned - sent
+            error_message = f"missing: {sorted(missing,key=str)}; unexpected: {sorted(unexpected, key=str)}"
+            entry = build_quarantine_entry(run_id=run_id, 
+                                           question_type=question_type,
+                                           call_id=call_id, 
+                                           llm_pass=llm_pass,
+                                           error=error_message,
+                                           failure_mode=FailureMode.ID_MISMATCH,
+                                           record_ids=record_ids,
+                                           raw_record= response.text,
+                                           finish_reason = finish_reason,
+                                           )
+            all_quarantined.append(entry)
+            write_quarantine([entry], run_id, llm_pass, runs_dir)
+            token_breakdown = calculate_token_metrics(response, template_token_count)
+            call_entry = EnrichmentCallEntry(
+                **call_entry_ctx,
+                tokens=token_breakdown,
+                failure_mode=FailureMode.ID_MISMATCH,
+            )
+            append_jsonl(call_entry, calls_file)
+            logger.warning("Batch %d (%s): id mismatch — %s", batch_index, question_type, error_message)
+            continue
+
         # 2.6. match response to existing record - combine and parse into output DTO
         draft_questions, batch_quarantined = convert_to_dto(parsed_responses,
                                                             batch,
                                                             configuration,
-                                                            run_id, llm_pass, call_id)
+                                                            run_id, llm_pass, call_id, finish_reason)
         #   quarantine records for batch and update total metrics
         all_quarantined.extend(batch_quarantined)
         total_processed += len(parsed_responses)
@@ -613,7 +646,7 @@ def enrich_with_llm_cols(run_id: str,
         write_jsonl_checkpoint(draft_questions, output_file)
         #   2.7.2. accounting for API call
         token_breakdown = calculate_token_metrics(response, template_token_count)
-        mode_counts = dict(Counter(q['failure_mode'] for q in batch_quarantined))
+        mode_counts = dict(Counter(q.failure_mode.value for q in batch_quarantined))
 
         #   build call_entry dict for run reciept 
         # (TODO refactor as helper later w. generation)
