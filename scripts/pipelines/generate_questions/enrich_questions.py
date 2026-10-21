@@ -110,6 +110,7 @@ from scripts.pipelines.generate_questions.generate_questions import (short_uuid,
                                                                      build_run_artifact_path,
                                                                      build_quarantine_entry,
                                                                      write_quarantine,
+                                                                     format_counts,
                                                                      CONFIG_PATH, CALLS)
 
 import notebook_support.notebook_config as nb_cfg
@@ -443,11 +444,14 @@ def enrich_with_llm_cols(run_id: str,
         configuration['model_name'],
         configuration['prompt_file']
         )
-    
 
     # --- 1. Initialization & Guards ---
     result_dtos = []
-    all_quarantined = []  # records quarantined, across batches 
+    # all_quarantined gathers entries across batches: one per failure *event*, not per record.
+    # (call level failure entry can contain a batch of questions and covers it via record_ids)
+    # Not to be used for quarantine record count -> derive one with:
+    #    sum(len(e.record_ids or []) for e in all_quarantined).
+    all_quarantined = []
     total_processed = 0     # records returned by the LLM, across batches
     total_quarantined = 0   # records quarantined, across batches
 
@@ -688,9 +692,11 @@ def enrich_with_llm_cols(run_id: str,
     logger.info("🏁 %s Completed: %s", llm_pass, run_id)
 
     # baseline record of run completion
+    actuals = json.loads(receipt_path.read_text())["actuals"]
     logger.info(
-        "Run %s complete: %d/%d records quarantined (%.1f%%)",
+        "Run %s complete: %d/%d records rejected (%.1f%%); failed calls: %s; batch loss: %s",
         run_id, total_quarantined, total_processed, run_failure_rate * 100,
+        format_counts(actuals["failed_calls"]), actuals["batch_loss_count"],
     )
     #  log warning if run failure rate exceeds threshold
     if run_failure_rate > configuration["max_run_failure_rate"]:

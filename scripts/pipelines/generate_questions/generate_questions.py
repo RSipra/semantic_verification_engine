@@ -161,6 +161,7 @@ from pathlib import Path
 from typing import List, Optional, Dict, Any, Tuple
 import json
 import uuid
+from collections import Counter
 from dotenv import load_dotenv
 import google.generativeai as genai
 from google.api_core import retry as api_retry
@@ -1148,16 +1149,23 @@ def save_run_completion(pipeline_id: str, run_id: str, llm_pass: str, status: st
     from the orchestrator. The per-call records live in `calls_file`, appended 
     during the run; this method writes the run-level summary (identity, status,
     context, totals —> record counts, tokens, and failures by mode) and a 
-    pointer back tothe records file. Deriving rather than accepting totals 
+    pointer back to the records file. Deriving rather than accepting totals 
     means the two levels (record files and receipt) cannot disagree.
-    
-    Record counts are a breakdown, not a check: rejected is the remainder of
-    sent − written, so the identity cannot disagree with itself. Reconciling against
-    the questions jsonl and quarantine file is the delta report's job.
     
     Receipts are never migrated, so call entries on disk span code versions:
     fields added after the first format are read with `.get()`, fields present
     from the start with `[]`, where a missing key is a bug.
+    
+    Record accounting: record `sent` is an invariant
+    - all records are sent to the model
+    - `sent = written + rejected + batch_loss_count`
+    where:
+        - written: accepted records written to checkpoint jsonl (happy path)
+        - rejected: failed validation by `dto_construction`, single record.
+        - batch_loss_count: failure where entire call batch is quarantined (i.e.
+          transport, no_candidates, unparsable, id_mismatch)
+    Note: Generation is a special case where chapters are sent and questions generated. 
+          in that case - only failed calls are reported.      
 
     Args:
         pipeline_id: Versioned identifier for the pipeline code that ran.
@@ -1169,6 +1177,8 @@ def save_run_completion(pipeline_id: str, run_id: str, llm_pass: str, status: st
     Returns:
         file_path for run receipt         
     """
+    logger = get_run_logger()
+    
     # read the call entries this run appended during execution
     # A run that made no successful calls leaves no calls file — a circuit-breaker
     # abort, or every call raising. That is a legitimate failed run and still gets
@@ -1199,16 +1209,35 @@ def save_run_completion(pipeline_id: str, run_id: str, llm_pass: str, status: st
     #   - In generation runs, send chaptersand model decides how many questions come back
     #     so sent/rejected do not apply, therefore GenerationCallEntry has no records_sent field.
     sent_applies = any("records_sent" in c for c in calls)
-    sent = written = rejected = batch_loss = 0
+    sent = written = rejected = batch_loss_count = 0
+
+    # record batch failures by type within a run | number of calls failed by cause within a run
+    batch_loss_by_cause, failed_calls = Counter(), Counter()
+
+    # aggregate sent, written, rejected, batch_loss
     for c in calls:
-        # total calls sent in llm pass
+        # failed call: whole batch counts as sent and lost.
         if c["failure_mode"]:
-            batch_loss += c.get('records_sent',0)
+            batch_loss_count += c.get('records_sent',0)
+            batch_loss_by_cause[c['failure_mode']]+=c.get('records_sent',0)
+            failed_calls[c['failure_mode']]+=1
+            sent += c.get('records_sent',0)
             continue
+
+        # correct, accepted record
         written += c["records_written"]
+
         if 'records_sent' in c:
             sent += c["records_sent"]
+            # failed validation with pydantic dto_construction
             rejected += c["records_sent"] - c["records_written"]
+
+    # check and warn if accounting doesn't match
+    if sent_applies and sent != written + rejected + batch_loss_count:
+        logger.warning(
+            "Record accounting mismatch: sent=%d != written=%d + rejected=%d + batch_loss_count=%d",
+            sent, written, rejected, batch_loss_count,
+        )
 
     # create run reciept         
     completion_data = {
@@ -1231,10 +1260,16 @@ def save_run_completion(pipeline_id: str, run_id: str, llm_pass: str, status: st
             # receipt becomes a model (see core/telemetry.py)
             "tokens": token_totals,
             "quarantined": quarantine_totals,
+            "record_accounting_consistent": (
+                sent == written + rejected + batch_loss_count
+                if sent_applies
+                else None),
             "records_sent": sent if sent_applies else None,
             "records_written": written,
             "records_rejected": rejected if sent_applies else None,
-            "batch_loss": batch_loss if sent_applies else None,           
+            "failed_calls": dict(failed_calls),
+            "batch_loss_count": batch_loss_count if sent_applies else None,
+            "batch_loss_by_cause": dict(batch_loss_by_cause) if sent_applies else None,          
         },
     }
 
@@ -1243,7 +1278,6 @@ def save_run_completion(pipeline_id: str, run_id: str, llm_pass: str, status: st
     with open(file_path, 'w', encoding='utf-8') as f:
         json.dump(completion_data, f, indent=2)
 
-    logger = get_run_logger()
     logger.info("🏁 Run receipt saved to: %s", file_path)
     return file_path
 
@@ -1256,6 +1290,10 @@ def render_markdown_rows(rows:List[Tuple[str,Any]]) -> str:
     one row of many. The caller supplies the header and separator.
     """
     return "\n".join(f"| **{label}** | {value}" for label, value in rows)
+
+def format_counts(counts: dict | None) -> str:
+    """Format a count dict as 'key: n, key: n' for the report; 'none' if empty or None."""
+    return ", ".join(f"{k}: {v}" for k, v in counts.items()) if counts else "none"
 
 # generate a completion report
 @task
@@ -1284,23 +1322,14 @@ def create_run_report(receipt_path: Path, output_root: Path):
     # 1. read from saved run report (SOT)
     with open(receipt_path, "r", encoding='utf-8') as f:
         receipt = json.load(f)
-    
+
     actuals = receipt['actuals']
     tokens = actuals['tokens']
     run_id = receipt['run_id']
     pipeline_id = receipt['pipeline_id']
     llm_pass = receipt['llm_pass']    
 
-    # 2. format list and dict fields for the table
-    #    .get: receipts are durable and never migrated, so a reader must tolerate
-    #    fields added after older receipts were written
-    quarantined = actuals.get("quarantined") or {}
-    quarantine_str = (
-        ", ".join(f"{mode}: {n}" for mode, n in quarantined.items())
-        if quarantined else "none"
-    )
-
-    # 3. Build the Markdown Report
+    # 2. Build the Markdown Report
     #    gather metrics for rendering
     global_metrics = [
         ('Run ID', f"{run_id}" ),
@@ -1310,28 +1339,31 @@ def create_run_report(receipt_path: Path, output_root: Path):
         ('Strategies run', ", ".join(actuals['strategies_run']) ),
         ('Models Active', ", ".join(actuals['models_used']) ),
     ]
-    # drop chapters if it doesn't apply to this pass (enrichment has no chapters)
+    #    drop chapters if it doesn't apply to this pass (enrichment has no chapters)
     if actuals["chapters_processed"]:
         global_metrics.append(("Chapters Processed", actuals["chapters_processed"]))
 
     metric_rows_llm_pass = [
-        ('API calls', actuals['api_calls']),
-        ('Input tokens', f"{tokens['1_input_template'] + tokens['2_input_payload']:,}"),
-        ('Output tokens', f"{tokens['4_output_candidates']:,}"),
-        ('Thinking tokens', f"{tokens['6_thinking_actual']:,}"),
-        ('Total tokens',  f"**{tokens['5_total_billed']:,}**"),
+        ('API calls (total)', actuals['api_calls']),
+        ('Failed API calls', format_counts(actuals['failed_calls'])),
+        ('Input tokens', f"{tokens.get('1_input_template', 0) + tokens.get('2_input_payload',0):,}"),
+        ('Output tokens', f"{tokens.get('4_output_candidates',0):,}"),
+        ('Thinking tokens', f"{tokens.get('6_thinking_actual',0):,}"),
+        ('Total tokens',  f"**{tokens.get('5_total_billed',0):,}**"),
         ('Questions saved', f"**{actuals['records_written']}**"),
-        ('Quarantined', quarantine_str),
+        ('Quarantined', format_counts(actuals.get("quarantined"))),
     ]
     # sent/rejected/batch loss only apply where records were sent — generation
-    # sends chapters and the model decides the yield, so these are 0 there
-    if actuals["records_sent"]:
+    # sends chapters and the model decides the yield, so these are None.
+    if actuals.get("records_sent") is not None:
         metric_rows_llm_pass.extend([
             ('Records sent', actuals["records_sent"]),
             ('Records rejected', actuals["records_rejected"]),
-            ('Batch loss', actuals["batch_loss"]),
+            ('Batch loss count', actuals["batch_loss_count"]),
+            ('Batch loss count by cause', format_counts(actuals["batch_loss_by_cause"])),
+            ('Record accounting consistent', actuals["record_accounting_consistent"])
         ])
-        
+
     report = f"""
 # 🧙‍♂️ Harry Potter Trivia: {llm_pass.replace("_", " ").title()} Pass Report
 
