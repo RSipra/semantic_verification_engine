@@ -28,6 +28,7 @@ class FailureMode(str, Enum):
     UNPARSEABLE = "response_unparseable"  # api call returned a response that could not be parsed
     DTO_CONSTRUCTION = "dto_construction"  # api response couldn't be converted to LLM Pass DTO
     ID_MISMATCH = "id_mismatch" # response did not match existing id of question
+    EMPTY_RESULT = "empty_result" # valid jsonl (passes parsable check) but empty list / zero records returned
 
 ## LLM API CALLS
 

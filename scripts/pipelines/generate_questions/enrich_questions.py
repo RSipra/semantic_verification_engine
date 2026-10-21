@@ -584,6 +584,31 @@ def enrich_with_llm_cols(run_id: str,
                            batch_index, question_type, e)
             continue
 
+        # the response is a valid json but empty (no records)
+        if len(parsed_responses) == 0 :
+            failure_mode = FailureMode.EMPTY_RESULT
+            entry = build_quarantine_entry(run_id=run_id,
+                                           call_id = call_id,
+                                           question_type = question_type,
+                                           llm_pass = llm_pass,
+                                           error = "json contains zero records",
+                                           failure_mode = failure_mode,
+                                           raw_record = response.text,
+                                           record_ids=record_ids,
+                                           finish_reason = finish_reason)
+            all_quarantined.append(entry)
+            write_quarantine([entry], run_id, llm_pass, runs_dir)
+            token_breakdown = calculate_token_metrics(response, template_token_count)
+            call_entry = EnrichmentCallEntry(
+                **call_entry_ctx,
+                tokens=token_breakdown,
+                failure_mode=failure_mode,
+            )
+            append_jsonl(call_entry, calls_file)
+            logger.warning("Batch %d (%s): response was a valid JSON with zero responses",
+                            batch_index, question_type)
+            continue      
+
         # 2.5.reconcile: all sent qids returned? no unexpected qids?
         sent = {d.syn_id for d in batch}
         returned = {r.get('question_id') for r in parsed_responses} # return none if id missing
