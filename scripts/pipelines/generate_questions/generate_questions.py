@@ -178,7 +178,8 @@ from pydantic import BaseModel, ValidationError
 from core.constants import Book, QuestionSource, QuestionType
 from core.models import DraftQuestion
 from core.telemetry import FailureMode, GenerationCallEntry, QuarantineEntry
-from scripts.pipelines.generate_questions.prompts.pipeline_config import GENERATION_STRATEGY, GEN_STRATEGY_VERSION
+from scripts.pipelines.generate_questions.prompts.pipeline_config import (GENERATION_STRATEGY, 
+                                                                          GEN_STRATEGY_VERSION)
 import notebook_support.notebook_config as nb_cfg
 
 ## CONSTANTS
@@ -935,77 +936,91 @@ def write_quarantine(entries: list[QuarantineEntry], run_id: str, llm_pass: str,
     logger.warning("Quarantined %d records to %s", len(entries), output_file)
 
 # response output helper: parse output and json output from the API call (helper)
-def process_and_save_candidates(run_id: str, batch_id: str, job_id: str, response, output_file: Path,
-                               full_metadata: Dict[str,Any], logger) -> Tuple[int, List[DraftQuestion]]:  # type: ignore
+def process_and_save_response(run_id: str, batch_id: str, job_id: str, 
+                                response, output_file: Path,
+                                full_metadata: Dict[str,Any],
+                                logger) -> Tuple[int, List[DraftQuestion]]:  # type: ignore
     """
-    response processing layer 3: core logic. Loops candidates, parses JSON
-    enriches data, and saves to disk.
-    
-    Returns the count of successfully saved questions and the list of draft questions.
+    Response processing layer 3: core logic. Parses the single response into
+    question records, adds run/job metadata (ids, model, prompt and pipeline
+    versions), and saves each record to disk.
+
+    Single candidate by design: tested candidate_count > 1 for variety;
+    additional candidates were mostly repeats with marginal new questions,
+    at proportional extra output-token cost.
+
+    Returns the count of saved questions and the list of draft questions.
     """
     # counter for candidates
     total_saved = 0
     draft_questions = []
+    quarantine = []
 
-    for i, candidate in enumerate(response.candidates):
-        try:
-            # Safety check for empty content parts
-            if not candidate.content.parts:
-                logger.warning("[job id: %s] Candidate %s has no content parts.", job_id, i)
-                continue
-            # Extract text from this specific candidate
-            # (Gemini structure: candidate -> content -> parts -> text)    
-            raw_candidate_text = candidate.content.parts[0].text
+    try:
+        # Parse text from response into json   
+        parsed_questions = extract_json_from_response(response.text)
 
-            # Use the helper function defined earlier in your script
-            parsed_questions = extract_json_from_response(raw_candidate_text)
+        if parsed_questions: # right now truthy - i can change to if len(parsed_questions) !=0
 
-            if parsed_questions:
-                with open(output_file, 'a', encoding='utf-8') as f:
-                    # write question data with full metadata to file (make sure they are standalone)
-                    for q_idx, question_data in enumerate(parsed_questions):
-                        # 0. Generate Deterministic ID
-                        # Format: {run_id}_{batch_id}_{job_id}_{candidate_index}_{question_index}
-                        # Example: "run20251224_x9z_batch_MCQ_Generation_a7b2_job_e5f6_0_0" <- long for data quality tracking
-                        unique_id = f"{run_id}_{batch_id}_{job_id}_{i}_{q_idx}"
-                        
-                        # 1. Identity: track exactly where the question came from
-                        question_data['syn_id'] = unique_id
-                        question_data['question_source'] = QuestionSource.SYNTHETIC.value
-                        
-                        # 2. Context: inject the full run/job metadata
-                        question_data['generation_model'] = full_metadata.get('model_name')
-                        question_data['timestamp'] = full_metadata.get('timestamp')
-                        question_data['generation_prompt_version'] = full_metadata.get('prompt_id')
-                        question_data['generation_pipeline_id'] = full_metadata['identifiers'].get('pipeline_name')
-                        question_data['generation_strategy_version'] = full_metadata.get('generation_strategy_version')
-                        
-                        # 3. Persistence: Write to JSONL
-                        f.write(json.dumps(question_data) + "\n")
-                        
-                        # 4. Create DTO
+            # write one record at a time to file and DTO so records from partial pipeline runs
+            # still saved.
+            with open(output_file, 'a', encoding='utf-8') as f:
+
+                # write question data with full metadata to file (make sure they are standalone)
+                for q_idx, question_data in enumerate(parsed_questions):
+                    # 0. Generate Deterministic ID
+                    # Format: {run_id}_{batch_id}_{job_id}_{candidate_index}_{question_index}
+                    # Example: "run20251224_x9z_batch_MCQ_Generation_a7b2_job_e5f6_0_0" 
+                    # -> long for data quality tracking
+                    unique_id = f"{run_id}_{batch_id}_{job_id}_{q_idx}"
+
+                    # 1. Identity: track exactly where the question came from
+                    question_data['syn_id'] = unique_id
+                    question_data['question_source'] = QuestionSource.SYNTHETIC.value
+
+                    # 2. Context: inject the full run/job metadata
+                    question_data['generation_model'] = full_metadata.get('model_name')
+                    question_data['timestamp'] = full_metadata.get('timestamp')
+                    question_data['generation_prompt_version'] = full_metadata.get('prompt_id')
+                    question_data['generation_pipeline_id'] = full_metadata['identifiers'].get(
+                        'pipeline_name')
+                    question_data['generation_strategy_version'] = full_metadata.get(
+                        'generation_strategy_version')
+
+                    try:
+                        # 3. Create DTO
                         draft_question = convert_question_to_dto(question_data)
                         draft_questions.append(draft_question)
 
+                    # invalid question structure (e.g. missing required fields, wrong types)
+                    # will be caught here    
+                    except ValidationError as e:
+                        quarantine.append({"record": question_data, 
+                                            "error": str(e),
+                                            "failure_mode": "dto_construction"})
+                        continue
+
+                    # 4. Persistence: Write to JSONL
+                    f.write(json.dumps(question_data) + "\n")
+
                 total_saved += len(parsed_questions)
 
-            else:
-                # Log the source file name if possible for debugging
-                source_file = full_metadata.get('source_files', 'Unknown')
-                logger.warning("❌ [job id: %s] JSON extraction failed for Candidate %s in %s",
-                               job_id, i, source_file)
+        else:
+            # Log the source file name if possible for debugging
+            source_file = full_metadata.get('source_files', 'Unknown')
+            logger.warning("❌ [job id: %s] JSON extraction failed for Response in %s",
+                            job_id, source_file)
 
-        # Specific error handling
-        except (json.JSONDecodeError, KeyError, TypeError, AttributeError) as e:
-            logger.error("[job id: %s] Data Error processing Candidate %s: %s", job_id, i, e)
-            continue
-        except OSError as e:
-            logger.error("[job id: %s] File System Error saving Candidate %s: %s", job_id, i, e)
-            continue
-        except Exception as e:  # pylint: disable=broad-exception-caught
-            logger.error("[job id: %s] 💥 Critical Unexpected Error on Candidate %s: %s",
-                         job_id, i, e)
-            continue
+    # Specific error handling
+    except (json.JSONDecodeError, KeyError, TypeError, AttributeError) as e:
+        logger.error("[job id: %s] Data Error processing Response: %s", job_id, e)
+
+    except OSError as e:
+        logger.error("[job id: %s] File System Error saving Response: %s", job_id, e)
+
+    except Exception as e:  # pylint: disable=broad-exception-caught
+        logger.error("[job id: %s] 💥 Critical Unexpected Error on Response: %s",
+                        job_id, e)
 
     return total_saved, draft_questions
 
@@ -1070,10 +1085,10 @@ def parse_and_save(run_id, batch_id, job_id, response, output_file: Path,
         logger.error("⛔ [job id: %s] No usable content — finish_reason=%s feedback=%s",
                     job_id, finish_reason, prompt_feedback)
         append_jsonl(call_entry, calls_file)
-        return call_entry, []
+        return call_entry, [], []
 
     # Step 3: core logic (save questions.jsonl file)
-    saved_count, draft_questions = process_and_save_candidates(run_id, batch_id, job_id, 
+    saved_count, draft_questions = process_and_save_response(run_id, batch_id, job_id, 
                                               response, output_file, full_metadata, logger)
 
     if saved_count > 0:

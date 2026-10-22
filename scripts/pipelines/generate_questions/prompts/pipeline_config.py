@@ -1,5 +1,31 @@
 '''
-Configuration for offline pipelines
+Configuration for offline pipelines (generation + enrichment)
+------
+Predefined models for each question type (model-per-type based on experimentation)
+
+Single candidate per call (candidate_count removed): testing candidate_count > 1
+for variety showed additional candidates were mostly repeats with marginal new
+questions, at proportional extra output-token cost. Re-enable only with a
+per-candidate failure-handling design.
+
+TODO (sampling + thinking): current config was carried over from 2.5
+experiments and has not been tested on gemini-3.1-flash-lite.
+  - temperature=0.7, top_p=0.95: Google recommends leaving sampling params at
+    defaults for all Gemini 3.x models (temp < 1.0 may cause looping /
+    degraded output). Test removing them; use system-instruction rules if
+    determinism is needed.
+  - thinking_level: not set. Flash-Lite defaults to `minimal`, unlike the
+    rest of Gemini 3 (default `high`). Tracer thinking share (20–40%) was
+    2.5 Flash and does not transfer.
+Before the book run: one smoke run to record 6_thinking_actual at default,
+then compare quarantine rate + validation yield with sampling params removed.
+Ref: ai.google.dev/gemini-api/docs/gemini-3 (Temperature, Thinking level)
+
+TODO (SDK): migrate pipeline calls from google-generativeai (deprecated) to
+google-genai — runtime already migrated (PR #10). Blocks removing the old SDK,
+which caps protobuf <6 and holds Dependabot #292/#293 open. 
+Also a prerequisite for the thinking test above: thinking_level is set via
+types.ThinkingConfig(thinking_level=...) in google-genai's GenerateContentConfig.
 '''
 
 from core.constants import QuestionType
@@ -7,23 +33,7 @@ from core.models import LexDraftQuestion, SyntheticStandard, SyntheticMCQ, Draft
 import notebook_support.notebook_config as nb_cfg
 from notebook_support.schemas import StandardQuestion, MCQuestion
 
-# Predefined models for each question type (model-per-type based on experimentation)
-
 # version of the generation strategy (for reproducibility and tracking)
-
-# TODO (sampling + thinking): current config was carried over from 2.5
-# experiments and has not been tested on gemini-3.1-flash-lite.
-#   - temperature=0.7, top_p=0.95: Google recommends leaving sampling params at
-#     defaults for all Gemini 3.x models (temp < 1.0 may cause looping /
-#     degraded output). Test removing them; use system-instruction rules if
-#     determinism is needed.
-#   - thinking_level: not set. Flash-Lite defaults to `minimal`, unlike the
-#     rest of Gemini 3 (default `high`). Tracer thinking share (20–40%) was
-#     2.5 Flash and does not transfer.
-# Before the book run: one smoke run to record 6_thinking_actual at default,
-# then compare quarantine rate + validation yield with sampling params removed.
-# Ref: ai.google.dev/gemini-api/docs/gemini-3 (Temperature, Thinking level)
-
 GEN_STRATEGY_VERSION = "generation_strategy_v1.0"
 MODEL = "gemini-3.1-flash-lite"
 
@@ -39,7 +49,6 @@ GENERATION_STRATEGY =[
         "temperature": 0.7,
         "max_output_tokens": 12000,
         "top_p": 0.95,
-        "candidate_count": 1 
     },
     {
         "task_name": "MCQ_Generation",
@@ -52,7 +61,6 @@ GENERATION_STRATEGY =[
         "temperature": 0.7,
         "max_output_tokens": 12000,
         "top_p": 0.95,
-        "candidate_count": 1  
     },
     {
         "task_name": "FR_Generation",
@@ -65,7 +73,6 @@ GENERATION_STRATEGY =[
         "temperature": 0.7,
         "max_output_tokens": 12000,
         "top_p": 0.95,
-        "candidate_count": 1 
     }
 ]
 
@@ -87,7 +94,6 @@ ENRICHMENT_STRATEGY={
         "temperature": 0.7,
         "max_output_tokens": 12000,
         "top_p": 0.95,
-        "candidate_count": 1,
         # localized warning: ratio of quarantined records to records returned by the LLM for the batch.
         "max_batch_failure_rate": 0.10, 
         # full-run warning: same ratio as a batch accumulated across all batches 
@@ -111,7 +117,6 @@ ENRICHMENT_STRATEGY={
         "temperature": 0.7,
         "max_output_tokens": 12000,
         "top_p": 0.95,
-        "candidate_count": 1,
         # localized warning: ratio of quarantined records to records returned by 
         # the LLM for the batch.
         "max_batch_failure_rate": 0.10, 
