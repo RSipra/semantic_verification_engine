@@ -99,6 +99,7 @@ from core.models import DraftQuestion
 from core.telemetry import EnrichmentCallEntry, FailureMode
 from scripts.pipelines.generate_questions.prompts.pipeline_config import ENRICHMENT_STRATEGY
 from scripts.pipelines.generate_questions.generate_questions import (short_uuid,
+                                                                     extract_json_from_response,
                                                                      check_response_usable,
                                                                      configure_api,
                                                                      make_api_call,
@@ -557,8 +558,8 @@ def enrich_with_llm_cols(run_id: str,
                         
         # 2.4. parse response into dict
         try:
-            parsed_responses = json.loads(response.text)
-        except json.JSONDecodeError as e:
+            parsed_responses = extract_json_from_response(response.text, logger)
+        except (json.JSONDecodeError, ValueError) as e:
             failure_mode= FailureMode.UNPARSEABLE
             entry = build_quarantine_entry(run_id=run_id,
                                            call_id = call_id,
@@ -580,8 +581,9 @@ def enrich_with_llm_cols(run_id: str,
                 failure_mode=failure_mode,
             )
             append_jsonl(call_entry, calls_file)
-            logger.warning("Batch %d (%s): response was not valid JSON — %s",
-                           batch_index, question_type, e)
+            reason = "not valid JSON" if isinstance(e, json.JSONDecodeError) else "wrong shape"
+            logger.warning("Batch %d (%s) response unparseable (%s) — %s",
+                           batch_index, question_type, reason, e)
             continue
 
         # the response is a valid json but empty (no records)

@@ -726,31 +726,57 @@ def make_api_call(final_prompt:str, config: dict):
         raise e
 
 # helper to parse the json output from the API response object
-def extract_json_from_response(text: str) -> Optional[List[Dict[str, Any]]]:
+def extract_json_from_response(text: str, logger = None) -> List[Dict[str, Any]]:
     """
-    Attempts to parse JSON from a string, handling potential Markdown wrapping.
-    Returns None if parsing fails.
+    Parse the model's response text as JSON.
+
+    Tries a direct parse first; if that fails, retries on the outermost [...]
+    (rescues JSON wrapped in markdown or stray text).
+
+    Raises:
+        json.JSONDecodeError: if neither attempt parses (the direct-parse
+            error is raised, since it describes the actual response).
+        ValueError:  if the text is valid JSON but not an array of objects
+            (e.g. a single object, or a list of strings), and the [...]
+            rescue does not recover a list.    
     """
     # 1. model mime respones works and returns correct json format (happy path)
     try:
-        return json.loads(text)
-    except json.JSONDecodeError:
-        pass
+        parsed = json.loads(text)
+    except json.JSONDecodeError as e:  # not JSON
+        parsed, original_error = None, e  
+    else:
+        # happy path
+        if isinstance(parsed, list) and all(isinstance(r, dict) for r in parsed):
+            return parsed
+        # record error that json is malformed (valid JSON, wrong shape for downstream)
+        got = (f"list of {type(parsed[0]).__name__}" if isinstance(parsed, list) and parsed
+               else type(parsed).__name__)
+        original_error = ValueError(f"expected a JSON array of objects, got {got}")
+
 
     # 2. Fail-safe. Model returns the response in incorrect foramt (str or wrapped in md)
-    #  look for json delimiters '[' and ']'
+    #  look for json delimiters '[' and ']' and try to salvage
     try:
         start = text.find('[')  # returns -1 if not found
         end = text.rfind(']')   # returns -1 if not found
 
         if start != -1 and end != -1:  # make sure both delimiters exist
             json_str = text[start : end + 1]  # then parse
-            return json.loads(json_str)
+            result = json.loads(json_str)
+            # make sure that rescued responses in the list are all dict instances
+            # this avoids extracting nested lists as valid results
+            if all(isinstance(r, dict) for r in result):
+                if logger:
+                    logger.warning("Response needed fallback extraction (fenced or wrapped JSON)")
+                return result
+
     except json.JSONDecodeError:
+        # error is discarded because failed salvage is not important
         pass
 
-    # 3. parsing fails
-    return None
+    # 3. parsing fails (rescue didn't work)
+    raise original_error
 
 # compile the Strategy (pipeline run) metadata
 def create_strategy_batch_metadata(pipeline_run_id: str,  # Level 1 (pipeline run) full script
