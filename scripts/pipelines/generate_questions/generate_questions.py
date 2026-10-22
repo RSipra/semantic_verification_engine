@@ -726,16 +726,22 @@ def make_api_call(final_prompt:str, config: dict):
         raise e
 
 # helper to parse the json output from the API response object
-def extract_json_from_response(text: str) -> Optional[List[Dict[str, Any]]]:
+def extract_json_from_response(text: str) -> List[Dict[str, Any]]:
     """
-    Attempts to parse JSON from a string, handling potential Markdown wrapping.
-    Returns None if parsing fails.
+    Parse the model's response text as JSON.
+
+    Tries a direct parse first; if that fails, retries on the outermost [...]
+    (rescues JSON wrapped in markdown or stray text).
+
+    Raises:
+        json.JSONDecodeError: if neither attempt parses (the direct-parse
+            error is raised, since it describes the actual response).
     """
     # 1. model mime respones works and returns correct json format (happy path)
     try:
         return json.loads(text)
-    except json.JSONDecodeError:
-        pass
+    except json.JSONDecodeError as e:
+        original_error = e
 
     # 2. Fail-safe. Model returns the response in incorrect foramt (str or wrapped in md)
     #  look for json delimiters '[' and ']'
@@ -749,8 +755,8 @@ def extract_json_from_response(text: str) -> Optional[List[Dict[str, Any]]]:
     except json.JSONDecodeError:
         pass
 
-    # 3. parsing fails
-    return None
+    # 3. parsing fails (rescue didn't work)
+    raise original_error
 
 # compile the Strategy (pipeline run) metadata
 def create_strategy_batch_metadata(pipeline_run_id: str,  # Level 1 (pipeline run) full script

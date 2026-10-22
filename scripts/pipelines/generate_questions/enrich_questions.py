@@ -99,6 +99,7 @@ from core.models import DraftQuestion
 from core.telemetry import EnrichmentCallEntry, FailureMode
 from scripts.pipelines.generate_questions.prompts.pipeline_config import ENRICHMENT_STRATEGY
 from scripts.pipelines.generate_questions.generate_questions import (short_uuid,
+                                                                     extract_json_from_response,
                                                                      check_response_usable,
                                                                      configure_api,
                                                                      make_api_call,
@@ -557,7 +558,7 @@ def enrich_with_llm_cols(run_id: str,
                         
         # 2.4. parse response into dict
         try:
-            parsed_responses = json.loads(response.text)
+            parsed_responses = extract_json_from_response(response.text)
         except json.JSONDecodeError as e:
             failure_mode= FailureMode.UNPARSEABLE
             entry = build_quarantine_entry(run_id=run_id,
