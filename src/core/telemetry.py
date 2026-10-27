@@ -60,6 +60,10 @@ class CallEntry(BaseModel):
     records_written: int = 0  
     # if llm call fails, add failure mode to call entry
     failure_mode: str | None = None
+    # flag if all records were rejected (didnt pass dto construction)
+    all_rejected: bool| None = None
+    # summary dict of all quarantined entries within a call by failure mode
+    quarantined: dict | None = None
 
     # make sure the output file name is recorded for valid records
     @model_validator(mode ='after')
@@ -115,8 +119,7 @@ class EnrichmentCallEntry(CallEntry):
     records_sent: int
     # position of this call's input slice within its pass's partition 
     # (e.g. MCQ questions split into N question batches for enrichment)
-    chunk_index: int  
-    quarantined: dict | None = None
+    chunk_index: int
 
 class QuarantineEntry(BaseModel):
     """Entry for tracking quarantined records."""

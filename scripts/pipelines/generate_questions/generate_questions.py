@@ -962,11 +962,13 @@ def write_quarantine(entries: list[QuarantineEntry], run_id: str, llm_pass: str,
     logger.warning("Quarantined %d records to %s", len(entries), output_file)
 
 # response output helper: parse output and json output from the API call (helper)
-def process_and_save_response(run_id: str, batch_id: str, job_id: str,
-                              parsed_response: List[Dict[str,Any]], 
+def process_and_save_response(run_id: str, batch_id: str, job_id: str, llm_pass: str,
+                              parsed_response: List[Dict[str,Any]],
                               output_file: Path,
                               full_metadata: Dict[str,Any],
-                              logger) -> List[DraftQuestion]:  # type: ignore
+                              finish_reason,
+                              logger,
+                              ) -> Tuple[List[DraftQuestion], List[QuarantineEntry]]:
     """
     Response processing layer 3: core logic. Adds run/job metadata to each parsed
     question (ids, model, prompt and pipeline versions), and saves each record to disk.
@@ -975,7 +977,14 @@ def process_and_save_response(run_id: str, batch_id: str, job_id: str,
     additional candidates were mostly repeats with marginal new questions,
     at proportional extra output-token cost.
 
-    Returns the list of draft questions.
+    Returns:
+        Tuple[list[DraftQuestion], list[QuarantineEntry]]: the generated draft DTOs, and
+        the quarantine entries for this call.
+    
+    # TODO (refactor): run_id / batch_id / call_id duplicate full_metadata["identifiers"]
+    # (pipeline_run_id, batch_id, job_id) — two sources for the same IDs. Keep
+    # full_metadata as the single source (needed for stamping anyway) and drop the
+    # separate parameters; settle job_id vs call_id naming at the same time.
     """
     draft_questions = []
     quarantine = []
@@ -1008,18 +1017,27 @@ def process_and_save_response(run_id: str, batch_id: str, job_id: str,
 
                 try:
                     # 3. Create DTO
-                    draft_question = convert_question_to_dto(question_data)
+                    draft = convert_question_to_dto(question_data)
                     # 4. Persistence: Write to JSONL
                     f.write(json.dumps(question_data) + "\n")
                     # so written and dto match
-                    draft_questions.append(draft_question)
+                    draft_questions.append(draft)
 
                 # invalid question structure (e.g. missing required fields, wrong types)
                 # will be caught here    
                 except ValidationError as e:
-                    quarantine.append({"record": question_data, 
-                                        "error": str(e),
-                                        "failure_mode": "dto_construction"})
+                    entry = build_quarantine_entry(
+                        run_id = run_id,
+                        call_id = job_id,
+                        question_type = full_metadata['question_type'],
+                        llm_pass = llm_pass,
+                        error= e,
+                        failure_mode=FailureMode.DTO_CONSTRUCTION,
+                        raw_record = question_data,
+                        record_ids= [unique_id],
+                        finish_reason=finish_reason,
+                        )
+                    quarantine.append(entry)
                     continue
 
     # Specific error handling
@@ -1033,7 +1051,7 @@ def process_and_save_response(run_id: str, batch_id: str, job_id: str,
         logger.error("[job id: %s] 💥 Critical Unexpected Error on Response: %s",
                         job_id, e)
 
-    return draft_questions
+    return draft_questions, quarantine
 
 # placeholder for cost esmtimate helper if needed for later dataset expansion
 def estimate_run_cost(run_receipt: Path) -> float:  
@@ -1398,6 +1416,7 @@ def generate_questions_pipeline(target_books: List[Book],
     is_trial = runs_dir == nb_cfg.TRIAL_RUNS_DIR
     run_id = f"{'test' if is_trial else 'run'}{datetime.now().strftime('%Y%m%d')}_{short_uuid()}"
     run_timestamp = datetime.now(timezone.utc).isoformat()
+    llm_pass = LLM_PASS_GEN
 
     # A.2: Deterimine the specific run strategy (if filtered):
     active_strategy = filter_strategy(GENERATION_STRATEGY, tasks_to_run)
@@ -1455,7 +1474,11 @@ def generate_questions_pipeline(target_books: List[Book],
     # A.8: Initialize
     #   initialize DTO list for all questions generated in this run
     all_draft_questions: List[DraftQuestion] = [] #type: ignore
-    total_questions = 0  
+    total_questions = 0
+    total_processed = 0     # records returned by the LLM, across batches
+    total_quarantined = 0   # records quarantined, across batches
+    # all_quarantined gathers entries across batches: one per failure *event*, not per record.
+    all_quarantined = []
 
     ## B. GENERATION STRATEGY LOOP (BATCH LEVEL):
     #  B.1: Loop through the selected question types from active strategy:
@@ -1466,6 +1489,7 @@ def generate_questions_pipeline(target_books: List[Book],
         safe_task_name = task_name.replace(" ", "_").strip()
         batch_id = f"batch_{safe_task_name}_{short_uuid()}"
         logger.info("\n--- Starting Strategy: %s ---", task_name)
+        question_type = config['file_prefix']
 
         # input token count for prompt template without formatting
         template_token_count = measure_template_tokens(config['model_name'],
@@ -1492,7 +1516,7 @@ def generate_questions_pipeline(target_books: List[Book],
                 time.sleep(delay)
 
             # C.1: Safety check: abort run if consecutive failures reaches limit
-            # Counts as a failure (cost spent, nothing saved) if: 
+            # Counts as a failure (cost spent, nothing saved) if:
             #   (i) the API call raises, or (ii) unusable, unparsable, or empty response
             # Note: Malformed-but-present answers are validation pipeline scope not this breaker's
             if consecutive_failures >= MAX_FAILURES:
@@ -1500,18 +1524,37 @@ def generate_questions_pipeline(target_books: List[Book],
                              task_name, MAX_FAILURES)
                 break
 
-            # C.2: Initialize 
+            # C.2: Initialize at call level
             job_id = f"job_{short_uuid()}"
             # Extract names for metadata (since chapter_batch is a list of Paths)
             first_chap = chapter_batch[0].stem  # chapter ref in output filename and logging
             source_files=[p.name for p in chapter_batch]
             output_file = output_dir / f"{run_id}_{config['file_prefix']}_{first_chap}.jsonl"
+            # Call entry = record of one API call; fields common to happy + failure branches
+            call_entry_ctx = {
+                'call_id' : job_id,
+                'question_type' : question_type,
+                'model' : config["model_name"],
+                'prompt_version' : config["prompt_id"],
+                'batch_id':  batch_id,
+                'chapter_count' : len(chapter_batch),
+                'source_files': source_files,
+                'records_written' : 0,
+            }
+            # quarantine common entries
+            quarantine_entry_ctx = {
+                'run_id' : run_id,
+                'call_id': job_id,
+                'question_type' : question_type,
+                'llm_pass' : llm_pass,
+                'record_ids' : None, # call level failures happen before DTO construction = no id.
+            }
 
             # C.3: prepare prompt (fill in template)
             final_prompt = prepare_prompt(chapter_batch,config['prompt_file'])
 
             # C.4: generate the full meta_data dict for job
-            full_metadata = create_strategy_batch_metadata(run_id, batch_id, 
+            full_metadata = create_strategy_batch_metadata(run_id, batch_id,
                                                             job_id, run_timestamp,
                                                             config, source_files)
             try:
@@ -1520,9 +1563,23 @@ def generate_questions_pipeline(target_books: List[Book],
 
             # Transport failure branch
             except Exception as e:  # pylint: disable=broad-exception-caught
-                # TODO: a call that raised before returning has no usage data here,
-                # so its tokens go unrecorded — the provider may still have billed
-                # them. Closed when transport failures get their own call entry
+                failure_mode = FailureMode.TRANSPORT
+                # create quarantine record
+                entry = build_quarantine_entry(
+                    **quarantine_entry_ctx,
+                    error = e,
+                    failure_mode= failure_mode,
+                    raw_record = None,
+                    )
+                all_quarantined.append(entry)
+                write_quarantine([entry], run_id, llm_pass, runs_dir)
+                # API call status
+                call_entry = GenerationCallEntry(
+                                **call_entry_ctx,
+                                tokens = {},  # no response ∴ no usage data
+                                failure_mode = failure_mode,
+                            )
+                append_jsonl(call_entry, calls_file)
                 logger.error(
                     "Error occurred while making API call for chapter %s: %s", first_chap, e)
                 consecutive_failures += 1
@@ -1536,25 +1593,28 @@ def generate_questions_pipeline(target_books: List[Book],
             # accounting (token counts from helper)
             token_breakdown = calculate_token_metrics(response, template_token_count)
 
-            # intialize call metadata including token counts (even if no questions saved)
-            call_entry = GenerationCallEntry(
-                call_id = job_id,
-                question_type = full_metadata["question_type"],
-                model = full_metadata["model_name"],
-                prompt_version = full_metadata["prompt_id"],
-                tokens = token_breakdown,
-                output_file = output_file.name,
-                records_written = 0,
-                batch_id= batch_id,
-                chapter_count = len(chapter_batch),
-                source_files = source_files,
-            )
-
             # Unusable response failure branch (empty or blocked)
             if not usable:
+                failure_mode = FailureMode.NO_CANDIDATES
+                # quarantine entry
+                entry = build_quarantine_entry(
+                                    **quarantine_entry_ctx,
+                                    error = prompt_feedback or "no prompt feedback provided",
+                                    failure_mode= failure_mode,
+                                    raw_record = None,
+                                    finish_reason = finish_reason,
+                                    )
+                all_quarantined.append(entry)
+                write_quarantine([entry], run_id, llm_pass, runs_dir)
+                # API call status
+                call_entry = GenerationCallEntry(
+                                **call_entry_ctx,
+                                tokens = token_breakdown,
+                                failure_mode = failure_mode,
+                            )
                 logger.warning(
                     "job_id %s (%s): no usable content — feedback=%s finish_reason=%s",
-                     job_id, full_metadata['question_type'], prompt_feedback, finish_reason,
+                     job_id, question_type, prompt_feedback, finish_reason,
                      )
                 append_jsonl(call_entry, calls_file)
                 consecutive_failures += 1
@@ -1565,43 +1625,91 @@ def generate_questions_pipeline(target_books: List[Book],
                 parsed_response = extract_json_from_response(response.text, logger)
 
             except (json.JSONDecodeError, ValueError) as e:
+                failure_mode = FailureMode.UNPARSEABLE
+                entry = build_quarantine_entry(
+                    **quarantine_entry_ctx,
+                    error = e,  # dont convert to str
+                    failure_mode= failure_mode,
+                    raw_record = response.text,
+                    finish_reason = finish_reason,
+                    )
+                all_quarantined.append(entry)
+                write_quarantine([entry], run_id, llm_pass, runs_dir)
+                # API call status
+                call_entry = GenerationCallEntry(
+                                **call_entry_ctx,
+                                tokens = token_breakdown,
+                                failure_mode = failure_mode,
+                                )
                 reason = "not valid JSON" if isinstance(e,json.JSONDecodeError) else "wrong shape"
                 logger.warning("job_id %s (%s): response unparseable (%s) — %s",
-                                           job_id, full_metadata['question_type'], reason, e)
+                                           job_id, question_type, reason, e)
                 append_jsonl(call_entry, calls_file)
                 consecutive_failures += 1
                 continue
 
             # Empty response failure branch: valid json but empty (no records)
             if len(parsed_response) == 0 :
+                failure_mode = FailureMode.EMPTY_RESULT
+                entry = build_quarantine_entry(
+                                    **quarantine_entry_ctx,
+                                    error = "json contains zero records",
+                                    failure_mode= failure_mode,
+                                    raw_record = response.text,
+                                    finish_reason = finish_reason,
+                                    )
+                all_quarantined.append(entry)
+                write_quarantine([entry], run_id, llm_pass, runs_dir)
+                # API call status
+                call_entry = GenerationCallEntry(
+                                **call_entry_ctx,
+                                tokens = token_breakdown,
+                                failure_mode = failure_mode,
+                                )
                 logger.warning("Job %s (%s): response was a valid JSON with zero responses",
-                                            job_id,full_metadata['question_type'])
+                                            job_id, question_type)
                 append_jsonl(call_entry, calls_file)
                 consecutive_failures += 1
                 continue
 
             # C.6: save the parsed questions
-            draft_questions = process_and_save_response(run_id, batch_id, job_id,
+            draft_questions, batch_quarantined = process_and_save_response(run_id, batch_id, job_id,
+                                                        llm_pass,
                                                         parsed_response,
                                                         output_file,
                                                         full_metadata,
+                                                        finish_reason,
                                                         logger)
             # update with question count for the call
             saved_count = len(draft_questions)
-            call_entry.records_written = saved_count
+            call_entry = GenerationCallEntry(
+                **call_entry_ctx,                    # records_written=0 comes from ctx
+                tokens=token_breakdown,
+                output_file=output_file.name,
+                quarantined=dict(Counter(q.failure_mode.value for q in batch_quarantined)),
+            )
+            call_entry.records_written = saved_count # update to actuat count
+            #   quarantine records for batch and update total metrics
+            all_quarantined.extend(batch_quarantined)
+            total_processed += len(parsed_response)
+            total_quarantined += len(batch_quarantined)
+            #   write quarantined records to jsonl for later inspection
+            write_quarantine(batch_quarantined, run_id, llm_pass, runs_dir)
 
             # C.7: Assess if run was a failure (no questions generated)
             # if successful update total question count else update failure counter
             if  saved_count > 0:
                 consecutive_failures = 0
                 total_questions += saved_count
+                call_entry.all_rejected = False
                 logger.info("✅ [job id: %s] Saved %s questions. Total tokens: %s",
                                             job_id, saved_count, 
                                             call_entry.tokens['5_total_billed'])
             else:
                 # explicitly log the zero question failure event + the cost incurred
                 # every parsed record failed DTO validation (rejected); tokens spent, nothing saved
-                consecutive_failures += 1    
+                call_entry.all_rejected = True
+                consecutive_failures += 1
                 logger.warning("⚠️ [job id: %s] 0 questions saved. Tokens wasted: %s",
                                                                 job_id,
                                                                 call_entry.tokens['5_total_billed'])
