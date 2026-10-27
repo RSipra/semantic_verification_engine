@@ -37,6 +37,9 @@ from notebook_support.schemas import StandardQuestion, MCQuestion
 GEN_STRATEGY_VERSION = "generation_strategy_v1.0"
 MODEL = "gemini-3.1-flash-lite"
 
+# threshold to issue warning based on rejected (quarantined) : generation ratio
+REJECTION_RATE_THRESHOLD = 0.7
+
 GENERATION_STRATEGY =[
     {
         "task_name": "EX_Generation",

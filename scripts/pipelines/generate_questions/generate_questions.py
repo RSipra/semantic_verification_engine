@@ -179,7 +179,8 @@ from core.constants import Book, QuestionSource, QuestionType
 from core.models import DraftQuestion
 from core.telemetry import FailureMode, GenerationCallEntry, QuarantineEntry
 from scripts.pipelines.generate_questions.prompts.pipeline_config import (GENERATION_STRATEGY, 
-                                                                          GEN_STRATEGY_VERSION)
+                                                                          GEN_STRATEGY_VERSION,
+                                                                          REJECTION_RATE_THRESHOLD)
 import notebook_support.notebook_config as nb_cfg
 
 ## CONSTANTS
@@ -968,7 +969,7 @@ def process_and_save_response(run_id: str, batch_id: str, job_id: str, llm_pass:
                               full_metadata: Dict[str,Any],
                               finish_reason,
                               logger,
-                              ) -> Tuple[List[DraftQuestion], List[QuarantineEntry]]:
+                              ) -> Tuple[List[DraftQuestion], List[QuarantineEntry], int]:
     """
     Response processing layer 3: core logic. Adds run/job metadata to each parsed
     question (ids, model, prompt and pipeline versions), and saves each record to disk.
@@ -978,8 +979,9 @@ def process_and_save_response(run_id: str, batch_id: str, job_id: str, llm_pass:
     at proportional extra output-token cost.
 
     Returns:
-        Tuple[list[DraftQuestion], list[QuarantineEntry]]: the generated draft DTOs, and
-        the quarantine entries for this call.
+        Tuple[list[DraftQuestion], list[QuarantineEntry], int]: the generated draft DTOs,
+        the quarantine entries for this call, and the number of questions parsed from
+        the response (before dto construction).
     
     # TODO (refactor): run_id / batch_id / call_id duplicate full_metadata["identifiers"]
     # (pipeline_run_id, batch_id, job_id) — two sources for the same IDs. Keep
@@ -988,6 +990,7 @@ def process_and_save_response(run_id: str, batch_id: str, job_id: str, llm_pass:
     """
     draft_questions = []
     quarantine = []
+    generated = len(parsed_response)
 
     try:
         # write one record at a time to file and DTO so records from partial pipeline runs
@@ -1051,7 +1054,7 @@ def process_and_save_response(run_id: str, batch_id: str, job_id: str, llm_pass:
         logger.error("[job id: %s] 💥 Critical Unexpected Error on Response: %s",
                         job_id, e)
 
-    return draft_questions, quarantine
+    return draft_questions, quarantine, generated
 
 # placeholder for cost esmtimate helper if needed for later dataset expansion
 def estimate_run_cost(run_receipt: Path) -> float:  
@@ -1673,38 +1676,64 @@ def generate_questions_pipeline(target_books: List[Book],
                 continue
 
             # C.6: save the parsed questions
-            draft_questions, batch_quarantined = process_and_save_response(run_id, batch_id, job_id,
-                                                        llm_pass,
-                                                        parsed_response,
-                                                        output_file,
-                                                        full_metadata,
-                                                        finish_reason,
-                                                        logger)
+            draft_questions, batch_quarantined, generated = process_and_save_response(
+                run_id, batch_id, job_id,
+                llm_pass,
+                parsed_response,
+                output_file,
+                full_metadata,
+                finish_reason,
+                logger
+                )
             # update with question count for the call
-            saved_count = len(draft_questions)
+            written, rejected = len(draft_questions), len(batch_quarantined)
+
+            # invariant: identity check
+            # check for an unexpected exception or skip in process_and_save_response.
+            if generated != written + rejected:
+                logger.error(
+                "Call %s (%s): record accounting broken, generated %d != written %d + rejected %d "
+                "(%d unaccounted). A record left the loop without being written or quarantined; "
+                "check for an unexpected exception or skip in process_and_save_response.",
+                job_id, question_type, generated, written, rejected,
+                generated - (written + rejected),
+                )
+
+            # happy path call entry    
             call_entry = GenerationCallEntry(
                 **call_entry_ctx,                    # records_written=0 comes from ctx
                 tokens=token_breakdown,
                 output_file=output_file.name,
                 quarantined=dict(Counter(q.failure_mode.value for q in batch_quarantined)),
             )
-            call_entry.records_written = saved_count # update to actuat count
+            call_entry.records_written = written
+
             #   quarantine records for batch and update total metrics
             all_quarantined.extend(batch_quarantined)
-            total_processed += len(parsed_response)
+            total_processed += generated
             total_quarantined += len(batch_quarantined)
             #   write quarantined records to jsonl for later inspection
             write_quarantine(batch_quarantined, run_id, llm_pass, runs_dir)
 
-            # C.7: Assess if run was a failure (no questions generated)
+            # C.7: Assess if call was a failure (no questions generated)
             # if successful update total question count else update failure counter
-            if  saved_count > 0:
+            # generated > 0 guaranteed by the empty-result guard
+            rejection_rate = rejected / generated
+            if  written > 0:
                 consecutive_failures = 0
-                total_questions += saved_count
+                total_questions += written
                 call_entry.all_rejected = False
+                if rejection_rate >= REJECTION_RATE_THRESHOLD:
+                    logger.warning(
+                    "Call %s (%s): high rejection rate %.0f%% (%d/%d records rejected, threshold %.0f%%). "
+                    "Call succeeded but a high share of output failed DTO validation; check dto_construction "
+                    "entries in the quarantine file for this call_id.",
+                    job_id, question_type, rejection_rate * 100, rejected,
+                    generated, REJECTION_RATE_THRESHOLD * 100,)
                 logger.info("✅ [job id: %s] Saved %s questions. Total tokens: %s",
-                                            job_id, saved_count, 
+                                            job_id, written,
                                             call_entry.tokens['5_total_billed'])
+
             else:
                 # explicitly log the zero question failure event + the cost incurred
                 # every parsed record failed DTO validation (rejected); tokens spent, nothing saved
