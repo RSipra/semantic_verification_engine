@@ -27,7 +27,7 @@ PIPELINE ARCHITECTURE:
     1. **Initialization:** Setup Run IDs, Logging, and API connections. Saves
     the 'Manifest'.
     2. **Strategy (Batch) Loop:** Iterates through defined strategies (EX, MCQ, FR).
-    3. **Chapter (Job) Loop:** Batches chapters, prepares prompts, and calls the API.
+    3. **Chapter (Call) Loop:** Batches chapters, prepares prompts, and calls the API.
        - Includes 'circuit breaker' logic (stops after 5 consecutive failures).
        - Includes rate limiting logic (for Google Free-Tier utilization).
     4. **Response output ETL & Validation:** parses JSON responses, validates safety, 
@@ -241,7 +241,7 @@ class RunIDFilter(logging.Filter):
 def short_uuid(n=8) -> str:
     """
     Generates a concise, random alphanumeric identifier based on UUID4.
-    This is used to create readable unique IDs for pipeline runs, batches, and jobs
+    This is used to create readable unique IDs for pipeline runs, batches, and calls
     where a full 32-character UUID would be too verbose for filenames or logs.
 
     Args:
@@ -782,7 +782,7 @@ def extract_json_from_response(text: str, logger = None) -> List[Dict[str, Any]]
 # compile the Strategy (pipeline run) metadata
 def create_strategy_batch_metadata(pipeline_run_id: str,  # Level 1 (pipeline run) full script
                                    batch_id: str,         # Level 2 (strategy) question type batch
-                                   job_id: str,           # Level 3 (job) api call
+                                   call_id: str,           # Level 3 (call) api call
                                    run_timestamp: str, 
                                    strategy: dict,
                                    source_filenames: List[str]) -> dict:
@@ -795,12 +795,12 @@ def create_strategy_batch_metadata(pipeline_run_id: str,  # Level 1 (pipeline ru
             "pipeline_name" : PIPELINE_ID,
             "pipeline_run_id": pipeline_run_id,     # Run: [parent] full script run
             "batch_id": batch_id,                   # Strategy: [group] question type batch 
-            "job_id": job_id                        # Job: [child] specific API call
+            "call_id": call_id,                     # Call: [child] specific API call
         },
         "timestamp": run_timestamp,                 # pipeline run timestamp
         # context
         "generation_strategy_version": GEN_STRATEGY_VERSION,  # static config version
-        "source_files": ", ".join(source_filenames),   # job level
+        "source_files": ", ".join(source_filenames),   # call level
         "question_type": strategy.get('file_prefix'),
         "prompt_id": strategy['prompt_id'],  
         "model_name": strategy['model_name'],
@@ -845,7 +845,7 @@ def calculate_token_metrics(response,
                             template_token_count: int) -> dict:
     """
     Response processing layer 2: accounting. Records a granular token breakdown
-    for one LLM call in `full_metadata["job_token_breakdown"]` and returns the
+    for one LLM call in `full_metadata["call_token_breakdown"]` and returns the
     headline counts. Shared by generation and enrichment passes.
 
     Input tokens are split into two parts, because every prompt in this pipeline
@@ -963,7 +963,7 @@ def write_quarantine(entries: list[QuarantineEntry], run_id: str, llm_pass: str,
     logger.warning("Quarantined %d records to %s", len(entries), output_file)
 
 # response output helper: parse output and json output from the API call (helper)
-def process_and_save_response(run_id: str, batch_id: str, job_id: str, llm_pass: str,
+def process_and_save_response(run_id: str, batch_id: str, call_id: str, llm_pass: str,
                               parsed_response: List[Dict[str,Any]],
                               output_file: Path,
                               full_metadata: Dict[str,Any],
@@ -971,7 +971,7 @@ def process_and_save_response(run_id: str, batch_id: str, job_id: str, llm_pass:
                               logger,
                               ) -> Tuple[List[DraftQuestion], List[QuarantineEntry], int]:
     """
-    Response processing layer 3: core logic. Adds run/job metadata to each parsed
+    Response processing layer 3: core logic. Adds run/call metadata to each parsed
     question (ids, model, prompt and pipeline versions), and saves each record to disk.
 
     Single candidate by design: tested candidate_count > 1 for variety;
@@ -984,9 +984,9 @@ def process_and_save_response(run_id: str, batch_id: str, job_id: str, llm_pass:
         the response (before dto construction).
     
     # TODO (refactor): run_id / batch_id / call_id duplicate full_metadata["identifiers"]
-    # (pipeline_run_id, batch_id, job_id) — two sources for the same IDs. Keep
+    # (pipeline_run_id, batch_id, call_id) — two sources for the same IDs. Keep
     # full_metadata as the single source (needed for stamping anyway) and drop the
-    # separate parameters; settle job_id vs call_id naming at the same time.
+    # separate parameters.
     """
     draft_questions = []
     quarantine = []
@@ -1000,16 +1000,16 @@ def process_and_save_response(run_id: str, batch_id: str, job_id: str, llm_pass:
             # write question data with full metadata to file (make sure they are standalone)
             for q_idx, question_data in enumerate(parsed_response):
                 # 0. Generate Deterministic ID
-                # Format: {run_id}_{batch_id}_{job_id}_{candidate_index}_{question_index}
-                # Example: "run20251224_x9z_batch_MCQ_Generation_a7b2_job_e5f6_0_0" 
+                # Format: {run_id}_{batch_id}_{call_id}_{question_index}
+                # Example: "run20251224_x9z_batch_MCQ_Generation_a7b2_call_e5f6_0_0" 
                 # -> long for data quality tracking
-                unique_id = f"{run_id}_{batch_id}_{job_id}_{q_idx}"
+                unique_id = f"{run_id}_{batch_id}_{call_id}_{q_idx}"
 
                 # 1. Identity: track exactly where the question came from
                 question_data['syn_id'] = unique_id
                 question_data['question_source'] = QuestionSource.SYNTHETIC.value
 
-                # 2. Context: inject the full run/job metadata
+                # 2. Context: inject the full run/call metadata
                 question_data['generation_model'] = full_metadata.get('model_name')
                 question_data['timestamp'] = full_metadata.get('timestamp')
                 question_data['generation_prompt_version'] = full_metadata.get('prompt_id')
@@ -1031,7 +1031,7 @@ def process_and_save_response(run_id: str, batch_id: str, job_id: str, llm_pass:
                 except ValidationError as e:
                     entry = build_quarantine_entry(
                         run_id = run_id,
-                        call_id = job_id,
+                        call_id = call_id,
                         question_type = full_metadata['question_type'],
                         llm_pass = llm_pass,
                         error= e,
@@ -1045,14 +1045,14 @@ def process_and_save_response(run_id: str, batch_id: str, job_id: str, llm_pass:
 
     # Specific error handling
     except (json.JSONDecodeError, KeyError, TypeError, AttributeError) as e:
-        logger.error("[job id: %s] Data Error processing Response: %s", job_id, e)
+        logger.error("[call id: %s] Data Error processing Response: %s", call_id, e)
 
     except OSError as e:
-        logger.error("[job id: %s] File System Error saving Response: %s", job_id, e)
+        logger.error("[call id: %s] File System Error saving Response: %s", call_id, e)
 
     except Exception as e:  # pylint: disable=broad-exception-caught
-        logger.error("[job id: %s] 💥 Critical Unexpected Error on Response: %s",
-                        job_id, e)
+        logger.error("[call id: %s] 💥 Critical Unexpected Error on Response: %s",
+                        call_id, e)
 
     return draft_questions, quarantine, generated
 
@@ -1498,19 +1498,19 @@ def generate_questions_pipeline(target_books: List[Book],
         template_token_count = measure_template_tokens(config['model_name'],
                                                            config['prompt_file'])
 
-        # CIRCUIT BREAKER: abort this strategy (q type) if too many jobs fail in a row
+        # CIRCUIT BREAKER: abort this strategy (q type) if too many calls fail in a row
         # Scope: counter is per-strategy (resets between question types) and resets
-        # on any successful job. 
+        # on any successful call. 
         # > Initialize count for consecutive failures
         consecutive_failures = 0
 
-        ## C. CHAPTER LOOP (JOB LEVEL)
-        #     job / call = one API call over a chapter-chunk.
+        ## C. CHAPTER LOOP (CALL LEVEL)
+        #     call = one API call over a chapter-chunk.
         #     Loop through batch_size number of chapters per loop (default = 2)
         for i, chapter_batch in enumerate(chunk_list(chapter_file_paths, batch_size)):
             # C.0: pacing (safe time delay for RPM limits) - sleep before each call except the first
             # TODO (pacing): only paces WITHIN a strategy — `i` resets per question type,
-            # so the first job of each strategy fires straight after the previous
+            # so the first call of each strategy fires straight after the previous
             # strategy's last call (with measure_template_tokens in that gap too).
             # Limits are per-key across all calls: loop position ≠ time since last call.
             # Proper fix: elapsed-time pacing at every call site. Low priority at 10 RPM.
@@ -1528,14 +1528,14 @@ def generate_questions_pipeline(target_books: List[Book],
                 break
 
             # C.2: Initialize at call level
-            job_id = f"job_{short_uuid()}"
+            call_id = f"call_{short_uuid()}"
             # Extract names for metadata (since chapter_batch is a list of Paths)
             first_chap = chapter_batch[0].stem  # chapter ref in output filename and logging
             source_files=[p.name for p in chapter_batch]
             output_file = output_dir / f"{run_id}_{config['file_prefix']}_{first_chap}.jsonl"
             # Call entry = record of one API call; fields common to happy + failure branches
             call_entry_ctx = {
-                'call_id' : job_id,
+                'call_id' : call_id,
                 'question_type' : question_type,
                 'model' : config["model_name"],
                 'prompt_version' : config["prompt_id"],
@@ -1547,7 +1547,7 @@ def generate_questions_pipeline(target_books: List[Book],
             # quarantine common entries
             quarantine_entry_ctx = {
                 'run_id' : run_id,
-                'call_id': job_id,
+                'call_id': call_id,
                 'question_type' : question_type,
                 'llm_pass' : llm_pass,
                 'record_ids' : None, # call level failures happen before DTO construction = no id.
@@ -1556,9 +1556,9 @@ def generate_questions_pipeline(target_books: List[Book],
             # C.3: prepare prompt (fill in template)
             final_prompt = prepare_prompt(chapter_batch,config['prompt_file'])
 
-            # C.4: generate the full meta_data dict for job
+            # C.4: generate the full meta_data dict for call
             full_metadata = create_strategy_batch_metadata(run_id, batch_id,
-                                                            job_id, run_timestamp,
+                                                            call_id, run_timestamp,
                                                             config, source_files)
             try:
                 # C.5: Make the API call
@@ -1616,8 +1616,8 @@ def generate_questions_pipeline(target_books: List[Book],
                                 failure_mode = failure_mode,
                             )
                 logger.warning(
-                    "job_id %s (%s): no usable content — feedback=%s finish_reason=%s",
-                     job_id, question_type, prompt_feedback, finish_reason,
+                    "call id %s (%s): no usable content — feedback=%s finish_reason=%s",
+                     call_id, question_type, prompt_feedback, finish_reason,
                      )
                 append_jsonl(call_entry, calls_file)
                 consecutive_failures += 1
@@ -1645,8 +1645,8 @@ def generate_questions_pipeline(target_books: List[Book],
                                 failure_mode = failure_mode,
                                 )
                 reason = "not valid JSON" if isinstance(e,json.JSONDecodeError) else "wrong shape"
-                logger.warning("job_id %s (%s): response unparseable (%s) — %s",
-                                           job_id, question_type, reason, e)
+                logger.warning("call id %s (%s): response unparseable (%s) — %s",
+                                           call_id, question_type, reason, e)
                 append_jsonl(call_entry, calls_file)
                 consecutive_failures += 1
                 continue
@@ -1669,15 +1669,15 @@ def generate_questions_pipeline(target_books: List[Book],
                                 tokens = token_breakdown,
                                 failure_mode = failure_mode,
                                 )
-                logger.warning("Job %s (%s): response was a valid JSON with zero responses",
-                                            job_id, question_type)
+                logger.warning("call id %s (%s): response was a valid JSON with zero responses",
+                                            call_id, question_type)
                 append_jsonl(call_entry, calls_file)
                 consecutive_failures += 1
                 continue
 
             # C.6: save the parsed questions
             draft_questions, batch_quarantined, generated = process_and_save_response(
-                run_id, batch_id, job_id,
+                run_id, batch_id, call_id,
                 llm_pass,
                 parsed_response,
                 output_file,
@@ -1692,10 +1692,10 @@ def generate_questions_pipeline(target_books: List[Book],
             # check for an unexpected exception or skip in process_and_save_response.
             if generated != written + rejected:
                 logger.error(
-                "Call %s (%s): record accounting broken, generated %d != written %d + rejected %d "
+                "call id %s (%s): record accounting broken, generated %d != written %d + rejected %d "
                 "(%d unaccounted). A record left the loop without being written or quarantined; "
                 "check for an unexpected exception or skip in process_and_save_response.",
-                job_id, question_type, generated, written, rejected,
+                call_id, question_type, generated, written, rejected,
                 generated - (written + rejected),
                 )
 
@@ -1725,13 +1725,13 @@ def generate_questions_pipeline(target_books: List[Book],
                 call_entry.all_rejected = False
                 if rejection_rate >= REJECTION_RATE_THRESHOLD:
                     logger.warning(
-                    "Call %s (%s): high rejection rate %.0f%% (%d/%d records rejected, threshold %.0f%%). "
+                    "call id %s (%s): high rejection rate %.0f%% (%d/%d records rejected, threshold %.0f%%). "
                     "Call succeeded but a high share of output failed DTO validation; check dto_construction "
                     "entries in the quarantine file for this call_id.",
-                    job_id, question_type, rejection_rate * 100, rejected,
+                    call_id, question_type, rejection_rate * 100, rejected,
                     generated, REJECTION_RATE_THRESHOLD * 100,)
-                logger.info("✅ [job id: %s] Saved %s questions. Total tokens: %s",
-                                            job_id, written,
+                logger.info("✅ [call id: %s] Saved %s questions. Total tokens: %s",
+                                            call_id, written,
                                             call_entry.tokens['5_total_billed'])
 
             else:
@@ -1739,12 +1739,12 @@ def generate_questions_pipeline(target_books: List[Book],
                 # every parsed record failed DTO validation (rejected); tokens spent, nothing saved
                 call_entry.all_rejected = True
                 consecutive_failures += 1
-                logger.warning("⚠️ [job id: %s] 0 questions saved. Tokens wasted: %s",
-                                                                job_id,
+                logger.warning("⚠️ [call id: %s] 0 questions saved. Tokens wasted: %s",
+                                                                call_id,
                                                                 call_entry.tokens['5_total_billed'])
             # Step 4: write call entry to file (call.jsonl)
             append_jsonl(call_entry, calls_file)     
-            # collect draft questions from the job into run-level list
+            # collect draft questions from the call into run-level list
             all_draft_questions.extend(draft_questions)
 
     ## D: WRAP-UP

@@ -524,8 +524,7 @@ def enrich_with_llm_cols(run_id: str,
                             failure_mode=failure_mode,
                         )
             append_jsonl(call_entry, calls_file)
-            logger.error("Error occurred while making API call for batch %d of type %s: %s", 
-                         batch_index, question_type, str(e))
+            logger.error("[call id: %s] API call failed: %s", call_id, e)
             continue
         # in case the response is empty or blocked
         usable, finish_reason, prompt_feedback = check_response_usable(response)
@@ -551,11 +550,11 @@ def enrich_with_llm_cols(run_id: str,
                         )
             append_jsonl(call_entry, calls_file)
             logger.warning(
-                "Batch %d (%s): no usable content — feedback=%s finish_reason=%s",
-                batch_index, question_type, prompt_feedback, finish_reason,
+                "[call id: %s] no usable content — feedback=%s finish_reason=%s",
+                call_id, prompt_feedback, finish_reason,
                 )
             continue
-                        
+
         # 2.4. parse response into dict
         try:
             parsed_responses = extract_json_from_response(response.text, logger)
@@ -582,8 +581,8 @@ def enrich_with_llm_cols(run_id: str,
             )
             append_jsonl(call_entry, calls_file)
             reason = "not valid JSON" if isinstance(e, json.JSONDecodeError) else "wrong shape"
-            logger.warning("Batch %d (%s) response unparseable (%s) — %s",
-                           batch_index, question_type, reason, e)
+            logger.warning("[call id: %s] response unparseable (%s) — %s",
+                           call_id, reason, e)
             continue
 
         # the response is a valid json but empty (no records)
@@ -607,8 +606,8 @@ def enrich_with_llm_cols(run_id: str,
                 failure_mode=failure_mode,
             )
             append_jsonl(call_entry, calls_file)
-            logger.warning("Batch %d (%s): response was a valid JSON with zero responses",
-                            batch_index, question_type)
+            logger.warning("[call id: %s] response was a valid JSON with zero records",
+                           call_id,)
             continue      
 
         # 2.5.reconcile: all sent qids returned? no unexpected qids?
@@ -642,7 +641,8 @@ def enrich_with_llm_cols(run_id: str,
                 failure_mode=FailureMode.ID_MISMATCH,
             )
             append_jsonl(call_entry, calls_file)
-            logger.warning("Batch %d (%s): id mismatch — %s", batch_index, question_type, error_message)
+            logger.warning("[call id: %s] id mismatch — %s",
+                           call_id, error_message)
             continue
 
         # 2.6. match response to existing record - combine and parse into output DTO
@@ -661,11 +661,11 @@ def enrich_with_llm_cols(run_id: str,
         batch_failure_rate = len(batch_quarantined)/len(parsed_responses) if parsed_responses else 0
         if batch_failure_rate > configuration["max_batch_failure_rate"]:
             logger.warning(
-                "Batch %d (%s): %.1f%% structural failure rate exceeds %.1f%% limit (%d/%d)",
-                batch_index, question_type, batch_failure_rate * 100,
+                "[call id: %s] %.1f%% structural failure rate exceeds %.1f%% limit (%d/%d)",
+                call_id, batch_failure_rate * 100,
                 configuration["max_batch_failure_rate"] * 100,
                 len(batch_quarantined), len(parsed_responses),
-            )
+                )
 
         # 2.7.save response as jsonl for recovery / testing / legacy later
         #   2.7.1. write checkpoint file with enrichment results
