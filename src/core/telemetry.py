@@ -99,7 +99,8 @@ class GenerationCallEntry(CallEntry):
     # run can cover fewer chapters than it has excerpt file
     chapter_count: int
     source_files: list[str]
-            
+    records_generated: int | None = None   # records parsed from response, before DTO construction
+
 class EnrichmentCallEntry(CallEntry):
     """
     One API call in an enrichment pass.

@@ -1087,6 +1087,61 @@ def estimate_run_cost(run_receipt: Path) -> float:
 
     return 0.0
 
+# helpers for save_run_completion task
+def _aggregate_generation(ok_calls: list[dict], quarantine_totals: Counter) -> dict:
+    """Generation identity (invariant): generated = written + rejected (no input set)."""
+    generated = sum(c.get("records_generated") or 0 for c in ok_calls)
+    written = sum(c["records_written"] for c in ok_calls)
+    rejected = sum(quarantine_totals.values())
+    return {
+        "records_generated": generated,
+        "records_sent": None,
+        "records_written": written,
+        "records_rejected": rejected,
+        "batch_loss_count": None,
+        "batch_loss_by_cause": None,
+        "record_accounting_consistent": generated == written + rejected,
+        "rejection_rate": rejected / generated if generated else None,
+    }
+
+def _aggregate_enrichment(calls: list[dict], ok_calls: list[dict]) -> dict:
+    """Enrichment identity (invariant): sent = written + rejected + batch_loss_count."""
+    batch_loss_by_cause = Counter()
+    for c in calls:
+        if c["failure_mode"]:
+            batch_loss_by_cause[c["failure_mode"]] += c.get("records_sent", 0)
+    batch_loss = sum(batch_loss_by_cause.values())
+    sent = sum(c.get("records_sent", 0) for c in calls)
+    written = sum(c["records_written"] for c in ok_calls)
+    rejected = sum(c["records_sent"] - c["records_written"] for c in ok_calls)
+    returned = sent - batch_loss          # records that came back = written + rejected
+    return {
+        "records_generated": None,
+        "records_sent": sent,
+        "records_written": written,
+        "records_rejected": rejected,
+        "batch_loss_count": batch_loss,
+        "batch_loss_by_cause": dict(batch_loss_by_cause),
+        "record_accounting_consistent": sent == written + rejected + batch_loss,
+        "rejection_rate": rejected / returned if returned else None,
+    }
+
+def _by_question_type(calls: list[dict], is_generation: bool) -> dict:
+    """Per question type: calls, failed, (generated), written, rejected."""
+    by_type = {}
+    for c in calls:
+        t = by_type.setdefault(c["question_type"], Counter())
+        t["calls"] += 1
+        if c["failure_mode"]:
+            t["failed"] += 1
+            continue
+        t["written"] += c["records_written"]
+        t["rejected"] += sum((c.get("quarantined") or {}).values())
+        if is_generation:
+            t["generated"] += c.get("records_generated") or 0
+    return {k: dict(v) for k, v in by_type.items()}
+
+# run level summary of calls and records + checking invariant identities.
 @task
 def save_run_completion(pipeline_id: str, run_id: str, llm_pass: str, status: str,
                         calls_file: Path, runs_dir:Path) -> Path:
@@ -1099,9 +1154,12 @@ def save_run_completion(pipeline_id: str, run_id: str, llm_pass: str, status: st
     Full run-level traceability / reproducibility: 
     - run_manifest (what was planned, written before execution)
     - questions jsonl (the DTOs produced, one record per line)
+    - quarantine jsonl (one entry per failed call or rejected record)
     - calls jsonl (one accounting line per API call)
     - run_receipt *here* (summary of one LLM pass: settings, totals,
-        status)      
+        status)
+    - log file (narrative of the run, per call)
+    - run report (derived view of the receipt; not a source of record)          
     
     Each LLM pass within a run produces a receipt (e.g. generation, lexical
     enrichment, semantic enrichment). All passes of a run share a run_id, 
@@ -1119,16 +1177,30 @@ def save_run_completion(pipeline_id: str, run_id: str, llm_pass: str, status: st
     fields added after the first format are read with `.get()`, fields present
     from the start with `[]`, where a missing key is a bug.
     
-    Record accounting: record `sent` is an invariant
-    - all records are sent to the model
-    - `sent = written + rejected + batch_loss_count`
-    where:
-        - written: accepted records written to checkpoint jsonl (happy path)
-        - rejected: failed validation by `dto_construction`, single record.
-        - batch_loss_count: failure where entire call batch is quarantined (i.e.
-          transport, no_candidates, unparsable, id_mismatch)
-    Note: Generation is a special case where chapters are sent and questions generated. 
-          in that case - only failed calls are reported.      
+    Two failure groups, counted separately because they point to different fixes:
+    - Group 1, failed calls (call level): no records came back (transport,
+      no_candidates, unparseable, empty_result, id_mismatch failure modes). Each
+      writes one quarantine-file entry (the evidence) and is counted in `failed_calls`
+      by mode. Points at the API, quota or response format.
+    - Group 2, rejected records (record level): the call succeeded but individual
+      records failed DTO construction. Each writes one quarantine-file entry and is
+      counted in the call entry's `quarantined` (summed here by cause). Points at
+      the prompt or the DTO.
+    NB the quarantine *file* holds both groups; the `quarantined` *counts* are
+    record level only (None on failed calls).
+
+    Record accounting (one identity per pass, built from the quantity each pass knows):
+    - generation — no input set; the model decides the yield:
+        records_generated = records_written + records_rejected
+      A failed call loses no records (none existed yet); it shows in failed_calls.
+    - enrichment — a known input set is sent:
+        records_sent = records_written + records_rejected + batch_loss_count
+      batch_loss_count = records sent on calls that failed (group 1).
+    Computed by `_aggregate_generation` / `_aggregate_enrichment` (pure functions:
+    call entries in, accounting fields out; both return the same keys, None where
+    a key doesn't apply). `record_accounting_consistent` cross-checks the saved
+    call entries against the identity; the flow separately compares these saved
+    totals with its in-memory totals.     
 
     Args:
         pipeline_id: Versioned identifier for the pipeline code that ran.
@@ -1141,7 +1213,8 @@ def save_run_completion(pipeline_id: str, run_id: str, llm_pass: str, status: st
         file_path for run receipt         
     """
     logger = get_run_logger()
-    
+    is_generation = llm_pass == LLM_PASS_GEN
+
     # read the call entries this run appended during execution
     # A run that made no successful calls leaves no calls file — a circuit-breaker
     # abort, or every call raising. That is a legitimate failed run and still gets
@@ -1158,49 +1231,20 @@ def save_run_completion(pipeline_id: str, run_id: str, llm_pass: str, status: st
             token_totals[key] = token_totals.get(key, 0) + value
 
     # Calculate the total number of records quarantined within the LLM pass
-    # by failure cause - NOTE: currently will be empty for generation pass
-    quarantine_totals = {}
+    # by failure cause
+    quarantine_totals = Counter()
     for c in calls:
-        for failure_mode, count in (c.get('quarantined') or {}).items():
-            # Quarantine is enrichment-only: GenerationCallEntry has no `quarantined`
-            # field, so .get() here is the shared function serving two entry shapes.
-            quarantine_totals[failure_mode] = quarantine_totals.get(failure_mode,0) + count
+        # # None on failed calls; "or {}" skips them and not reported by Counter
+        quarantine_totals.update(c.get("quarantined") or {})
+    failed_calls = Counter(c["failure_mode"] for c in calls if c["failure_mode"])
+    ok_calls = [c for c in calls if not c["failure_mode"]]
 
-    # Record accounting.Aggregate call entry counts across successful and quarantined runs 
+    # Record accounting. Aggregate call entry counts across successful and failed calls 
     # for troubleshooting
-    #   - Only enrichment sends records.
-    #   - In generation runs, send chaptersand model decides how many questions come back
-    #     so sent/rejected do not apply, therefore GenerationCallEntry has no records_sent field.
-    sent_applies = any("records_sent" in c for c in calls)
-    sent = written = rejected = batch_loss_count = 0
-
-    # record batch failures by type within a run | number of calls failed by cause within a run
-    batch_loss_by_cause, failed_calls = Counter(), Counter()
-
-    # aggregate sent, written, rejected, batch_loss
-    for c in calls:
-        # failed call: whole batch counts as sent and lost.
-        if c["failure_mode"]:
-            batch_loss_count += c.get('records_sent',0)
-            batch_loss_by_cause[c['failure_mode']]+=c.get('records_sent',0)
-            failed_calls[c['failure_mode']]+=1
-            sent += c.get('records_sent',0)
-            continue
-
-        # correct, accepted record
-        written += c["records_written"]
-
-        if 'records_sent' in c:
-            sent += c["records_sent"]
-            # failed validation with pydantic dto_construction
-            rejected += c["records_sent"] - c["records_written"]
-
-    # check and warn if accounting doesn't match
-    if sent_applies and sent != written + rejected + batch_loss_count:
-        logger.warning(
-            "Record accounting mismatch: sent=%d != written=%d + rejected=%d + batch_loss_count=%d",
-            sent, written, rejected, batch_loss_count,
-        )
+    accounting = (_aggregate_generation(ok_calls, quarantine_totals) if is_generation
+                  else _aggregate_enrichment(calls, ok_calls))
+    if not accounting["record_accounting_consistent"]:
+        logger.warning("Record accounting mismatch (%s): %s", llm_pass, accounting)
 
     # create run reciept         
     completion_data = {
@@ -1214,25 +1258,22 @@ def save_run_completion(pipeline_id: str, run_id: str, llm_pass: str, status: st
             "api_calls": len(calls),
             "strategies_run": sorted({c["question_type"] for c in calls}),
             "models_used": sorted({c["model"] for c in calls}),
-            # chapters will only apply to generation pass, will be 0 for enrichment
+            # chapters apply to generation only; None for enrichment
             "chapters_processed": (
-                sum(c["chapter_count"] for c in calls if "chapter_count" in c)
-                if any("chapter_count" in c for c in calls) else None
+                sum(c.get("chapter_count", 0) for c in calls) if is_generation else None
             ),
             # output keys unchanged for now; renamed with the rest when the
             # receipt becomes a model (see core/telemetry.py)
             "tokens": token_totals,
-            "quarantined": quarantine_totals,
-            "record_accounting_consistent": (
-                sent == written + rejected + batch_loss_count
-                if sent_applies
-                else None),
-            "records_sent": sent if sent_applies else None,
-            "records_written": written,
-            "records_rejected": rejected if sent_applies else None,
+            "quarantined": dict(quarantine_totals),  # Counter obj -> dict
             "failed_calls": dict(failed_calls),
-            "batch_loss_count": batch_loss_count if sent_applies else None,
-            "batch_loss_by_cause": dict(batch_loss_by_cause) if sent_applies else None,          
+            "calls_failed": sum(failed_calls.values()),
+            "all_rejected_calls": sum(1 for c in ok_calls if c.get("all_rejected")),
+            "by_question_type": _by_question_type(calls, is_generation),
+            # pass-specific accounting (same keys for both passes; None where a
+            # key doesn't apply): records_generated/sent/written/rejected,
+            # batch_loss_*, rejection_rate, record_accounting_consistent
+            **accounting,
         },
     }
 
@@ -1253,6 +1294,20 @@ def render_markdown_rows(rows:List[Tuple[str,Any]]) -> str:
     one row of many. The caller supplies the header and separator.
     """
     return "\n".join(f"| **{label}** | {value}" for label, value in rows)
+
+# create a full markdown table (header + separator + rows) for multi-column data
+def render_markdown_table(headers: List[str], rows: List[List[Any]]) -> str:
+    """
+    Render a multi-column markdown table, header and separator included.
+
+    Companion to `render_markdown_rows` (label/value pairs): use this when each
+    row has several columns, e.g. the per-question-type breakdown. The first
+    column is left-aligned (labels), the rest right-aligned (counts).
+    """
+    head = "| " + " | ".join(headers) + " |"
+    sep = "|:---|" + "---:|" * (len(headers) - 1)
+    body = "\n".join("| " + " | ".join(str(v) for v in row) + " |" for row in rows)
+    return "\n".join([head, sep, body])
 
 def format_counts(counts: dict | None) -> str:
     """Format a count dict as 'key: n, key: n' for the report; 'none' if empty or None."""
@@ -1306,26 +1361,44 @@ def create_run_report(receipt_path: Path, output_root: Path):
     if actuals["chapters_processed"]:
         global_metrics.append(("Chapters Processed", actuals["chapters_processed"]))
 
-    metric_rows_llm_pass = [
+    gen = actuals.get("records_generated") is not None
+    rate = actuals.get("rejection_rate")
+
+    summary_rows = [
         ('API calls (total)', actuals['api_calls']),
-        ('Failed API calls', format_counts(actuals['failed_calls'])),
-        ('Input tokens', f"{tokens.get('1_input_template', 0) + tokens.get('2_input_payload',0):,}"),
-        ('Output tokens', f"{tokens.get('4_output_candidates',0):,}"),
-        ('Thinking tokens', f"{tokens.get('6_thinking_actual',0):,}"),
-        ('Total tokens',  f"**{tokens.get('5_total_billed',0):,}**"),
+        ('Calls failed', actuals['calls_failed']),
         ('Questions saved', f"**{actuals['records_written']}**"),
-        ('Quarantined', format_counts(actuals.get("quarantined"))),
+        ('Input tokens', f"{tokens.get('1_input_template', 0) + tokens.get('2_input_payload', 0):,}"),
+        ('Output tokens', f"{tokens.get('4_output_candidates', 0):,}"),
+        ('Thinking tokens', f"{tokens.get('6_thinking_actual', 0):,}"),
+        ('Total tokens', f"**{tokens.get('5_total_billed', 0):,}**"),
     ]
-    # sent/rejected/batch loss only apply where records were sent — generation
-    # sends chapters and the model decides the yield, so these are None.
-    if actuals.get("records_sent") is not None:
-        metric_rows_llm_pass.extend([
-            ('Records sent', actuals["records_sent"]),
-            ('Records rejected', actuals["records_rejected"]),
-            ('Batch loss count', actuals["batch_loss_count"]),
-            ('Batch loss count by cause', format_counts(actuals["batch_loss_by_cause"])),
-            ('Record accounting consistent', actuals["record_accounting_consistent"])
-        ])
+    failure_rows = [('Failed calls by mode', format_counts(actuals['failed_calls']))]
+    if not gen:
+        failure_rows += [
+            ('Batch loss count', actuals['batch_loss_count']),
+            ('Batch loss by cause', format_counts(actuals['batch_loss_by_cause'])),
+        ]
+    rejection_rows = [
+        ('Records generated' if gen else 'Records sent',
+         actuals['records_generated'] if gen else actuals['records_sent']),
+        ('Records written', actuals['records_written']),
+        ('Records rejected', actuals['records_rejected']),
+        ('Rejected by cause', format_counts(actuals['quarantined'])),
+        ('Rejection rate', f"{rate:.0%}" if rate is not None else "n/a"),
+        ('All-rejected calls', actuals['all_rejected_calls']),
+        ('Record accounting consistent', actuals['record_accounting_consistent']),
+    ]
+
+    type_headers = (["Type", "Calls", "Failed"]
+                    + (["Generated"] if gen else [])
+                    + ["Written", "Rejected"])
+    type_rows = [
+        [t, v.get("calls", 0), v.get("failed", 0)]
+        + ([v.get("generated", 0)] if gen else [])
+        + [v.get("written", 0), v.get("rejected", 0)]
+        for t, v in sorted(actuals["by_question_type"].items())
+    ]
 
     report = f"""
 # 🧙‍♂️ Harry Potter Trivia: {llm_pass.replace("_", " ").title()} Pass Report
@@ -1334,11 +1407,27 @@ def create_run_report(receipt_path: Path, output_root: Path):
 |:---|---:|
 {render_markdown_rows(global_metrics)}
 
-## 📊 Result Metrics
+## 📊 Summary
 
 | Resource | Count |
 |:---|---:|
-{render_markdown_rows(metric_rows_llm_pass)}
+{render_markdown_rows(summary_rows)}
+
+## ⛔ Failed calls (no records came back)
+
+| Metric | Value |
+|:---|---:|
+{render_markdown_rows(failure_rows)}
+
+## 🧪 Rejections (records came back, failed validation)
+
+| Metric | Value |
+|:---|---:|
+{render_markdown_rows(rejection_rows)}
+
+## 🗂️ By question type
+
+{render_markdown_table(type_headers, type_rows)}
 
 ## 📂 Output Artifacts
 Questions: `{rel}/` (filenames start with `{run_id}_`)  
@@ -1478,12 +1567,12 @@ def generate_questions_pipeline(target_books: List[Book],
     #   initialize DTO list for all questions generated in this run
     all_draft_questions: List[DraftQuestion] = [] #type: ignore
     total_questions = 0
-    total_processed = 0     # records returned by the LLM, across batches
-    total_quarantined = 0   # records quarantined, across batches
+    total_generated = 0     # records returned by the LLM, across batches
+    total_rejected = 0   # records quarantined, across batches
     # all_quarantined gathers entries across batches: one per failure *event*, not per record.
     all_quarantined = []
 
-    ## B. GENERATION STRATEGY LOOP (BATCH LEVEL):
+    ## B. GENERATION STRATEGY LOOP (STRATEGY LEVEL):
     #  B.1: Loop through the selected question types from active strategy:
     for config in active_strategy:
         # create batch identifiers
@@ -1668,6 +1757,7 @@ def generate_questions_pipeline(target_books: List[Book],
                                 **call_entry_ctx,
                                 tokens = token_breakdown,
                                 failure_mode = failure_mode,
+                                records_generated = 0,
                                 )
                 logger.warning("call id %s (%s): response was a valid JSON with zero responses",
                                             call_id, question_type)
@@ -1704,14 +1794,15 @@ def generate_questions_pipeline(target_books: List[Book],
                 **call_entry_ctx,                    # records_written=0 comes from ctx
                 tokens=token_breakdown,
                 output_file=output_file.name,
+                records_generated=generated,
                 quarantined=dict(Counter(q.failure_mode.value for q in batch_quarantined)),
             )
             call_entry.records_written = written
 
             #   quarantine records for batch and update total metrics
             all_quarantined.extend(batch_quarantined)
-            total_processed += generated
-            total_quarantined += len(batch_quarantined)
+            total_generated += generated
+            total_rejected += len(batch_quarantined)
             #   write quarantined records to jsonl for later inspection
             write_quarantine(batch_quarantined, run_id, llm_pass, runs_dir)
 
@@ -1759,7 +1850,18 @@ def generate_questions_pipeline(target_books: List[Book],
                                        status,
                                        calls_file,
                                        runs_dir)
+    # created from file (saved content)
     create_run_report(receipt_path, output_dir)
+
+    # cross check: in-memory values vs. saved for discrepency
+    actuals = json.loads(receipt_path.read_text())["actuals"]
+    if (actuals["records_generated"], actuals["records_rejected"]) != (total_generated, 
+                                                                       total_rejected):
+        logger.error("Receipt disagrees with runtime totals: saved generated=%s rejected=%s, "
+                     "runtime generated=%d rejected=%d",
+                     actuals["records_generated"], actuals["records_rejected"],
+                     total_generated, total_rejected)
+
     # completion update
     logger.info("🏁 Generation Completed: %s",run_id)
 
