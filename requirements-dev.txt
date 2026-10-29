@@ -29,7 +29,7 @@ bleach==6.2.0
 burner-redis==0.1.7
 cachetools==6.2.0
 celery==5.6.0
-certifi==2024.12.14
+certifi==2026.10.18
 cffi==2.0.0
 charset-normalizer==3.4.1
 click==8.4.2
@@ -282,7 +282,7 @@ tzlocal==5.3.1
 uncalled-for==0.3.2
 uritemplate==4.2.0
 urllib3==2.8.0
-uv==0.11.18
+uv==0.13.4
 uvicorn==0.38.0
 vine==5.1.0
 voluptuous==0.15.2
