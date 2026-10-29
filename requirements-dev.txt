@@ -80,7 +80,7 @@ flatten-dict==0.4.2
 flufl.lock==8.2.0
 fonttools==4.63.0
 frozenlist==1.5.0
-fsspec==2024.9.0
+fsspec==2026.6.0
 funcy==2.0
 gcsfs==2024.9.0.post1
 git-filter-repo==2.47.0
