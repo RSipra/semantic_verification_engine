@@ -7,7 +7,7 @@ name = "harry_potter_trivia"
 version = "0.1.0"
 description = "A Harry Potter Trivia Game with AI generation and NLP features."
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 dependencies = [
     # DEPRECATED - remove once the offline pipeline is migrated to google-genai
     # (scripts/pipelines/generate_questions/). Kept only for that pipeline.
