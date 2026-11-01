@@ -163,12 +163,11 @@ import json
 import uuid
 from collections import Counter
 from dotenv import load_dotenv
-import google.generativeai as genai
-from google.api_core import retry as api_retry
-from google.api_core import exceptions as core_exceptions
-from google.generativeai.types.helper_types import RequestOptionsDict
+from google import genai
+from google.genai import types
 from prefect import flow, task, get_run_logger #pipeline orchestrator
 from prefect.artifacts import create_markdown_artifact
+from prefect.cache_policies import NO_CACHE
 from rich.console import Console
 from rich.markdown import Markdown
 from pydantic import BaseModel, ValidationError
@@ -213,16 +212,23 @@ LLM_PASS_GEN = 'generation'
 
 # Pipeline settings (circuit breaker limit - how many failed runs before aborting pipeline)
 MAX_FAILURES = 5
+
+# Override http request options (prevent rpd saturation)
 # SDK 500 retry policy: same as SDK default but with 30s budget instead of 600s
 # See the make_api_call docstring for why.
-SDK_RETRY = api_retry.Retry(
-    initial=1.0, maximum=10.0, multiplier=1.3,
-    timeout=15.0,  
-    predicate=api_retry.if_exception_type(core_exceptions.ServiceUnavailable),
+SDK_RETRY = types.HttpRetryOptions(
+    attempts=5,
+    initial_delay=1.0,          # seconds
+    max_delay=10.0,             # seconds
+    exp_base=1.3,
+    http_status_codes=[503],
 )
-REQUEST_OPTIONS: RequestOptionsDict ={"retry": SDK_RETRY, "timeout": 60}
+HTTP_OPTIONS = types.HttpOptions(
+    timeout=60_000,             # milliseconds (60s) —> note: retry delays above are in seconds
+    retry_options=SDK_RETRY,
+)
 
-# GENERATION_STRATEGY: Predefined models for each question type (model-per-type based 
+# GENERATION_STRATEGY: Predefined models for each question type (model-per-type based
 # on experimentation) imported from src/ds_utils/ds_constants
 
 class RunIDFilter(logging.Filter):
@@ -401,8 +407,27 @@ def configure_file_logging(run_id: str, logs_dir: Path):
     return str(log_file)
 
 @task  #configure the API
-def configure_api(config_path: Path) -> None:
-    """Loads environment variables and configures the Gemini API."""
+def configure_api(config_path: Path) -> genai.Client:
+    """
+    Load the Gemini API key and create a configured client.
+
+    Reads GEMINI_API_KEY from `config_path` (.env) or, if the file is missing,
+    from system environment variables (local and cloud/CI). The client carries
+    the connection settings for every call made through it: the key and
+    HTTP_OPTIONS (per-request timeout + 503 retry policy). Request-level settings
+    that shape the output (model, temperature, response format) belong in each
+    call's GenerateContentConfig, not here.
+
+    Args:
+        config_path: path to the .env file holding GEMINI_API_KEY.
+
+    Returns:
+        genai.Client: configured client; pass it to make_api_call /
+        measure_template_tokens.
+
+    Raises:
+        ValueError: GEMINI_API_KEY not found in the file or the environment.
+    """
 
     # 1. Safety check: confirm file exists
     if not config_path.exists():
@@ -417,8 +442,10 @@ def configure_api(config_path: Path) -> None:
     if not api_key:
         raise ValueError("Error: GEMINI_API_KEY not found in the config file.")
 
-    # 4: configure api 
-    genai.configure(api_key=api_key)  # type: ignore
+    # 4: create gemini client instance: configure api and http request options
+    # HTTP_OPTIONS carries timeout + 503 retry policy 
+    client = genai.Client(api_key=api_key, http_options=HTTP_OPTIONS)
+    return client
 
 # select different dirs for book vs. thematic runs    
 def determine_target_folder(target_books: List[Book]) -> str:
@@ -583,18 +610,51 @@ def save_run_manifest(run_id: str, pipeline_id: str, active_strategy: list,
 
     get_run_logger().info("Manifest saved: %s", filename)
 
-# Get an estimate of the template's token count ONCE (cached input) at the start of run
-@task(retries=2)
-def measure_template_tokens(model_name: str, prompt_path: Path) -> int:
+# Measure the prompt template's token count once per strategy, at the start of the run
+@task(cache_policy=NO_CACHE, retries=2)
+def measure_template_tokens(client: genai.Client, model_name:str, prompt_path: Path) -> int:
     """
-    Calculates the token count of the raw prompt template (Metric 1).
-    We run this ONCE per strategy to establish the 'Cached' baseline.
+    Count the tokens in the raw prompt template (Metric 1: 1_input_template).
+
+    The template is the fixed part of every prompt for a strategy, so it is
+    measured once per strategy and used to split each call's input tokens into
+    template vs payload (chapter text). Note: templates are below Gemini's
+    implicit-caching minimum, so this fixed part is not actually cached by the
+    API.
+
+    Not Prefect-cached (cache_policy=NO_CACHE): the client input can't be hashed
+    into a cache key, and the count should always reflect the template file as
+    it is now.
+    
+    Args:
+        client: configured genai.Client (from configure_api).
+        model_name: model whose tokenizer to count with.
+        prompt_path: path to the prompt template file.
+
+    Returns:
+        int: template token count.
+    
+    Raises:
+        ValueError: if the template file is empty (a prompt problem, raised
+            before any API call).
+        ValueError: if count_tokens returns no total (an unexpected API
+            response).
+        Neither is caught by the flows: a setup failure stops the pass before
+        any generation calls are made (no tokens spent), consistent with other
+        config errors.    
     """
     # read the raw template (before formatting -> adding the chapter text, source_info etc)
     template_text = prompt_path.read_text(encoding="utf-8")
-    # ask the model to count it
-    model = genai.GenerativeModel(model_name)  # type:ignore
-    response = model.count_tokens(template_text)
+
+    # an empty template is a prompt problem: stop before any API call
+    if not template_text.strip():
+        raise ValueError(f"Prompt template is empty: {prompt_path.name}")
+
+    # use API's tokenizer for count
+    response = client.models.count_tokens(model=model_name,
+                                          contents=template_text)
+    if response.total_tokens is None:
+        raise ValueError(f"count_tokens returned no total for {prompt_path.name}")
 
     return response.total_tokens
 
@@ -668,22 +728,35 @@ def prepare_prompt(chapter_path: List[Path], prompt_path:Path) -> str:
 
 # To handle the 429 error caused by time sliding window (exceeding RPM limit for free-tier) 
 # -> pipeline retries with larger delays.
-@task(retries=3, retry_delay_seconds=[60, 120, 300])
-def make_api_call(final_prompt:str, config: dict):
+@task(cache_policy=NO_CACHE, retries=3, retry_delay_seconds=[60, 120, 300])
+def make_api_call(client: genai.Client,
+                  final_prompt:str,
+                  config: dict) -> types.GenerateContentResponse:
     """
     Calls Gemini with built-in retries and specific generation parameters.
     
-    Retry policy (2026-09-24): 
+    Retry policy (updated for google-genai, 2026-11): 
     --------------------------
-    google-api-core's default retry on generate_content(503 only,
-    deadline=600s, backoff capped at 10s, full jitter) makes ~120 requests
-    per call during a 503 burst (~12 RPM, matching the 13 RPM observed
-    on the dashboard). Stacked under Prefect retries, a burst used 422/500 RPD.
-    Capped at timeout=15s: measured 8 attempts in 13.3s via probe_api --offline.
-    Worst case with Prefect retries=3 is ~32 requests per task.
-    Do not raise either without rerunning the probe.
+    Two layers:
+    - SDK (client HTTP_OPTIONS, see configure_api): retries 503 only, 5 attempts,
+      1s initial / x1.3 / 10s max backoff + jitter (~6–9 s of waiting), per-request
+      timeout 60 s. Handles short transient blips.
+    - Prefect (this decorator): retries=3 with 60/120/300 s delays. Handles 429
+      (free-tier RPM sliding window) and longer outages.
+    Worst case = 5 SDK requests × 4 Prefect tries = 20 requests per task
+    (measured 2026-11-01 via probe_api --offline: 5 attempts in 8.6 s of
+    backoff; real 503s add server latency per attempt).     
+    History: the old google-api-core default
+    retry made ~120 requests per call in a 503 burst and used 422/500 RPD; it was
+    capped at 15 s (8 attempts in 13.3 s) — numbers measured on the old SDK.
+    Do not raise either layer without rerunning the probe.
+    
+    Not cached (cache_policy=NO_CACHE): every call must reach the model, since a
+    reused result would skip generation while call entries and tokens assume a
+    real call. The client input also can't be hashed into a Prefect cache key.
     
     Args:
+        client: configured genai.Client (from configure_api)
         final_prompt: The finalized prompt string
         config: A dictionary containing 'model_name', 'temperature', etc.
     
@@ -703,28 +776,25 @@ def make_api_call(final_prompt:str, config: dict):
     model_name = config.get('model_name')
     if not model_name:
         raise ValueError("Configuration missing required key: 'model_name'")
-    # create model instance
-    model = genai.GenerativeModel(model_name)  # type: ignore
 
-    # 2. Create Generation Config
-    gen_config = genai.GenerationConfig(  # type: ignore
+    # 2. Build the request config (settings that shape the output)
+    gen_config = types.GenerateContentConfig(
         temperature=config.get('temperature', 0.7),
         top_p=config.get('top_p', 0.95),
         max_output_tokens=config.get('max_output_tokens', 12000),
-        candidate_count=config.get('candidate_count', 1),
-        response_mime_type="application/json"
+        response_mime_type="application/json",
     )
-  
     # 3. Call API
     try:
-        response = model.generate_content(
-            final_prompt,
-            generation_config=gen_config,
-            request_options= REQUEST_OPTIONS)
-        return response
+        response = client.models.generate_content(
+            model=model_name,
+            contents=final_prompt,
+            config=gen_config
+        )
     except Exception as e:
         logger.error("API Call failed for %s: %s", model_name, e)
-        raise e
+        raise
+    return response
 
 # helper to parse the json output from the API response object
 def extract_json_from_response(text: str, logger = None) -> List[Dict[str, Any]]:
@@ -821,7 +891,8 @@ def check_response_usable(response):
 
     Four states are considered for response (3 of them are unusable):
     - no candidate (prompt blocked), 
-    - a candidate finishing on SAFETY (output blocked),
+    - a candidate whose finish reason isn’t STOP/MAX_TOKENS (output blocked:
+      SAFETY, RECITATION, … etc),
     - a candidate with no parts (empty for another reason), or
     - usable.
 
@@ -829,14 +900,24 @@ def check_response_usable(response):
         (usable, finish_reason, prompt_feedback). finish_reason is None when no
         candidate exists; prompt_feedback is None when the provider sent none.
     """
+    # Finish reasons that can carry a usable answer. STOP = normal; MAX_TOKENS =
+    # truncated — passed on so the parser classifies it (unparseable, with
+    # finish_reason recording the truncation). Anything else (SAFETY, RECITATION,
+    # BLOCKLIST, OTHER, unknown future values…) is treated as blocked/empty here.
+    USABLE_FINISH_REASONS = {"STOP", "MAX_TOKENS"}
+
     candidate = response.candidates[0] if response.candidates else None
-    finish_reason = candidate.finish_reason.name if candidate else None
+    finish_reason = (candidate.finish_reason.name 
+                     if candidate and candidate.finish_reason 
+                     else None)
     feedback = str(response.prompt_feedback) if response.prompt_feedback else None
 
     usable = (
         candidate is not None
-        and finish_reason != "SAFETY"
+        and finish_reason in USABLE_FINISH_REASONS
+        and candidate.content is not None  # blocked outputs may have no content
         and bool(candidate.content.parts)  # candidate is not empty
+        and bool(response.text)            # parts must include text to parse
     )
     return usable, finish_reason, feedback
 
@@ -845,7 +926,7 @@ def calculate_token_metrics(response,
                             template_token_count: int) -> dict:
     """
     Response processing layer 2: accounting. Records a granular token breakdown
-    for one LLM call in `full_metadata["call_token_breakdown"]` and returns the
+    for one LLM call from the response usage_metadata and returns the
     headline counts. Shared by generation and enrichment passes.
 
     Input tokens are split into two parts, because every prompt in this pipeline
@@ -862,46 +943,58 @@ def calculate_token_metrics(response,
     since every call in a pass shares the same template prefix.
     `3_input_cached_actual` is what the provider *did* cache and bill at the
     reduced rate. Tracer: all templates are below the implicit-caching minimum,
-    so expect ~0 until prompt structure changes (see caching TODO on the
-    generation loop). Reports cache hits from implicit or explicit caching
-    alike, so this accounting holds if explicit caching is adopted.
+    so expect ~0 until prompt structure changes. Reports cache hits from
+    implicit or explicit caching alike, so this accounting holds if explicit
+    caching is adopted.
     
     2. Why thinking and residual are separated: 
     
     `6_thinking_actual` is the API's chain-of-thought count, billed at the
-    output rate. `7_other_processing` is the residual — billed minus input,
-    visible output and thinking — so the breakdown sums to the total. Expected
-    ~0; a non-zero value means something else is being billed (e.g. tool-use
-    prompt tokens). Tracer: hidden tokens were 20% of generation and ~40% of
-    enrichment totals — the largest controllable cost (see thinking_level TODO).
+    output rate. Tracer (old SDK, default thinking): hidden tokens were ~20% of
+    generation and ~40% of enrichment totals — the largest controllable cost
+    (experiment E4). `8_tool_use_prompt` counts tool results fed back to the
+    model (0 until tools are used, E1). `7_other_processing` is the remainder;
+    per the SDK's documented identity it should be 0).
 
     NB: experiment logs (experiments/*.yaml) use input_cached / input_uncached
     for the same template / payload split. Not provider caching.
 
     Args:
-        response: Raw API response; read via `response.usage_metadata`.
-        full_metadata: Metadata dict for this call, updated in place.
+        response: Raw API response; read via `response.usage_metadata` (all fields
+            Optional — None is read as 0).
         template_token_count: Tokens in the prompt template before injection.
 
     Returns:
-        (total_billed, total_input, output) as reported by the API.
+        dict: per-call token breakdown. Keys are numbered for display order,
+        not additive:
 
     Breakdown keys written:
         1_input_template:       template_token_count
         2_input_payload:        total input - template (floored at 0)
-        3_input_cached_actual:  cached_content_token_count from the API
-        4_output_candidates:    output tokens
-        5_total_billed:         total_token_count from the API
-        6_thinking_actual:      thoughts_token_count from the API
-        7_other_processing:     billed - (input + output + thinking), e.g. other processing tokens
+        3_input_cached_actual:  cached_content_token_count; a SUBSET of 1 + 2
+                                (the cached portion, billed at a discount),
+                                never add it on top.
+        4_output_candidates:    candidates_token_count
+        5_total_tokens:         total_token_count = 1 + 2 + 4 + 6 + 7 + 8
+        6_thinking_actual:      thoughts_token_count
+        7_other_processing:     remainder (total − prompt − candidates −
+                                thoughts − tool_use). Per the SDK's documented
+                                identity it should be 0; nonzero is logged as a
+                                warning (the SDK is counting something not
+                                tracked here). Not quarantined: a meter
+                                mismatch, not a bad output.
+        8_tool_use_prompt:      tool_use_prompt_token_count
+        
     """
+    logger = get_run_logger()
     # Extract raw numbers from the API
     usage = getattr(response, 'usage_metadata', None)
     api_total_input = getattr(usage, 'prompt_token_count', 0) or 0
     api_output = getattr(usage, 'candidates_token_count', 0) or 0
     api_cached = getattr(usage, 'cached_content_token_count', 0) or 0
     api_thinking     = getattr(usage, 'thoughts_token_count', 0) or 0
-    api_total_billed = getattr(usage, 'total_token_count', 0) or 0 # total tokens
+    api_tool_use = getattr(usage, 'tool_use_prompt_token_count', 0) or 0
+    api_total = getattr(usage, 'total_token_count', 0) or 0 # total tokens
 
     # Calculate granular custom metrics
     # a. prompt template w/o formatting 
@@ -909,18 +1002,28 @@ def calculate_token_metrics(response,
     # b.  - Generation pass: chapter_text & source_info tokens
     #     - Enrichment pass: question batch tokens    
     input_payload = max(0, api_total_input - input_template)
-    # c. hidden processing tokens (billed but not in input/output)  
-    other_processing_tokens = api_total_billed - (api_total_input + api_output + api_thinking)
+    # c. hidden processing tokens (billed but not in input/output) 
+    other_processing_tokens = api_total - (api_total_input +
+                                           api_output +
+                                           api_thinking +
+                                           api_tool_use)
+
+    if other_processing_tokens != 0:
+        logger.warning("Token breakdown has %d unexplained tokens (total %d ≠ prompt %d + "
+                    "candidates %d + thoughts %d + tool_use %d)",
+                    other_processing_tokens, api_total, api_total_input,
+                    api_output, api_thinking, api_tool_use)
 
     # return breakdown as dict
     return {
         "1_input_template": input_template,
         "2_input_payload": input_payload,
-        "3_input_cached_actual": api_cached,
+        "3_input_cached_actual": api_cached,  # subset of 1+2, see docstring
         "4_output_candidates": api_output,
-        "5_total_billed": api_total_billed,
+        "5_total_tokens": api_total,
         "6_thinking_actual": api_thinking,
-        "7_other_processing": other_processing_tokens,
+        "7_other_processing": other_processing_tokens,  # expected 0, see docstring
+        "8_tool_use_prompt": api_tool_use,
     }
 
 # Convert LLM response candidates into DraftQuestion objects
@@ -1369,9 +1472,12 @@ def create_run_report(receipt_path: Path, output_root: Path):
         ('Calls failed', actuals['calls_failed']),
         ('Questions saved', f"**{actuals['records_written']}**"),
         ('Input tokens', f"{tokens.get('1_input_template', 0) + tokens.get('2_input_payload', 0):,}"),
+        ('↳ of which cached', f"{tokens.get('3_input_cached_actual', 0):,}"),
         ('Output tokens', f"{tokens.get('4_output_candidates', 0):,}"),
         ('Thinking tokens', f"{tokens.get('6_thinking_actual', 0):,}"),
-        ('Total tokens', f"**{tokens.get('5_total_billed', 0):,}**"),
+        ('Tool use prompt tokens', f"{tokens.get('8_tool_use_prompt', 0):,}"),
+        ('Other processing tokens (expected 0)', f"{tokens.get('7_other_processing', 0):,}"),
+        ('Total tokens', f"**{tokens.get('5_total_tokens', 0):,}**"),
     ]
     failure_rows = [('Failed calls by mode', format_counts(actuals['failed_calls']))]
     if not gen:
@@ -1531,8 +1637,8 @@ def generate_questions_pipeline(target_books: List[Book],
     logger.info("🚀 Starting Pipeline: %s", run_id)
     logger.info("Prefects UI Logs mirroring to: %s", log_path)
 
-    # A.4: configure the pipeline API
-    configure_api(CONFIG_PATH)
+    # A.4: Instantiate client object and configure the pipeline API
+    client = configure_api(CONFIG_PATH)
 
     # A.5: distinguish between a book vs. thematic run
     target_folder = determine_target_folder(target_books)
@@ -1584,8 +1690,10 @@ def generate_questions_pipeline(target_books: List[Book],
         question_type = config['file_prefix']
 
         # input token count for prompt template without formatting
-        template_token_count = measure_template_tokens(config['model_name'],
-                                                           config['prompt_file'])
+        # Setup step: if this raises, the pass stops before any API generation calls (fail fast)
+        template_token_count = measure_template_tokens(client,
+                                                       config['model_name'],
+                                                       config['prompt_file'])
 
         # CIRCUIT BREAKER: abort this strategy (q type) if too many calls fail in a row
         # Scope: counter is per-strategy (resets between question types) and resets
@@ -1651,7 +1759,7 @@ def generate_questions_pipeline(target_books: List[Book],
                                                             config, source_files)
             try:
                 # C.5: Make the API call
-                response = make_api_call(final_prompt, config)
+                response = make_api_call(client, final_prompt, config)
 
             # Transport failure branch
             except Exception as e:  # pylint: disable=broad-exception-caught
@@ -1673,7 +1781,8 @@ def generate_questions_pipeline(target_books: List[Book],
                             )
                 append_jsonl(call_entry, calls_file)
                 logger.error(
-                    "Error occurred while making API call for chapter %s: %s", first_chap, e)
+                    "[call id: %s] (%s) API call failed for chapter %s — %s", 
+                    call_id, question_type, first_chap, e)
                 consecutive_failures += 1
                 continue
 
@@ -1705,16 +1814,19 @@ def generate_questions_pipeline(target_books: List[Book],
                                 failure_mode = failure_mode,
                             )
                 logger.warning(
-                    "call id %s (%s): no usable content — feedback=%s finish_reason=%s",
+                    "[call id: %s] (%s) no usable content — feedback=%s finish_reason=%s",
                      call_id, question_type, prompt_feedback, finish_reason,
                      )
                 append_jsonl(call_entry, calls_file)
                 consecutive_failures += 1
                 continue
 
-            # Unparsable response failure branch (cannot be converted valid jsonl)  
+            # Unparsable response failure branch (cannot be converted valid jsonl)
+            # check_response_usable guarantees text is present (usable requires it)
+            response_text = response.text
+            assert response_text is not None
             try:
-                parsed_response = extract_json_from_response(response.text, logger)
+                parsed_response = extract_json_from_response(response_text, logger)
 
             except (json.JSONDecodeError, ValueError) as e:
                 failure_mode = FailureMode.UNPARSEABLE
@@ -1722,7 +1834,7 @@ def generate_questions_pipeline(target_books: List[Book],
                     **quarantine_entry_ctx,
                     error = e,  # dont convert to str
                     failure_mode= failure_mode,
-                    raw_record = response.text,
+                    raw_record = response_text,
                     finish_reason = finish_reason,
                     )
                 all_quarantined.append(entry)
@@ -1734,7 +1846,7 @@ def generate_questions_pipeline(target_books: List[Book],
                                 failure_mode = failure_mode,
                                 )
                 reason = "not valid JSON" if isinstance(e,json.JSONDecodeError) else "wrong shape"
-                logger.warning("call id %s (%s): response unparseable (%s) — %s",
+                logger.warning("[call id: %s] (%s) response unparseable (%s) — %s",
                                            call_id, question_type, reason, e)
                 append_jsonl(call_entry, calls_file)
                 consecutive_failures += 1
@@ -1747,7 +1859,7 @@ def generate_questions_pipeline(target_books: List[Book],
                                     **quarantine_entry_ctx,
                                     error = "json contains zero records",
                                     failure_mode= failure_mode,
-                                    raw_record = response.text,
+                                    raw_record = response_text,
                                     finish_reason = finish_reason,
                                     )
                 all_quarantined.append(entry)
@@ -1759,7 +1871,7 @@ def generate_questions_pipeline(target_books: List[Book],
                                 failure_mode = failure_mode,
                                 records_generated = 0,
                                 )
-                logger.warning("call id %s (%s): response was a valid JSON with zero responses",
+                logger.warning("[call id: %s] (%s) response was a valid JSON with zero records",
                                             call_id, question_type)
                 append_jsonl(call_entry, calls_file)
                 consecutive_failures += 1
@@ -1782,7 +1894,7 @@ def generate_questions_pipeline(target_books: List[Book],
             # check for an unexpected exception or skip in process_and_save_response.
             if generated != written + rejected:
                 logger.error(
-                "call id %s (%s): record accounting broken, generated %d != written %d + rejected %d "
+                "[call id: %s] (%s) record accounting broken, generated %d != written %d + rejected %d "
                 "(%d unaccounted). A record left the loop without being written or quarantined; "
                 "check for an unexpected exception or skip in process_and_save_response.",
                 call_id, question_type, generated, written, rejected,
@@ -1816,14 +1928,14 @@ def generate_questions_pipeline(target_books: List[Book],
                 call_entry.all_rejected = False
                 if rejection_rate >= REJECTION_RATE_THRESHOLD:
                     logger.warning(
-                    "call id %s (%s): high rejection rate %.0f%% (%d/%d records rejected, threshold %.0f%%). "
+                    "[call id: %s] (%s) high rejection rate %.0f%% (%d/%d records rejected, threshold %.0f%%). "
                     "Call succeeded but a high share of output failed DTO validation; check dto_construction "
                     "entries in the quarantine file for this call_id.",
                     call_id, question_type, rejection_rate * 100, rejected,
                     generated, REJECTION_RATE_THRESHOLD * 100,)
                 logger.info("✅ [call id: %s] Saved %s questions. Total tokens: %s",
                                             call_id, written,
-                                            call_entry.tokens['5_total_billed'])
+                                            call_entry.tokens['5_total_tokens'])
 
             else:
                 # explicitly log the zero question failure event + the cost incurred
@@ -1832,7 +1944,7 @@ def generate_questions_pipeline(target_books: List[Book],
                 consecutive_failures += 1
                 logger.warning("⚠️ [call id: %s] 0 questions saved. Tokens wasted: %s",
                                                                 call_id,
-                                                                call_entry.tokens['5_total_billed'])
+                                                                call_entry.tokens['5_total_tokens'])
             # Step 4: write call entry to file (call.jsonl)
             append_jsonl(call_entry, calls_file)     
             # collect draft questions from the call into run-level list
@@ -1868,6 +1980,10 @@ def generate_questions_pipeline(target_books: List[Book],
     return receipt_path, all_draft_questions  # return for testing and validation
 
 if __name__ == "__main__":
+    
+    # test command:    
+    # python -m scripts.pipelines.generate_questions.generate_questions --books BOOK_3 --tasks FR_Generation --limit 1 --trial
+    
     # 1. Setup the Argument Parser
     parser = argparse.ArgumentParser(description="Run the Harry Potter Generation Pipeline.")
 

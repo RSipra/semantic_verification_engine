@@ -437,11 +437,12 @@ def enrich_with_llm_cols(run_id: str,
     # --- 0. SETUP ---
     # API and run config, call files (to save run reciept for LLM pass)
     logger = get_run_logger()
-    configure_api(CONFIG_PATH)
+    client = configure_api(CONFIG_PATH)
     llm_pass = configuration['llm_pass']
     calls_file = build_run_artifact_path(runs_dir, run_id, llm_pass , CALLS)
     # token count of prompt template without attached questions
     template_token_count = measure_template_tokens(
+        client,
         configuration['model_name'],
         configuration['prompt_file']
         )
@@ -505,7 +506,7 @@ def enrich_with_llm_cols(run_id: str,
 
         # 2.3. API call
         try:
-            response = make_api_call(prompt, configuration)
+            response = make_api_call(client, prompt, configuration)
         except Exception as e:
             failure_mode = FailureMode.TRANSPORT
             entry = build_quarantine_entry(run_id = run_id,
@@ -556,8 +557,11 @@ def enrich_with_llm_cols(run_id: str,
             continue
 
         # 2.4. parse response into dict
+        # check_response_usable guarantees text is present (usable requires it)
+        response_text = response.text
+        assert response_text is not None
         try:
-            parsed_responses = extract_json_from_response(response.text, logger)
+            parsed_responses = extract_json_from_response(response_text, logger)
         except (json.JSONDecodeError, ValueError) as e:
             failure_mode= FailureMode.UNPARSEABLE
             entry = build_quarantine_entry(run_id=run_id,
@@ -566,7 +570,7 @@ def enrich_with_llm_cols(run_id: str,
                                            llm_pass = llm_pass,
                                            error = e,
                                            failure_mode = failure_mode,
-                                           raw_record = response.text,
+                                           raw_record = response_text,
                                            record_ids = record_ids,
                                            # no guard needed: check_response_usable above returns 
                                            # False unless a candidate with parts exists
@@ -594,7 +598,7 @@ def enrich_with_llm_cols(run_id: str,
                                            llm_pass = llm_pass,
                                            error = "json contains zero records",
                                            failure_mode = failure_mode,
-                                           raw_record = response.text,
+                                           raw_record = response_text,
                                            record_ids=record_ids,
                                            finish_reason = finish_reason)
             all_quarantined.append(entry)
@@ -629,7 +633,7 @@ def enrich_with_llm_cols(run_id: str,
                                            error=error_message,
                                            failure_mode=FailureMode.ID_MISMATCH,
                                            record_ids=record_ids,
-                                           raw_record= response.text,
+                                           raw_record= response_text,
                                            finish_reason = finish_reason,
                                            )
             all_quarantined.append(entry)

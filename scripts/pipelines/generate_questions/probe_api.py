@@ -2,49 +2,47 @@
 Probe the Gemini retry policy before spending pipeline quota.
 
 Why this exists:
-    On 2026-09-24, google-api-core's default retry on generate_content
-    (503 only, deadline=600s, backoff capped at 10s) turned a 503 burst into
-    ~66 requests per call. Stacked under Prefect retries, that used 422/500
-    RPD. make_api_call now uses a capped policy (REQUEST_OPTIONS: timeout=30s,
-    ~6 attempts). This script verifies that policy without running a pipeline.
+    On 2026-09-24, the old SDK's google-api-core default retry (503 only,
+    deadline=600s) turned a 503 burst into ~66 requests per call; stacked under
+    Prefect retries that used 422/500 RPD. Since the google-genai migration the
+    SDK-level policy is HTTP_OPTIONS (client): 503 only, 5 attempts, 1s/x1.3/10s
+    backoff + jitter, per-request timeout 60 s. This script measures that policy
+    without running a pipeline.
 
 Design:
-    Imports REQUEST_OPTIONS from generate_questions rather than redeclaring
-    it, so the probe tests the config the pipeline actually uses. A copy
+    Imports SDK_RETRY / HTTP_OPTIONS from generate_questions rather than
+    redeclaring them, so the probe tests the config the pipeline actually uses. A copy
     here could drift from the real one, and a probe of the copy would
     still pass.
 
 Modes:
-    --offline   No API call, zero quota. Feeds the retry policy a function
-                that always raises ServiceUnavailable (503), and reports how
-                many attempts it made and how long it took. This is the only
-                way to exercise the retry path, since a real 503 can't be
+    --offline   No network, zero quota. Sends a real SDK call through a fake
+                HTTP transport (httpx.MockTransport) that always answers 503,
+                and counts the requests the SDK makes before giving up. This
+                exercises the SDK's actual retry path; a real 503 can't be
                 triggered on demand.
-                Expect: RetryError, ~6-8 attempts in ~30s (jitter varies the
-                count). Before the fix, this ran ~10 min and made ~66 attempts.
-
-    (default)   One live request with the real REQUEST_OPTIONS. Confirms the
-                SDK accepts the options and the call returns.
-                Expect: prints the policy (timeout=30), response "OK", token
-                usage. Dashboard RPD should go up by exactly 1. More than 1
-                means retries fired.
+                Expect: ServerError, 5 attempts in ~8–9 s
+    (default)   One live request through the pipeline's configured client.
+                Expect: prints the policy, response "OK", token usage.
+                Dashboard RPD should go up by exactly 1; more than 1 means
+                SDK retries fired.
 
 Usage (from repo root, same way generate_questions.py is run):
-    python scripts/pipelines/generate_questions/probe_api.py --offline
-    python scripts/pipelines/generate_questions/probe_api.py
-
-    If 'src' fails to import, prefix with PYTHONPATH=.
+    python -m scripts.pipelines.generate_questions.probe_api --offline
+    python -m scripts.pipelines.generate_questions.probe_api
 
 Run --offline first (free), then the live probe, before any pipeline run.
 """
 
 import sys
 import time
+import httpx
 from prefect import flow
-from google.api_core import exceptions as core_exceptions
+from google import genai
+from google.genai import errors, types
 from scripts.pipelines.generate_questions.generate_questions import (configure_api, 
                                                                      CONFIG_PATH, 
-                                                                     REQUEST_OPTIONS, 
+                                                                     HTTP_OPTIONS, 
                                                                      SDK_RETRY)
 @flow
 def offline():
@@ -67,13 +65,24 @@ def offline():
         applied.
     """
     attempts = {"n": 0}
-    def always_503():
+    def always_503(request: httpx.Request) -> httpx.Response:
         attempts["n"] += 1
-        raise core_exceptions.ServiceUnavailable("fake")
+        return httpx.Response(503, json={"error": {"code": 503, "message": "fake",
+                                                   "status": "UNAVAILABLE"}})
+
+    # same retry policy + timeout as the pipeline, but HTTP goes to the fake transport
+    fake_client = genai.Client(
+        api_key="offline-probe",
+        http_options=types.HttpOptions(
+            timeout=HTTP_OPTIONS.timeout,
+            retry_options=SDK_RETRY,
+            client_args={"transport": httpx.MockTransport(always_503)},  # CONFIRM field name
+        ),
+    )
     t0 = time.perf_counter()
     try:
-        SDK_RETRY(always_503)()
-    except Exception as e:
+        fake_client.models.generate_content(model="gemini-3.1-flash-lite", contents="probe")
+    except errors.APIError as e:
         print(f"{type(e).__name__} | {attempts['n']} attempts in {time.perf_counter() - t0:.1f}s")
 
 def live():
@@ -96,14 +105,11 @@ def live():
         1 request normally; at most ~6-8 if the call hits 503s, bounded by
         the 30s timeout.
     """    
-    import google.generativeai as genai
-    
-    configure_api(CONFIG_PATH)
-    print("retry:", SDK_RETRY, "| timeout:", REQUEST_OPTIONS.get("timeout"))
-    model = genai.GenerativeModel("gemini-3.1-flash-lite")  # type: ignore
+    client = configure_api(CONFIG_PATH)
+    print("retry:", SDK_RETRY, "| timeout (ms):", HTTP_OPTIONS.timeout)
     t0 = time.perf_counter()
-    resp = model.generate_content("Reply with OK.", request_options=REQUEST_OPTIONS)
-    print(f"{time.perf_counter() - t0:.2f}s | {resp.text.strip()} | {resp.usage_metadata}")
+    resp = client.models.generate_content(model="gemini-3.1-flash-lite", contents="Reply with OK.")
+    print(f"{time.perf_counter() - t0:.2f}s | {(resp.text or '').strip()} | {resp.usage_metadata}")
 
 if __name__ == "__main__":
     if "--offline" in sys.argv:

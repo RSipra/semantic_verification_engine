@@ -109,3 +109,5 @@ phase2_tracer_deploy
 .dv/config.local
 scratchpad.py
 scratch_test_generation_branches.py
+scratch_sdk_explore.py
+scratchpad_newsdk.py

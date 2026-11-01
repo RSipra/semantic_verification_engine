@@ -21,11 +21,8 @@ Before the book run: one smoke run to record 6_thinking_actual at default,
 then compare quarantine rate + validation yield with sampling params removed.
 Ref: ai.google.dev/gemini-api/docs/gemini-3 (Temperature, Thinking level)
 
-TODO (SDK): migrate pipeline calls from google-generativeai (deprecated) to
-google-genai — runtime already migrated (PR #10). Blocks removing the old SDK,
-which caps protobuf <6 and holds Dependabot #292/#293 open. 
-Also a prerequisite for the thinking test above: thinking_level is set via
-types.ThinkingConfig(thinking_level=...) in google-genai's GenerateContentConfig.
+SDK: migrated to google-genai (2026-11) — ThinkingConfig now available via
+GenerateContentConfig(thinking_config=...); thinking experiment pending.
 '''
 
 from core.constants import QuestionType
