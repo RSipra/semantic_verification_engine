@@ -19,7 +19,9 @@ import regex as re
 from dateparser.search import search_dates
 from word2number import w2n
 from pydantic import BaseModel, Field, model_validator, ValidationError
-import google.generativeai as genai
+# import google.generativeai as genai
+from google import genai
+from google.genai import types
 
 from dotenv import load_dotenv, find_dotenv
 from core.embeddings import get_sbert_model, sbert_settings, get_nli_model, nli_settings
@@ -36,7 +38,7 @@ load_dotenv(find_dotenv("config.env"), override=True)
 google_api_key = os.environ.get('GEMINI_API_KEY')
 if not google_api_key:
     raise ValueError("Error: GOOGLE_API_KEY not found.")
-genai.configure(api_key=google_api_key)  # type: ignore
+client = genai.Client(api_key=google_api_key)
 
 ## constants and thresholds
 HOLIDAY_MAP ={
@@ -49,7 +51,7 @@ HOLIDAY_MAP ={
     "new year's eve": "december 31"
 }
 # instantiate nli model
-nli_model = get_nli_model() 
+# nli_model = get_nli_model() 
 
 # LLM models to use for API calls
 PRIMARY_MODEL = "models/gemini-3.1-flash-lite-preview"
@@ -337,7 +339,7 @@ In your `reasoning` field, first check for Proper Noun identity. If the specific
 
 # LLM response pydantic model (EX, FR)
 class LLMJudgeResponse(BaseModel):
-    """
+    """ DTO for LLM response
     """
     # ordered to push model to think before assigning boolean
     reasoning: str = Field(description="Step-by-step logical proof of why the answer fails or passes the strict criteria.")
@@ -349,35 +351,33 @@ class LLMJudgeResponse(BaseModel):
 def warmup_llm_connection(model_name: str = PRIMARY_MODEL, 
                           system_prompt: str = SYSTEM_PROMPT_EX):
     """
-    Standalone network ping to absorb the 6-second gRPC cold-start penalty.
+    Standalone network ping to absorb the 6-second connection cold-start penalty.
     Run this once before the main evaluation loop.
     """
-    print(f"--- Initiating LLM Network Handshake ---")
+    print("--- Initiating LLM Network Handshake ---")
     print(f"Target: {model_name}")
     start_time = time.time()
     
     try:
-        # 1. Initialize the model using your exact genai syntax 
+        #    Initialize the model using your exact genai syntax and
+        #    Send the smallest possible payload to open the connection and 
         #    System instructions for EX (most LLM calls) added upfront to avoid cold start penalty
         #    on the first real evaluation call.
-        ping_model = genai.GenerativeModel(model_name=model_name,  # type: ignore
-                                           system_instruction=system_prompt)  
-        
-        # 2. Send the smallest possible payload to open the connection and 
-        #    compile the response schema (LLMJudgeResponse) to mitigate the 
-        #    cold start penalty for future calls.
-        _ = ping_model.generate_content(
-            "Return a dummy response",
-            generation_config=genai.GenerationConfig(  # type: ignore
-                response_mime_type="application/json",
-                response_schema=LLMJudgeResponse, 
-            )
-        )
-        
+        client.models.generate_content(
+                    model=model_name,
+                    contents="Return a dummy response",
+                    config=types.GenerateContentConfig(
+                        system_instruction=system_prompt,
+                        response_mime_type="application/json",
+                        response_schema=LLMJudgeResponse,
+                        http_options=types.HttpOptions(timeout=60_000),
+                        )
+                    )
+
         end_time = time.time()
         print(f"✅ Connection established. Warmup time: {round(end_time - start_time, 2)} seconds.")
         print("The network pipe is now open for _call_llm_judge.\n")
-        
+    
     except Exception as e:
         print(f"⚠️ Warmup failed. The first call to _call_llm_judge will carry the cold-start penalty.")
         print(f"Error Details: {str(e)}\n")
@@ -464,28 +464,27 @@ def _call_llm_judge(question: str,
 
     for target_model in model_cascade:
         try:
-            # initialize the Gemma model
-            model = genai.GenerativeModel( #  type: ignore
-                model_name=target_model, 
-                system_instruction=system_prompt
-            )
             print("--- Escalating to LLM Judge ---")
             start_time = time.time()
-            response = model.generate_content(
-                user_prompt,
-                generation_config=genai.GenerationConfig(  # type: ignore
-                    temperature=0.1,
-                    response_mime_type="application/json",
-                    response_schema=LLMJudgeResponse, ),
-                request_options={"timeout": 60.0}
-            )
+            response = client.models.generate_content(
+                            model=target_model,
+                            contents=user_prompt,
+                            config=types.GenerateContentConfig(
+                                system_instruction=system_prompt,
+                                temperature=0.1,
+                                response_mime_type="application/json",
+                                response_schema=LLMJudgeResponse,
+                                http_options=types.HttpOptions(timeout=60_000),
+                                )
+                            )
+
             end_time = time.time()
             print(f"LLM resolution time: {round(end_time - start_time, 2)} seconds")
             # 2. conservative rate Limiting (10 RPM / 6s buffer)
             time.sleep(delay_seconds)
             
             # clean markdown formatting before parsing
-            raw_text = response.text.strip()
+            raw_text = (response.text or "").strip()
             if raw_text.startswith("```json"):
                 raw_text = raw_text[7:]
             elif raw_text.startswith("```"):
@@ -503,7 +502,7 @@ def _call_llm_judge(question: str,
             error_msg = str(e).lower()
             
             # Catch Rate Limits (429), Timeouts (deadline), and Server Errors (503/500)
-            if any(code in error_msg for code in ["429", "404", "503", "500", "deadline", "timeout"]):
+            if any(code in error_msg for code in ["429", "404", "503", "500", "deadline", "timeout", "timed out"]):
                 print(f"⚠️ {target_model} failed or timed out... Attempting fallback.")
                 time.sleep(10.0)
                 continue # <-- pushes it to  FALLBACK_MODEL
