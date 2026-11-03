@@ -9,12 +9,7 @@ description = "A Harry Potter Trivia Game with AI generation and NLP features."
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
-    # DEPRECATED - remove once the offline pipeline is migrated to google-genai
-    # (scripts/pipelines/generate_questions/). Kept only for that pipeline.
-    # Its protobuf<6 cap blocks the datasets/fsspec/gcsfs security bumps
-    # (Dependabot alerts #292, #293).
-    "google-generativeai",
-    "google-genai",   # Current Gemini SDK: runtime (llm_service, tracer lab)
+    "google-genai>=2.30.1",   # Current Gemini SDK: runtime (llm_service) + offline pipelines
     "python-dotenv",
     "pyyaml",
     "prefect",

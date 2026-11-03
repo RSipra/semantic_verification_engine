@@ -17,8 +17,7 @@ pyarrow==24.0.0  # startup.py reads production parquet via pq.read_table() → d
 pydantic-settings==2.12.0
 python-dotenv==1.2.2
 protobuf==5.29.6  # was pinned <6 for google-generativeai (removed). Kept to match
-                  # dev env; revisit when dev moves to protobuf 6 after pipeline
-                  # migration (#292/#293). 
+                  # dev env; — upgrade to 6.x separately
 
 # sentencepiece (older artifact)
 
