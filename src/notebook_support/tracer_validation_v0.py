@@ -20,12 +20,9 @@ import torch
 import networkx as nx
 import pyarrow as pa
 
-
-
-from core.constants import QuestionType, QuestionSource
-from core.models import DataTier
+from notebook_support.ds_constants import QuestionType, QuestionSource, DataTier
 from notebook_support.text_processing import clean_text_fn
-import core.models as pyd
+import notebook_support.tracer_models_v0 as pyd
 
 ## Configuration
 SBERT_MODEL_NAME = "all-MiniLM-L6-v2"
@@ -45,7 +42,8 @@ EMBEDDING_COL_NAMES = ['question_embeddings','answer_embeddings','source_quote_e
 ## step 1.1. Schema Checks with Pydantic V2
 # Gatekeepr - ensure correct quality of data is processed further
 
-# TODO: update pipeline to use core.enforce_schema.py for pydantic evals.
+# Frozen tracer-era validator (758da3b3). Deliberately NOT core.enforce_schema:
+# the tracer is delinked from src (2026-11-03) — see tracer_nlp_lab_v0 docstring.
 
 # helper for retriveing schema from Pydantic model module
 def select_pydantic_scheme(question_source: QuestionSource,

@@ -1,11 +1,35 @@
 """
 Project: SVE (ref implementation: Harry Potter Trivia)
 PHASE 2 Tracer -> Context Refinery: NLP Lab (Answer checking logic)
+
+tracer_nlp_lab_v0 — support module for the SVE tracer demo notebooks.
+
+Scope
+- Frozen at the tracer stage: backs the end-to-end tracer demo notebooks
+  (commit 758da3b3) and stays reproducible for them.
+- NOT a runtime or test module. It does not track the live system in src/;
+  current runtime behaviour lives in src/core and is tested there.
+- Changes here should only keep the tracer notebooks running (e.g. SDK
+  migrations), not add new features.
+  
+Notes: 
+1. DTOs are frozen in notebook_support.tracer_models_v0, copied from commit
+    758da3b3 (tracer era). There, Production* = the hydrated runtime schema (tensor
+    fields) — the offline/runtime split came later in src. The DTOs and the lab
+    share notebook_support.ds_constants enums. Delinked from src core.models on
+    2026-11-03: src schema changes no longer reach the tracer.
+    Boundary assumption: Production-DTO-validated data. In src this boundary is now
+    Runtime DTO validation at startup (d1925441) — see ADR-P2-025.
+2. Still imports core.embeddings (model loader). Precomputed tracer embeddings
+   assume sbert_settings model = all-MiniLM-L6-v2; changing it invalidates them.
+   A different model with the same 384 dims would pass validation but give meaningless
+   similarity scores.
+3. LLM judge calls use the google-genai SDK (migrated from google-generativeai).
 """
 ## setup / imports
 import time
 from datetime import datetime
-from typing import List, Tuple, cast
+from typing import List, Tuple, cast, TypeAlias
 import json
 import os
 import warnings
@@ -19,15 +43,14 @@ import regex as re
 from dateparser.search import search_dates
 from word2number import w2n
 from pydantic import BaseModel, Field, model_validator, ValidationError
-# import google.generativeai as genai
 from google import genai
 from google.genai import types
 
 from dotenv import load_dotenv, find_dotenv
-from core.embeddings import get_sbert_model, sbert_settings, get_nli_model, nli_settings
-from core.models import (
-    ProductionStandard_Green, ProductionMCQ_Green, 
-    ProductionStandard_Blue, ProductionMCQ_Blue, 
+from core.embeddings import get_sbert_model, sbert_settings, nli_settings, get_nli_model
+from notebook_support.tracer_models_v0 import (
+    ProductionStandard_Green, ProductionMCQ_Green,
+    ProductionStandard_Blue, ProductionMCQ_Blue,
     RUNTIME_REGISTRY)
 from notebook_support.tracer_descp_features_v0 import count_clean_words
 from notebook_support.ds_constants import AnswerType, QuestionType
@@ -40,6 +63,11 @@ if not google_api_key:
     raise ValueError("Error: GOOGLE_API_KEY not found.")
 client = genai.Client(api_key=google_api_key)
 
+# runtime DTOs (tensors hydrated at startup) — what the evaluators receive
+MCQ_TYPES: TypeAlias = ProductionMCQ_Green | ProductionMCQ_Blue
+STANDARD_TYPES: TypeAlias = ProductionStandard_Green | ProductionStandard_Blue
+AnyRuntimeQuestion: TypeAlias = MCQ_TYPES | STANDARD_TYPES
+
 ## constants and thresholds
 HOLIDAY_MAP ={
     "halloween":"october 31",
@@ -50,8 +78,6 @@ HOLIDAY_MAP ={
     "new years eve": "december 31",
     "new year's eve": "december 31"
 }
-# instantiate nli model
-# nli_model = get_nli_model() 
 
 # LLM models to use for API calls
 PRIMARY_MODEL = "models/gemini-3.1-flash-lite-preview"
@@ -107,8 +133,8 @@ class EXThresholdConfig(BaseModel):
     ambiguous_answer_floor: float = 0.40
 
 ## Structured output: Answer Evaluation Results 
-# standardizing answer evaluation metrics into data classes
 
+# standardizing answer evaluation metrics into data classes
 class BaseEvalResults(BaseModel):
     """
     Core fields shared by every single evaluation.
@@ -266,7 +292,8 @@ def question_factory(row_dict: dict, mode: str = "dev"):
             Must be a valid QuestionType (EX, FR, MCQ).")    
     
     # 3. Look up correct model from the 'runtime registery'
-    pydantic_model_class = RUNTIME_REGISTRY[mode].get(q_type)
+    # str enums, value/hash-equal to core's (verified 2026-11-02); removed by delinking
+    pydantic_model_class = RUNTIME_REGISTRY[mode].get(q_type)  
     if not pydantic_model_class:
         raise ValueError(f"No model registered for type: {q_type}")
     
@@ -654,11 +681,11 @@ def run_evaluator_test_suite(test_cases: list[dict],
         q_type_str = getattr(q, 'question_type', 'MCQ')
         
         # 3. THE ROUTER LOGIC: Dynamically dispatch to the correct evaluator
-        if isinstance(q, (ProductionMCQ_Green, ProductionMCQ_Blue)):
+        if isinstance(q, MCQ_TYPES):
             # MCQ does not utilize LLM or NLI escalation
             result = check_mcq_answer(player_answer, q)
 
-        elif isinstance(q, (ProductionStandard_Green, ProductionStandard_Blue)):
+        elif isinstance(q, STANDARD_TYPES):
             if q.question_type == 'FR' and not treat_fr_as_ex:
                 result = check_fr_answer(player_answer, q, 
                                          enable_llm_escalation=enable_llm_escalation)
@@ -827,7 +854,7 @@ def _check_semantic_variations(player_answer_tensor: torch.Tensor,
 # MCQ with a 'text' answer type (can be evaluated with fuzzy matching and semantic similarity)
 @track_eval_latency
 def check_mcq_answer(player_answer:str,
-                     q: ProductionMCQ_Green | ProductionMCQ_Blue,
+                     q: MCQ_TYPES,
                      config: MCQThresholdConfig = MCQThresholdConfig()
                      ) -> MCQEvalResults:
     """
@@ -937,7 +964,7 @@ def check_mcq_answer(player_answer:str,
 
 @track_eval_latency
 def check_fr_answer(player_answer: str,
-                    q: ProductionStandard_Green | ProductionStandard_Blue,
+                    q: STANDARD_TYPES,
                     config: FRThresholdConfig = FRThresholdConfig(),
                     enable_llm_escalation: bool = False  #for notebook experiments only
                     ) -> FREvalResults:
@@ -1129,7 +1156,7 @@ def _check_nli_entailment(premise: str, hypothesis: str, nli_model_inst) -> tupl
 # MAIN EX Evaluator 
 @track_eval_latency  
 def check_ex_answer(player_answer: str,
-                    q: ProductionStandard_Green | ProductionStandard_Blue,
+                    q: STANDARD_TYPES,
                     config: EXThresholdConfig = EXThresholdConfig(),
                     enable_llm_escalation: bool = True,  #for notebook experiments only
                     enable_nli_escalation:bool = False  #for notebook experiments only
@@ -1251,7 +1278,7 @@ def check_ex_answer(player_answer: str,
         _, nli_label, nli_confidence = _check_nli_entailment(
                 premise=gold_answer,
                 hypothesis=player_answer,
-                nli_model_inst=nli_model
+                nli_model_inst=get_nli_model()
             )
         # append NLI telemetry to your result object
         result.nli_label = nli_label
@@ -1520,19 +1547,17 @@ def _check_date_answer(player_entities: dict[str, int | None] | None, gold_answe
 ## 5.1. subrouter for non-text answer evaluation
 
 def _route_nontext_eval(player_answer: str, 
-                        q: ProductionStandard_Green | 
-                           ProductionStandard_Blue  |
-                           ProductionMCQ_Green      |
-                           ProductionMCQ_Blue) -> BaseEvalResults:
+                        q: AnyRuntimeQuestion) -> BaseEvalResults:
     """
     Sub-router handling all deterministic, strict-match non-textual answers
     """
     # --- 1. numeric or year answer ---
     if q.answer_type in [AnswerType.NUMERIC, AnswerType.YEAR]:
+        answer_type: AnswerType = q.answer_type
         # 1. preprocess the player answer
         processed_player_num = _preprocess_numeric_player_ans(player_answer, q.answer_type, hard_cap=1)
         # 2. route to evaluator
-        return _check_numeric_answer(processed_player_num, q.answer_type, q.answer)
+        return _check_numeric_answer(processed_player_num, answer_type, q.answer)
     
     # --- 2. date answer ---
     elif q.answer_type == AnswerType.DATE:
@@ -1551,10 +1576,7 @@ def _route_nontext_eval(player_answer: str,
 
 ## 5.2. Subrouter for TEXT type answers
 def _route_text_eval(player_answer: str, 
-                     q: (ProductionStandard_Green | 
-                         ProductionStandard_Blue  |
-                         ProductionMCQ_Green      |
-                         ProductionMCQ_Blue)):
+                     q: AnyRuntimeQuestion):
     """
     Sub-router handling semantic textual answer evaluations
     """
@@ -1562,17 +1584,17 @@ def _route_text_eval(player_answer: str,
     # norm_player_ans = _preprocess_text_player_ans(player_answer)
     
     # 2. MCQ (Mulitple Chocie Questions) evaluator
-    if (isinstance(q, ProductionMCQ_Green | ProductionMCQ_Blue)
+    if (isinstance(q, MCQ_TYPES)
         and q.question_type == QuestionType.MCQ):
         return check_mcq_answer(player_answer, q)
     
     # 3. FR (Factual Recall) evaluator
-    elif (isinstance(q, ProductionStandard_Green| ProductionStandard_Blue) 
+    elif (isinstance(q, STANDARD_TYPES) 
           and q.question_type == QuestionType.FR):
         return check_fr_answer(player_answer, q)
     
     # 4. EX (Explanatory) evaluator
-    elif (isinstance(q, ProductionStandard_Green| ProductionStandard_Blue) 
+    elif (isinstance(q, STANDARD_TYPES) 
           and q.question_type == QuestionType.EX):
         return check_ex_answer(player_answer, q)      
 
@@ -1585,10 +1607,7 @@ def _route_text_eval(player_answer: str,
 ## 5.3 Main router for answer checking
 
 def evaluation_router(raw_player_answer,
-                      q: ProductionStandard_Green | 
-                         ProductionStandard_Blue  |
-                         ProductionMCQ_Green      |
-                         ProductionMCQ_Blue) -> BaseEvalResults:
+                      q: AnyRuntimeQuestion) -> BaseEvalResults:
     """
     Main entry point for the Semantic Verification Engine.
     Routes player answers to the appropriate sub-router based on AnswerType.

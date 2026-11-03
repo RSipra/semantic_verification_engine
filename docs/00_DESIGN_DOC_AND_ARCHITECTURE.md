@@ -427,10 +427,12 @@ The lifecycle will be managed as follows:
 | **IV. Algorithms & Heuristics** | | | |
 | **[ADR-P2-014](adrs/ADR-P2-014.md)** | **Heuristic Stability (LLM Drift)** | ✅ Accepted | Preserves heuristic answer-shape patterns across question types through prompt-led generation and manual, dataset-level monitoring for drift.|
 | **[ADR-P2-015](adrs/ADR-P2-015.md)**|**Statistical Quality Control (SQC) for Synthetic Data**|🚧 Proposed|Applies statistical sampling to synthetic data batches as an offline safety net to catch incorrect or hallucinated questions early, using efficient, conditional review to protect user trust at demo scale.|
-| **V. Deferred / Superseded** | | | |
+| **V. Demo & Reproducibility** | | | |
+| **[ADR-P2-025](adrs/ADR-P2-025.md)** | **Tracer Notebooks Frozen as Stage Snapshot** | ✅ Accepted | Delinks the tracer walkthrough notebooks from `src` so later schema changes can't break a finished stage's documented results.|
+| **VI. Deferred / Superseded** | | | |
 | **[ADR-P2-016](adrs/ADR-P2-016.md)** | **Manual Input Swimlane** | ⏳ Deferred | Defers a third manual input swimlane for low-volume, manually curated questions that introduce novelty and gameplay variety in the Content Factory.|
 | **[ADR-P2-019](adrs/ADR-P2-019.md)**|**Exclusion of Yes/No (YN) Questions from Gold Dataset**| ✅ Accepted| YN questions provide limited signal for semantic validation in Phase 2 |
-<!--Next tag = 20 -->
+<!--Next tag = = 26. ADR-P2-020 to P2-024 not yet indexed in this table — backfill pending. -->
 
 </details>
 
