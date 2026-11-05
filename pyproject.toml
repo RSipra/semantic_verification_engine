@@ -20,4 +20,9 @@ dependencies = [
 # This tells Python to look for source code in the 'src' folder
 [tool.setuptools.packages.find]
 where = ["src"]  # Look inside src
-include = ["*"]  # Grab everything (ds_utils, HPtrivia_game)
+include = ["*"]  # Grab everything (e.g. core, notebook_support)
+
+# Pylint: load the Pydantic plugin so model fields are understood (no false E1101 no-member)
+[tool.pylint.main]
+load-plugins = ["pylint_pydantic"]
+source-roots = ["."]

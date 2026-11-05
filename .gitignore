@@ -35,7 +35,7 @@ src/mvp_phase1
 # Ignore token files or sensitive configs
 .env
 config.env
-.vscode/
+.vscode/*
 
 # ignore virtual environment - have requirements.txt
 .venv/
@@ -102,6 +102,9 @@ notebooks/02_research/09_nlp_lab_semantic_evaluators_v0.ipynb
 notebooks/02_research/10_nlp_lab_deterministic_evaluators_v0.ipynb
 storage/
 *.json
+# exception: shared editor config (must come after *.json)
+!.vscode/settings.json
+
 # Run artifacts are tracked history — exempt from the blanket *.json rule
 !data/07_pipeline_logs/**/*.json
 .python-version

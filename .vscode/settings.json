@@ -1,0 +1,12 @@
+{
+  "python.defaultInterpreterPath": ".venv/bin/python",
+  "python.envFile": "${workspaceFolder}/.env",
+  "python.terminal.activateEnvironment": true,
+  "python.analysis.typeCheckingMode": "basic",
+  "python.analysis.autoImportCompletions": true,
+  "python.analysis.extraPaths": ["src", "."],
+  "pylint.importStrategy": "fromEnvironment",
+  "pylint.args": ["--load-plugins=pylint_pydantic"],
+  "pylint.args": ["--load-plugins=pylint_pydantic", "--source-roots=."],
+}
+  

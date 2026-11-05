@@ -210,6 +210,8 @@ pygit2==1.19.0
 Pygments==2.20.0
 pygtrie==2.5.0
 pylint==4.0.9
+pylint-plugin-utils==0.9.0
+pylint-pydantic==0.4.1
 pyparsing==3.2.1
 pyphen==0.17.2
 pyreadr==0.5.3
