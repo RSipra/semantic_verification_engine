@@ -45,7 +45,12 @@ WORKDIR /app
 #    
 COPY requirements.txt .
 # 5.1. torch (locked CPU)
-# CPU-only wheel; pinned to 2.13.0 for CVE-2026-xxxxx (torch.jit.script). Not yet rebuilt as of 22 July 2026.
+# CPU-only wheel, kept out of requirements.txt to stay lean on the free-tier VM.
+# Pinned to 2.13.0 for CVE-2026-xxxxx (torch.jit.script).
+# Live image (built Oct 2026) runs 2.10.0+cpu; 2.13.0 lands on next rebuild.
+# MIRROR: keep this version in sync with torch in requirements-dev.txt
+# (offline/online embedding parity). Dependabot does not see this line.
+# After a bump, verify with src/dev/embed_parity_check.py.
 RUN pip install --no-cache-dir torch torch==2.13.0 --index-url https://download.pytorch.org/whl/cpu
 # 5.2. remaining lightweight deps, ensure torch not overwritten by sentence transformers
 RUN pip install --no-cache-dir -r requirements.txt --extra-index-url https://download.pytorch.org/whl/cpu
