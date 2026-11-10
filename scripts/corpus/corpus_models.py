@@ -5,7 +5,7 @@ Phase 2: Content Generation (Corpus validation before generation pipeline)
 corpus_models — the corpus record contract (core data integrity for SVE).
 ======================================================================
 
-Defines the certified corpus record written by certify_corpus (job 1) and read by
+Defines the certified corpus record written by qualify_corpus (job 1) and read by
 preflight (job 2) within the content generation pipeline.
 
 Purpose
@@ -15,9 +15,10 @@ correct. Validation checks questions against this same corpus, so it cannot dete
 wrong corpus. This module defines the record that closes that gap.
 
 Trust model (ADR-P2-026: corpus trust boundary)
-- Certify once: certify_corpus (job 1) profiles every chapter deterministically,
+- Certify once: qualify_corpus (job 1) profiles every chapter deterministically,
   records the evidence, and marks the corpus `certified` after a stratified fidelity
-  sample passes against a reference copy. Establishes correctness.
+  sample passes against a reference copy. Establishes correctness. Required for any
+  pipeline run, trials included.
 - Verify every run: preflight (job 2) checks the selected chapters against this
   record before any API call: files present, chapter count, sha256. Any mismatch stops
   the run. Establishes integrity (a checksum proves "unchanged", not "correct").
@@ -81,7 +82,7 @@ class ProfileEvidence(BaseModel):
 
     source: str = Field(
         ..., description=("Where the profile came from: notebook path (manual) or"
-                          " 'certify_corpus.py@<commit>' (script)."))
+                          " 'qualify_corpus.py@<commit>' (script)."))
     outliers_reviewed: list[int] = Field(
         default_factory=list, description="Short chapters reviewed and accepted as legitimate.")
     notes: str | None = Field(

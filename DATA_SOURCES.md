@@ -29,6 +29,14 @@ processing happens in later stages. Processed datasets live in the numbered DVC 
 - **Description**: A collection of the full text of the seven main Harry Potter books, originally packaged for R in .rda format. These files were read into Python using the pyreadr library.
 - **Usage**:   Serves as the canonical source text for the LLM-based question generation process. This ensures that all new questions are factually grounded in the main book series.
 - **License**: Not specified in the source repository. Used here for a non-commercial portfolio project.
+- **Upstream text source:** www.readbooksvampire.com (via the R package) — site no longer exists.
+- **Publication years:** from the R package README (first-publication years).
+- **Chapter titles (table of contents):** [snapshot](https://github.com/sharanyavb/harry-potter/blob/57acafc1a9e5ed3f7c89a0d19f69d32806afbde9/HP_Chapters.csv) of `HP_Chapters.csv` from  [sharanyavb/harry-potter](https://github.com/sharanyavb/harry-potter)
+@`57acafc1a9e5ed3f7c89a0d19f69d32806afbde9`, taken <2026-11-06; books 3, 4, 7 used.
+  - Fan-compiled — spot-checked against an owned copy.
+  - Known error: book 3 ch 19 is "The Servant of Lord Voldemort" (snapshot: "The Servant of the
+  Dark Lord"); verified online.
+  contents note. Handled as a reviewed exception in qualify_corpus.
 
 ---
 ## 📌 3. Harry Potter Character List  
