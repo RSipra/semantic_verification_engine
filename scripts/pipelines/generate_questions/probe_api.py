@@ -85,6 +85,7 @@ def offline():
     except errors.APIError as e:
         print(f"{type(e).__name__} | {attempts['n']} attempts in {time.perf_counter() - t0:.1f}s")
 
+@flow(name="probe-api-live")
 def live():
     """
     Make one real generate_content call using the pipeline's REQUEST_OPTIONS.
