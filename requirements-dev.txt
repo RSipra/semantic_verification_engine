@@ -165,10 +165,10 @@ numpy==2.0.2
 oauthlib==4.0.1
 omegaconf==2.3.0
 openai==2.32.0
-opentelemetry-api==1.45.1
-opentelemetry-exporter-prometheus==0.66b1
-opentelemetry-sdk==1.45.1
-opentelemetry-semantic-conventions==0.66b1
+opentelemetry-api==1.45.2
+opentelemetry-exporter-prometheus==0.66b2
+opentelemetry-sdk==1.45.2
+opentelemetry-semantic-conventions==0.66b2
 orjson==3.11.9
 packaging==24.2
 pandas==2.2.3
@@ -253,7 +253,7 @@ six==1.17.0
 smmap==5.0.2
 sniffio==1.3.1
 sortedcontainers==2.4.0
-soupsieve==2.9.0
+soupsieve==4.0.0
 SQLAlchemy==2.0.44
 sqltrie==0.11.2
 stack-data==0.6.3
@@ -271,7 +271,7 @@ tomli==2.2.1
 tomlkit==0.13.2
 # MIRROR: must match the torch pin in the Dockerfile (runtime, CPU wheel).
 torch==2.13.0
-tornado==6.6
+tornado==6.6.1
 tqdm==4.67.1
 traitlets==5.14.3
 transformers==5.10.0
