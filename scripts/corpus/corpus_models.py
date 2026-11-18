@@ -65,9 +65,21 @@ import hashlib
 import json
 from datetime import date
 from typing import Literal, Self
+from pathlib import Path
+
 from pydantic import BaseModel, ConfigDict, Field, model_validator, field_validator, field_serializer
 
 from core.constants import Book
+
+DEFAULT_CORPUS_ROOT = Path("data/06_books")
+RECORD_FILENAME = "corpus_record.json"
+
+def record_path(corpus_root: Path) -> Path:
+    """
+    Where the corpus record lives (same for every corpus).
+    Different corpus has a different corpus_root path
+    """
+    return corpus_root / RECORD_FILENAME
 
 CorpusStatus = Literal["profiled", "certified", "superseded"]
 CertificationMethod = Literal["manual_review", "script", "script+llm"]
