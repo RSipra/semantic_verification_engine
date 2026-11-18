@@ -28,7 +28,22 @@ CorpusSchema → BookSchema (keyed by Book enum) → ChapterSchema (keyed by 1-b
 chapter number). Evidence is recorded per book: each book is accepted on its own
 fidelity sample (see FidelitySample). Validators enforce: certified ⇒ every book has
 a passing sample; chapter keys match chapter numbers; corpus_id matches the chapter
-checksums; unknown fields rejected.  
+checksums; unknown fields rejected.
+
+Who writes what, and when
+1. Profile — qualify_corpus writes the record with status "profiled":
+     CorpusSchema   whole corpus: corpus_id (from chapter checksums), status, provenance
+     BookSchema     per book: expected chapters, year, ProfileEvidence
+     ChapterSchema  per chapter: title, title_in_text, counts, sha256
+     ProfileEvidence  per book: HOW the profile was produced (script@commit, notes)
+     FidelitySample   per book: None at this stage
+2. Sample — select_sample (sampling.py) writes a working CSV of chapters to review
+   manually (SampleReviewRow, one per chapter). The reviewer fills in result and notes.
+   The CSV is not part of the record.
+3. Promote — the review helper reads the CSV back (validated), and if every book
+   passes, summarises each book's rows into one FidelitySample and rewrites the
+   record with status "certified".
+ProfileEvidence = how the data was measured.  FidelitySample = whether it matched the book.  
 
 Design note — why certification is required.
 ------------------------------------------------
@@ -47,9 +62,10 @@ would replace most of the correctness checks below.
 
 """
 import hashlib
+import json
 from datetime import date
 from typing import Literal, Self
-from pydantic import BaseModel, ConfigDict, Field, model_validator
+from pydantic import BaseModel, ConfigDict, Field, model_validator, field_validator, field_serializer
 
 from core.constants import Book
 
@@ -77,7 +93,10 @@ class Provenance(BaseModel):
 
 # Book level evidence (word-count check, outlier review, etc.)
 class ProfileEvidence(BaseModel):
-    """How this book's deterministic profile was produced and reviewed."""
+    """
+    How this book's deterministic profile was produced and reviewed.
+    Per book, written by qualify_corpus at profiling: how the profile was produced.
+    """
     model_config = ConfigDict(extra="forbid")
 
     source: str = Field(
@@ -92,6 +111,9 @@ class ProfileEvidence(BaseModel):
 class FidelitySample(BaseModel):
     """
     Fidelity sample result for ONE book.
+    
+    Per book, written at promotion: summary of the review rows (chapters, strategy, reference,
+    result).
 
     Each book is accepted on its own sample: result = "pass" only if every sampled
     chapter matched the reference. The checking itself may span several books in one
@@ -109,6 +131,59 @@ class FidelitySample(BaseModel):
                                              "e.g. 'owned print copy'."))
     result: Literal["pass", "fail"] = Field(..., description="Outcome of the sample check.")
     date_checked: date = Field(..., description="Date the sample was checked.")
+
+# standardize labels for chapter selection
+Labels = Literal["first", "last", "shortest", "longest", "iqr_outlier", "random"]
+
+class SampleReviewRow(BaseModel):
+    """
+    One sampled chapter in the fidelity review CSV (the detailed, hand-filled evidence).
+
+    Flow using sampling.py:
+      1. select_sample writes one row per sampled chapter to
+         fidelity_evidence/fidelity_evidence_<corpus_id>.csv (result and notes empty).
+      2. The reviewer fills in result ("pass" / "fail") and notes for each row.
+      3. The review helper reads the CSV back through this model (validated: it is
+         hand-edited), applies the round rules, and — if every book passes — summarises
+         each book's rows into one FidelitySample in the corpus record (status → certified).
+
+    The CSV keeps the per-chapter detail; the record's FidelitySample keeps the per-book
+    summary. Rows are valid only for the corpus_id they carry.
+    """
+    model_config = ConfigDict(extra="forbid")
+
+    corpus_id: str = Field(..., description="Corpus id for which this chapter was sampled.")
+    book: Book = Field(..., description="The book to which this chapter belongs.")
+    chapter: int = Field(..., ge=1, description="Chapter number.")
+    reason: list[Labels] = Field(...,
+        min_length=1,
+        description="Why this chapter was sampled. Stored in the CSV as a JSON list, "
+                    'e.g. ["first", "shortest"] (converted by the two hooks below).')
+    round: int = Field(
+        default=1,
+        ge=1, le=2,
+        description="Round of review: 1 = initial, 2 = re-review after a fail.")
+    result: Literal["", "pass", "fail"] = Field(
+        default="",
+        description="Result of the review: empty = not yet reviewed, ")
+    notes: str = Field(
+        default="",
+        description=("Review result: '' = not yet reviewed, "
+                     "'pass' or 'fail' per ADR-P2-026 criterion."))
+
+    # CSV conversion for `reason` (a CSV cell can only hold text)
+    @field_validator("reason", mode="before")
+    @classmethod
+    def reason_from_csv(cls, v):
+        """Reading the CSV: the cell is a JSON string → parse it into a list."""
+        return json.loads(v) if isinstance(v, str) else v
+
+    @field_serializer("reason", when_used="json")
+    def reason_to_csv(self, v: list[str]) -> str:
+        """Writing the CSV (model_dump(mode='json')): list → JSON string for the cell."""
+        return json.dumps(v)
+
+EVIDENCE_COLS = list(SampleReviewRow.model_fields)
 
 class ChapterSchema(BaseModel):
     """Schema for a single chapter."""

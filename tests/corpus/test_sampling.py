@@ -1,21 +1,63 @@
-"""Unit tests for scripts/corpus/sampling.py.
+"""
+Unit tests for scripts/corpus/sampling.py.
 
 iqr_outliers: each test pins one behaviour of the outlier rule. The fence test uses
 numbers worked out by hand (inclusive quartiles, multiplier 1.5).
+select_book_sample: each test builds a small BookSchema in memory and pins one rule of
+the sampling plan.
+Round-1 helpers (select_corpus_sample, evidence_path, write_evidence, read_evidence):
+a small two-book record; the round trip checks the review CSV reads back unchanged.
 """
 # pylint: disable=missing-function-docstring   # test names describe the check
-import pytest
+# pylint: disable=redefined-outer-name         # pytest fixtures are injected by parameter name
+
 from typing import get_args
 
+import pytest
+
 from core.constants import Book
-from scripts.corpus.corpus_models import BookSchema, ChapterSchema, ProfileEvidence
-from scripts.corpus.sampling import Labels, iqr_outliers, select_book_sample
+from scripts.corpus.corpus_models import (BookSchema, ChapterSchema, CorpusSchema,
+                                          ProfileEvidence, Provenance, compute_corpus_id)
+from scripts.corpus.sampling import (Labels, iqr_outliers, select_book_sample, evidence_path,
+                                     read_evidence, select_corpus_sample, write_evidence)
 
 CORPUS_ID = "680db04cf48248ce"
 ALL_LABELS = set(get_args(Labels))        # {"first", "last", "shortest", "longest", "iqr_outlier", "random"}
 
 # Ten typical chapters around 5,000 words, plus one short and one long outlier.
 TYPICAL = dict(enumerate([4800, 4900, 5000, 5100, 5200, 4950, 5050, 4850, 5150, 5000], start=1))
+
+# 12 chapters: ch 5 shortest (1500, outlier), ch 9 longest (9000, outlier); others ~5000.
+COUNTS = [5000, 4800, 5100, 4900, 1500, 5200, 4950, 5050, 9000, 4850, 5150, 5000]
+
+## Helpers & Fixtures
+
+def make_book(word_counts: list[int], titles_in_text: bool = True,
+              book: Book = Book.BOOK_3) -> BookSchema:
+    """Book with chapters 1..N whose word counts are given in order."""
+    chapters = {
+        n: ChapterSchema(title=f"Ch {n}", title_in_text=titles_in_text, number=n,
+                         filename=f"{book.value}chapter_{n:02d}.txt", character_count=words * 5,
+                         word_count=words, sha256=f"{n:064x}")
+        for n, words in enumerate(word_counts, start=1)
+    }
+    return BookSchema(name=book, expected_chapters=len(chapters), published_year=1999, isbn=None,
+                      evidence=ProfileEvidence(source="test"), chapters=chapters)
+
+
+def random_picks(sample: dict[int, list[Labels]]) -> list[int]:
+    return [n for n, why in sample.items() if "random" in why]
+
+@pytest.fixture
+def record() -> CorpusSchema:
+    """Two-book profiled record; book 7 inserted first to check the output is sorted anyway."""
+    content = {Book.BOOK_7: make_book(COUNTS, titles_in_text=False, book=Book.BOOK_7),
+               Book.BOOK_3: make_book(COUNTS, titles_in_text=True, book=Book.BOOK_3)}
+    return CorpusSchema(
+        schema_version="0.1", corpus_id=compute_corpus_id(content), status="profiled",
+        provenance=Provenance(source_type="community", origin="test", acquired_from="test",
+                              extraction_script="test"),
+        corpus_root="data/06_books", scope="test", content=content)    
 
 ## iqr_outliers tests
 
@@ -63,33 +105,12 @@ def test_does_not_modify_input():
 
 ## select_book_sample tests
 
+# --- rules ---------------------------------------------------------------------
 def test_every_reason_is_a_valid_label():
     sample = select_book_sample(make_book(COUNTS, titles_in_text=False), CORPUS_ID)
     assert all(set(why) <= ALL_LABELS for why in sample.values())
-    
-
-def make_book(word_counts: list[int], titles_in_text: bool = True,
-              book: Book = Book.BOOK_3) -> BookSchema:
-    """Book with chapters 1..N whose word counts are given in order."""
-    chapters = {
-        n: ChapterSchema(title=f"Ch {n}", title_in_text=titles_in_text, number=n,
-                         filename=f"{book.value}chapter_{n:02d}.txt", character_count=words * 5,
-                         word_count=words, sha256=f"{n:064x}")
-        for n, words in enumerate(word_counts, start=1)
-    }
-    return BookSchema(name=book, expected_chapters=len(chapters), published_year=1999, isbn=None,
-                      evidence=ProfileEvidence(source="test"), chapters=chapters)
 
 
-# 12 chapters: ch 5 shortest (1500, outlier), ch 9 longest (9000, outlier); others ~5000.
-COUNTS = [5000, 4800, 5100, 4900, 1500, 5200, 4950, 5050, 9000, 4850, 5150, 5000]
-
-
-def random_picks(sample: dict[int, list[Labels]]) -> list[int]:
-    return [n for n, why in sample.items() if "random" in why]
-
-
-# --- rules ---------------------------------------------------------------------
 def test_rule_chapters_selected_with_reasons():
     sample = select_book_sample(make_book(COUNTS), CORPUS_ID)
     assert "first" in sample[1] and "last" in sample[12]
@@ -157,3 +178,68 @@ def test_book_is_part_of_the_seed():
     picks = {book: random_picks(select_book_sample(make_book(counts, False, book), CORPUS_ID))
              for book in (Book.BOOK_3, Book.BOOK_4, Book.BOOK_7)}
     assert len({tuple(p) for p in picks.values()}) > 1
+
+
+## select_corpus_sample
+
+def test_rows_cover_every_book(record):
+    rows = select_corpus_sample(record)
+    assert {r.book for r in rows} == {Book.BOOK_3, Book.BOOK_7}
+
+
+def test_every_row_carries_the_corpus_id(record):
+    assert all(r.corpus_id == record.corpus_id for r in select_corpus_sample(record))
+
+
+def test_rows_sorted_by_book_then_chapter(record):
+    keys = [(r.book.value, r.chapter) for r in select_corpus_sample(record)]
+    assert keys == sorted(keys)
+
+
+def test_one_row_per_sampled_chapter(record):
+    keys = [(r.book, r.chapter) for r in select_corpus_sample(record)]
+    assert len(keys) == len(set(keys))
+
+
+def test_rows_start_unreviewed_in_round_one(record):
+    assert all((r.round, r.result, r.notes) == (1, "", "") for r in select_corpus_sample(record))
+
+
+def test_same_record_gives_same_rows(record):
+    assert select_corpus_sample(record) == select_corpus_sample(record)
+
+
+## evidence_path, write_evidence, read_evidence
+
+def test_evidence_path_carries_corpus_id(tmp_path):
+    path = evidence_path(tmp_path, "abc123")
+    assert path == tmp_path / "fidelity_evidence" / "fidelity_evidence_abc123.csv"
+
+
+def test_round_trip_preserves_rows(record, tmp_path):
+    rows = select_corpus_sample(record)
+    path = evidence_path(tmp_path, record.corpus_id)
+    write_evidence(rows, path)
+    assert read_evidence(path) == rows
+
+
+def test_reviewer_edits_survive_round_trip(record, tmp_path):
+    rows = select_corpus_sample(record)
+    rows[0] = rows[0].model_copy(update={"result": "pass", "notes": "matches, with a comma"})
+    path = evidence_path(tmp_path, record.corpus_id)
+    write_evidence(rows, path)
+    assert read_evidence(path)[0].notes == "matches, with a comma"
+
+
+def test_write_creates_missing_folder(record, tmp_path):
+    path = evidence_path(tmp_path / "new_root", record.corpus_id)
+    write_evidence(select_corpus_sample(record), path)
+    assert path.is_file()
+
+
+def test_csv_holds_readable_values(record, tmp_path):
+    path = evidence_path(tmp_path, record.corpus_id)
+    write_evidence(select_corpus_sample(record), path)
+    text = path.read_text()
+    assert "prisoner_of_azkaban_" in text and "Book.BOOK_3" not in text
+    assert "corpus_id,book,chapter,reason,round,result,notes" in text

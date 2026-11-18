@@ -7,6 +7,7 @@ accepted, and each validator refuses what it should.
 # pylint: disable=missing-function-docstring   # test names describe the check
 
 from datetime import date
+import json
 
 import pytest
 from pydantic import ValidationError
@@ -14,7 +15,7 @@ from pydantic import ValidationError
 from core.constants import Book
 from scripts.corpus.corpus_models import (BookSchema, ChapterSchema, CorpusSchema,
                                           FidelitySample, ProfileEvidence,Provenance,
-                                          compute_corpus_id)
+                                          compute_corpus_id, SampleReviewRow)
 
 
 # --- builders ---------------------------------------------------------------
@@ -125,3 +126,55 @@ def test_bad_sha256_is_refused():
     with pytest.raises(ValidationError):
         make_chapter(1).model_copy(update={"sha256": "not-a-hash"}).model_validate(
             {**make_chapter(1).model_dump(), "sha256": "not-a-hash"})
+
+
+# --- SampleReviewRow: the hand-edited review CSV's validation boundary ----------------
+def make_row(**overrides) -> SampleReviewRow:
+    fields = {"corpus_id": "680db04cf48248ce", "book": Book.BOOK_3, "chapter": 5,
+              "reason": ["shortest", "iqr_outlier"]}
+    return SampleReviewRow(**{**fields, **overrides})
+
+
+def test_review_row_starts_unreviewed():
+    row = make_row()
+    assert (row.round, row.result, row.notes) == (1, "", "")
+
+
+@pytest.mark.parametrize("result", ["", "pass", "fail"])
+def test_review_row_valid_results_accepted(result):
+    assert make_row(result=result).result == result
+
+
+def test_review_row_book_accepted_as_enum_value_string():
+    # as read from the CSV: the value, not the member name
+    assert make_row(book="prisoner_of_azkaban_").book is Book.BOOK_3
+
+
+def test_review_row_reason_parsed_from_json_cell():
+    assert make_row(reason='["first", "shortest"]').reason == ["first", "shortest"]
+
+
+def test_review_row_reason_dumped_as_json_string_for_csv():
+    dumped = make_row().model_dump(mode="json")
+    assert json.loads(dumped["reason"]) == ["shortest", "iqr_outlier"]
+    assert dumped["book"] == "prisoner_of_azkaban_"     # enum → value, not "Book.BOOK_3"
+
+
+def test_review_row_plain_dump_keeps_reason_as_list():
+    assert make_row().model_dump()["reason"] == ["shortest", "iqr_outlier"]
+
+
+@pytest.mark.parametrize("override", [
+    {"result": "Pass"},                  # wrong case
+    {"result": "passed"},                # wrong word
+    {"reason": ["shortst"]},             # unknown label
+    {"reason": []},                      # at least one reason
+    {"reason": '["first", "shortest"'},  # broken JSON (e.g. mangled quote)
+    {"round": 3},                        # only rounds 1 and 2
+    {"chapter": 0},                      # chapters start at 1
+    {"book": "Book.BOOK_3"},             # member name, not value
+    {"extra_column": "x"},               # unknown field
+])
+def test_review_row_invalid_hand_edits_refused(override):
+    with pytest.raises(ValidationError):
+        make_row(**override)

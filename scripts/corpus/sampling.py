@@ -3,20 +3,25 @@ Project: SVE (ref implementation: Harry Potter Trivia)
 Phase 2: Content Generation (Corpus validation before generation pipeline)
 
 Sampling methods for validation of corpus
+
+Selects the chapters for the fidelity check and writes the review CSV
+(fidelity_evidence/fidelity_evidence_<corpus_id>.csv).
+SampleReviewRow = one sampled chapter: why it was chosen (reason), which round,
+and the reviewer's result + notes. Hand-edited, so it is validated when read back.
+The review helper later summarises these rows into the record's FidelitySample
+(see corpus_models: "Who writes what, and when").
 """
 from pathlib import Path
 from statistics import quantiles
 import logging
 import random
 from collections import defaultdict
-from typing import Literal
 
-from scripts.corpus.corpus_models import CorpusSchema, BookSchema
+import pandas as pd
+
+from scripts.corpus.corpus_models import CorpusSchema, BookSchema, SampleReviewRow, Labels
 
 logger = logging.getLogger(__name__)
-
-# standardize labels for chapter selection
-Labels = Literal["first", "last", "shortest", "longest", "iqr_outlier", "random"]
 
 def iqr_outliers(chapters: dict[int, int], multiplier: float = 1.5) -> set[int]:
     """
@@ -40,7 +45,7 @@ def iqr_outliers(chapters: dict[int, int], multiplier: float = 1.5) -> set[int]:
     iqr = q3 - q1
 
     if iqr == 0:
-        logger.debug("[DEBUG]: IQR is zero, all chapters have the same length")
+        logger.debug("IQR is zero, all chapters have the same length")
         return set()  # all chapters have the same length
 
     lower_fence = q1 - multiplier * iqr
@@ -49,6 +54,7 @@ def iqr_outliers(chapters: dict[int, int], multiplier: float = 1.5) -> set[int]:
     # filter chapters
     return {n for n, words in chapters.items() if words < lower_fence or words > upper_fence}
 
+
 def select_book_sample(book_record: BookSchema,
                                 corpus_id: str) -> dict[int, list[Labels]]:
     """
@@ -56,9 +62,8 @@ def select_book_sample(book_record: BookSchema,
 
     Rules: first, last, shortest, longest, IQR outliers (both tails), plus a seeded random
     pick from the remaining chapters —> 1 if every chapter's title is in its text, else 2.
-    Seeded per book (f"{corpus_id}:{book.value}") so the same corpus always gives the same
-    sample, independent of other books. exclude_from_random: chapters already covered
-    (e.g. carried-forward evidence) so the random pick adds new ones.
+    Seeded per book (f"{corpus_id}_{book.name.value}") so the same corpus always gives the
+    same sample, independent of other books.
     """
 
     wordcounts = {n: ch.word_count for n, ch in book_record.chapters.items()}
@@ -80,29 +85,49 @@ def select_book_sample(book_record: BookSchema,
 
     return dict(sorted(labels.items()))
 
-def select_corpus_sample(corpus_record_path: str, output_path: str) -> None:
+
+def select_corpus_sample(record: CorpusSchema) -> list[SampleReviewRow]:
     """
-   create evidence csv 
-   1. read corpus schema from json
-   2. for each book (def select_book_sample):
-        - select chapters for review. first, last, shortest, longest U iqr outliers. 
-        - select random n chapters .
-            1<=n<3 for now. if book.chapter.title_in_text True for all chapters, n=1 else n =2.
-            for random seed - use corpus id_book_number (same corpus, same sample)
-        - create a df where each book.chapter is a row with fields for manual review.    
-   3. write csv output (def write_evidence).
-        - finalize df - add manual phase notes from a single dict matched to book, chapter.
-        - check if file exists - if no write file. else logger - file already exists. check.
-        - save file to memory - ddata/06_books/fidelity_evidence/fidelity_evidence_<corpus_id>.csv
-   
-   result and notes start empty and are filled in by the reviewer (see ADR-P2-026 for what to
-   record)
+    Sample chapters across all books of a profiled corpus: one SampleReviewRow per chapter.
+       
+    Calls select_book_sample per book; rows are sorted by book, then chapter, so the same
+    corpus always yields the same file. result and notes start empty and are filled in by
+    the reviewer (see ADR-P2-026 for what to record).
     """
-    json_data = Path(corpus_record_path).read_text(encoding="utf-8")
-    corpus_record = CorpusSchema.model_validate_json(json_data)
 
     # for each book in corpus, select chapters for review and create a df for manual review
-    for book, book_schema in corpus_record.content.items():
-        
-        # dict of chapters with reasons for selection: chapter number → list of reasons
-        selected_chapters = select_book_sample(book_schema, corpus_record.corpus_id)
+    rows = [
+            SampleReviewRow(
+                corpus_id=record.corpus_id,
+                book=book_name,
+                chapter=chapter,
+                reason=labels)
+            for book_name, book in record.content.items()
+            for chapter, labels in select_book_sample(book, record.corpus_id).items()
+        ]
+    return sorted(rows, key=lambda r: (r.book.value, r.chapter))
+
+
+def evidence_path(corpus_root: Path, corpus_id: str) -> Path:
+    """Where the fidelity review CSV for this corpus lives."""
+    return corpus_root / "fidelity_evidence" / f"fidelity_evidence_{corpus_id}.csv"
+
+
+def write_evidence(rows: list[SampleReviewRow], path: Path) -> None:
+    """
+    Write review rows to CSV (reason as a JSON list via SampleReviewRow). Overwrites: callers
+    decide whether writing is allowed (see main).
+    """
+    path.parent.mkdir(parents=True, exist_ok=True)
+    pd.DataFrame([r.model_dump(mode="json") for r in rows]).to_csv(path, index=False)
+
+
+def read_evidence(path: Path) -> list[SampleReviewRow]:
+    """
+    Read the (hand-edited) review CSV back into validated rows. dtype=str and
+    keep_default_na=False hand cells over exactly as written, so empty results stay ''.
+    
+    Returns List[SampleReviewRow]
+    """
+    df = pd.read_csv(path, dtype=str, keep_default_na=False)
+    return [SampleReviewRow.model_validate(r) for r in df.to_dict("records")]
