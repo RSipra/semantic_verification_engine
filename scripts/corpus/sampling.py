@@ -21,6 +21,7 @@ from collections import defaultdict
 
 import pandas as pd
 
+from src.core.constants import Book
 from scripts.corpus.corpus_models import (CorpusSchema, BookSchema, SampleReviewRow, Labels,
                                           DEFAULT_CORPUS_ROOT, record_path)
 
@@ -138,6 +139,20 @@ def read_evidence(path: Path) -> list[SampleReviewRow]:
     df = pd.read_csv(path, dtype=str, keep_default_na=False)
     return [SampleReviewRow.model_validate(r) for r in df.to_dict("records")]
 
+
+def passages(text: str, length: int = 300) -> dict[str, str]:
+    """
+    Start, middle and end excerpts of a chapter for side-by-side review (whitespace collapsed).
+    """
+    flat = " ".join(text.split())
+    mid = len(flat) // 2
+    return {
+        "START": flat[:length],
+        "MIDDLE": flat[max(0, mid - length // 2): mid + length // 2],
+        "END": flat[-length:],
+    }
+
+
 ## Orchestrators
 
 def run_select(corpus_root: Path) -> int:
@@ -170,6 +185,37 @@ def run_select(corpus_root: Path) -> int:
     print(f"{len(samples)} chapters selected across {len(record.content)} books → {write_path}")
     return 0
 
+def run_show(corpus_root:Path, books:set[Book]|None=None) -> int:
+    """
+    `sampling show`: print start / middle / end passages of each sampled chapter, for
+    comparison against the reference copy. All books, or only `books`.
+    """
+    # load corpus record from json
+    record = CorpusSchema.model_validate_json(record_path(corpus_root).read_text(encoding="utf-8"))
+
+    # read evidence file
+    path = evidence_path(corpus_root, record.corpus_id)
+    if not path.exists():
+        print(f"no sample selected yet for corpus {record.corpus_id}: run `select` first")
+        return 1
+
+    rows =  [r for r in read_evidence(path) if books is None or r.book in books]
+    if not rows:
+        print("no sampled chapters for the selected book(s); run `select` first.")
+        return 0
+
+    # gather chapters text
+    for row in rows:
+        chapter = record.content[row.book].chapters[row.chapter]
+        text = (corpus_root / chapter.filename).read_text(encoding="utf-8")
+        print(f"\n=== {row.book.value} ch {row.chapter} · '{chapter.title}' · "
+              f"{', '.join(row.reason)} · round {row.round} ===")
+        for label, excerpt in passages(text).items():
+            print(f"\n[{label}]\n{excerpt}")
+
+    return 0
+
+
 def main(argv: list[str]|None = None):
     """CLI for the fidelity check: `select` (now), then `show` and `promote` (later)."""
 
@@ -181,13 +227,19 @@ def main(argv: list[str]|None = None):
     # define subcommands (sampling steps) to run
     steps = parser.add_subparsers(dest="step", required=True)
     steps.add_parser("select", description="select the corpus sample and write the review CSV")
+    show = steps.add_parser("show", help="print start/middle/end passages of sampled chapters")
 
+    show.add_argument("--books", nargs="+", choices=[b.name for b in Book],
+                  help="only these books (e.g. BOOK_3 BOOK_7); default: all")
     # run the cli subcommands + arguments
     args = parser.parse_args(argv)
 
     # call the function for the chosen step, passing the parsed folder
     if args.step == 'select':
         return run_select(args.corpus_root)
+    if args.step == 'show':
+        books = {Book[name] for name in args.books} if args.books else None
+        return run_show(args.corpus_root, books)
     return 1  # run failure
 
 if __name__ == "__main__":

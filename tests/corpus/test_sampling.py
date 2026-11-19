@@ -21,7 +21,8 @@ from scripts.corpus.corpus_models import (BookSchema, ChapterSchema, CorpusSchem
                                           ProfileEvidence, Provenance, compute_corpus_id,
                                           record_path)
 from scripts.corpus.sampling import ( iqr_outliers, select_book_sample, evidence_path,
-                                     read_evidence, select_corpus_sample, write_evidence, main)
+                                     read_evidence, select_corpus_sample, write_evidence, main,
+                                     passages)
 
 CORPUS_ID = "680db04cf48248ce"
 # labels: {"first", "last", "shortest", "longest", "iqr_outlier", "random"}
@@ -63,7 +64,7 @@ def record() -> CorpusSchema:
         corpus_root="data/06_books", scope="test", content=content)
 
 
-def write_record(record: CorpusSchema, corpus_root: Path) -> None:
+def save_record(record: CorpusSchema, corpus_root: Path) -> None:
     """Put a record where main() looks for it (corpus_root/corpus_record.json)."""
     record_path(corpus_root).write_text(record.model_dump_json(), encoding="utf-8")
 
@@ -258,13 +259,13 @@ def test_csv_holds_readable_values(record, tmp_path):
 
 ## main / select
 def test_select_writes_review_csv(record, tmp_path):
-    write_record(record, tmp_path)
+    save_record(record, tmp_path)
     assert select(tmp_path) == 0
     assert read_evidence(evidence_path(tmp_path, record.corpus_id)) == select_corpus_sample(record)
 
 
 def test_select_does_not_overwrite_existing_csv(record, tmp_path, capsys):
-    write_record(record, tmp_path)
+    save_record(record, tmp_path)
     select(tmp_path)
     path = evidence_path(tmp_path, record.corpus_id)
     path.write_text(path.read_text() + "reviewer edits\n")       # stand-in for filled-in results
@@ -276,7 +277,7 @@ def test_select_does_not_overwrite_existing_csv(record, tmp_path, capsys):
 
 
 def test_select_skips_corpus_that_is_not_profiled(record, tmp_path, capsys):
-    write_record(record.model_copy(update={"status": "superseded"}), tmp_path)
+    save_record(record.model_copy(update={"status": "superseded"}), tmp_path)
     assert select(tmp_path) == 0
     assert not evidence_path(tmp_path, record.corpus_id).exists()
     assert "nothing to sample" in capsys.readouterr().out
@@ -286,3 +287,90 @@ def test_no_step_given_shows_usage():
     with pytest.raises(SystemExit) as exc:
         main([])
     assert exc.value.code != 0        # argparse: required subcommand missing
+
+
+# --- passages ----------------------------------------------------------------------------
+def test_passages_cut_start_middle_end():
+    text = "".join(f"{i:04d}" for i in range(250))          # 1,000 chars, position-coded
+    parts = passages(text, length=300)
+    assert parts["START"] == text[:300]
+    assert parts["END"] == text[-300:]
+    assert parts["MIDDLE"] == text[350:650]                 # centred on the halfway point (500)
+
+
+def test_passages_collapse_whitespace():
+    parts = passages("line one\n\n  line   two\nline three", length=300)
+    assert parts["START"] == "line one line two line three"
+
+
+def test_short_text_returned_whole_without_error():
+    parts = passages("Just a short chapter.", length=300)
+    assert set(parts.values()) == {"Just a short chapter."}
+
+
+# --- show (via main) ---------------------------------------------------------------------
+def write_chapter_files(record: CorpusSchema, corpus_root: Path) -> None:
+    """A recognisable text file for every chapter in the record, named as the record says."""
+    for book in record.content.values():
+        for n, chapter in book.chapters.items():
+            body = f"START-{book.name.value}{n} " + "filler " * 200 + f" END-{book.name.value}{n}"
+            (corpus_root / chapter.filename).write_text(body, encoding="utf-8")
+
+
+def show(corpus_root: Path, *books: str) -> int:
+    args = ["--corpus-root", str(corpus_root), "show"]
+    return main(args + (["--books", *books] if books else []))
+
+
+@pytest.fixture
+def selected(record, tmp_path):
+    """Corpus root with record, chapter files and a selected sample (show's preconditions)."""
+    save_record(record, tmp_path)
+    write_chapter_files(record, tmp_path)
+    select(tmp_path)
+    return tmp_path
+
+
+def test_show_prints_one_block_per_sampled_chapter(record, selected, capsys):
+    assert show(selected) == 0
+    out = capsys.readouterr().out
+    assert out.count("=== ") == len(select_corpus_sample(record))
+    assert out.count("[START]") == out.count("[MIDDLE]") == out.count("[END]") == out.count("=== ")
+
+
+def test_show_header_names_book_chapter_title_and_reasons(record, selected, capsys):
+    show(selected)
+    out = capsys.readouterr().out
+    first = select_corpus_sample(record)[0]
+    title = record.content[first.book].chapters[first.chapter].title
+    assert f"=== {first.book.value} ch {first.chapter} · '{title}'" in out
+    assert ", ".join(first.reason) in out
+
+
+def test_show_passages_come_from_the_right_file(record, selected, capsys):
+    show(selected)
+    out = capsys.readouterr().out
+    first = select_corpus_sample(record)[0]
+    assert f"START-{first.book.value}{first.chapter}" in out
+
+
+def test_show_books_filter(selected, capsys):
+    assert show(selected, "BOOK_3") == 0
+    out = capsys.readouterr().out
+    assert "prisoner_of_azkaban_" in out and "deathly_hallows_" not in out
+
+
+def test_show_book_without_sampled_chapters(selected, capsys):
+    assert show(selected, "BOOK_4") == 0            # not in the fixture corpus: nothing sampled
+    assert "no sampled chapters" in capsys.readouterr().out
+
+
+def test_show_before_select_returns_error(record, tmp_path, capsys):
+    save_record(record, tmp_path)                     # record exists, no review CSV yet
+    assert show(tmp_path) == 1
+    assert "run `select` first" in capsys.readouterr().out
+
+
+def test_show_rejects_comma_separated_books(selected):
+    with pytest.raises(SystemExit):
+        show(selected, "BOOK_3,")                     # argparse choices: spaces, not commas
