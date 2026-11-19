@@ -54,9 +54,9 @@ from pydantic import ValidationError
 
 from core.constants import Book
 from scripts.corpus.corpus_models import (
-    BookSchema, ChapterSchema, CorpusSchema, ProfileEvidence, Provenance, compute_corpus_id, 
+    BookSchema, ChapterSchema, CorpusSchema, ProfileEvidence, Provenance, compute_corpus_id,
     DEFAULT_CORPUS_ROOT, record_path)
- 
+
 # Reviewed title discrepancies: (book, chapter) → (title to record, reason).
 TITLE_EXCEPTIONS: dict[tuple[Book, int], tuple[str, str]] = {
     (Book.BOOK_3, 8):  ("Flight of the Fat Lady", "corpus text typo 'FAT FADY'; toc correct"),
@@ -85,8 +85,9 @@ PUBLISHED_YEAR: dict[Book, int] = {Book.BOOK_3: 1999, Book.BOOK_4: 2000, Book.BO
 TITLE_SEARCH_CHARS = 300
 
 # Provenance of the text and of the toc snapshot — keep in step with DATA_SOURCES.md.
-TOC_SNAPSHOT_SOURCE = ("HP_Chapters.csv from github.com/sharanyavb/harry-potter@<FULL-SHA> "
-                       "(fan-compiled, US edition titles)")   # TODO: paste the pinned commit
+TOC_SNAPSHOT_SOURCE = ("HP_Chapters.csv from "
+                       "github.com/sharanyavb/harry-potter@57acafc1a9e5ed3f7c89a0d19f69d32806afbde9"
+                       " (fan-compiled, US edition titles)")
 PROVENANCE = Provenance(
     source_type="community",
     origin="www.readbooksvampire.com (site no longer exists), via R package",
@@ -185,8 +186,8 @@ def profile_chapter(book: Book, number: int, title: str,
 
 # --- block 4: one book ---------------------------------------------------------------
 _CHAPTER_FILE = re.compile(r"^(?P<prefix>.+_)chapter_(?P<num>\d+)\.txt$")
- 
- 
+
+
 def find_unexpected_files(book: Book, expected: set[int], corpus_root: Path) -> list[Problem]:
     """Files for this book that are not one of its expected chapters."""
     expected_names = {chapter_filename(book, n) for n in expected}

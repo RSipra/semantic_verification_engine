@@ -67,7 +67,8 @@ from datetime import date
 from typing import Literal, Self
 from pathlib import Path
 
-from pydantic import BaseModel, ConfigDict, Field, model_validator, field_validator, field_serializer
+from pydantic import (BaseModel, ConfigDict, Field, model_validator,
+                      field_validator, field_serializer)
 
 from core.constants import Book
 
@@ -241,16 +242,16 @@ class BookSchema(BaseModel):
     def sampled_chapters_exist(self) -> Self:
         """Validate that every sampled chapter is in this book."""
         if self.fidelity_sample:
-            unknown = sorted(set(self.fidelity_sample.chapters) - set(self.chapters))
+            unknown = sorted(set(self.fidelity_sample.chapters) - set(self.chapters)) # pylint: disable=no-member  # pydantic field, FieldInfo false positive
             if unknown:
                 raise ValueError(
-                    f"fidelity sample lists chapters not in {self.name.value}: {unknown}")
+                    f"fidelity sample lists chapters not in {self.name.value}: {unknown}") # pylint: disable=no-member  # pydantic field, FieldInfo false positive
         return self
 
     @model_validator(mode="after")
     def keys_match_numbers(self) -> Self:
         """Validate that chapter keys match chapter.number."""
-        bad = [k for k, ch in self.chapters.items() if k != ch.number]
+        bad = [k for k, ch in self.chapters.items() if k != ch.number] # pylint: disable=no-member  # pydantic field, FieldInfo false positive
         if bad:
             raise ValueError(f"chapter keys do not match chapter.number: {bad}")
         return self
@@ -302,7 +303,7 @@ class CorpusSchema(BaseModel):
             missing = [f for f in (
                 "certification_method", "date_certified")
                        if getattr(self, f) is None]
-            unsampled = [b.value for b, rec in self.content.items()
+            unsampled = [b.value for b, rec in self.content.items()  # pylint: disable=no-member  # pydantic field, FieldInfo false positive 
                          if rec.fidelity_sample is None or rec.fidelity_sample.result != "pass"]
             if missing or unsampled:
                 raise ValueError(
