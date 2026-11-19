@@ -13,7 +13,7 @@ import pytest
 
 from core.constants import Book
 from scripts.corpus import qualify_corpus as qc
-from scripts.corpus.corpus_models import CorpusSchema, FidelitySample
+from scripts.corpus.corpus_models import CorpusSchema, FidelitySample, record_path
 
 BOOKS = [Book.BOOK_3, Book.BOOK_7]
 TITLES = {
@@ -52,10 +52,6 @@ def corpus(tmp_path):
 
 def run(root, *extra):
     return qc.main(["--corpus-root", str(root), "--books", *[b.name for b in BOOKS], *extra])
-
-
-def record_path(root):
-    return root / qc.RECORD_FILENAME
 
 
 # --- titles --------------------------------------------------------------------------

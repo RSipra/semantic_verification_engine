@@ -12,17 +12,20 @@ a small two-book record; the round trip checks the review CSV reads back unchang
 # pylint: disable=redefined-outer-name         # pytest fixtures are injected by parameter name
 
 from typing import get_args
+from pathlib import Path
 
 import pytest
 
 from core.constants import Book
-from scripts.corpus.corpus_models import (BookSchema, ChapterSchema, CorpusSchema,
-                                          ProfileEvidence, Provenance, compute_corpus_id)
-from scripts.corpus.sampling import (Labels, iqr_outliers, select_book_sample, evidence_path,
-                                     read_evidence, select_corpus_sample, write_evidence)
+from scripts.corpus.corpus_models import (BookSchema, ChapterSchema, CorpusSchema, Labels,
+                                          ProfileEvidence, Provenance, compute_corpus_id,
+                                          record_path)
+from scripts.corpus.sampling import ( iqr_outliers, select_book_sample, evidence_path,
+                                     read_evidence, select_corpus_sample, write_evidence, main)
 
 CORPUS_ID = "680db04cf48248ce"
-ALL_LABELS = set(get_args(Labels))        # {"first", "last", "shortest", "longest", "iqr_outlier", "random"}
+# labels: {"first", "last", "shortest", "longest", "iqr_outlier", "random"}
+ALL_LABELS = set(get_args(Labels))
 
 # Ten typical chapters around 5,000 words, plus one short and one long outlier.
 TYPICAL = dict(enumerate([4800, 4900, 5000, 5100, 5200, 4950, 5050, 4850, 5150, 5000], start=1))
@@ -57,7 +60,16 @@ def record() -> CorpusSchema:
         schema_version="0.1", corpus_id=compute_corpus_id(content), status="profiled",
         provenance=Provenance(source_type="community", origin="test", acquired_from="test",
                               extraction_script="test"),
-        corpus_root="data/06_books", scope="test", content=content)    
+        corpus_root="data/06_books", scope="test", content=content)
+
+
+def write_record(record: CorpusSchema, corpus_root: Path) -> None:
+    """Put a record where main() looks for it (corpus_root/corpus_record.json)."""
+    record_path(corpus_root).write_text(record.model_dump_json(), encoding="utf-8")
+
+
+def select(corpus_root: Path) -> int:
+    return main(["--corpus-root", str(corpus_root), "select"])
 
 ## iqr_outliers tests
 
@@ -243,3 +255,34 @@ def test_csv_holds_readable_values(record, tmp_path):
     text = path.read_text()
     assert "prisoner_of_azkaban_" in text and "Book.BOOK_3" not in text
     assert "corpus_id,book,chapter,reason,round,result,notes" in text
+
+## main / select
+def test_select_writes_review_csv(record, tmp_path):
+    write_record(record, tmp_path)
+    assert select(tmp_path) == 0
+    assert read_evidence(evidence_path(tmp_path, record.corpus_id)) == select_corpus_sample(record)
+
+
+def test_select_does_not_overwrite_existing_csv(record, tmp_path, capsys):
+    write_record(record, tmp_path)
+    select(tmp_path)
+    path = evidence_path(tmp_path, record.corpus_id)
+    path.write_text(path.read_text() + "reviewer edits\n")       # stand-in for filled-in results
+    before = path.read_text()
+
+    assert select(tmp_path) == 0
+    assert path.read_text() == before
+    assert "already selected" in capsys.readouterr().out
+
+
+def test_select_skips_corpus_that_is_not_profiled(record, tmp_path, capsys):
+    write_record(record.model_copy(update={"status": "superseded"}), tmp_path)
+    assert select(tmp_path) == 0
+    assert not evidence_path(tmp_path, record.corpus_id).exists()
+    assert "nothing to sample" in capsys.readouterr().out
+
+
+def test_no_step_given_shows_usage():
+    with pytest.raises(SystemExit) as exc:
+        main([])
+    assert exc.value.code != 0        # argparse: required subcommand missing

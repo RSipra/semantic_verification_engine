@@ -11,6 +11,8 @@ and the reviewer's result + notes. Hand-edited, so it is validated when read bac
 The review helper later summarises these rows into the record's FidelitySample
 (see corpus_models: "Who writes what, and when").
 """
+import argparse
+import sys
 from pathlib import Path
 from statistics import quantiles
 import logging
@@ -19,9 +21,13 @@ from collections import defaultdict
 
 import pandas as pd
 
-from scripts.corpus.corpus_models import CorpusSchema, BookSchema, SampleReviewRow, Labels
+from scripts.corpus.corpus_models import (CorpusSchema, BookSchema, SampleReviewRow, Labels,
+                                          DEFAULT_CORPUS_ROOT, record_path)
+
 
 logger = logging.getLogger(__name__)
+
+## Helpers
 
 def iqr_outliers(chapters: dict[int, int], multiplier: float = 1.5) -> set[int]:
     """
@@ -131,3 +137,58 @@ def read_evidence(path: Path) -> list[SampleReviewRow]:
     """
     df = pd.read_csv(path, dtype=str, keep_default_na=False)
     return [SampleReviewRow.model_validate(r) for r in df.to_dict("records")]
+
+## Orchestrators
+
+def run_select(corpus_root: Path) -> int:
+    """
+    `sampling select`: choose the fidelity sample for a profiled corpus and write the review CSV.
+
+    Does nothing (exit 0) if the corpus is not `profiled`, or if a review CSV already exists for
+    this corpus_id (it may hold the reviewer's results; delete it to reselect).
+    """
+    # load corpus record from json
+    record = CorpusSchema.model_validate_json(record_path(corpus_root).read_text(encoding="utf-8"))
+
+    # check corpus status
+    if record.status != "profiled":
+        print(f"corpus {record.corpus_id} is {record.status}: nothing to sample")
+        return 0
+
+    # check if evidence file exists for corpus
+    write_path = evidence_path(corpus_root, record.corpus_id)
+    if write_path.exists():
+        print(f"sample already selected for corpus {record.corpus_id}: {write_path} "
+              "(fill in results, or delete the file to reselect)")
+        return 0
+
+    # select corpus samples
+    samples = select_corpus_sample(record)
+
+    # write evidence file
+    write_evidence(samples, write_path)
+    print(f"{len(samples)} chapters selected across {len(record.content)} books → {write_path}")
+    return 0
+
+def main(argv: list[str]|None = None):
+    """CLI for the fidelity check: `select` (now), then `show` and `promote` (later)."""
+
+    # create parser: arguments for running module
+    parser = argparse.ArgumentParser(description="Fidelity sampling for the corpus.")
+    parser.add_argument("--corpus-root", type=Path, default=DEFAULT_CORPUS_ROOT,
+                        help="folder holding the corpus record and chapter files")
+
+    # define subcommands (sampling steps) to run
+    steps = parser.add_subparsers(dest="step", required=True)
+    steps.add_parser("select", description="select the corpus sample and write the review CSV")
+
+    # run the cli subcommands + arguments
+    args = parser.parse_args(argv)
+
+    # call the function for the chosen step, passing the parsed folder
+    if args.step == 'select':
+        return run_select(args.corpus_root)
+    return 1  # run failure
+
+if __name__ == "__main__":
+    sys.exit(main())
