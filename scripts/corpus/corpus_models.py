@@ -65,7 +65,8 @@ import hashlib
 import json
 from datetime import date
 from typing import Literal, Self
-from pathlib import Path
+from pathlib import Path, PurePosixPath
+import re
 
 from pydantic import (BaseModel, ConfigDict, Field, model_validator,
                       field_validator, field_serializer)
@@ -74,6 +75,24 @@ from core.constants import Book
 
 DEFAULT_CORPUS_ROOT = Path("data/06_books")
 RECORD_FILENAME = "corpus_record.json"
+
+SHA256_HEX = re.compile(r"[0-9a-f]{64}")
+
+def file_sha256(path: Path) -> str:
+    """sha256 of the file's exact bytes (no decoding, so encoding/newline changes are detected)."""
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def hash_evidence(corpus_root: Path, paths: list[Path]) -> dict[str, str]:
+    """Map each evidence file to its sha256, keyed by POSIX path relative to corpus_root."""
+    return {p.relative_to(corpus_root).as_posix(): file_sha256(p) for p in sorted(paths)}
+
+
+def changed_evidence(corpus_root: Path, evidence_files: dict[str, str]) -> list[str]:
+    """Evidence files that are missing or whose bytes no longer match the recorded hash."""
+    return [rel for rel, expected in sorted(evidence_files.items())
+            if not (corpus_root / rel).is_file() or file_sha256(corpus_root / rel) != expected]
+
 
 def record_path(corpus_root: Path) -> Path:
     """
@@ -286,7 +305,33 @@ class CorpusSchema(BaseModel):
         ..., description="scope of the corpus, e.g. HP Book Series (1-7), Canadian version (tbc)")
     date_certified: date | None = Field(
         default=None, description="Date the corpus was certified; None until certified.")
+    evidence_files: dict[str, str] = Field(
+        default_factory=dict,
+        description="Certification evidence (e.g. fidelity review CSV, book reference file): "
+                    "path relative to corpus_root -> sha256 of file bytes.")
     content: dict[Book, BookSchema] = Field(..., description="Books keyed by Book enum value.")
+
+    @field_validator("evidence_files")
+    @classmethod
+    def evidence_files_well_formed(cls, v:dict[str,str]) -> dict[str,str]:
+        """
+        Check the shape of each evidence entry, not whether it matches the files on disk.
+
+        - path: relative and inside corpus_root (no leading '/', no '..'), so preflight
+          only ever hashes files inside the DVC-tracked folder.
+        - hash: 64 lowercase hex characters (sha256), so a malformed value fails here
+          with a clear message instead of as an unexplained mismatch in preflight.
+
+        Collects every bad entry and raises once. Matching against disk: changed_evidence.
+        """
+        bad_paths = [
+            p for p in v if PurePosixPath(p).is_absolute() or ".." in PurePosixPath(p).parts]
+        bad_hashes = [p for p, h in v.items() if not SHA256_HEX.fullmatch(h)]
+        if bad_paths or bad_hashes:
+            raise ValueError(
+                f"evidence_files: paths must be relative inside corpus_root {bad_paths}; "
+                f"hashes must be 64 lowercase hex {bad_hashes}")
+        return v
 
     @model_validator(mode="after")
     def corpus_id_matches_content(self) -> Self:
@@ -303,11 +348,38 @@ class CorpusSchema(BaseModel):
             missing = [f for f in (
                 "certification_method", "date_certified")
                        if getattr(self, f) is None]
+            if not self.evidence_files:
+                missing.append("evidence_files")
             unsampled = [b.value for b, rec in self.content.items()  # pylint: disable=no-member  # pydantic field, FieldInfo false positive 
                          if rec.fidelity_sample is None or rec.fidelity_sample.result != "pass"]
             if missing or unsampled:
                 raise ValueError(
-                    "status=certified requires certification_method + date_certified "
+                    "status=certified requires certification_method + date_certified + evidence_files "
                     f"(missing: {missing}) and a passing fidelity sample for every book "
                     f"(missing/failed: {unsampled})")
         return self
+
+class FidelityReferences(BaseModel):
+    """
+    The reference edition each book was checked against in the manual fidelity review.
+
+    Hand-written, one file per corpus, stored beside the review CSV. Validated on read:
+    promote copies each value into that book's FidelitySample.reference.
+    """
+    model_config = ConfigDict(extra="forbid")
+
+    corpus_id: str = Field(..., description="Corpus the review was performed on")
+    references: dict[Book, str] = Field(
+        ..., 
+        min_length=1,
+        description="Book -> reference edition (title, publisher, year, ISBN, access)"
+        )
+
+    @field_validator("references")
+    @classmethod
+    def no_blank_references(cls, v: dict[Book, str]) -> dict[Book, str]:
+        """Ensure reference is not empty"""
+        blank = [book.value for book, ref in v.items() if not ref.strip()]
+        if blank:
+            raise ValueError(f"blank reference for: {', '.join(blank)}")
+        return v

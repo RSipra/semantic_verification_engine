@@ -17,12 +17,12 @@ from pathlib import Path
 import pytest
 
 from core.constants import Book
-from scripts.corpus.corpus_models import (BookSchema, ChapterSchema, CorpusSchema, Labels,
-                                          ProfileEvidence, Provenance, compute_corpus_id,
-                                          record_path)
+from scripts.corpus.corpus_models import (CorpusSchema, Labels, Provenance, 
+                                          compute_corpus_id, record_path)
 from scripts.corpus.sampling import ( iqr_outliers, select_book_sample, evidence_path,
                                      read_evidence, select_corpus_sample, write_evidence, main,
                                      passages)
+from tests.corpus.conftest import COUNTS, make_book
 
 CORPUS_ID = "680db04cf48248ce"
 # labels: {"first", "last", "shortest", "longest", "iqr_outlier", "random"}
@@ -31,23 +31,8 @@ ALL_LABELS = set(get_args(Labels))
 # Ten typical chapters around 5,000 words, plus one short and one long outlier.
 TYPICAL = dict(enumerate([4800, 4900, 5000, 5100, 5200, 4950, 5050, 4850, 5150, 5000], start=1))
 
-# 12 chapters: ch 5 shortest (1500, outlier), ch 9 longest (9000, outlier); others ~5000.
-COUNTS = [5000, 4800, 5100, 4900, 1500, 5200, 4950, 5050, 9000, 4850, 5150, 5000]
 
 ## Helpers & Fixtures
-
-def make_book(word_counts: list[int], titles_in_text: bool = True,
-              book: Book = Book.BOOK_3) -> BookSchema:
-    """Book with chapters 1..N whose word counts are given in order."""
-    chapters = {
-        n: ChapterSchema(title=f"Ch {n}", title_in_text=titles_in_text, number=n,
-                         filename=f"{book.value}chapter_{n:02d}.txt", character_count=words * 5,
-                         word_count=words, sha256=f"{n:064x}")
-        for n, words in enumerate(word_counts, start=1)
-    }
-    return BookSchema(name=book, expected_chapters=len(chapters), published_year=1999, isbn=None,
-                      evidence=ProfileEvidence(source="test"), chapters=chapters)
-
 
 def random_picks(sample: dict[int, list[Labels]]) -> list[int]:
     return [n for n, why in sample.items() if "random" in why]

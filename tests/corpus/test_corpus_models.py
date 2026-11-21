@@ -17,6 +17,7 @@ from scripts.corpus.corpus_models import (BookSchema, ChapterSchema, CorpusSchem
                                           FidelitySample, ProfileEvidence,Provenance,
                                           compute_corpus_id, SampleReviewRow)
 
+evidence_files={"fidelity_evidence/e.csv": "a" * 64},
 
 # --- builders ---------------------------------------------------------------
 def make_chapter(n: int) -> ChapterSchema:
@@ -68,7 +69,8 @@ def test_profiled_record_is_valid(profiled_content):
 def test_certified_record_with_evidence_is_valid(passing_sample):
     content = {Book.BOOK_3: make_book(sample=passing_sample)}
     record = make_corpus(content, status="certified", certification_method="manual_review",
-                         date_certified=date(2026, 11, 5))
+                         date_certified=date(2026, 11, 5),
+                        evidence_files={"fidelity_evidence/e.csv": "a" * 64})
     assert record.status == "certified"
 
 

@@ -117,7 +117,9 @@ def certify(path):
                             reference="test", result="pass", date_checked=date(2026, 11, 9))
     for book in data["content"].values():
         book["fidelity_sample"] = json.loads(sample.model_dump_json())
-    data.update(status="certified", certification_method="manual_review", date_certified="2026-11-09")
+    data.update(status="certified", certification_method="manual_review", 
+                date_certified="2026-11-09",
+                evidence_files={"fidelity_evidence/e.csv": "a" * 64})
     path.write_text(CorpusSchema.model_validate(data).model_dump_json(indent=2))
 
 
@@ -136,4 +138,3 @@ def test_changed_data_clears_certification(corpus, capsys):
     assert run(corpus) == 0
     assert "CERTIFICATION CLEARED" in capsys.readouterr().out
     assert CorpusSchema.model_validate_json(record_path(corpus).read_text()).status == "profiled"
-    

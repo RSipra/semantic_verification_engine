@@ -23,7 +23,7 @@ import pandas as pd
 
 from src.core.constants import Book
 from scripts.corpus.corpus_models import (CorpusSchema, BookSchema, SampleReviewRow, Labels,
-                                          DEFAULT_CORPUS_ROOT, record_path)
+                                          DEFAULT_CORPUS_ROOT, record_path, FidelityReferences,)
 
 
 logger = logging.getLogger(__name__)
@@ -152,6 +152,14 @@ def passages(text: str, length: int = 300) -> dict[str, str]:
         "END": flat[-length:],
     }
 
+def references_path(corpus_root: Path, corpus_id: str) -> Path:
+    """create standard reference path for fidelity reference records"""
+    return corpus_root / "fidelity_evidence" / f"fidelity_references_{corpus_id}.json"
+
+
+def read_references(path: Path) -> FidelityReferences:
+    """read the fidelity evidence files"""
+    return FidelityReferences.model_validate_json(path.read_text(encoding="utf-8"))
 
 ## Orchestrators
 
