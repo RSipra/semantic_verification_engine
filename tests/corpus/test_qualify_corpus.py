@@ -138,3 +138,35 @@ def test_changed_data_clears_certification(corpus, capsys):
     assert run(corpus) == 0
     assert "CERTIFICATION CLEARED" in capsys.readouterr().out
     assert CorpusSchema.model_validate_json(record_path(corpus).read_text()).status == "profiled"
+
+
+# --- per-book notes --------------------------------------------------------------------
+def test_book_notes_list_only_that_books_exceptions():
+    """Each book's notes carry its own exceptions, never another book's."""
+    notes_3 = qc.book_notes(Book.BOOK_3)
+    notes_4 = qc.book_notes(Book.BOOK_4)
+    assert "FAT FADY" in notes_3 and "FAT FADY" not in notes_4
+    assert "Weasley" in notes_4 and "Weasley" not in notes_3
+
+
+def test_each_book_in_record_gets_its_own_notes(corpus):
+    """Guards against one shared ProfileEvidence object (last book's notes everywhere)."""
+    run(corpus)
+    record = CorpusSchema.model_validate_json(record_path(corpus).read_text())
+    notes = [book.evidence.notes for book in record.content.values()]
+    assert len(set(notes)) == len(notes)
+
+
+# --- title exceptions ------------------------------------------------------------------
+def test_exception_applies_to_book_without_titles_in_text(tmp_path, monkeypatch):
+    """An exception corrects the title even when no title check runs (books 4 and 7)."""
+    book = Book.BOOK_7
+    monkeypatch.setitem(qc.TITLE_IN_TEXT, book, False)
+    monkeypatch.setitem(qc.TITLE_EXCEPTIONS, (book, 1), ("Corrected Title", "test"))
+    (tmp_path / qc.chapter_filename(book, 1)).write_text("Some chapter text.", encoding="utf-8")
+
+    chapter, problems = qc.profile_chapter(book, 1, "Toc Title", tmp_path)
+
+    assert problems == []
+    assert chapter is not None
+    assert chapter.title == "Corrected Title"

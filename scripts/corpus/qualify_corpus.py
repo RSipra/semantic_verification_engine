@@ -57,6 +57,9 @@ from scripts.corpus.corpus_models import (
     BookSchema, ChapterSchema, CorpusSchema, ProfileEvidence, Provenance, compute_corpus_id,
     DEFAULT_CORPUS_ROOT, record_path)
 
+# Extraction commit number:
+EXTRACTION_COMMIT = "4853d448ebef0fce3806bf2e53cef5dd100f0c3f"
+
 # Reviewed title discrepancies: (book, chapter) → (title to record, reason).
 TITLE_EXCEPTIONS: dict[tuple[Book, int], tuple[str, str]] = {
     (Book.BOOK_3, 8):  ("Flight of the Fat Lady", "corpus text typo 'FAT FADY'; toc correct"),
@@ -65,7 +68,50 @@ TITLE_EXCEPTIONS: dict[tuple[Book, int], tuple[str, str]] = {
     (Book.BOOK_3, 19): (
         "The Servant of Lord Voldemort",
         "toc snapshot error; file matches published title (verified online, 2026-11-09)"),
+    # book 4: toc snapshot errors; US edition contents page per Scholastic excerpt
+    # (scholastic.com/hpread/HP_Book4_Chapter_Excerpt.pdf, ISBN 978-0-439-13959-5), checked 2026-11-22
+    (Book.BOOK_4, 5): (
+        "Weasleys’ Wizard Wheezes",
+        "toc snapshot error ('Weasley’s'); US edition title per Scholastic contents, 2026-11-22"),
+    (Book.BOOK_4, 28): (
+        "The Madness of Mr. Crouch",
+        "toc snapshot error (UK 'Mr'); US edition title per Scholastic contents, 2026-11-22"),
+
+    # book 7: toc snapshot errors; wording per US 1st ed. contents
+    # (Scholastic, illus. GrandPré; lib.ecu.edu catalogue record 1079452, checked 2026-11-22)
+    (Book.BOOK_7, 6): ("The Ghoul in Pajamas",
+                       "toc snapshot error (UK spelling 'Pyjamas'); US edition title per library catalogue, 2026-11-22"),
+    (Book.BOOK_7, 13): ("The Muggle-Born Registration Commission",
+                        "toc snapshot error ('Committee'); US edition title per library catalogue, 2026-11-22"),
+    (Book.BOOK_7, 16): ("Godric’s Hollow",
+                        "toc snapshot typo ('Hallow'); US edition title per library catalogue, 2026-11-22"),
 }
+
+# Same for every book: where the titles came from.
+TOC_NOTE = ("toc: HP_Chapters.csv from github.com/sharanyavb/harry-potter@57acafc1a9e5ed3f7c89a0d19f69d32806afbde9 "
+            "(fan-compiled; mixes US and UK forms)")
+
+# Per book: how the recorded titles were verified.
+TITLE_VERIFICATION: dict[Book, str] = {
+    Book.BOOK_3: "titles in text: every chapter checked against the toc",
+    Book.BOOK_4: ("titles not in text (ch 1 only): all 37 verified against the US edition contents "
+                  "(Scholastic excerpt, ISBN 978-0-439-13959-5), 2026-11-22"),
+    Book.BOOK_7: ("titles not in text: ch 1–36 verified against the US 1st ed. contents "
+                  "(Scholastic 2007, ISBN 978-0-545-01022-1; lib.ecu.edu catalogue record 1079452), "
+                  "2026-11-22; ch 37 'Epilogue' is untitled in the contents"),
+}
+
+
+def book_notes(book: Book) -> str:
+    """
+    Profile notes for one book: toc source, how titles were verified, this book's exceptions only.
+    """
+    exceptions = [f"ch {n}: {reason}"
+                  for (b, n), (_, reason) in sorted(TITLE_EXCEPTIONS.items()) if b == book]
+    parts = [TOC_NOTE, TITLE_VERIFICATION[book]]
+    if exceptions:
+        parts.append("title exceptions: " + "; ".join(exceptions))
+    return " | ".join(parts)
 
 # --- configuration -----------------------------------------------------------------
 TOC_RELATIVE_PATH = Path("reference/hp_chapters_toc.csv")   # snapshot, inside corpus_root
@@ -93,7 +139,7 @@ PROVENANCE = Provenance(
     origin="www.readbooksvampire.com (site no longer exists), via R package",
     acquired_from="github.com/bradleyboehmke/harrypotter",
     extraction_script="scripts/pipelines/extract_hp_corpus.py",
-    extraction_commit=None,
+    extraction_commit=EXTRACTION_COMMIT,
 )
 
 
@@ -237,15 +283,12 @@ def profile_corpus(corpus_root: Path, books: list[Book],
                    toc_path: Path | None = None) -> tuple[CorpusSchema | None, list[Problem]]:
     """Profile all selected books. Returns (record, []) on success or (None, problems)."""
     toc, problems = load_toc(toc_path or corpus_root / TOC_RELATIVE_PATH, books)
-    evidence = ProfileEvidence(source=f"qualify_corpus.py@{git_commit()}",
-                               notes = (
-             f"toc: {TOC_SNAPSHOT_SOURCE}; book 4: only ch 1 carries its title; "
-             "title exceptions: " + "; ".join(f"{b.value.rstrip('_')} ch {n}: {why}"
-                                              for (b, n), (_, why) in TITLE_EXCEPTIONS.items())))
     content: dict[Book, BookSchema] = {}
+    source = f"qualify_corpus.py@{git_commit()}"
     for book in books:
         if book not in toc:
             continue                      # its toc problem is already recorded
+        evidence = ProfileEvidence(source=source, notes=book_notes(book))
         record, book_problems = profile_book(book, toc[book], corpus_root, evidence)
         problems.extend(book_problems)
         if record is not None:
