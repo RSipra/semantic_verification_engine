@@ -36,6 +36,14 @@ Usage (repo root):
     python -m scripts.corpus.qualify_corpus --dry-run       # check only, never write
     python -m scripts.corpus.qualify_corpus --books BOOK_3  # subset (record covers only these)
 
+Re-profiling after a code change (order matters)
+  The record cites the code that produced it (evidence.source = qualify_corpus.py@<HEAD>).
+  Uncommitted edits are not in HEAD, so commit the code BEFORE profiling:
+    1. commit code changes       git commit
+    2. profile                   python -m scripts.corpus.qualify_corpus --corpus-root data/06_books
+    3. check the source SHA      grep '"source"' data/06_books/corpus_record.json  (== git rev-parse HEAD)
+    4. version + commit data     dvc add data/06_books && dvc push && git add data/06_books.dvc && git commit    
+
 """
 from __future__ import annotations
 
@@ -269,6 +277,14 @@ def profile_book(book: Book, titles: dict[int, str], corpus_root: Path,
 
 
 # --- block 5: whole corpus, gate, write ------------------------------------------------
+def warn_if_uncommitted() -> None:
+    """Warn if scripts/corpus has uncommitted changes (the record would cite older code)."""
+    changes = subprocess.run(["git", "status", "--porcelain", "--", "scripts/corpus"],
+                             capture_output=True, text=True, check=True).stdout.strip()
+    if changes:
+        print("WARNING: scripts/corpus has uncommitted changes. The record will cite the last "
+              "commit, not this code. Commit first, then re-profile.")
+        
 def git_commit() -> str:
     """Current repo commit (for evidence.source), or 'unknown' outside a git checkout."""
     try:
@@ -368,6 +384,7 @@ def main(argv: list[str] | None = None) -> int:
     if args.dry_run:
         print("dry run: nothing written")
         return 0
+    warn_if_uncommitted()
     path = record_path(args.corpus_root)
     print(write_record(record, path))
     return 0
