@@ -29,6 +29,8 @@ from statistics import quantiles
 import logging
 import random
 from collections import defaultdict, Counter
+from collections.abc import Callable
+from typing import TypeVar
 from datetime import date
 
 import pandas as pd
@@ -239,6 +241,51 @@ def summarize_book(rows: list[SampleReviewRow], reference: str, today: date) -> 
         result="pass",
         date_checked=today,
     )
+# define placeholder for type determined at function call.
+T = TypeVar('T')
+
+def load_input(label: str, path: Path, reader: Callable[[Path],T], problems: list[str],
+               *, hint: str="", display_path: Path | None = None) -> T | None:
+    """
+    Wrapper around a reader: call `reader(path)` and turn its expected failures into
+    entries in `problems` instead of exceptions.
+
+    The reader does the reading and validation (e.g. read_evidence, read_references,
+    read_corpus_record); this wrapper only handles its failures, so every input is
+    reported the same way:
+      - missing file (FileNotFoundError)        -> "<label> not found: <file><hint>"
+      - unreadable (PermissionError)            -> "<label> unreadable (permission denied): <file>"
+      - invalid (ValidationError, ParserError)  -> "<label> invalid: <file>" + details
+    In those cases it returns None and does not raise; the caller decides what to do
+    with `problems` (promote: print them, exit 1). Any other exception is a bug and is
+    not caught.
+
+    Args:
+        label: what the input is, used in messages (e.g. "review CSV").
+        path: the argument passed to `reader`. Usually the file itself.
+        reader: function that reads and validates the input (e.g. read_evidence).
+        problems: list the failure message is appended to (go/no-go: the caller decides).
+        hint: appended to the "not found" message, e.g. " (run `sampling select` first)".
+        display_path: the file to show in messages, when `path` is not the file itself.
+            Currently only the corpus record: read_corpus_record takes corpus_root (a
+            folder), so the message shows record_path(corpus_root) instead. Default: path.
+
+    Returns:
+        The reader's result, or None if the file is missing, unreadable or invalid.
+        Unexpected errors (bugs) are not caught.
+    """
+    message_path = display_path or path
+    try:
+        return reader(path)
+
+    except FileNotFoundError:
+        problems.append(f"{label} not found: {message_path}{hint}")
+    except PermissionError:
+        problems.append(f"{label} unreadable (permission denied): {message_path}")
+    except (ValidationError, pd.errors.ParserError) as e:
+        problems.append(f"{label} invalid: {message_path}\n{e}")
+
+    return None
 
 
 ## Orchestrators
@@ -315,22 +362,18 @@ def run_promote(corpus_root:Path, today: date | None = None)-> int:
     """
     # setup
     problems: list[str] = []
-    rec_path = record_path(corpus_root)
     today = today or date.today()
 
     # 1a. read the record (validated by the model); needed for the status check
-    record = None
-    try:
-        record = read_corpus_record(corpus_root)
-    except FileNotFoundError:
-        problems.append(f"corpus record not found: {rec_path} (run qualify_corpus first)")
-    except PermissionError:
-        problems.append(f"corpus record unreadable (permission denied): {rec_path}")
-    except ValidationError as e:
-        problems.append(f"corpus record invalid: {rec_path}\n{e}")
+    record = load_input("corpus record",
+                        corpus_root,
+                        read_corpus_record,
+                        problems,
+                        hint=" (run qualify_corpus first)",
+                        display_path=record_path(corpus_root))
     if record is None:
         print_problems("promote refused", problems)
-        return 1    
+        return 1
 
     # 0. status: only a profiled record can be promoted
     if record.status == "certified":
@@ -345,25 +388,16 @@ def run_promote(corpus_root:Path, today: date | None = None)-> int:
     csv_path = evidence_path(corpus_root, record.corpus_id)
     refs_path = references_path(corpus_root, record.corpus_id)
 
-    evidence_rows = None
-    try:
-        evidence_rows = read_evidence(csv_path)
-    except FileNotFoundError:
-        problems.append(f"review CSV not found: {csv_path} (run `sampling select` first)") 
-    except PermissionError:
-        problems.append(f"review CSV unreadable (permission denied): {csv_path}")
-    except (ValidationError, pd.errors.ParserError) as e:
-        problems.append(f"review CSV invalid: {csv_path}\n{e}")
+    evidence_rows = load_input("review CSV",
+                               csv_path,
+                               read_evidence,
+                               problems,
+                               hint=" (run `sampling select` first)",)
 
-    evidence_refs = None
-    try:
-        evidence_refs = read_references(refs_path)
-    except FileNotFoundError:
-        problems.append(f"references file not found: {refs_path}")
-    except PermissionError:
-        problems.append(f"references file unreadable (permission denied): {refs_path}")
-    except ValidationError as e:
-        problems.append(f"references file invalid: {refs_path}\n{e}")
+    evidence_refs = load_input("references file",
+                               refs_path,
+                               read_references,
+                               problems,)
 
     if evidence_rows is None or evidence_refs is None:
         print_problems("promote refused", problems)
@@ -372,11 +406,11 @@ def run_promote(corpus_root:Path, today: date | None = None)-> int:
     # 2. identity: evidence belongs to this corpus
     bad_ids = sorted({r.corpus_id for r in evidence_rows if r.corpus_id != record.corpus_id})
     if bad_ids:
-        problems.append((f"review CSV rows carry corpus_id {bad_ids}, "
-                         f"expected {record.corpus_id}"))
+        problems.append(f"review CSV rows carry corpus_id {bad_ids}, "
+                         f"expected {record.corpus_id}")
     if evidence_refs.corpus_id != record.corpus_id:
-        problems.append((f"references file carries corpus_id {evidence_refs.corpus_id}, "
-                         f"expected {record.corpus_id}"))
+        problems.append(f"references file carries corpus_id {evidence_refs.corpus_id}, "
+                         f"expected {record.corpus_id}")
     if problems:
         print_problems("promote refused", problems)
         return 1
@@ -386,7 +420,7 @@ def run_promote(corpus_root:Path, today: date | None = None)-> int:
     if changed_chapters:
         problems.append("chapter files differ from the profiled record: "
                         + "; ".join(changed_chapters)
-                        + " (re-profile before promoting)")
+                        + " (restore files or re-profile before promoting)")
         print_problems("promote refused", problems)
         return 1
 
@@ -421,9 +455,9 @@ def run_promote(corpus_root:Path, today: date | None = None)-> int:
     # 6. build the certified record, validate (backstop), write
     data = record.model_dump()
     for book in sorted(record.content, key=lambda b: b.value):
-        #read the evidence rows for book from the evidence file
+        # read the evidence rows for book from the evidence file
         book_rows = [r for r in evidence_rows if r.book == book]
-        sample = summarize_book(book_rows, evidence_refs.references[book], today )
+        sample = summarize_book(book_rows, evidence_refs.references[book], today)
         data["content"][book]["fidelity_sample"] = sample.model_dump()
     data.update(status="certified", certification_method="manual_review",
                 date_certified=today,
