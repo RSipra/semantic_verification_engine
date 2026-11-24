@@ -88,15 +88,25 @@ All commands accept `--corpus-root`; tests always pass a temporary root and neve
 
 
 ## 6. Promotion and evidence binding
-**Promote** (planned) refuses — exit 1, writes nothing — if:
-- the record is not `profiled` (unless `--recertify`, below);
-- the CSV or references `corpus_id` differs from the record;
-- any `result` is blank or any row fails;
-- a book in the record has no sampled rows, or no reference.
+**Promote** (`python -m scripts.corpus.sampling promote`) certifies a profiled corpus. Checks run in order;
+any problem means refuse — exit 1, write nothing. Root-cause levels stop at once; levels 4 and 5 are
+reported together.
 
-On success, for each book it writes a `FidelitySample` (chapters, sampling strategy, check scope, reference,
-result, date), sets `certification_method = manual_review` and `date_certified`, and stores
-`evidence_files`: the sha256 of the review CSV and the references file, keyed by path relative to `corpus_root`.
+| Level | Check | On failure |
+|---|---|---|
+| 0. Status | record is `profiled` | `certified` → exit 0, nothing to do; anything else → refuse |
+| 1. Inputs | record, review CSV and references file exist and validate | refuse (stop) |
+| 2. Identity | every CSV row's and the references file's `corpus_id` equals the record's | refuse (stop) |
+| 3. Data unchanged | every chapter file's sha256 equals the record's | refuse (stop): restore files or re-profile |
+| 4. Sample complete | CSV `(book, chapter)` set equals the regenerated `select` plan; every book has a reference | refuse (collect) |
+| 5. Outcome | no blank `result`; every row `pass` | refuse (collect); a fail → escalate (round 2) |
+| 6. Write | build the certified record, validate it through `CorpusSchema`, write | model validators are the backstop |
+
+On success, for each book it writes a `FidelitySample`: chapters (sorted), sampling strategy (review round(s)
+and label counts, e.g. `round 1: first ×1, random ×2`), check scope, reference, result `pass`, date. It sets
+`certification_method = manual_review` and `date_certified`, and stores `evidence_files`: the sha256 of the
+review CSV and the references file, keyed by path relative to `corpus_root`. `[profile]` fields are never
+changed.
 
 **Preflight** (planned, commit B) runs on the selected chapters before any API setup
 (`configure_api` / `measure_template_tokens`) and stops the run, with zero API calls, if:
@@ -108,7 +118,7 @@ result, date), sets `certification_method = manual_review` and `date_certified`,
 
 DVC's own hashes (`dvc status`) are an independent second layer: different software detecting the same changes.
 
-**Re-certification** — a legitimate evidence correction needs an explicit `promote --recertify`, allowed only
+**Re-certification** (planned) — a legitimate evidence correction needs an explicit `promote --recertify`, allowed only
 for a certified record whose `corpus_id` still matches the evidence. It re-runs every promote check and rewrites
 the fidelity samples, `evidence_files` and `date_certified`. Changes to chapter data are not re-certification:
 they change `corpus_id` and re-profile.
@@ -157,6 +167,11 @@ message. Prior certifications live in Git/DVC history.
 - **Corpus onboarding:** garbled-text heuristic, LLM coherence review (experiment), outlier review — for books 1, 2, 5, 6.
 - **Text normalisation (E2):** dash styles and dropped opening quotes, for source-quote matching.
 - **Per-book profile notes:** each book's evidence notes list only its own exceptions.
+- **Per-book certification** *(before adding the next book)*: book-level hash and sampling seed; evidence files
+  per book; unchanged books carry their passing sample forward, so adding a book needs review of that book only.
+- **`superseded` status:** nothing writes it (re-profiling replaces the record); keep or drop.
+- **Round 2 rows:** promote currently requires an exact match with the plan; with escalation, extra rows are
+  allowed only when `round == 2`.
 
 
 ## 10. Risks (detail)

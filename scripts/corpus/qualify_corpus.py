@@ -48,7 +48,6 @@ Re-profiling after a code change (order matters)
 from __future__ import annotations
 
 import argparse
-import hashlib
 import re
 import subprocess
 import sys
@@ -63,7 +62,7 @@ from pydantic import ValidationError
 from core.constants import Book
 from scripts.corpus.corpus_models import (
     BookSchema, ChapterSchema, CorpusSchema, ProfileEvidence, Provenance, compute_corpus_id,
-    DEFAULT_CORPUS_ROOT, record_path)
+    DEFAULT_CORPUS_ROOT, record_path, bytes_sha256)
 
 # Extraction commit number:
 EXTRACTION_COMMIT = "4853d448ebef0fce3806bf2e53cef5dd100f0c3f"
@@ -233,7 +232,7 @@ def profile_chapter(book: Book, number: int, title: str,
     record = ChapterSchema(
         title=title, title_in_text=has_title, number=number, filename=filename,
         character_count=len(text), word_count=len(text.split()),
-        sha256=hashlib.sha256(raw).hexdigest(),
+        sha256=bytes_sha256(raw),
     )
     return record, []
 

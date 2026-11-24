@@ -15,7 +15,9 @@ from pydantic import ValidationError
 from core.constants import Book
 from scripts.corpus.corpus_models import (BookSchema, ChapterSchema, CorpusSchema,
                                           FidelitySample, ProfileEvidence,Provenance,
-                                          compute_corpus_id, SampleReviewRow)
+                                          compute_corpus_id, SampleReviewRow,
+                                          RECORD_FILENAME, bytes_sha256, file_sha256,
+                                          read_corpus_record, record_path)
 
 evidence_files={"fidelity_evidence/e.csv": "a" * 64},
 
@@ -180,3 +182,43 @@ def test_review_row_plain_dump_keeps_reason_as_list():
 def test_review_row_invalid_hand_edits_refused(override):
     with pytest.raises(ValidationError):
         make_row(**override)
+
+
+# --- read_corpus_record ----------------------------------------------------------------
+def test_read_corpus_record_round_trips(record, tmp_path):
+    record_path(tmp_path).write_text(record.model_dump_json(), encoding="utf-8")
+    assert read_corpus_record(tmp_path) == record
+
+
+def test_read_corpus_record_looks_in_corpus_root(record, tmp_path):
+    (tmp_path / RECORD_FILENAME).write_text(record.model_dump_json(), encoding="utf-8")
+    assert read_corpus_record(tmp_path).corpus_id == record.corpus_id
+
+
+def test_read_corpus_record_missing_file_raises(tmp_path):
+    with pytest.raises(FileNotFoundError):
+        read_corpus_record(tmp_path)
+
+
+@pytest.mark.parametrize("text", ["{not json", '{"schema_version": "0.1"}'])
+def test_read_corpus_record_invalid_raises_validation_error(tmp_path, text):
+    # broken JSON and a record missing required fields both surface as ValidationError
+    record_path(tmp_path).write_text(text, encoding="utf-8")
+    with pytest.raises(ValidationError):
+        read_corpus_record(tmp_path)
+
+
+# --- bytes_sha256 / file_sha256 ----------------------------------------------------------
+def test_bytes_and_file_hash_agree(tmp_path):
+    # profiling hashes bytes, promote/preflight hash files: they must give the same answer
+    data = b"chapter text\r\nwith a windows newline"
+    path = tmp_path / "chapter.txt"
+    path.write_bytes(data)
+    assert bytes_sha256(data) == file_sha256(path)
+
+
+def test_bytes_sha256_is_64_lowercase_hex():
+    digest = bytes_sha256(b"x")
+    assert len(digest) == 64 and digest == digest.lower()
+    assert all(c in "0123456789abcdef" for c in digest)    
+

@@ -2,14 +2,25 @@
 Project: SVE (ref implementation: Harry Potter Trivia)
 Phase 2: Content Generation (Corpus validation before generation pipeline)
 
-Sampling methods for validation of corpus
+Fidelity review of a profiled corpus: select the sample, show it, promote the result.
 
-Selects the chapters for the fidelity check and writes the review CSV
-(fidelity_evidence/fidelity_evidence_<corpus_id>.csv).
-SampleReviewRow = one sampled chapter: why it was chosen (reason), which round,
-and the reviewer's result + notes. Hand-edited, so it is validated when read back.
-The review helper later summarises these rows into the record's FidelitySample
-(see corpus_models: "Who writes what, and when").
+Commands (python -m scripts.corpus.sampling [--corpus-root DIR] <command>)
+  select   choose the sample from the profiled record (deterministic) and write the
+           review CSV: fidelity_evidence/fidelity_evidence_<corpus_id>.csv
+  show     print start / middle / end passages of each sampled chapter for side-by-side
+           review against the reference edition (--books BOOK_3 BOOK_7 to filter)
+  promote  check the reviewed CSV and the references file, then certify the record:
+           one FidelitySample per book, evidence files bound by sha256, status
+           `certified`. Any problem: refuse, write nothing, exit 1.
+
+Hand-edited inputs (validated when read)
+  review CSV       one SampleReviewRow per sampled chapter; the reviewer fills result + notes
+  references file  fidelity_references_<corpus_id>.json: reference edition per book
+
+Exit codes: 0 = done or nothing to do; 1 = refused (problems printed).
+
+Record structure: see corpus_models. Workflow, sampling plan and promote checks:
+docs/adrs/ADR-P2-026_specs.md (sections 1, 4, 5, 6).
 """
 import argparse
 import sys
@@ -17,13 +28,17 @@ from pathlib import Path
 from statistics import quantiles
 import logging
 import random
-from collections import defaultdict
+from collections import defaultdict, Counter
+from datetime import date
 
 import pandas as pd
+from pydantic import ValidationError
 
-from src.core.constants import Book
+from core.constants import Book
 from scripts.corpus.corpus_models import (CorpusSchema, BookSchema, SampleReviewRow, Labels,
-                                          DEFAULT_CORPUS_ROOT, record_path, FidelityReferences,)
+                                          DEFAULT_CORPUS_ROOT, record_path, FidelityReferences,
+                                          read_corpus_record, file_sha256, FidelitySample,
+                                          hash_evidence,)
 
 
 logger = logging.getLogger(__name__)
@@ -139,8 +154,9 @@ def read_evidence(path: Path) -> list[SampleReviewRow]:
     df = pd.read_csv(path, dtype=str, keep_default_na=False)
     return [SampleReviewRow.model_validate(r) for r in df.to_dict("records")]
 
+PASSAGE_LENGTH = 300
 
-def passages(text: str, length: int = 300) -> dict[str, str]:
+def passages(text: str, length: int = PASSAGE_LENGTH) -> dict[str, str]:
     """
     Start, middle and end excerpts of a chapter for side-by-side review (whitespace collapsed).
     """
@@ -152,6 +168,9 @@ def passages(text: str, length: int = 300) -> dict[str, str]:
         "END": flat[-length:],
     }
 
+CHECK_SCOPE = (f"start, middle, end passages (~{PASSAGE_LENGTH} chars each) "
+               "shown by `sampling show`, compared manually against the reference")
+
 def references_path(corpus_root: Path, corpus_id: str) -> Path:
     """create standard reference path for fidelity reference records"""
     return corpus_root / "fidelity_evidence" / f"fidelity_references_{corpus_id}.json"
@@ -160,6 +179,67 @@ def references_path(corpus_root: Path, corpus_id: str) -> Path:
 def read_references(path: Path) -> FidelityReferences:
     """read the fidelity evidence files"""
     return FidelityReferences.model_validate_json(path.read_text(encoding="utf-8"))
+
+
+def print_problems(header: str, problems: list[str]) -> None:
+    """helper to print problems list"""
+    print(f"{header}: {len(problems)} problem(s)")
+    for p in problems:
+        print(f"  - {p}")
+
+
+def check_changed_chapters(corpus_root:Path, record:CorpusSchema) -> list[str]:
+    """ Chapters whose file is missing or whose bytes differ from the recorded sha256."""
+    changed = []
+    # loop over contents dict in record, sorted by key (book name)
+    for book in sorted(record.content, key=lambda b: b.value):
+        book_record = record.content[book]
+
+        # for each chapter in the book record - check sha
+        for number, chapter in sorted(book_record.chapters.items()):
+            # read file
+            path = corpus_root / chapter.filename
+            if not path.is_file():
+                changed.append(f"{book.value} ch {number}: file missing ({chapter.filename})")
+            # check the sha.
+            elif chapter.sha256 != file_sha256(path):
+                changed.append(
+                    f"{book.value} ch {number}: changed since profiling ({chapter.filename})")
+    return changed
+
+
+def summarize_book(rows: list[SampleReviewRow], reference: str, today: date) -> FidelitySample:
+    """
+    Summarise one book's review rows into its FidelitySample for the certified record.
+
+    Args:
+        rows: this book's rows from the review CSV (one per sampled chapter). Already
+            checked by promote: every result is "pass", and they cover the planned sample.
+        reference: the reference edition this book was checked against
+            (FidelityReferences.references[book]).
+        today: certification date; passed in so tests can fix it.
+
+    Returns:
+        FidelitySample with: the sampled chapters (sorted); a sampling strategy built from
+        the rows (review round(s) + label counts, e.g. "round 1: first ×1, random ×2");
+        the fixed check scope; the reference; result "pass"; date_checked = today.
+    """
+    # how many rounds completed in manual review, 1 or 2
+    rounds = ", ".join(str(n) for n in sorted({r.round for r in rows}))
+    # aggregation of sampling chapter labels across the book
+    counts = Counter(label for r in rows for label in r.reason)
+    # readable summary of label with count
+    labels = ", ".join(f"{label} ×{n}" for label, n in sorted(counts.items()))
+    # construct sample dto
+    return FidelitySample(
+        chapters=sorted(r.chapter for r in rows),
+        sampling_strategy=f"round {rounds}: {labels}",
+        check_scope=CHECK_SCOPE,
+        reference=reference,
+        result="pass",
+        date_checked=today,
+    )
+
 
 ## Orchestrators
 
@@ -171,7 +251,7 @@ def run_select(corpus_root: Path) -> int:
     this corpus_id (it may hold the reviewer's results; delete it to reselect).
     """
     # load corpus record from json
-    record = CorpusSchema.model_validate_json(record_path(corpus_root).read_text(encoding="utf-8"))
+    record = read_corpus_record(corpus_root)
 
     # check corpus status
     if record.status != "profiled":
@@ -193,13 +273,14 @@ def run_select(corpus_root: Path) -> int:
     print(f"{len(samples)} chapters selected across {len(record.content)} books → {write_path}")
     return 0
 
+
 def run_show(corpus_root:Path, books:set[Book]|None=None) -> int:
     """
     `sampling show`: print start / middle / end passages of each sampled chapter, for
     comparison against the reference copy. All books, or only `books`.
     """
     # load corpus record from json
-    record = CorpusSchema.model_validate_json(record_path(corpus_root).read_text(encoding="utf-8"))
+    record = read_corpus_record(corpus_root)
 
     # read evidence file
     path = evidence_path(corpus_root, record.corpus_id)
@@ -224,8 +305,139 @@ def run_show(corpus_root:Path, books:set[Book]|None=None) -> int:
     return 0
 
 
+def run_promote(corpus_root:Path, today: date | None = None)-> int:
+    """
+    `sampling promote`: certify a profiled corpus from its review CSV and references.
+
+    Refuses (exit 1, writes nothing) unless every check passes; exit 0 if already certified.
+    Checks by level (spec section 6): 0 status, 1 inputs readable, 2 identity,
+    3 chapters unchanged, 4 sample complete, 5 all pass; then 6 build, validate, write.
+    """
+    # setup
+    problems: list[str] = []
+    rec_path = record_path(corpus_root)
+    today = today or date.today()
+
+    # 1a. read the record (validated by the model); needed for the status check
+    record = None
+    try:
+        record = read_corpus_record(corpus_root)
+    except FileNotFoundError:
+        problems.append(f"corpus record not found: {rec_path} (run qualify_corpus first)")
+    except PermissionError:
+        problems.append(f"corpus record unreadable (permission denied): {rec_path}")
+    except ValidationError as e:
+        problems.append(f"corpus record invalid: {rec_path}\n{e}")
+    if record is None:
+        print_problems("promote refused", problems)
+        return 1    
+
+    # 0. status: only a profiled record can be promoted
+    if record.status == "certified":
+        print(f"corpus {record.corpus_id} already certified: nothing to do")
+        return 0
+    if record.status != "profiled":
+        print_problems("promote refused",
+                       [f"record status is {record.status!r}: re-profile the current data"])
+        return 1
+
+    # 1b. evidence inputs readable: review CSV and references file
+    csv_path = evidence_path(corpus_root, record.corpus_id)
+    refs_path = references_path(corpus_root, record.corpus_id)
+
+    evidence_rows = None
+    try:
+        evidence_rows = read_evidence(csv_path)
+    except FileNotFoundError:
+        problems.append(f"review CSV not found: {csv_path} (run `sampling select` first)") 
+    except PermissionError:
+        problems.append(f"review CSV unreadable (permission denied): {csv_path}")
+    except (ValidationError, pd.errors.ParserError) as e:
+        problems.append(f"review CSV invalid: {csv_path}\n{e}")
+
+    evidence_refs = None
+    try:
+        evidence_refs = read_references(refs_path)
+    except FileNotFoundError:
+        problems.append(f"references file not found: {refs_path}")
+    except PermissionError:
+        problems.append(f"references file unreadable (permission denied): {refs_path}")
+    except ValidationError as e:
+        problems.append(f"references file invalid: {refs_path}\n{e}")
+
+    if evidence_rows is None or evidence_refs is None:
+        print_problems("promote refused", problems)
+        return 1
+
+    # 2. identity: evidence belongs to this corpus
+    bad_ids = sorted({r.corpus_id for r in evidence_rows if r.corpus_id != record.corpus_id})
+    if bad_ids:
+        problems.append((f"review CSV rows carry corpus_id {bad_ids}, "
+                         f"expected {record.corpus_id}"))
+    if evidence_refs.corpus_id != record.corpus_id:
+        problems.append((f"references file carries corpus_id {evidence_refs.corpus_id}, "
+                         f"expected {record.corpus_id}"))
+    if problems:
+        print_problems("promote refused", problems)
+        return 1
+
+    # 3. data unchanged: chapter files still match the profiled sha256
+    changed_chapters = check_changed_chapters(corpus_root, record)
+    if changed_chapters:
+        problems.append("chapter files differ from the profiled record: "
+                        + "; ".join(changed_chapters)
+                        + " (re-profile before promoting)")
+        print_problems("promote refused", problems)
+        return 1
+
+    # 4. sample complete: CSV == regenerated plan; every book has a reference
+    planned = {(r.book, r.chapter) for r in select_corpus_sample(record)}
+    reviewed = {(r.book, r.chapter) for r in evidence_rows}
+    missing = sorted(planned - reviewed)
+    extra = sorted(reviewed - planned)
+    if missing:
+        problems.append("planned chapters not in the review CSV: "
+                        + ", ".join(f"{b.value} ch {n}" for b, n in missing))
+    if extra:
+        problems.append("review CSV chapters not in the planned sample: "
+                        + ", ".join(f"{b.value} ch {n}" for b, n in extra))
+    no_ref = sorted(b.value for b in set(record.content) - set(evidence_refs.references))
+    if no_ref:
+        problems.append(f"no reference for: {', '.join(no_ref)}")
+
+    # 5. outcome: every row reviewed and passed
+    for row in evidence_rows:
+        where = f"{row.book.value} ch {row.chapter}"
+        if row.result == "":
+            problems.append(f"{where}: not reviewed (result is blank)")
+        elif row.result == "fail":
+            problems.append(f"{where}: failed review (escalate per ADR-P2-026, round 2)")
+
+    # go / no-go for levels 4 and 5 (collected together)
+    if problems:
+        print_problems("promote refused", problems)
+        return 1
+
+    # 6. build the certified record, validate (backstop), write
+    data = record.model_dump()
+    for book in sorted(record.content, key=lambda b: b.value):
+        #read the evidence rows for book from the evidence file
+        book_rows = [r for r in evidence_rows if r.book == book]
+        sample = summarize_book(book_rows, evidence_refs.references[book], today )
+        data["content"][book]["fidelity_sample"] = sample.model_dump()
+    data.update(status="certified", certification_method="manual_review",
+                date_certified=today,
+                evidence_files=hash_evidence(corpus_root, [csv_path, refs_path]))
+    certified = CorpusSchema.model_validate(data)
+    record_path(corpus_root).write_text(certified.model_dump_json(indent=2), encoding="utf-8")
+
+    print(f"certified corpus {certified.corpus_id}: {len(certified.content)} books, "
+          f"{len(evidence_rows)} chapters reviewed, all pass")
+    return 0
+
 def main(argv: list[str]|None = None):
-    """CLI for the fidelity check: `select` (now), then `show` and `promote` (later)."""
+    """CLI for the fidelity check: `select`, then `show` and `promote`
+    (see module docstring)."""
 
     # create parser: arguments for running module
     parser = argparse.ArgumentParser(description="Fidelity sampling for the corpus.")
@@ -239,6 +451,7 @@ def main(argv: list[str]|None = None):
 
     show.add_argument("--books", nargs="+", choices=[b.name for b in Book],
                   help="only these books (e.g. BOOK_3 BOOK_7); default: all")
+    steps.add_parser("promote", help="certify the corpus from the reviewed sample")
     # run the cli subcommands + arguments
     args = parser.parse_args(argv)
 
@@ -248,6 +461,8 @@ def main(argv: list[str]|None = None):
     if args.step == 'show':
         books = {Book[name] for name in args.books} if args.books else None
         return run_show(args.corpus_root, books)
+    if args.step == 'promote':
+        return run_promote(args.corpus_root)
     return 1  # run failure
 
 if __name__ == "__main__":

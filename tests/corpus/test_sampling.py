@@ -11,17 +11,20 @@ a small two-book record; the round trip checks the review CSV reads back unchang
 # pylint: disable=missing-function-docstring   # test names describe the check
 # pylint: disable=redefined-outer-name         # pytest fixtures are injected by parameter name
 
+from datetime import date
 from typing import get_args
 from pathlib import Path
 
 import pytest
 
 from core.constants import Book
-from scripts.corpus.corpus_models import (CorpusSchema, Labels, Provenance, 
-                                          compute_corpus_id, record_path)
-from scripts.corpus.sampling import ( iqr_outliers, select_book_sample, evidence_path,
+from scripts.corpus.corpus_models import (CorpusSchema, Labels, FidelityReferences,
+                                          SampleReviewRow, read_corpus_record, file_sha256,
+                                          compute_corpus_id, record_path, changed_evidence,)
+from scripts.corpus.sampling import (CHECK_SCOPE, iqr_outliers, select_book_sample, evidence_path,
                                      read_evidence, select_corpus_sample, write_evidence, main,
-                                     passages)
+                                     passages, check_changed_chapters, references_path, run_promote,
+                                     summarize_book)
 from tests.corpus.conftest import COUNTS, make_book
 
 CORPUS_ID = "680db04cf48248ce"
@@ -36,17 +39,6 @@ TYPICAL = dict(enumerate([4800, 4900, 5000, 5100, 5200, 4950, 5050, 4850, 5150, 
 
 def random_picks(sample: dict[int, list[Labels]]) -> list[int]:
     return [n for n, why in sample.items() if "random" in why]
-
-@pytest.fixture
-def record() -> CorpusSchema:
-    """Two-book profiled record; book 7 inserted first to check the output is sorted anyway."""
-    content = {Book.BOOK_7: make_book(COUNTS, titles_in_text=False, book=Book.BOOK_7),
-               Book.BOOK_3: make_book(COUNTS, titles_in_text=True, book=Book.BOOK_3)}
-    return CorpusSchema(
-        schema_version="0.1", corpus_id=compute_corpus_id(content), status="profiled",
-        provenance=Provenance(source_type="community", origin="test", acquired_from="test",
-                              extraction_script="test"),
-        corpus_root="data/06_books", scope="test", content=content)
 
 
 def save_record(record: CorpusSchema, corpus_root: Path) -> None:
@@ -359,3 +351,250 @@ def test_show_before_select_returns_error(record, tmp_path, capsys):
 def test_show_rejects_comma_separated_books(selected):
     with pytest.raises(SystemExit):
         show(selected, "BOOK_3,")                     # argparse choices: spaces, not commas
+
+
+# --- summarize_book ----------------------------------------------------------------------
+TODAY = date(2026, 11, 23)
+
+
+def review_row(chapter: int, reason: list[Labels], round_: int = 1) -> SampleReviewRow:
+    return SampleReviewRow(corpus_id=CORPUS_ID, book=Book.BOOK_3, chapter=chapter,
+                           reason=reason, round=round_, result="pass")
+
+
+def test_summary_lists_chapters_sorted():
+    rows = [review_row(12, ["last"]), review_row(1, ["first"]), review_row(5, ["shortest"])]
+    assert summarize_book(rows, "ref", TODAY).chapters == [1, 5, 12]
+
+
+def test_summary_counts_every_label_once_per_chapter():
+    # ch 5 carries two labels: each is counted
+    rows = [review_row(1, ["first"]), review_row(5, ["shortest", "iqr_outlier"]),
+            review_row(7, ["random"]), review_row(9, ["random"])]
+    strategy = summarize_book(rows, "ref", TODAY).sampling_strategy
+    assert strategy == "round 1: first ×1, iqr_outlier ×1, random ×2, shortest ×1"
+
+
+def test_summary_names_every_round_present():
+    rows = [review_row(1, ["first"]), review_row(4, ["random"], round_=2)]
+    assert summarize_book(rows, "ref", TODAY).sampling_strategy.startswith("round 1, 2:") # pylint: disable=no-member
+    # pydantic field, FieldInfo false positive
+
+def test_summary_passes_through_reference_date_and_scope():
+    sample = summarize_book([review_row(1, ["first"])], "UK e-book, ISBN x", TODAY)
+    assert (sample.reference, sample.date_checked, sample.check_scope, sample.result) == \
+        ("UK e-book, ISBN x", TODAY, CHECK_SCOPE, "pass")
+
+
+# --- promote: fixtures and helpers ---------------------------------------------------------
+def save_profiled_corpus(record: CorpusSchema, corpus_root: Path) -> CorpusSchema:
+    """
+    Write chapter files, then record their real sha256 (and the matching corpus_id), as
+    profiling would. make_book's placeholder hashes would otherwise fail promote's check.
+    """
+    write_chapter_files(record, corpus_root)
+    content = {}
+    for book, book_record in record.content.items():
+        chapters = {n: ch.model_copy(update={"sha256": file_sha256(corpus_root / ch.filename)})
+                    for n, ch in book_record.chapters.items()}
+        content[book] = book_record.model_copy(update={"chapters": chapters})
+    data = record.model_dump()
+    data.update(content={b: bk.model_dump() for b, bk in content.items()},
+                corpus_id=compute_corpus_id(content))
+    profiled = CorpusSchema.model_validate(data)
+    save_record(profiled, corpus_root)
+    return profiled
+
+
+def set_results(corpus_root: Path, corpus_id: str, result: str = "pass") -> None:
+    """Fill every row's result, as the reviewer would."""
+    path = evidence_path(corpus_root, corpus_id)
+    write_evidence([r.model_copy(update={"result": result}) for r in read_evidence(path)], path)
+
+
+def write_references(corpus_root: Path, corpus_id: str, books,
+                     claimed_id: str | None = None) -> None:
+    """References file for corpus_id; claimed_id puts a different corpus_id inside the file."""
+    refs = FidelityReferences(corpus_id=claimed_id or corpus_id,
+                              references={b: f"reference edition for {b.value}" for b in books})
+    references_path(corpus_root, corpus_id).write_text(refs.model_dump_json(), encoding="utf-8")
+
+
+def promote(corpus_root: Path) -> int:
+    return main(["--corpus-root", str(corpus_root), "promote"])
+
+
+@pytest.fixture
+def reviewed(record, tmp_path):
+    """Corpus root ready to certify: matching hashes, sample selected, all pass, references."""
+    profiled = save_profiled_corpus(record, tmp_path)
+    select(tmp_path)
+    set_results(tmp_path, profiled.corpus_id)
+    write_references(tmp_path, profiled.corpus_id, profiled.content)
+    return tmp_path, profiled
+
+
+# --- check_changed_chapters -----------------------------------------------------------------
+def test_unchanged_chapters_report_nothing(reviewed):
+    root, rec = reviewed
+    assert check_changed_chapters(root, rec) == []
+
+
+def test_edited_chapter_is_reported(reviewed):
+    root, rec = reviewed
+    chapter = rec.content[Book.BOOK_3].chapters[2]
+    (root / chapter.filename).write_text("edited", encoding="utf-8")
+    assert check_changed_chapters(root, rec) == [
+        f"prisoner_of_azkaban_ ch 2: changed since profiling ({chapter.filename})"]
+
+
+def test_missing_chapter_is_reported(reviewed):
+    root, rec = reviewed
+    chapter = rec.content[Book.BOOK_7].chapters[3]
+    (root / chapter.filename).unlink()
+    assert check_changed_chapters(root, rec) == [
+        f"deathly_hallows_ ch 3: file missing ({chapter.filename})"]
+
+
+# --- promote: happy path ----------------------------------------------------------------------
+def test_promote_certifies_reviewed_corpus(reviewed):
+    root, _ = reviewed
+    assert run_promote(root, today=TODAY) == 0
+    certified = read_corpus_record(root)
+    assert certified.status == "certified"
+    assert (certified.certification_method, certified.date_certified) == ("manual_review", TODAY)
+
+
+def test_promote_writes_one_passing_sample_per_book(reviewed):
+    root, rec = reviewed
+    run_promote(root, today=TODAY)
+    certified = read_corpus_record(root)
+    rows = select_corpus_sample(rec)
+    for book, book_record in certified.content.items():
+        sample = book_record.fidelity_sample
+        assert sample is not None and sample.result == "pass" and sample.date_checked == TODAY
+        assert sample.chapters == [r.chapter for r in rows if r.book == book]
+        assert sample.reference == f"reference edition for {book.value}"
+
+
+def test_promote_binds_both_evidence_files_by_hash(reviewed):
+    root, rec = reviewed
+    run_promote(root, today=TODAY)
+    certified = read_corpus_record(root)
+    assert set(certified.evidence_files) == {
+        evidence_path(root, rec.corpus_id).relative_to(root).as_posix(),
+        references_path(root, rec.corpus_id).relative_to(root).as_posix()}
+    assert changed_evidence(root, certified.evidence_files) == []
+
+
+def test_promote_leaves_profile_fields_untouched(reviewed):
+    root, rec = reviewed
+    run_promote(root, today=TODAY)
+    certified = read_corpus_record(root)
+    assert certified.provenance == rec.provenance
+    for book, book_record in certified.content.items():
+        assert book_record.chapters == rec.content[book].chapters
+        assert book_record.evidence == rec.content[book].evidence
+
+
+def test_promote_runs_from_the_cli(reviewed, capsys):
+    root, rec = reviewed
+    assert promote(root) == 0
+    assert f"certified corpus {rec.corpus_id}" in capsys.readouterr().out
+
+
+# --- promote: status -------------------------------------------------------------------------
+def test_promote_on_certified_corpus_does_nothing(reviewed, capsys):
+    root, _ = reviewed
+    run_promote(root, today=TODAY)
+    before = record_path(root).read_bytes()
+    assert promote(root) == 0
+    assert record_path(root).read_bytes() == before
+    assert "already certified" in capsys.readouterr().out
+
+
+def test_promote_refuses_superseded_record(reviewed, capsys):
+    root, rec = reviewed
+    save_record(rec.model_copy(update={"status": "superseded"}), root)
+    assert promote(root) == 1
+    assert "superseded" in capsys.readouterr().out
+
+
+def test_promote_refuses_without_record(tmp_path, capsys):
+    assert promote(tmp_path) == 1
+    assert "corpus record not found" in capsys.readouterr().out
+
+
+# --- promote: refusals (each spoils one input; nothing is written) -----------------------------
+def drop_first_row(root: Path, rec: CorpusSchema) -> None:
+    path = evidence_path(root, rec.corpus_id)
+    write_evidence(read_evidence(path)[1:], path)
+
+
+def add_unplanned_row(root: Path, rec: CorpusSchema) -> None:
+    path = evidence_path(root, rec.corpus_id)
+    rows = read_evidence(path)
+    planned = {r.chapter for r in rows if r.book == Book.BOOK_3}
+    spare = min(set(rec.content[Book.BOOK_3].chapters) - planned)
+    extra = rows[0].model_copy(update={"book": Book.BOOK_3, "chapter": spare})
+    write_evidence(rows + [extra], path)
+
+
+def set_one_result(result: str):
+    def spoil(root: Path, rec: CorpusSchema) -> None:
+        path = evidence_path(root, rec.corpus_id)
+        rows = read_evidence(path)
+        rows[0] = rows[0].model_copy(update={"result": result})
+        write_evidence(rows, path)
+    return spoil
+
+
+def break_csv_cell(root: Path, rec: CorpusSchema) -> None:
+    path = evidence_path(root, rec.corpus_id)
+    path.write_text(path.read_text(encoding="utf-8").replace(",pass,", ",maybe,", 1),
+                    encoding="utf-8")
+
+
+REFUSALS = {
+    "csv missing": (lambda root, rec: evidence_path(root, rec.corpus_id).unlink(),
+                    "review CSV not found"),
+    "references missing": (lambda root, rec: references_path(root, rec.corpus_id).unlink(),
+                           "references file not found"),
+    "csv invalid": (break_csv_cell, "review CSV invalid"),
+    "references for another corpus": (
+        lambda root, rec: write_references(root, rec.corpus_id, rec.content,
+                                           claimed_id="other_corpus"),
+        "references file carries corpus_id"),
+    "chapter edited": (
+        lambda root, rec: (root / rec.content[Book.BOOK_3].chapters[1].filename)
+        .write_text("edited", encoding="utf-8"),
+        "changed since profiling"),
+    "row deleted": (drop_first_row, "planned chapters not in the review CSV"),
+    "row added": (add_unplanned_row, "not in the planned sample"),
+    "reference missing for a book": (
+        lambda root, rec: write_references(root, rec.corpus_id, [Book.BOOK_3]),
+        "no reference for: deathly_hallows_"),
+    "result blank": (set_one_result(""), "not reviewed"),
+    "result fail": (set_one_result("fail"), "escalate per ADR-P2-026"),
+}
+
+
+@pytest.mark.parametrize("spoil, message", REFUSALS.values(), ids=REFUSALS.keys())
+def test_promote_refuses_and_writes_nothing(reviewed, capsys, spoil, message):
+    root, rec = reviewed
+    spoil(root, rec)
+    before = record_path(root).read_bytes()
+
+    assert promote(root) == 1
+    assert record_path(root).read_bytes() == before
+    out = capsys.readouterr().out
+    assert "promote refused" in out and message in out
+
+
+def test_promote_reports_both_missing_inputs_together(reviewed, capsys):
+    root, rec = reviewed
+    evidence_path(root, rec.corpus_id).unlink()
+    references_path(root, rec.corpus_id).unlink()
+    assert promote(root) == 1
+    out = capsys.readouterr().out
+    assert "review CSV not found" in out and "references file not found" in out

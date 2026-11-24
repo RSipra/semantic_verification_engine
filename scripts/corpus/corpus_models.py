@@ -5,45 +5,55 @@ Phase 2: Content Generation (Corpus validation before generation pipeline)
 corpus_models — the corpus record contract (core data integrity for SVE).
 ======================================================================
 
-Defines the certified corpus record written by qualify_corpus (job 1) and read by
-preflight (job 2) within the content generation pipeline.
+Defines the certified record: profiled by qualify_corpus, certified by `sampling promote`,
+and read by preflight before every content generation run.
 
 Purpose
+--------
 SVE verifies answers against the source text, so the corpus is the system's ground
 truth: every later stage (generation, enrichment, validation, runtime) assumes it is
 correct. Validation checks questions against this same corpus, so it cannot detect a
 wrong corpus. This module defines the record that closes that gap.
 
 Trust model (ADR-P2-026: corpus trust boundary)
-- Certify once: qualify_corpus (job 1) profiles every chapter deterministically,
-  records the evidence, and marks the corpus `certified` after a stratified fidelity
-  sample passes against a reference copy. Establishes correctness. Required for any
-  pipeline run, trials included.
-- Verify every run: preflight (job 2) checks the selected chapters against this
-  record before any API call: files present, chapter count, sha256. Any mismatch stops
-  the run. Establishes integrity (a checksum proves "unchanged", not "correct").
+- Qualify once (job 1): qualify_corpus profiles every chapter deterministically
+  (status `profiled`); a person reviews a planned sample against a reference edition
+  (`sampling select` / `show`); `sampling promote` marks the corpus `certified` and binds
+  the review evidence by hash. Establishes correctness. Required for any pipeline run,
+  trials included.
+- Verify every run (job 2): preflight checks the record is certified and the selected
+  chapters and evidence files still match their recorded sha256 before any API call.
+  Any mismatch stops the run. Establishes integrity (a checksum proves "unchanged",
+  not "correct").
 
 Contract
-CorpusSchema → BookSchema (keyed by Book enum) → ChapterSchema (keyed by 1-based
-chapter number). Evidence is recorded per book: each book is accepted on its own
-fidelity sample (see FidelitySample). Validators enforce: certified ⇒ every book has
-a passing sample; chapter keys match chapter numbers; corpus_id matches the chapter
-checksums; unknown fields rejected.
+---------
+Record structure (one JSON file per corpus; [step] = who fills the field)
+  CorpusSchema                                             corpus_record.json
+  ├── schema_version, corpus_id, status, corpus_root, scope    [profile]
+  ├── provenance: Provenance                                   [profile]
+  ├── certification_method, date_certified, evidence_files     [promote]
+  └── content: {Book -> BookSchema}
+        ├── name, expected_chapters, published_year, isbn      [profile]
+        ├── evidence: ProfileEvidence    how it was measured   [profile]
+        ├── fidelity_sample: FidelitySample | None
+        │                                whether it matched     [promote]
+        └── chapters: {int -> ChapterSchema}                   [profile]
+              title, title_in_text, number, filename, counts, sha256
+promote never changes [profile] fields: fix those by re-profiling.              
 
-Who writes what, and when
-1. Profile — qualify_corpus writes the record with status "profiled":
-     CorpusSchema   whole corpus: corpus_id (from chapter checksums), status, provenance
-     BookSchema     per book: expected chapters, year, ProfileEvidence
-     ChapterSchema  per chapter: title, title_in_text, counts, sha256
-     ProfileEvidence  per book: HOW the profile was produced (script@commit, notes)
-     FidelitySample   per book: None at this stage
-2. Sample — select_sample (sampling.py) writes a working CSV of chapters to review
-   manually (SampleReviewRow, one per chapter). The reviewer fills in result and notes.
-   The CSV is not part of the record.
-3. Promote — the review helper reads the CSV back (validated), and if every book
-   passes, summarises each book's rows into one FidelitySample and rewrites the
-   record with status "certified".
-ProfileEvidence = how the data was measured.  FidelitySample = whether it matched the book.  
+Evidence files (outside the record, in <corpus_root>/fidelity_evidence/)
+  fidelity_evidence_<corpus_id>.csv     rows of SampleReviewRow  [select; reviewer fills]
+  fidelity_references_<corpus_id>.json  FidelityReferences       [reviewer]
+
+Validators: certified => method, date, evidence_files and a passing sample for every
+book; chapter keys == chapter.number; sampled chapters exist; corpus_id matches the
+chapter checksums; evidence paths stay inside corpus_root; unknown fields rejected.
+
+Workflow and specification
+--------------------------- 
+profile -> select -> review -> promote: docs/adrs/ADR-P2-026_specs.md
+(section 1 workflow, section 6 promote, section 7 record).
 
 Design note — why certification is required.
 ------------------------------------------------
@@ -56,9 +66,9 @@ would replace most of the correctness checks below.
   Files can change after they arrive, so proving a run uses the certified text is
   always this system's job (with a licensed copy, checksums would be verified against
   the publisher's values.)
-- Extra validation (free source only): the stratified fidelity sample against a
-  reference copy, manual profiling evidence (word-count checks, outlier review),
-  title-alignment checks, and "unconfirmed" provenance fields (edition, ISBN).
+- Extra validation (free source only): the fidelity sample reviewed against a reference
+  edition, title checks against an independent table of contents,
+  and "unconfirmed" provenance fields (edition, ISBN).
 
 """
 import hashlib
@@ -78,9 +88,19 @@ RECORD_FILENAME = "corpus_record.json"
 
 SHA256_HEX = re.compile(r"[0-9a-f]{64}")
 
+# Hashing: one definition (bytes_sha256), two entry points.
+# - qualify_corpus already holds the raw bytes (it needs them for its empty / UTF-8 checks),
+#   so it calls bytes_sha256 directly instead of reading the file twice.
+# - promote / preflight start from a path, so they call file_sha256.
+# Profiling and verification must hash identically, or every chapter would look "changed".
+def bytes_sha256(data: bytes) -> str:
+    """sha256 of raw bytes — the single hashing definition for chapters and evidence."""
+    return hashlib.sha256(data).hexdigest()
+
+
 def file_sha256(path: Path) -> str:
     """sha256 of the file's exact bytes (no decoding, so encoding/newline changes are detected)."""
-    return hashlib.sha256(path.read_bytes()).hexdigest()
+    return bytes_sha256(path.read_bytes())
 
 
 def hash_evidence(corpus_root: Path, paths: list[Path]) -> dict[str, str]:
@@ -358,6 +378,10 @@ class CorpusSchema(BaseModel):
                     f"(missing: {missing}) and a passing fidelity sample for every book "
                     f"(missing/failed: {unsampled})")
         return self
+
+def read_corpus_record(corpus_root: Path) -> CorpusSchema:
+    """Read and validate the corpus record in corpus_root (raises if missing or invalid)."""
+    return CorpusSchema.model_validate_json(record_path(corpus_root).read_text(encoding="utf-8"))
 
 class FidelityReferences(BaseModel):
     """
