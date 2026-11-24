@@ -298,7 +298,16 @@ def run_select(corpus_root: Path) -> int:
     this corpus_id (it may hold the reviewer's results; delete it to reselect).
     """
     # load corpus record from json
-    record = read_corpus_record(corpus_root)
+    problems: list[str] = []
+    record = load_input("corpus record",
+                        corpus_root,
+                        read_corpus_record,
+                        problems,
+                        hint=" (run qualify_corpus first)",
+                        display_path=record_path(corpus_root))
+    if record is None:
+        print_problems("select refused", problems)
+        return 1
 
     # check corpus status
     if record.status != "profiled":
@@ -327,15 +336,29 @@ def run_show(corpus_root:Path, books:set[Book]|None=None) -> int:
     comparison against the reference copy. All books, or only `books`.
     """
     # load corpus record from json
-    record = read_corpus_record(corpus_root)
-
-    # read evidence file
-    path = evidence_path(corpus_root, record.corpus_id)
-    if not path.exists():
-        print(f"no sample selected yet for corpus {record.corpus_id}: run `select` first")
+    problems: list[str] = []
+    record = load_input("corpus record",
+                            corpus_root,
+                            read_corpus_record,
+                            problems,
+                            hint=" (run qualify_corpus first)",
+                            display_path=record_path(corpus_root))
+    if record is None:
+        print_problems("select refused", problems)
         return 1
 
-    rows =  [r for r in read_evidence(path) if books is None or r.book in books]
+    # read evidence file
+    csv_path = evidence_path(corpus_root, record.corpus_id)
+    all_rows = load_input("review CSV",
+                                   csv_path,
+                                   read_evidence,
+                                   problems,
+                                   hint=" (run `sampling select` first)",)
+    if all_rows is None:
+        print_problems("show refused", problems)
+        return 1
+
+    rows =  [r for r in all_rows if books is None or r.book in books]
     if not rows:
         print("no sampled chapters for the selected book(s); run `select` first.")
         return 0

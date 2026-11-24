@@ -199,6 +199,11 @@ def test_same_record_gives_same_rows(record):
     assert select_corpus_sample(record) == select_corpus_sample(record)
 
 
+def test_select_without_record_refuses(tmp_path, capsys):
+    assert select(tmp_path) == 1
+    assert "corpus record not found" in capsys.readouterr().out    
+
+
 ## evidence_path, write_evidence, read_evidence
 
 def test_evidence_path_carries_corpus_id(tmp_path):
@@ -345,13 +350,26 @@ def test_show_book_without_sampled_chapters(selected, capsys):
 def test_show_before_select_returns_error(record, tmp_path, capsys):
     save_record(record, tmp_path)                     # record exists, no review CSV yet
     assert show(tmp_path) == 1
-    assert "run `select` first" in capsys.readouterr().out
+    out = capsys.readouterr().out
+    assert "review CSV not found" in out and "run `sampling select` first" in out
 
 
 def test_show_rejects_comma_separated_books(selected):
     with pytest.raises(SystemExit):
         show(selected, "BOOK_3,")                     # argparse choices: spaces, not commas
 
+
+def test_show_without_record_refuses(tmp_path, capsys):
+    assert show(tmp_path) == 1
+    assert "corpus record not found" in capsys.readouterr().out
+
+
+def test_show_with_invalid_csv_refuses(selected, capsys):
+    path = next((selected / "fidelity_evidence").glob("fidelity_evidence_*.csv"))
+    path.write_text(path.read_text(encoding="utf-8").replace(",1,,", ",1,maybe,", 1),
+                    encoding="utf-8")
+    assert show(selected) == 1
+    assert "review CSV invalid" in capsys.readouterr().out
 
 # --- summarize_book ----------------------------------------------------------------------
 TODAY = date(2026, 11, 23)
