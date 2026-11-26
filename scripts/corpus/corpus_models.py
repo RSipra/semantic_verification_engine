@@ -82,8 +82,9 @@ from pydantic import (BaseModel, ConfigDict, Field, model_validator,
                       field_validator, field_serializer)
 
 from core.constants import Book
+from notebook_support import notebook_config as nb_cfg
 
-DEFAULT_CORPUS_ROOT = Path("data/06_books")
+DEFAULT_CORPUS_ROOT = nb_cfg.BOOK_TEXT
 RECORD_FILENAME = "corpus_record.json"
 
 SHA256_HEX = re.compile(r"[0-9a-f]{64}")
