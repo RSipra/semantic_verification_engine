@@ -101,5 +101,5 @@ def test_path_escaping_corpus_root_rejected(record, path):
 
 @pytest.mark.parametrize("bad_hash", ["abc", "A" * 64, "g" * 64])
 def test_malformed_hash_rejected(record, bad_hash):
-    with pytest.raises(ValidationError, match="64 lowercase hex"):
+    with pytest.raises(ValidationError, match="string_pattern_mismatch"):
         certify(record, {"fidelity_evidence/e.csv": bad_hash})

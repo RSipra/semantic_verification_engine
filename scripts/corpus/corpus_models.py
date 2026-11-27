@@ -84,6 +84,7 @@ from pydantic import (BaseModel, ConfigDict, Field, model_validator,
 import pandas as pd
 
 from core.constants import Book
+from core.models import CorpusId, Sha256Hex
 from notebook_support import notebook_config as nb_cfg
 
 DEFAULT_CORPUS_ROOT = nb_cfg.BOOK_TEXT
@@ -257,7 +258,7 @@ class ChapterSchema(BaseModel):
         ..., ge=0, description=("len(text.split()) — fixed whitespace method. "
                                 "Diagnostic, like character_count."))
     # fingerprint of file content
-    sha256: str = Field(
+    sha256: Sha256Hex = Field(
         ...,
         pattern=r"^[0-9a-f]{64}$",
         description="SHA-256 of the raw file bytes. The run-time integrity check.")
@@ -312,7 +313,7 @@ class CorpusSchema(BaseModel):
     schema_version:  Literal["0.1"] = Field(
         ..., description=("Record format version; "
                                 "preflight refuses any other value. 0.x = draft."))
-    corpus_id : str = Field(
+    corpus_id: CorpusId = Field(
         ..., description=("Hash of all chapter checksums; "
                           "changes if and only if the corpus data changes."))
     status: CorpusStatus = Field(..., description=("profiled = deterministic profile done; "
@@ -328,7 +329,7 @@ class CorpusSchema(BaseModel):
         ..., description="scope of the corpus, e.g. HP Book Series (1-7), Canadian version (tbc)")
     date_certified: date | None = Field(
         default=None, description="Date the corpus was certified; None until certified.")
-    evidence_files: dict[str, str] = Field(
+    evidence_files: dict[str, Sha256Hex] = Field(
         default_factory=dict,
         description="Certification evidence (e.g. fidelity review CSV, book reference file): "
                     "path relative to corpus_root -> sha256 of file bytes.")
@@ -336,24 +337,22 @@ class CorpusSchema(BaseModel):
 
     @field_validator("evidence_files")
     @classmethod
-    def evidence_files_well_formed(cls, v:dict[str,str]) -> dict[str,str]:
+    def evidence_files_well_formed(cls, v:dict[str,Sha256Hex]) -> dict[str, Sha256Hex]:
         """
         Check the shape of each evidence entry, not whether it matches the files on disk.
 
         - path: relative and inside corpus_root (no leading '/', no '..'), so preflight
           only ever hashes files inside the DVC-tracked folder.
-        - hash: 64 lowercase hex characters (sha256), so a malformed value fails here
-          with a clear message instead of as an unexplained mismatch in preflight.
+        - hash: format enforced by the Sha256Hex type on the field, so a malformed value
++         fails at load instead of as an unexplained mismatch in preflight.
 
         Collects every bad entry and raises once. Matching against disk: changed_evidence.
         """
         bad_paths = [
             p for p in v if PurePosixPath(p).is_absolute() or ".." in PurePosixPath(p).parts]
-        bad_hashes = [p for p, h in v.items() if not SHA256_HEX.fullmatch(h)]
-        if bad_paths or bad_hashes:
+        if bad_paths:
             raise ValueError(
-                f"evidence_files: paths must be relative inside corpus_root {bad_paths}; "
-                f"hashes must be 64 lowercase hex {bad_hashes}")
+                f"evidence_files: paths must be relative inside corpus_root {bad_paths}")
         return v
 
     @model_validator(mode="after")

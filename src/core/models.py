@@ -40,9 +40,9 @@ import json
 import hashlib
 import base64
 from enum import Enum
-from typing import List, Optional, Self, Dict, Literal, TYPE_CHECKING, Any
+from typing import (List, Optional, Self, Dict, Literal, TYPE_CHECKING, Any, Annotated,)
 from pydantic import (BaseModel, field_validator, Field, model_validator, 
-                      ConfigDict, ValidationInfo)
+                      ConfigDict, ValidationInfo, StringConstraints,)
 import numpy as np
 from core.constants import QuestionType, QuestionSource, AnswerType
 
@@ -55,6 +55,15 @@ class DataTier(str, Enum):
     GOLD = "gold"
     PROD_GREEN = "production_green"
     PROD_BLUE = "production_blue"
+
+# Shared format aliases. Also used by scripts/corpus/corpus_models (corpus record fields).
+# They live here for simplicity. Move them to a small core module (e.g. core/formats.py)
+# if importing core.models into the corpus package ever becomes heavy or circular.
+# corpus_id: 16 lowercase hex (compute_corpus_id)
+CorpusId = Annotated[str, StringConstraints(pattern=r"^[0-9a-f]{16}$")]
+# sha256 of a file's raw bytes: 64 lowercase hex
+Sha256Hex = Annotated[str, StringConstraints(pattern=r"^[0-9a-f]{64}$")]
+
 
 class GenPipelineMetadata(BaseModel):
     """
