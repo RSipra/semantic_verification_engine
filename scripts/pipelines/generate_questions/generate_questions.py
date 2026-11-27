@@ -180,6 +180,7 @@ from core.telemetry import FailureMode, GenerationCallEntry, QuarantineEntry
 from scripts.pipelines.generate_questions.prompts.pipeline_config import (GENERATION_STRATEGY, 
                                                                           GEN_STRATEGY_VERSION,
                                                                           REJECTION_RATE_THRESHOLD)
+from scripts.corpus.preflight import run_preflight
 import notebook_support.notebook_config as nb_cfg
 
 ## CONSTANTS
@@ -557,7 +558,8 @@ def get_run_scope(chapter_limit: Optional[int], chapter_filter: Optional[List[in
 def save_run_manifest(run_id: str, pipeline_id: str, active_strategy: list,
                       llm_pass: str, target_books: List[Book], chapters: list, 
                       run_timestamp: str, run_scope: str,
-                      manifests_dir: Path) -> None:
+                      manifests_dir: Path, corpus_id: str,
+                      chapter_sha256: dict[str, str]) -> None:
     """
     Saves the execution plan (*recipe*) before execution starts. This is to help distinguish 
     between attempted runs (e.g aborted, crashed) vs. successful runs (with full reporting, 
@@ -580,6 +582,8 @@ def save_run_manifest(run_id: str, pipeline_id: str, active_strategy: list,
         (models, prompts) to be executed.
         target_books: The specific list of Book enums targeted in this run.
         chapters: The specific list of chapters file paths selected for this run.
+        corpus_id: certified corpus the run's chapters were verified against (from preflight).
+        chapter_sha256: chapter file name -> certified sha256, as verified by preflight.
     """
     # Edit question_type dict to json compatible formats
     formatted_strategy = []
@@ -597,8 +601,10 @@ def save_run_manifest(run_id: str, pipeline_id: str, active_strategy: list,
         "scope": {
             "type": run_scope,
             "target_books": [b.name for b in target_books],
+            "corpus_id": corpus_id,
             "total_chapters": len(chapters), 
-            "chapter_files": [p.name for p in chapters] 
+            "chapter_files": [p.name for p in chapters],
+            "chapter_sha256": chapter_sha256, 
         },
         "strategy": formatted_strategy
     }
@@ -1636,28 +1642,36 @@ def generate_questions_pipeline(target_books: List[Book],
     logger.info("🚀 Starting Pipeline: %s", run_id)
     logger.info("Prefects UI Logs mirroring to: %s", log_path)
 
-    # A.4: Instantiate client object and configure the pipeline API
-    client = configure_api(CONFIG_PATH)
-
-    # A.5: distinguish between a book vs. thematic run
-    # (books: come from the certified corpus folder, which holds corpus_record.json); pass it on,
-    # never build a second path.
+    # A.4: distinguish between a book vs. thematic run
+    # target_folder is the ONE source folder for this run (books: the certified corpus
+    # folder, which holds corpus_record.json): get_chapters reads from it and preflight
+    # verifies it — pass the same value to both, never build a second path
     target_folder = determine_target_folder(target_books)
     if target_folder == nb_cfg.THEMES_DIR:
         logger.info("Thematic Run detected. Switching source to: %s", target_folder)
 
-    # A.6: Retrieve chapter files and run scope
-    # A.6.1: Retrieve list of required run chapter paths
+    # A.5: Retrieve chapter files and run scope
+    # A.5.1: Retrieve list of required run chapter paths
     chapter_file_paths = get_chapters(target_books,
                                       target_book_folder=target_folder,
                                       chapter_filter=target_chapters,
                                       chapter_limit=chapter_limit)
-    # A.6.2: Check if the run is on full_book or partial_pilot 
+    # A.5.2: Check if the run is on full_book or partial_pilot 
     run_scope =  get_run_scope(chapter_limit, target_chapters)
-    # A.6.3: log special case if chapter limits applied (e.g. demo, troubleshooting)
+    # A.5.3: log special case if chapter limits applied (e.g. demo, troubleshooting)
     if chapter_limit:
         logger.warning("🛑 Processing Cap Applied: Limiting execution to %s chapters.",
                        chapter_limit)
+
+    # A.5.4: Preflight (corpus trust boundary, ADR-P2-026): the chapters this run reads must be
+    # the certified bytes. Raises ValueError on any problem: the run stops here, before any
+    # API setup or manifest, and the error is logged by the crash handler (terminal + run log).
+    preflight = run_preflight(target_folder, chapter_file_paths)
+    logger.info("✅ Preflight passed: certified corpus %s, %d chapters verified",
+                preflight.corpus_id, len(chapter_file_paths))
+
+    # A.6: Instantiate client object and configure the pipeline API
+    client = configure_api(CONFIG_PATH)
 
     # A.7: Create and save the run manifest (= plan for this run)
     save_run_manifest(run_id, 
@@ -1668,7 +1682,9 @@ def generate_questions_pipeline(target_books: List[Book],
                       chapter_file_paths,
                       run_timestamp,
                       run_scope,
-                      manifests_dir)
+                      manifests_dir,
+                      corpus_id=preflight.corpus_id,
+                      chapter_sha256=preflight.chapter_sha256)
 
     # A.8: Initialize
     #   initialize DTO list for all questions generated in this run
