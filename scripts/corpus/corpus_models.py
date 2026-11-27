@@ -74,12 +74,14 @@ would replace most of the correctness checks below.
 import hashlib
 import json
 from datetime import date
-from typing import Literal, Self
+from typing import Literal, Self, TypeVar
 from pathlib import Path, PurePosixPath
 import re
+from collections.abc import Callable
 
 from pydantic import (BaseModel, ConfigDict, Field, model_validator,
-                      field_validator, field_serializer)
+                      field_validator, field_serializer, ValidationError)
+import pandas as pd
 
 from core.constants import Book
 from notebook_support import notebook_config as nb_cfg
@@ -383,6 +385,52 @@ class CorpusSchema(BaseModel):
 def read_corpus_record(corpus_root: Path) -> CorpusSchema:
     """Read and validate the corpus record in corpus_root (raises if missing or invalid)."""
     return CorpusSchema.model_validate_json(record_path(corpus_root).read_text(encoding="utf-8"))
+
+# define placeholder for type determined at function call.
+T = TypeVar('T')
+
+def load_input(label: str, path: Path, reader: Callable[[Path], T], problems: list[str],
+               *, hint: str="", display_path: Path | None = None) -> T | None:
+    """
+    Wrapper around a reader: call `reader(path)` and turn its expected failures into
+    entries in `problems` instead of exceptions.
+
+    The reader does the reading and validation (e.g. read_evidence, read_references,
+    read_corpus_record); this wrapper only handles its failures, so every input is
+    reported the same way:
+      - missing file (FileNotFoundError)        -> "<label> not found: <file><hint>"
+      - unreadable (PermissionError)            -> "<label> unreadable (permission denied): <file>"
+      - invalid (ValidationError, ParserError)  -> "<label> invalid: <file>" + details
+    In those cases it returns None and does not raise; the caller decides what to do
+    with `problems` (promote: print them, exit 1). Any other exception is a bug and is
+    not caught.
+
+    Args:
+        label: what the input is, used in messages (e.g. "review CSV").
+        path: the argument passed to `reader`. Usually the file itself.
+        reader: function that reads and validates the input (e.g. read_evidence).
+        problems: list the failure message is appended to (go/no-go: the caller decides).
+        hint: appended to the "not found" message, e.g. " (run `sampling select` first)".
+        display_path: the file to show in messages, when `path` is not the file itself.
+            Currently only the corpus record: read_corpus_record takes corpus_root (a
+            folder), so the message shows record_path(corpus_root) instead. Default: path.
+
+    Returns:
+        The reader's result, or None if the file is missing, unreadable or invalid.
+        Unexpected errors (bugs) are not caught.
+    """
+    message_path = display_path or path
+    try:
+        return reader(path)
+
+    except FileNotFoundError:
+        problems.append(f"{label} not found: {message_path}{hint}")
+    except PermissionError:
+        problems.append(f"{label} unreadable (permission denied): {message_path}")
+    except (ValidationError, pd.errors.ParserError) as e:
+        problems.append(f"{label} invalid: {message_path}\n{e}")
+
+    return None
 
 class FidelityReferences(BaseModel):
     """

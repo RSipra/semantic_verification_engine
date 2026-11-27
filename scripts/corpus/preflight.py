@@ -5,9 +5,9 @@ from pathlib import Path
 
 from pydantic import BaseModel, ConfigDict
 
-from scripts.corpus.sampling import load_input
 from scripts.corpus.corpus_models import (ChapterSchema, CorpusSchema, bytes_sha256,
-                                          changed_evidence, read_corpus_record, record_path)
+                                          changed_evidence, read_corpus_record, record_path,
+                                          load_input)
 
 class PreflightResult(BaseModel):
     """ What a passing run takes from the certified record (manifest now, lineage later)."""
