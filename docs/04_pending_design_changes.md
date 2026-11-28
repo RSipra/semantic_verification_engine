@@ -18,6 +18,7 @@ expensive part to reconstruct.
 | 5 | Provider portability — the LLM call seam | Open |
 | 6 | What makes a dataset Production_Blue | Open |
 | 7 | `chunk` and `batch` used interchangeably | Decided |
+| 8 | Source attribution check in validation | Open |
 
 ---
 
@@ -463,6 +464,7 @@ Both words are currently used for the same thing, in both pipelines:
 This cost real time twice while writing the failure branches: the vocabulary
 collision reads as a semantic difference between the passes, and it isn't one.
 
+
 ### One genuine asymmetry to preserve
 
 Enrichment has two counters, generation one:
@@ -487,6 +489,68 @@ planned. Enrichment's flat counter is a local for building `call_id`.
 - [ ] **Pipeline README:** use one term once the rename lands.
 
 ---
+
+---
+
+## 8 · Source attribution check in validation
+
+**Status:** Open — check identified, placement and handling not decided
+**Date:** 2026-11-27
+
+### The problem
+
+A generation call covers a batch of chapters (`batch_size`, default 2). Which
+chapter a question came from is known only through `source_reference`, which is
+the LLM's claim: it picks one of the batch's titles. `source_reference` drives
+the runtime source hint, so a question attributed to the wrong chapter shows the
+player a wrong hint. The question itself can still be correct; the label is not.
+
+The current checks do not catch this. If the RAG triad grounds a question
+against the whole chapter batch, a good quote score proves the quote is *in the
+batch*, not in the chapter `source_reference` names.
+
+### What makes a check possible
+
+Question lineage (ADR-P2-027) records the call's batch as `{file name: sha256}`
+on every question. Validation can therefore load exactly the chapters the LLM
+saw, confirm by hash that they are the same bytes, and work out which chapter
+the quote comes from. Lineage records facts about the inputs; the check would
+turn the attribution claim into a verified fact.
+
+### Constraints
+
+- **Not exact matching.** The LLM often splices `source_quote` across sentences
+  (triad score ~1), so an exact substring search would report false
+  misattributions. Use the graded segment matching from E2 instead.
+- **Attribution is relative.** The check only needs to know which batch chapter
+  the quote matches *best*, not prove an absolute match. Splicing lowers every
+  chapter's score equally, so the comparison stays reliable.
+- **Deterministic.** In line with the design stance: verify with code before
+  sending anything to an LLM judge.
+
+### Open questions
+
+- **Placement:** a gate in the validation workflow, or an early check in
+  generation, where the chapter text is already in memory. Decide from the
+  misattribution rate measured on the first full book run.
+- **Handling:** auto-correct `source_reference` to the chapter the quote was
+  found in, or quarantine for review. Quote found in neither chapter is a
+  grounding failure, already covered by the triad.
+- How the check relates to the triad's existing quote score: a separate step
+  before it, or part of it.
+
+### Actions
+
+- [ ] **Refresh how the validation workflow runs today** (notebooks): what
+      context the triad receives, and whether anything reads `source_reference`.
+- [ ] **Measure the misattribution rate** on the first full book run.
+- [ ] **Decide placement and handling**, then write an ADR (or amend the
+      validation ADR).
+- [ ] **Code — validation:** load the triad context through lineage, with the
+      hash check, so validation verifies against the certified bytes.
+- [ ] **Code — attribution check:** E2 segment matching against each batch
+      chapter; compare the best match with `source_reference`.
+- [ ] **Update design doc:** add the check to the validation layer description.
 
 ## Amendments to existing entries
 
