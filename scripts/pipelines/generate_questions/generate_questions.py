@@ -24,8 +24,8 @@ KEY COMPONENTS:
       high-throughput Pay-As-You-Go execution.  
  
 PIPELINE ARCHITECTURE:
-    1. **Initialization:** Setup Run IDs, Logging, and API connections. Saves
-    the 'Manifest'.
+    1. **Initialization:** Setup Run IDs, Logging, preflight (certified corpus check,
+    ADR-P2-026), and API connections. Saves the 'Manifest'.
     2. **Strategy (Batch) Loop:** Iterates through defined strategies (EX, MCQ, FR).
     3. **Chapter (Call) Loop:** Batches chapters, prepares prompts, and calls the API.
        - Includes 'circuit breaker' logic (stops after 5 consecutive failures).
@@ -175,7 +175,7 @@ from pydantic import BaseModel, ValidationError
 # IMPORT PROJECT CONFIGURATION
 # Using the "Src Layout" (pip install -e .)
 from core.constants import Book, QuestionSource, QuestionType
-from core.models import DraftQuestion
+from core.models import CorpusId, DraftQuestion, Sha256Hex
 from core.telemetry import FailureMode, GenerationCallEntry, QuarantineEntry
 from scripts.pipelines.generate_questions.prompts.pipeline_config import (GENERATION_STRATEGY, 
                                                                           GEN_STRATEGY_VERSION,
@@ -857,13 +857,16 @@ def extract_json_from_response(text: str, logger = None) -> List[Dict[str, Any]]
 # compile the Strategy (pipeline run) metadata
 def create_strategy_batch_metadata(pipeline_run_id: str,  # Level 1 (pipeline run) full script
                                    batch_id: str,         # Level 2 (strategy) question type batch
-                                   call_id: str,           # Level 3 (call) api call
+                                   call_id: str,          # Level 3 (call) api call
                                    run_timestamp: str, 
                                    strategy: dict,
-                                   source_filenames: List[str]) -> dict:
+                                   source_filenames: List[str],
+                                   corpus_id: CorpusId,
+                                   source_chapter_sha256: dict[str, Sha256Hex]) -> dict:
     """
-    Constructs the standardized metadata object for a generation batch.
-    Merges static strategy config with dynamic runtime context.
+    Constructs the standardized metadata object for a generation call.
+    Merges static strategy config with dynamic runtime context, including corpus
+    lineage (ADR-P2-027): corpus_id and the sha256 of each chapter in the call.
     """
     return{
         "identifiers": {
@@ -879,6 +882,9 @@ def create_strategy_batch_metadata(pipeline_run_id: str,  # Level 1 (pipeline ru
         "question_type": strategy.get('file_prefix'),
         "prompt_id": strategy['prompt_id'],  
         "model_name": strategy['model_name'],
+        # corpus lineage tracking
+        "corpus_id": corpus_id,                     
+        "source_chapter_sha256": source_chapter_sha256,
         # model hyperparameters for current batch / strategy (question type)
         "hyperparameters": {
             "temperature": strategy['temperature'],
@@ -1076,11 +1082,12 @@ def process_and_save_response(run_id: str, batch_id: str, call_id: str, llm_pass
                               output_file: Path,
                               full_metadata: Dict[str,Any],
                               finish_reason,
-                              logger,
+                              logger
                               ) -> Tuple[List[DraftQuestion], List[QuarantineEntry], int]:
     """
     Response processing layer 3: core logic. Adds run/call metadata to each parsed
-    question (ids, model, prompt and pipeline versions), and saves each record to disk.
+    question (ids, model, prompt and pipeline versions, corpus lineage), and saves
+    each record to disk.
 
     Single candidate by design: tested candidate_count > 1 for variety;
     additional candidates were mostly repeats with marginal new questions,
@@ -1125,6 +1132,9 @@ def process_and_save_response(run_id: str, batch_id: str, call_id: str, llm_pass
                     'pipeline_name')
                 question_data['generation_strategy_version'] = full_metadata.get(
                     'generation_strategy_version')
+                # Lineage (ADR-P2-027): certified corpus + sha256 of each chapter in this call
+                question_data['corpus_id'] = full_metadata.get('corpus_id')
+                question_data['source_chapter_sha256'] = full_metadata.get('source_chapter_sha256')
 
                 try:
                     # 3. Create DTO
@@ -1666,16 +1676,16 @@ def generate_questions_pipeline(target_books: List[Book],
     # A.5.4: Preflight (corpus trust boundary, ADR-P2-026): the chapters this run reads must be
     # the certified bytes. Raises ValueError on any problem: the run stops here, before any
     # API setup or manifest, and the error is logged by the crash handler (terminal + run log).
-    preflight = run_preflight(target_folder, chapter_file_paths)
+    preflight_result = run_preflight(target_folder, chapter_file_paths)
     logger.info("✅ Preflight passed: certified corpus %s, %d chapters verified",
-                preflight.corpus_id, len(chapter_file_paths))
+                preflight_result.corpus_id, len(chapter_file_paths))
 
     # A.6: Instantiate client object and configure the pipeline API
     client = configure_api(CONFIG_PATH)
 
     # A.7: Create and save the run manifest (= plan for this run)
-    save_run_manifest(run_id, 
-                      pipeline_id, 
+    save_run_manifest(run_id,
+                      pipeline_id,
                       active_strategy,
                       LLM_PASS_GEN,
                       target_books,
@@ -1683,8 +1693,8 @@ def generate_questions_pipeline(target_books: List[Book],
                       run_timestamp,
                       run_scope,
                       manifests_dir,
-                      corpus_id=preflight.corpus_id,
-                      chapter_sha256=preflight.chapter_sha256)
+                      corpus_id=preflight_result.corpus_id,
+                      chapter_sha256=preflight_result.chapter_sha256)
 
     # A.8: Initialize
     #   initialize DTO list for all questions generated in this run
@@ -1722,6 +1732,14 @@ def generate_questions_pipeline(target_books: List[Book],
         #     call = one API call over a chapter-chunk.
         #     Loop through batch_size number of chapters per loop (default = 2)
         for i, chapter_batch in enumerate(chunk_list(chapter_file_paths, batch_size)):
+            
+            # Lineage (ADR-P2-027): certified sha256 of each chapter in this call's batch.
+            # [] lookup on purpose: preflight hashed the same chapter_file_paths, so a
+            # missing name is a bug and should fail loudly.
+            source_chapter_sha256 = {
+                p.name: preflight_result.chapter_sha256[p.name] for p in chapter_batch
+            }
+            
             # C.0: pacing (safe time delay for RPM limits) - sleep before each call except the first
             # TODO (pacing): only paces WITHIN a strategy — `i` resets per question type,
             # so the first call of each strategy fires straight after the previous
@@ -1773,7 +1791,9 @@ def generate_questions_pipeline(target_books: List[Book],
             # C.4: generate the full meta_data dict for call
             full_metadata = create_strategy_batch_metadata(run_id, batch_id,
                                                             call_id, run_timestamp,
-                                                            config, source_files)
+                                                            config, source_files, 
+                                                            preflight_result.corpus_id,
+                                                            source_chapter_sha256)
             try:
                 # C.5: Make the API call
                 response = make_api_call(client, final_prompt, config)

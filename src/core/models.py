@@ -74,6 +74,17 @@ class GenPipelineMetadata(BaseModel):
     timestamp: str
     generation_pipeline_id: str
     generation_strategy_version: str
+    # Lineage value shapes (ADR-P2-027). The model checks format only; preflight checks the
+    # values against the certified record, at generation time.
+    corpus_id: CorpusId | None = Field(
+        default=None,
+        description=("Certified corpus the question was generated from (verified by preflight). "
+                     "None = lineage unknown (records from before ADR-P2-027)."))
+    source_chapter_sha256: dict[str, Sha256Hex] | None = Field(
+        default=None,
+        description=("Source file name -> certified sha256 of the text the question was generated "
+                     "from. One entry per source (several for future thematic questions). "
+                     "None = lineage unknown, or source_reference did not map to a source file."))
 
 class DraftQuestion(GenPipelineMetadata):
     """Core fields  """

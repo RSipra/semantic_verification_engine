@@ -424,6 +424,8 @@ The lifecycle will be managed as follows:
 | **[ADR-P2-011](adrs/ADR-P2-011.md)** | **Validation Layer (Pydantic)** | ✅ Accepted | Enforce strict schemas at the "Silver" layer entrance to reject malformed data before expensive enrichment. |
 | **[ADR-P2-012](adrs/ADR-P2-012.md)** | **Dataset enrichment pipeline (Notebook → Script transition)** | 🚧 Proposed | **Bootstrap & Shed:** Use a notebook to bootstrap Gold with curated legacy data then shed it after transitioning to automated generation|
 |**[ADR-P2-018](adrs/ADR-P2-018.md)**|Stateless Game Architecture for Cloud Deployment|🚧 Proposed|Refactored the MVP from a stateful CLI loop to a stateless request/response architecture, enabling serverless deployment while preserving the `rich` console rendering.|
+| **[ADR-P2-026](adrs/ADR-P2-026.md)** | **Corpus Trust Boundary** | ✅ Accepted | Certify the source corpus once (deterministic profile + sampled manual fidelity review), then verify at every generation run (preflight) that the chapters read are the certified bytes. Workflow: [spec](adrs/ADR-P2-026_specs.md).|
+| **[ADR-P2-027](adrs/ADR-P2-027.md)** | **Certified Corpus Details in Question Lineage** | ✅ Accepted | Each generated question records its certified `corpus_id` and the sha256 of every chapter in its generation call, so Silver records trace to the exact source text. |
 | **IV. Algorithms & Heuristics** | | | |
 | **[ADR-P2-014](adrs/ADR-P2-014.md)** | **Heuristic Stability (LLM Drift)** | ✅ Accepted | Preserves heuristic answer-shape patterns across question types through prompt-led generation and manual, dataset-level monitoring for drift.|
 | **[ADR-P2-015](adrs/ADR-P2-015.md)**|**Statistical Quality Control (SQC) for Synthetic Data**|🚧 Proposed|Applies statistical sampling to synthetic data batches as an offline safety net to catch incorrect or hallucinated questions early, using efficient, conditional review to protect user trust at demo scale.|
@@ -432,7 +434,7 @@ The lifecycle will be managed as follows:
 | **VI. Deferred / Superseded** | | | |
 | **[ADR-P2-016](adrs/ADR-P2-016.md)** | **Manual Input Swimlane** | ⏳ Deferred | Defers a third manual input swimlane for low-volume, manually curated questions that introduce novelty and gameplay variety in the Content Factory.|
 | **[ADR-P2-019](adrs/ADR-P2-019.md)**|**Exclusion of Yes/No (YN) Questions from Gold Dataset**| ✅ Accepted| YN questions provide limited signal for semantic validation in Phase 2 |
-<!--Next tag = = 26. ADR-P2-020 to P2-024 not yet indexed in this table — backfill pending. -->
+<!--Next tag = = 28. ADR-P2-020 to P2-024 not yet indexed in this table — backfill pending. -->
 
 </details>
 
